@@ -94,15 +94,15 @@ class GetSensorController extends AbstractController
         if (!$user instanceof User) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
-
+//dd('lol');
         $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO);
 
         $allowedSensors = $sensorUserFilter->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO);
-
+//dd($allowedSensors);
         foreach ($allowedSensors as $sensor) {
             $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);
         }
-
+//dd($sensorDTOs);
         if (empty($sensorDTOs)) {
             if (!empty($sensorUserFilter->getErrors())) {
                 return $this->sendBadRequestJsonResponse($sensorUserFilter->getErrors());

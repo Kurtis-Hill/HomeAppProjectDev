@@ -2,9 +2,9 @@
 
 namespace App\Sensors\Builders\ReadingTypeQueryDTOBuilders;
 
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
-use App\Sensors\Entity\Sensor;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use JetBrains\PhpStorm\Pure;
 
@@ -18,9 +18,9 @@ class MotionQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             $motionData['alias'],
             $motionData['object'],
-            'sensor',
-            'sensorID',
-            Sensor::ALIAS,
+            BaseSensorReadingType::ALIAS,
+            'baseReadingTypeID',
+            BaseSensorReadingType::ALIAS,
         );
     }
 }

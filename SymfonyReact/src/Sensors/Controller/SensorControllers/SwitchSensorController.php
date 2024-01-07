@@ -143,7 +143,7 @@ class SwitchSensorController extends AbstractController
                 ($readingTypeCurrentReadingDTO instanceof BoolCurrentReadingUpdateRequestDTO)
                 && $sensor->getSensorTypeObject() instanceof RelayReadingTypeInterface
             ) {
-                $relay = $relayRepository->findOneBy(['sensor' => $sensor]);
+                $relay = $relayRepository->findBySensorID($sensor->getSensorID())[0];
                 if (!$relay) {
                     throw new ReadingTypeNotFoundException('Relay reading type not found');
                 }

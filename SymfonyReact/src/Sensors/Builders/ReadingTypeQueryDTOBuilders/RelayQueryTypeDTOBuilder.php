@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Builders\ReadingTypeQueryDTOBuilders;
 
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\Sensor;
@@ -18,9 +19,9 @@ class RelayQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             $relayData['alias'],
             $relayData['object'],
-            'sensor',
-            'sensorID',
-            Sensor::ALIAS,
+            BaseSensorReadingType::ALIAS,
+            'baseReadingTypeID',
+            BaseSensorReadingType::ALIAS,
         );
     }
 }

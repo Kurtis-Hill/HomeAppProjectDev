@@ -127,8 +127,8 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
-        $soilSensor = $standardReadingTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
-
+        $soilSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
+//        dd($soilSensor);
         self::assertTrue($result);
         self::assertEquals(
             $analogCurrentReadingUpdateMessage->getCurrentReading(),
@@ -154,7 +154,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
-        $soilSensor = $standardReadingTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $soilSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertNotEquals(
@@ -181,7 +181,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
-        $ldrSensor = $standardReadingTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $ldrSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -208,7 +208,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
-        $ldrSensor = $standardReadingTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $ldrSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertNotEquals(
@@ -237,7 +237,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Humidity $dhtSensor */
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-        $dhtSensor = $humidityRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $dhtSensor = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -266,11 +266,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Humidity $humidity */
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-        $humidity = $humidityRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
         /** @var Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-        $temperature = $temperatureRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -301,11 +301,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Humidity $humidity */
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-        $humidity = $humidityRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
         /** @var Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-        $temperature = $temperatureRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertNotEquals(
@@ -337,7 +337,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Humidity $humidity */
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-        $humidity = $humidityRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -367,11 +367,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Humidity $humidity */
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-        $humidity = $humidityRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
         /** @var Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-        $temperature = $temperatureRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -403,11 +403,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Humidity $humidity */
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-        $humidity = $humidityRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
         /** @var Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-        $temperature = $temperatureRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertNotEquals(
@@ -440,7 +440,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-        $temperature = $temperatureRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -467,7 +467,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-        $temperature = $temperatureRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertNotEquals(
@@ -494,7 +494,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Latitude $latitude */
         $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
-        $latitude = $latitudeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $latitude = $latitudeRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -523,15 +523,15 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Humidity $humidity */
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-        $humidity = $humidityRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
         /** @var Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-        $temperature = $temperatureRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
         /** @var Latitude $latitude */
         $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
-        $latitude = $latitudeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $latitude = $latitudeRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -565,15 +565,15 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         /** @var Humidity $humidity */
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-        $humidity = $humidityRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
         /** @var Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-        $temperature = $temperatureRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
         /** @var Latitude $latitude */
         $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
-        $latitude = $latitudeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $latitude = $latitudeRepository->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertNotEquals(
@@ -605,7 +605,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        $motion = $this->entityManager->getRepository(Motion::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $motion = $this->entityManager->getRepository(Motion::class)->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -629,7 +629,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        $motion = $this->entityManager->getRepository(Motion::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $motion = $this->entityManager->getRepository(Motion::class)->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertNotSame(
@@ -654,7 +654,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        $relay = $this->entityManager->getRepository(Relay::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $relay = $this->entityManager->getRepository(Relay::class)->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertEquals(
@@ -678,7 +678,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        $relay = $this->entityManager->getRepository(Relay::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $relay = $this->entityManager->getRepository(Relay::class)->findBySensorID($sensor->getSensorID())[0];
 
         self::assertTrue($result);
         self::assertNotSame(

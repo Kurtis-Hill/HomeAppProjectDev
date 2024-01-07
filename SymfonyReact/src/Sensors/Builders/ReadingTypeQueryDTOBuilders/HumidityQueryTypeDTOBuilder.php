@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Builders\ReadingTypeQueryDTOBuilders;
 
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\Sensor;
@@ -18,9 +19,9 @@ class HumidityQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             $humidData['alias'],
             $humidData['object'],
-            'sensor',
-            'sensorID',
-            Sensor::ALIAS,
+            BaseSensorReadingType::ALIAS,
+            'baseReadingTypeID',
+            BaseSensorReadingType::ALIAS,
         );
     }
 }

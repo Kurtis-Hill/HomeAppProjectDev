@@ -10,7 +10,7 @@ use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\User\Entity\User;
 
 readonly class NewSensorDTOBuilder
 {
@@ -27,7 +27,7 @@ readonly class NewSensorDTOBuilder
         string $sensorName,
         int $sensorTypeID,
         int $deviceID,
-        UserInterface $user,
+        User $user,
         int $pinNumber,
         ?int $readingInterval,
     ): NewSensorDTO {

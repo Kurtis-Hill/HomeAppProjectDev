@@ -87,7 +87,9 @@ class GetCardViewControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
+        dd($requestResponse->getContent());
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
         self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));

@@ -2,9 +2,13 @@
 
 namespace App\Sensors\Repository\SensorReadingType\ORM;
 
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @extends ServiceEntityRepository<ReadingTypeRepository>
@@ -19,5 +23,27 @@ class StandardReadingTypeRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AbstractStandardReadingType::class);
+    }
+
+    /**
+     * @return StandardReadingSensorInterface[]
+     */
+    #[ArrayShape([StandardReadingSensorInterface::class])]
+    public function findBySensorID(int $sensorID): array
+    {
+        $qb = $this->createQueryBuilder('readingType');
+        $expr = $qb->expr();
+
+        $qb->select('readingType')
+            ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
+            ->where(
+                $expr->eq(
+                    'baseReadingType.sensor',
+                    ':sensor'
+                )
+            )
+            ->setParameters(['sensor' => $sensorID]);
+
+        return $qb->getQuery()->getResult();
     }
 }

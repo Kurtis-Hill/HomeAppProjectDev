@@ -14,12 +14,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'basereadingtype')]
 class BaseSensorReadingType
 {
+    public const ALIAS = 'baseReadingType';
+
     #[
         ORM\Column(name: 'baseReadingTypeID', type: "integer", nullable: false),
         ORM\Id,
         ORM\GeneratedValue(strategy: "IDENTITY"),
     ]
-    private int $readingTypeID;
+    private int $baseReadingTypeID;
 
     #[
         ORM\ManyToOne(targetEntity: Sensor::class),
@@ -50,9 +52,9 @@ class BaseSensorReadingType
         $this->updatedAt = new DateTimeImmutable('now');
     }
 
-    public function getReadingTypeID(): int
+    public function getBaseReadingTypeID(): int
     {
-        return $this->readingTypeID;
+        return $this->baseReadingTypeID;
     }
 
     public function getSensor(): Sensor

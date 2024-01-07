@@ -47,7 +47,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Analog $analogSensor */
-        $analogSensor = $this->entityManager->getRepository(Analog::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $analogSensor = $this->entityManager->getRepository(Analog::class)->findBySensorID($sensor->getSensorID())[0];
 
         $highReading = $analogSensor->getHighReading();
         $analogSensor->setCurrentReading($highReading + 5);
@@ -73,7 +73,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Analog $analogSensor */
-        $analogSensor = $this->entityManager->getRepository(Analog::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $analogSensor = $this->entityManager->getRepository(Analog::class)->findBySensorID($sensor->getSensorID())[0];
 
         $lowReading = $analogSensor->getLowReading();
         $analogSensor->setCurrentReading($lowReading - 5);
@@ -107,7 +107,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Temperature $tempObject */
-        $tempObject = $this->entityManager->getRepository(Temperature::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $tempObject = $this->entityManager->getRepository(Temperature::class)->findBySensorID($sensor->getSensorID())[0];
 
         $highReading = $tempObject->getHighReading();
         $tempObject->setCurrentReading($highReading + 5);
@@ -132,7 +132,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Temperature $temperature */
-        $temperature = $this->entityManager->getRepository(Temperature::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $temperature = $this->entityManager->getRepository(Temperature::class)->findBySensorID($sensor->getSensorID())[0];
 
         $lowReading = $temperature->getLowReading();
         $temperature->setCurrentReading($lowReading - 5);
@@ -180,7 +180,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Humidity $humidObject */
-        $humidObject = $this->entityManager->getRepository(Humidity::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidObject = $this->entityManager->getRepository(Humidity::class)->findBySensorID($sensor->getSensorID())[0];
 
         $highReading = $humidObject->getHighReading();
         $humidObject->setCurrentReading($highReading + 5);
@@ -270,7 +270,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Latitude $latitudeObject */
-        $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findBySensorID($sensor->getSensorID())[0];
 
         $lowReading = $latitudeObject->getLowReading();
         $latitudeObject->setCurrentReading($lowReading - 5);

@@ -28,8 +28,8 @@ class SensorReadingTypeFetcher
     #[ArrayShape([AbstractBoolReadingBaseSensor::class|StandardReadingTypeRepository::class])]
     public function fetchAllSensorReadingTypesBySensor(Sensor $sensor): array
     {
-        $boolTypeSensors = $this->boolReadingBaseSensorRepository->findBy(['sensor' => $sensor]);
-        $standardTypeSensors = $this->standardReadingTypeRepository->findBy(['sensor' => $sensor]);
+        $boolTypeSensors = $this->boolReadingBaseSensorRepository->findBySensorID($sensor->getSensorID());
+        $standardTypeSensors = $this->standardReadingTypeRepository->findBySensorID($sensor->getSensorID());
 
         return array_merge($boolTypeSensors, $standardTypeSensors);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Builders\ReadingTypeQueryDTOBuilders;
 
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\Sensor;
@@ -18,9 +19,9 @@ class LatitudeQueryTypeDTOBuilder implements ReadingTypeQueryDTOBuilderInterface
         return new JoinQueryDTO(
             $latitudeData['alias'],
             $latitudeData['object'],
-            'sensor',
-            'sensorID',
-            Sensor::ALIAS,
+            BaseSensorReadingType::ALIAS,
+            'baseReadingTypeID',
+            BaseSensorReadingType::ALIAS,
         );
     }
 }

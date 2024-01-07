@@ -108,7 +108,7 @@ class SwitchSensorControllerTest extends WebTestCase
 
         /** @var BoolReadingSensorInterface $sensorReadingType */
         $sensorReadingType = $readingTypeRepository
-            ->findOneBy(['sensor' => $sensor->getSensorID()]);
+            ->findBySensorID($sensor->getSensorID())[0];
 
         self::assertEquals($currentReadings['relay'], $sensorReadingType->getRequestedReading());
     }
@@ -168,7 +168,7 @@ class SwitchSensorControllerTest extends WebTestCase
 
         /** @var BoolReadingSensorInterface $sensorReadingType */
         $sensorReadingType = $sensorReadingTypeRepository
-            ->findOneBy(['sensor' => $sensor->getSensorID()]);
+            ->findBySensorID($sensor->getSensorID())[0];
 
         self::assertEquals($currentReadings['relay'], $sensorReadingType->getRequestedReading());
     }

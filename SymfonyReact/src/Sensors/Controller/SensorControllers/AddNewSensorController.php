@@ -110,7 +110,6 @@ class AddNewSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
 
-//        dd($newSensorDTO);
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $newSensorDTO);
         } catch (AccessDeniedException) {

@@ -125,9 +125,10 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         self::assertNotNull($sensorAfterUpdate);
 
         /** @var AllSensorReadingTypeInterface[] $sensorReadingTypes */
+        /** @TODO REPOSITORY FIX */
         $sensorReadingTypes = array_merge(
-            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBy(['sensor' => $sensorAfterUpdate]),
-            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBy(['sensor' => $sensorAfterUpdate]),
+            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($sensorAfterUpdate->getSensorID()),
+            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBySensorID($sensorAfterUpdate->getSensorID()),
 
         );
 
@@ -373,8 +374,8 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
 
         $sensorReadingTypes = array_merge(
-            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBy(['sensor' => $firstSensor]),
-            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBy(['sensor' => $firstSensor]),
+            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($firstSensor->getSensorID()),
+            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBySensorID($firstSensor->getSensorID()),
 
         );
         self::assertNotEmpty($sensorReadingTypes);
@@ -405,8 +406,8 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $sensorAfterUpdate = $this->sensorRepository->find($firstSensor->getSensorID());
         /** @var AllSensorReadingTypeInterface[] $sensorReadingTypes */
         $sensorReadingTypes = array_merge(
-            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBy(['sensor' => $sensorAfterUpdate]),
-            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBy(['sensor' => $sensorAfterUpdate]),
+            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($sensorAfterUpdate->getSensorID()),
+            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBySensorID($sensorAfterUpdate->getSensorID()),
 
         );
         self::assertNotEmpty($sensorReadingTypes);

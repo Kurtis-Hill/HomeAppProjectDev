@@ -15,7 +15,7 @@ use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 use App\UserInterface\Factories\CardViewTypeFactories\CardViewFormDTOFactory;
 use Doctrine\ORM\Exception\ORMException;
 
-class CardViewFormPreparationFacade implements CardViewFormPreparationHandlerInterface
+class CardViewFormCreationHandler implements CardViewFormPreparationHandlerInterface
 {
     private SensorRepositoryInterface $sensorRepository;
 

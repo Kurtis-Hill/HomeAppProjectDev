@@ -53,7 +53,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Analog $analogSensor */
-        $analogSensor = $this->entityManager->getRepository(Analog::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $analogSensor = $this->entityManager->getRepository(Analog::class)->findBySensorID($sensor->getSensorID())[0];
         $analogSensor->setConstRecord(true);
 
 //dd($analogSensor);
@@ -77,7 +77,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
 
         /** @var Analog $analogSensor */
-        $analogSensor = $this->entityManager->getRepository(Analog::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $analogSensor = $this->entityManager->getRepository(Analog::class)->findBySensorID($sensor->getSensorID())[0];
         $analogSensor->setConstRecord(false);
 
         $this->sut->processConstRecord($analogSensor);
@@ -109,7 +109,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
 
         /** @var Temperature $tempObject */
-        $tempObject = $this->entityManager->getRepository(Temperature::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $tempObject = $this->entityManager->getRepository(Temperature::class)->findBySensorID($sensor->getSensorID())[0];
 
 //        $tempObject = $sensorReadingTypeObject->getTemperature();
         $tempObject->setConstRecord(true);
@@ -135,7 +135,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
 
         /** @var Temperature $tempObject */
-        $tempObject = $this->entityManager->getRepository(Temperature::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $tempObject = $this->entityManager->getRepository(Temperature::class)->findBySensorID($sensor->getSensorID())[0];
         $tempObject->setConstRecord(false);
 
         $this->sut->processConstRecord($tempObject);
@@ -180,7 +180,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
 
         /** @var Humidity $humid */
-        $humid = $this->entityManager->getRepository(Humidity::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humid = $this->entityManager->getRepository(Humidity::class)->findBySensorID($sensor->getSensorID())[0];
         $humid->setConstRecord(true);
 
         $this->sut->processConstRecord($humid);
@@ -201,7 +201,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Humidity $humidObject */
-        $humidObject = $this->entityManager->getRepository(Humidity::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidObject = $this->entityManager->getRepository(Humidity::class)->findBySensorID($sensor->getSensorID())[0];
         $humidObject->setConstRecord(false);
 
         $this->sut->processConstRecord($humidObject);
@@ -240,7 +240,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Latitude $latitudeObject */
-        $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findBySensorID($sensor->getSensorID())[0];
         $latitudeObject->setConstRecord(true);
 
         $this->sut->processConstRecord($latitudeObject);
@@ -261,7 +261,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Latitude $latitudeObject */
-        $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findBySensorID($sensor->getSensorID())[0];
         $latitudeObject->setConstRecord(false);
 
         $this->sut->processConstRecord($latitudeObject);

@@ -125,7 +125,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         /** @var RelayRepository $relayRepository */
         $relayRepository = $this->diContainer->get(RelayRepository::class);
         /** @var Relay $genericSensorType */
-        $sensorID = $relayRepository->findAll()[0]->getSensorID();
+        $sensorID = $relayRepository->findAll()[0]->getBaseReadingType()->getSensor()->getSensorID();
         $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
             $sensorID,
             $boolCurrentReadingUpdateDTO,
@@ -178,7 +178,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
         /** @var RelayRepository $sensorTypeRepository */
         $sensorTypeRepository = $this->diContainer->get(MotionRepository::class);
-        $sensorID = $sensorTypeRepository->findAll()[0]->getSensorID();
+        $sensorID = $sensorTypeRepository->findAll()[0]->getBaseReadingType()->getSensor()->getSensorID();
         $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
             $sensorID,
             $boolCurrentReadingUpdateDTO,

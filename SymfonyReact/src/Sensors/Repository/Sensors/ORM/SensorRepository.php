@@ -318,6 +318,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     #[ArrayShape([Sensor::class])]
     public function findSensorsByIDNoCache(array $sensorIDs, string $orderBy = 'ASC'): array
     {
+//        dd($sensorIDs);
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
         $expr = $qb->expr();
 

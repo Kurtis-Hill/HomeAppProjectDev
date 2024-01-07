@@ -92,7 +92,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $result = $sut->handleUpdateSensorReadingRequest($requestSensorCurrentReadingUpdateMessageDTO);
         self::assertTrue($result);
 
-        $relayAfterUpdate = $this->relayRepository->findOneBy(['sensor' => $relay->getSensorID()]);
+        $relayAfterUpdate = $this->relayRepository->findBySensorID($relay->getSensorID())[0];;
         self::assertEquals(
             $boolCurrentReadingUpdateRequestDTO->getCurrentReading(),
             $relayAfterUpdate->getCurrentReading(),
@@ -284,7 +284,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $result = $sut->handleUpdateSensorReadingRequest($requestSensorCurrentReadingUpdateMessageDTO);
         self::assertFalse($result);
 
-        $relayAfterUpdate = $this->relayRepository->findOneBy(['sensor' => $relay->getSensorID()]);
+        $relayAfterUpdate = $this->relayRepository->findBySensorID($relay->getSensorID())[0];;
         self::assertNotSame(
             $boolCurrentReadingUpdateRequestDTO->getCurrentReading(),
             $relayAfterUpdate->getCurrentReading(),

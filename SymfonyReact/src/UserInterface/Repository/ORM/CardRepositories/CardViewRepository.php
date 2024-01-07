@@ -4,6 +4,7 @@ namespace App\UserInterface\Repository\ORM\CardRepositories;
 
 use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\AbstractSensorType;
 use App\User\Entity\Room;
@@ -154,7 +155,9 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
             ->innerJoin(Colour::class, Colour::ALIAS, Join::WITH, Colour::ALIAS .'.colourID = '. CardView::ALIAS . '.cardColourID')
             ->innerJoin(Icons::class, Icons::ALIAS, Join::WITH, Icons::ALIAS . '.iconID = '. CardView::ALIAS. '.cardIconID')
             ->innerJoin(Room::class, Room::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('roomID', 'roomID', Room::ALIAS))
-            ->innerJoin(AbstractSensorType::class, AbstractSensorType::ALIAS, Join::WITH, AbstractSensorType::ALIAS . $this->createJoinConditionString('sensorTypeID', 'sensorTypeID', Sensor::ALIAS));
+            ->innerJoin(AbstractSensorType::class, AbstractSensorType::ALIAS, Join::WITH, AbstractSensorType::ALIAS . $this->createJoinConditionString('sensorTypeID', 'sensorTypeID', Sensor::ALIAS))
+            ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS . '.sensor = ' . Sensor::ALIAS . '.sensorID')
+        ;
     }
 
     /**

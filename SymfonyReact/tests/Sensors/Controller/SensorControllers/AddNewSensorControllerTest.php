@@ -556,7 +556,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
         foreach ($sensors as $sensorTypeClass) {
-            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
+            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findBySensorID($sensor->getSensorID())[0];
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }
 
@@ -653,8 +653,8 @@ class AddNewSensorControllerTest extends WebTestCase
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensor]);
 
         $newReadingTypeObjects = array_merge(
-            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBy(['sensor' => $sensorID]),
-            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBy(['sensor' => $sensorID]),
+            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($sensor->getSensorID()),
+            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBySensorID($sensor->getSensorID()),
         );
         self::assertNotEmpty($newReadingTypeObjects);
 //        dd($newReadingTypeObjects, $sensor);
@@ -666,7 +666,7 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var AllSensorReadingTypeInterface $sensorTypeClass */
         foreach ($newReadingTypeObjects as $sensorTypeClass) {
             /** @var AllSensorReadingTypeInterface $sensorType */
-            $sensorType = $this->entityManager->getRepository($sensorTypeClass::class)->findOneBy(['sensor' => $sensorID]);
+            $sensorType = $this->entityManager->getRepository($sensorTypeClass::class)->findBySensorID($sensor->getSensorID())[0];
             self::assertInstanceOf($sensorTypeClass::class, $sensorType);
             //        dd($sensorTypeMappingObject, $sensorType);
 //            dd(
@@ -769,7 +769,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         foreach ($sensors as $sensorTypeClass) {
             /** @var AllSensorReadingTypeInterface $sensorType */
-            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
+            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findBySensorID($sensor->getSensorID())[0];
             self::assertInstanceOf($sensorTypeClass, $sensorType);
 
             if ($sensorTypeObject instanceof TemperatureReadingTypeInterface && $sensorType instanceof Temperature) {

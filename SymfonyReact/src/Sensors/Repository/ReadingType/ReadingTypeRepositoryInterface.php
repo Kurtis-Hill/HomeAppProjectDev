@@ -42,4 +42,6 @@ interface ReadingTypeRepositoryInterface
     public function findOneBySensorName(string $sensorName): ?AllSensorReadingTypeInterface;
 
     public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void;
+
+    public function findBySensorID(int $sensorID): array;
 }

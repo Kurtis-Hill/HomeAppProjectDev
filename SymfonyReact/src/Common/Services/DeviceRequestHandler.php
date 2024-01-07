@@ -6,6 +6,7 @@ namespace App\Common\Services;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\DTO\Request\DeviceRequest\DeviceRequestEncapsulationDTO;
 use Exception;
+use HttpException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -26,6 +27,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
      * @throws ExceptionInterface
      * @throws Exception
      * @throws TransportExceptionInterface
+     * @throws HttpException
      */
     public function handleDeviceRequest(
         DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO,

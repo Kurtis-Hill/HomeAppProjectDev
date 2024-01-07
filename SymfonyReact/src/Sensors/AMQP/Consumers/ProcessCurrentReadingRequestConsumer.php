@@ -54,7 +54,6 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
             $device = $this->deviceRepository->find($sensorData->getDeviceID());
         } catch (ORMException $exception) {
             $this->elasticLogger->error('expection message: ' . $exception->getMessage());
-
             return false;
         } catch (Exception $e) {
             $this->elasticLogger->error('expection message: ' . $e->getMessage());

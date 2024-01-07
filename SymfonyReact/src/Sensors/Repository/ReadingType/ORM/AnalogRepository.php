@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Repository\ReadingType\ORM;
 
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -9,6 +10,7 @@ use App\Sensors\Repository\ReadingType\ReadingTypeRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @extends ServiceEntityRepository<AnalogRepository>
@@ -25,24 +27,9 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
         parent::__construct($registry, Analog::class);
     }
 
-    public function persist(AllSensorReadingTypeInterface $readingTypeObject): void
-    {
-        $this->getEntityManager()->persist($readingTypeObject);
-    }
-
-    public function flush(): void
-    {
-        $this->getEntityManager()->flush();
-    }
-
     public function findOneById(int $id): ?Analog
     {
         return $this->find($id);
-    }
-
-    public function removeObject(AllSensorReadingTypeInterface $readingTypeObject)
-    {
-        $this->getEntityManager()->remove($readingTypeObject);
     }
 
     public function findOneBySensorNameID(int $sensorNameID): ?Analog
@@ -51,7 +38,8 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
         $expr = $qb->expr();
 
         $qb->select(Analog::READING_TYPE)
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Analog::READING_TYPE.'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Analog::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
             ->where(
                 $expr->eq(
                     Sensor::ALIAS.'.sensorID',
@@ -69,7 +57,8 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
         $expr = $qb->expr();
 
         $qb->select(Analog::READING_TYPE)
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, Analog::READING_TYPE.'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Analog::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
             ->where(
                 $expr->eq(
                     Sensor::ALIAS.'.sensorName',
@@ -84,5 +73,42 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
     public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void
     {
         $this->getEntityManager()->refresh($readingTypeObject);
+    }
+
+    public function persist(AllSensorReadingTypeInterface $readingTypeObject): void
+    {
+        $this->getEntityManager()->persist($readingTypeObject);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
+    public function removeObject(AllSensorReadingTypeInterface $readingTypeObject)
+    {
+        $this->getEntityManager()->remove($readingTypeObject);
+    }
+
+    /**
+     * @return Analog[]
+     */
+    #[ArrayShape([Analog::class])]
+    public function findBySensorID(int $sensorID): array
+    {
+        $qb = $this->createQueryBuilder('readingType');
+        $expr = $qb->expr();
+
+        $qb->select('readingType')
+            ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
+            ->where(
+                $expr->eq(
+                    'baseReadingType.sensor',
+                    ':sensor'
+                )
+            )
+            ->setParameters(['sensor' => $sensorID]);
+
+        return $qb->getQuery()->getResult();
     }
 }
