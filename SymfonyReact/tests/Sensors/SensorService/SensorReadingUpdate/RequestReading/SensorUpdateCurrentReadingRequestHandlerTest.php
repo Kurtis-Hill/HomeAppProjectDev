@@ -85,14 +85,15 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         );
 
         $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-            $relay->getSensorID(),
+            $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
 
         $result = $sut->handleUpdateSensorReadingRequest($requestSensorCurrentReadingUpdateMessageDTO);
         self::assertTrue($result);
 
-        $relayAfterUpdate = $this->relayRepository->findBySensorID($relay->getSensorID())[0];;
+        $relayAfterUpdate = $this->relayRepository->findBySensorID($relay->getBaseReadingType()->getSensor()->getSensorID())[0];
+
         self::assertEquals(
             $boolCurrentReadingUpdateRequestDTO->getCurrentReading(),
             $relayAfterUpdate->getCurrentReading(),
@@ -186,7 +187,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         );
 
         $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-            $relay->getSensorID(),
+            $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
 
@@ -229,7 +230,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         );
 
         $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-            $motion->getSensorID(),
+            $motion->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
 
@@ -277,14 +278,15 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         );
 
         $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-            $relay->getSensorID(),
+            $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
 
         $result = $sut->handleUpdateSensorReadingRequest($requestSensorCurrentReadingUpdateMessageDTO);
         self::assertFalse($result);
 
-        $relayAfterUpdate = $this->relayRepository->findBySensorID($relay->getSensorID())[0];;
+        $relayAfterUpdate = $this->relayRepository->findBySensorID($relay->getBaseReadingType()->getSensor()->getSensorID())[0];
+
         self::assertNotSame(
             $boolCurrentReadingUpdateRequestDTO->getCurrentReading(),
             $relayAfterUpdate->getCurrentReading(),

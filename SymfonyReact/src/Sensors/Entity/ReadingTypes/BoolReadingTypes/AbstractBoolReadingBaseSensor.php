@@ -57,6 +57,11 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
     #[ORM\Column(name: "expectedReading", type: "boolean", nullable: true)]
     private ?bool $expectedReading;
 
+    public function getReadingTypeID(): int
+    {
+        return $this->boolID;
+    }
+
     public function getBoolID(): int
     {
         return $this->boolID;
@@ -143,5 +148,10 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
             $createdAt = new DateTimeImmutable('now');
         }
         $this->getBaseReadingType()->setCreatedAt($createdAt);
+    }
+
+    public function getSensorID(): int
+    {
+        return $this->getBaseReadingType()->getSensor()->getSensorID();
     }
 }

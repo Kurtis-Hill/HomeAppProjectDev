@@ -20,7 +20,7 @@ class LatitudeResponseDTOBuilder implements SensorResponseDTOBuilderInterface
             );
         }
         return new LatitudeResponseDTO(
-            $readingTypeObject->getSensorID(),
+            $readingTypeObject->getReadingTypeID(),
             SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),
             $readingTypeObject->getCurrentReading(),
             $readingTypeObject->getHighReading(),

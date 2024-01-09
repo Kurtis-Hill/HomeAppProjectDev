@@ -141,6 +141,7 @@ class GetCardViewController extends AbstractController
         $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO();
         try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter);
+//            dd($cardData);
         } catch (WrongUserTypeException) {
 
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);

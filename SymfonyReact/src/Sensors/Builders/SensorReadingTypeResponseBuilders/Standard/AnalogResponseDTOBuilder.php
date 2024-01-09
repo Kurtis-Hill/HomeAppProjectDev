@@ -23,7 +23,7 @@ class AnalogResponseDTOBuilder implements SensorResponseDTOBuilderInterface
             );
         }
         return new AnalogResponseDTO(
-            $readingTypeObject->getSensorID(),
+            $readingTypeObject->getReadingTypeID(),
             SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),
             $readingTypeObject->getCurrentReading(),
             $readingTypeObject->getHighReading(),

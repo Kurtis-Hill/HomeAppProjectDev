@@ -26,7 +26,7 @@ class BoolReadingTypeResponseBuilder implements ReadingTypeResponseBuilderInterf
         }
 
         return new BoolBoundaryReadingsTypeResponseDTO(
-            $readingTypeObject->getSensorID(),
+            $readingTypeObject->getReadingTypeID(),
             $readingTypeObject->getReadingType(),
             $readingTypeObject->getConstRecord(),
             $readingTypeObject->getExpectedReading(),

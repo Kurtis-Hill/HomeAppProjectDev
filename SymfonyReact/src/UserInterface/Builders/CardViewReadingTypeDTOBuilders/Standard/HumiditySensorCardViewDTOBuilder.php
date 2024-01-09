@@ -12,7 +12,7 @@ class HumiditySensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTOBui
         if (empty($cardData['humid_readingTypeID'])) {
             return null;
         }
-        $dateTime = $this->formatDateTime($cardData['humid_updatedAt']);
+        $dateTime = $this->formatDateTime($cardData['baseReadingType_updatedAt']);
 
         return $this->getStandardCardViewDTO(
             Humidity::READING_TYPE,

@@ -10,13 +10,11 @@ use DateTimeInterface;
 
 interface AllSensorReadingTypeInterface
 {
+    public function getReadingTypeID(): int;
+
     public function getSensor(): Sensor;
 
     public function getSensorID(): int;
-
-//    public function setSensorID(int $id);
-
-//    public function getReadingType(): string;
 
     public function getConstRecord(): bool;
 

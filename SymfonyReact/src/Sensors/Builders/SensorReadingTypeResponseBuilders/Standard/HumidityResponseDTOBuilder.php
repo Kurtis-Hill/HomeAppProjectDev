@@ -21,7 +21,7 @@ class HumidityResponseDTOBuilder implements SensorResponseDTOBuilderInterface
         }
 
         return new HumidityResponseDTO(
-            $readingTypeObject->getSensorID(),
+            $readingTypeObject->getReadingTypeID(),
             SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),
             $readingTypeObject->getCurrentReading(),
             $readingTypeObject->getHighReading(),

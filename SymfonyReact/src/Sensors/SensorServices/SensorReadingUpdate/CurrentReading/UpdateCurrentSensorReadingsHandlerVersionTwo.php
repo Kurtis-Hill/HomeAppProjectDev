@@ -62,8 +62,6 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
 
 
             $readingTypeObject = $readingTypeRepository->findOneBySensorName($updateSensorCurrentReadingConsumerDTO->getSensorName());
-//            dd($readingTypeObject);
-            $changed[] = $readingTypeObject;
             if ($readingTypeObject === null) {
                 throw new SensorNotFoundException(
                     sprintf(
@@ -122,13 +120,8 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
             }
         }
 
-//        dd('eh',
-//            $changed,
-//            $updateSensorCurrentReadingConsumerDTO
-//        );
         try {
-
-        $this->sensorRepository->flush();
+            $this->sensorRepository->flush();
         } catch (\Exception $exception) {
             dd($exception);
             dd('exception');

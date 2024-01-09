@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping\Entity;
 #[Entity(
     repositoryClass: RelayRepository::class
 )]
-class Relay extends AbstractBoolReadingBaseSensor //implements AllSensorReadingTypeInterface //implements RelayReadingTypeInterface//, AllSensorReadingTypeInterface
+class Relay extends AbstractBoolReadingBaseSensor
 {
     public const READING_TYPE = 'relay';
 
@@ -22,11 +22,6 @@ class Relay extends AbstractBoolReadingBaseSensor //implements AllSensorReadingT
     public function getReadingType(): string
     {
         return self::READING_TYPE;
-    }
-
-    public function setUpdatedAt(): void
-    {
-        // TODO: Implement setUpdatedAt() method.
     }
 
     public function getSensorID(): int

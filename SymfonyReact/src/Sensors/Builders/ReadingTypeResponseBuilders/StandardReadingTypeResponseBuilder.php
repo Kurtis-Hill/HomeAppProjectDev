@@ -26,7 +26,7 @@ class StandardReadingTypeResponseBuilder implements ReadingTypeResponseBuilderIn
         }
 
         return new StandardBoundaryReadingsTypeResponseDTO(
-            $readingTypeObject->getSensorID(),
+            $readingTypeObject->getReadingTypeID(),
             $readingTypeObject->getReadingType(),
             $readingTypeObject->getHighReading(),
             $readingTypeObject->getLowReading(),

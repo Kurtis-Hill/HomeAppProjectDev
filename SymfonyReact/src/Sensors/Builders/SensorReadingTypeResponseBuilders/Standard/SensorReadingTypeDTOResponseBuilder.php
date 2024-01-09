@@ -2,11 +2,8 @@
 
 namespace App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard;
 
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\SensorReadingTypeEncapsulationDTOResponseBuilder;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeEncapsulationResponseDTO;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\Standard\StandardReadingTypeResponseInterface;
-use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
@@ -14,20 +11,9 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
-use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
-use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeResponseFactory;
-use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
-use App\Sensors\Repository\SensorReadingType\ORM\StandardReadingTypeRepository;
 use App\Sensors\SensorServices\SensorReadingTypeFetcher;
 use JetBrains\PhpStorm\ArrayShape;
 

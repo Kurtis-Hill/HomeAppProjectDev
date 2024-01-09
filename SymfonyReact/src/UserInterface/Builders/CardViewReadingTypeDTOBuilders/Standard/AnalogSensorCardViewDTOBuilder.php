@@ -12,7 +12,7 @@ class AnalogSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTOBuild
         if (empty($cardData['analog_readingTypeID'])) {
             return null;
         }
-        $dateTime = $this->formatDateTime($cardData['analog_updatedAt']);
+        $dateTime = $this->formatDateTime($cardData['baseReadingType_updatedAt']);
 
         return $this->getStandardCardViewDTO(
             Analog::READING_TYPE,

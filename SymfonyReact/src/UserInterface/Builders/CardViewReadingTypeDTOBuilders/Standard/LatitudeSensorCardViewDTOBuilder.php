@@ -12,7 +12,7 @@ class LatitudeSensorCardViewDTOBuilder extends AbstractStandardReadingTypeDTOBui
         if (empty($cardData['lat_readingTypeID'])) {
             return null;
         }
-        $dateTime = $this->formatDateTime($cardData['lat_updatedAt']);
+        $dateTime = $this->formatDateTime($cardData['baseReadingType_updatedAt']);
 
         return $this->getStandardCardViewDTO(
             Latitude::READING_TYPE,

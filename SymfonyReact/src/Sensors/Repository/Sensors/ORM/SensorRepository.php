@@ -5,6 +5,7 @@ namespace App\Sensors\Repository\Sensors\ORM;
 use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -43,7 +44,6 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
     public function persist(Sensor $sensorReadingData): void
     {
-
         $this->getEntityManager()->persist($sensorReadingData);
     }
 
@@ -74,7 +74,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
-                    $expr->eq('device.groupID', ':groupName'),
+                $expr->eq('device.groupID', ':groupName'),
             )
             ->setParameters(
                 [
@@ -138,7 +138,13 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         array $readingTypeJoinQueryDTOs = [],
     ): array {
         $qb = $this->createQueryBuilder('sensors');
-
+        $qb->leftJoin(
+            BaseSensorReadingType::class,
+            BaseSensorReadingType::ALIAS,
+            Join::WITH,
+            'sensors.sensorID = ' . BaseSensorReadingType::ALIAS . '.sensor'
+        );
+//        dd($readingTypeJoinQueryDTOs, $joinQueryDTO);
         if (!empty($readingTypeJoinQueryDTOs)) {
             $readingTypes = $this->prepareSensorJoinsForQuery($readingTypeJoinQueryDTOs, $qb);
             $selects[] = $readingTypes;
@@ -163,7 +169,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 'sensorName' => $sensorsName,
                 'deviceID' => $deviceID
             ]);
-
+        //dd($qb->getQuery()->getSQL());
         return array_filter($qb->getQuery()->getResult());
     }
 

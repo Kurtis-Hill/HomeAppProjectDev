@@ -204,7 +204,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Humidity $humidObject */
-        $humidObject = $this->entityManager->getRepository(Humidity::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $humidObject = $this->entityManager->getRepository(Humidity::class)->findBySensorID($sensor->getSensorID())[0];
 
         $lowReading = $humidObject->getLowReading();
         $humidObject->setCurrentReading($lowReading - 5);
@@ -246,7 +246,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Latitude $latitudeObject */
-        $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findOneBy(['sensor' => $sensor->getSensorID()]);
+        $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findBySensorID($sensor->getSensorID())[0];
 
         $highReading = $latitudeObject->getHighReading();
         $latitudeObject->setCurrentReading($highReading + 5);

@@ -237,7 +237,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_admin_can_change_sensor_to_device_not_apart_of(): void
     {
-        sleep(1);
+
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
 
@@ -383,7 +383,6 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_just_updating_device_id(): void
     {
-        sleep(1);
         $sensors = $this->sensorRepository->findAll();
 
         /** @var Sensor $sensorToUpdate */
@@ -444,7 +443,6 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_just_updating_sensor_name(): void
     {
-        sleep(1);
         $sensors = $this->sensorRepository->findAll();
 
         /** @var Sensor $sensorToUpdate */
@@ -533,7 +531,7 @@ class UpdateSensorControllerTest extends WebTestCase
 //
 //        $randomPin = $devicePinsInUse[1];
 //
-////        dd($randomPin);
+    ////        dd($randomPin);
 //
 //        /** @var Sensor $sensor */
 //        $sensor = $this->sensorRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
@@ -572,7 +570,6 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_updating_just_reading_interval(): void
     {
-        sleep(1);
         /** @var Sensor $sensor */
         $sensor = $this->sensorRepository->findAll()[0];
 
@@ -613,7 +610,6 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_updating_sensor_correct_data_regular_user(): void
     {
-        sleep(1);
         $sensors = $this->sensorRepository->findAll();
 
         /** @var User $user */
