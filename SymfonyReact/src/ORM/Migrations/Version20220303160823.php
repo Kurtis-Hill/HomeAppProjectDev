@@ -417,11 +417,6 @@ final class Version20220303160823 extends AbstractMigration
               ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`);
         ");
 
-//        $this->addSql("
-//            ALTER TABLE `groups`
-//                ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
-//        ");
-
         $this->addSql("
             ALTER TABLE `groupmappings`
               ADD CONSTRAINT `groupmapping_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -11,8 +11,6 @@ class DeviceAuthenticationResponse
 {
     private string $token;
 
-    private DeviceAuthenticationIPRequestDTO $deviceIps;
-
     public function __construct(string $token)
     {
         $this->token = $token;

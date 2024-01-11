@@ -11,12 +11,12 @@ use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
@@ -33,7 +33,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GetCardViewFormController extends WebTestCase
+class GetCardViewFormControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
@@ -67,14 +67,13 @@ class GetCardViewFormController extends WebTestCase
     /**
      * @dataProvider getCardViewFormDataProvider
      */
-    public function test_get_card_view_form_data(string $sensorType): void
+    public function test_get_card_view_form_data(string $sensorTypeString): void
     {
-        /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var SensorTypeInterface $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['sensorTypeID' => $sensorType->getSensorTypeID()])[0];
-
         /** @var CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['sensor' => $sensor->getSensorID()])[0];
 
@@ -142,21 +141,21 @@ class GetCardViewFormController extends WebTestCase
 
     public function getCardViewFormDataProvider(): Generator
     {
-        yield [Dht::NAME];
+        yield [Dht::class];
 
-        yield [Bmp::NAME];
+        yield [Bmp::class];
 
-        yield [Soil::NAME];
+        yield [Soil::class];
 
-        yield [Dallas::NAME];
+        yield [Dallas::class];
 
-        yield [GenericRelay::NAME];
+        yield [GenericRelay::class];
 
-        yield [GenericMotion::NAME];
+        yield [GenericMotion::class];
 
-        yield [LDR::NAME];
+        yield [LDR::class];
 
-        yield [Sht::NAME];
+        yield [Sht::class];
     }
 
     /**

@@ -98,10 +98,6 @@ class AddNewDeviceController extends AbstractController
             );
         } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
-        } catch (ORMException $e) {
-            $this->logger->error($e->getMessage());
-
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Device')]);
         }
 
         try {

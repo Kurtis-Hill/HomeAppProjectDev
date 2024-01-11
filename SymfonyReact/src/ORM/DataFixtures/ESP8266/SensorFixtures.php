@@ -600,14 +600,12 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $sensor->setSensorTypeID($this->getReference($sensorDetails['sensors']['alias']));
             $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
             $sensor->setPinNumber($sensorDetails['pinNumber']);
-//            $sensor->setCreatedAt($createdAt);
             $this->addReference($sensorDetails['sensorName'], $sensor);
             $manager->persist($sensor);
 
             $newSensorType = new $sensorDetails['sensors']['object']();
 
             foreach ($sensorDetails['sensors']['readingTypes'] as $key => $readingType) {
-//                dd($key, $readingType);
                 $this->setSensorObjects(
                     $ref,
                     $readingType,
@@ -660,25 +658,21 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                         $newObject->setCurrentReading($newSensorType->getMinTemperature());
                         $newObject->setLowReading($newSensorType->getMinTemperature());
                         $newObject->setHighReading($newSensorType->getMaxTemperature());
-//                    $newSensorType->setTemperature($newObject);
                     }
                     if ($newSensorType instanceof HumidityReadingTypeInterface && $newObject instanceof Humidity) {
                         $newObject->setCurrentReading($newSensorType->getMinHumidity());
                         $newObject->setLowReading($newSensorType->getMinHumidity());
                         $newObject->setHighReading($newSensorType->getMaxHumidity());
-//                    $newSensorType->setHumidObject($newObject);
                     }
                     if ($newSensorType instanceof LatitudeReadingTypeInterface && $newObject instanceof Latitude) {
                         $newObject->setCurrentReading($newSensorType->getMinLatitude());
                         $newObject->setLowReading($newSensorType->getMinLatitude());
                         $newObject->setHighReading($newSensorType->getMaxLatitude());
-//                    $newSensorType->setLatitudeObject($newObject);
                     }
                     if ($newSensorType instanceof AnalogReadingTypeInterface && $newObject instanceof Analog) {
                         $newObject->setCurrentReading($newSensorType->getMinAnalog());
                         $newObject->setLowReading($newSensorType->getMinAnalog());
                         $newObject->setHighReading($newSensorType->getMaxAnalog());
-//                    $newSensorType->setAnalogObject($newObject);
                     }
                 }
             } elseif ($newObject instanceof BoolReadingSensorInterface) {
@@ -686,31 +680,14 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 $newObject->setExpectedReading(true);
                 $newObject->setCurrentReading(true);
                 $newObject->setRequestedReading(true);
-//            $newObject->setCreatedAt(new DateTimeImmutable('now'));
-                if ($newSensorType instanceof MotionSensorReadingTypeInterface) {
-//                $newSensorType->setMotion($newObject);
-//                $manager->persist($newSensorType);
-                }
-                if ($newSensorType instanceof RelayReadingTypeInterface) {
-//                $newSensorType->setRelay($newObject);
-//                $manager->persist($newSensorType);
-                }
             } else {
                 throw new Exception('Sensor type not found');
             }
-
-//            if ($newObject->getUpdatedAt() === null) {
-//                dd($newObject, $newSensorType);
-//                dd($newObject, $newSensorType);
-//            }
         } catch (Exception $e) {
             dd($e, $newObject, $newSensorType, $newSensor);
         }
 
-//        dd($newSensorType, $readingTypeObjects);
-//        $this->setReference($refName, $newObject);
         $this->setReference($refName, $baseReadingType);
-//        $manager->persist($newSensorType);
         $manager->persist($newObject);
     }
 }

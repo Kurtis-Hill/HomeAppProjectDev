@@ -12,8 +12,6 @@ use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<Devices>
- *
  * @method Devices|null find($id, $lockMode = null, $lockVersion = null)
  * @method Devices|null findOneBy(array $criteria, array $orderBy = null)
  * @method Devices[]    findAll()

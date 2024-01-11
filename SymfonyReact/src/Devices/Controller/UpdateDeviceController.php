@@ -101,8 +101,6 @@ class UpdateDeviceController extends AbstractController
                 $deviceUpdateRequestDTO,
                 $deviceToUpdate,
             );
-        } catch (NonUniqueResultException | ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room or group name')]);
         } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
         }

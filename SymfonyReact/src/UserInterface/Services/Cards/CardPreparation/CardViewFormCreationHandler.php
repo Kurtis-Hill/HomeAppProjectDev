@@ -43,8 +43,7 @@ class CardViewFormCreationHandler implements CardViewFormPreparationHandlerInter
 
     public function createCardViewFormDTO(CardView $cardViewObject, string $cardFormType): CardViewSensorFormInterface
     {
-        $sensorTypeObject = $this->findStandardSensorTypeObjectByCardView($cardViewObject);
-
+        $sensorTypeObject = $cardViewObject->getSensor()->getSensorTypeObject();
         $usersCardSelections = $this->usersCardSelectionService->buildUsersCardSelectionDTOs();
 
         $cardViewFormDTOBuilder = $this->cardViewFormDTOFactory->getCardViewFormBuilderService($cardFormType);

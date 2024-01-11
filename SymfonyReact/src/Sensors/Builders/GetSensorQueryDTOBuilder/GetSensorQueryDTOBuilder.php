@@ -8,9 +8,9 @@ use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
 class GetSensorQueryDTOBuilder
 {
     public static function buildGetSensorQueryDTO(
-        int $limit = null,
-        int $offset = null,
-        int $page = null,
+        int $limit = 50,
+        int $offset = 0,
+        int $page = 1,
         ?array $deviceIDs = null,
         ?array $deviceNames = null,
         ?array $groupIDs = null,

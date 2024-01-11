@@ -59,13 +59,14 @@ class GetCardViewFormController extends AbstractController
                 CardViewFormDTOFactory::SENSOR_TYPE_READING_FORM_CARD
             );
         } catch (
-
             SensorTypeException
             | CardFormTypeNotRecognisedException
             | SensorTypeBuilderFailureException $e
         ) {
+            dd($e->getMessage());
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
-        } catch (ORMException) {
+        } catch (ORMException $e) {
+            dd($e->getMessage());
             $this->logger->error('Query failure for card view form id: ' . $cardViewObject->getCardViewID());
 
             return $this->sendInternalServerErrorJsonResponse(['Query failure   ']);

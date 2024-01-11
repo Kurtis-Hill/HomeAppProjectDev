@@ -14,7 +14,6 @@ interface StandardReadingSensorInterface
 
     public function setSensor(Sensor $id);
 
-
     /**
      * Sensor Reading Methods
      */
