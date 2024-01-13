@@ -2,6 +2,7 @@
 
 namespace App\Sensors\SensorServices\TriggerChecker;
 
+use App\Common\Exceptions\OperatorConvertionException;
 use App\Common\Services\OperatorValueCheckerConvertor;
 use App\Sensors\Entity\SensorTrigger;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
@@ -14,10 +15,19 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
         private SensorTriggerRepository $sensorTriggerRepository,
     ) {}
 
+    /**
+     * @throws OperatorConvertionException
+     *
+     * @return SensorTrigger[]
+     */
     #[ArrayShape([SensorTrigger::class])]
-    public function checkSensorForTriggers(AllSensorReadingTypeInterface $readingType): array
+    public function checkSensorForTriggers(AllSensorReadingTypeInterface $readingType, ?string $day = null, ?string $time = null): array
     {
-        $allSensorTriggers = $this->sensorTriggerRepository->findAllSensorTriggersForDayAndTime($readingType->getSensor());
+        $allSensorTriggers = $this->sensorTriggerRepository->findAllSensorTriggersForDayAndTime(
+            $readingType->getSensor(),
+            $day,
+            $time
+        );
 
         $triggeredTriggers = [];
         foreach ($allSensorTriggers as $sensorTrigger) {
