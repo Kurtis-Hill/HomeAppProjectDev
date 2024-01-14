@@ -78,7 +78,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
             $mockLogger
         );
 
-        $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorName' => SensorFixtures::RELAY_SENSOR_NAME]);
+        $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME]);
 
         /** @var SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder */
         $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
@@ -128,7 +128,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
             $mockLogger
         );
 
-        $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorName' => SensorFixtures::RELAY_SENSOR_NAME]);
+        $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME]);
         $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
         $sensorRequestDTOs = $singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
 

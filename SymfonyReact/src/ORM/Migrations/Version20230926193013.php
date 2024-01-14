@@ -73,13 +73,30 @@ final class Version20230926193013 extends AbstractMigration
                     `thursday` BOOLEAN DEFAULT TRUE,
                     `friday` BOOLEAN DEFAULT TRUE,
                     `saturday` BOOLEAN DEFAULT TRUE,
-                    `sunday` BOOLEAN DEFAULT TRUE,  
+                    `sunday` BOOLEAN DEFAULT TRUE, 
+                    `override` BOOLEAN DEFAULT FALSE, 
                     `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    INDEX `baseReadingTypeThatTriggers` (`baseReadingTypeThatTriggers`),
+                    INDEX `baseReadingTypeToTriggerID` (`baseReadingTypeToTriggerID`),
+                    INDEX `triggerTypeID` (`triggerTypeID`),
+                    INDEX `operatorID` (`operatorID`),
+                    INDEX `createdBy` (`createdBy`),
+                    INDEX `startTime` (`startTime`),
+                    INDEX `endTime` (`endTime`),
+                    INDEX `monday` (`monday`),
+                    INDEX `tuesday` (`tuesday`),
+                    INDEX `wednesday` (`wednesday`),
+                    INDEX `thursday` (`thursday`),
+                    INDEX `friday` (`friday`),
+                    INDEX `saturday` (`saturday`),
+                    INDEX `sunday` (`sunday`),
+                    INDEX `override` (`override`),
                     PRIMARY KEY (`sensorTriggerID`)
                 )
                 DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
+        '
+        );
 
         $this->addSql("
             ALTER TABLE `sensortrigger`
@@ -88,9 +105,7 @@ final class Version20230926193013 extends AbstractMigration
                 ADD CONSTRAINT `FK_1F9B6F4F8D93D6498` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
                 ADD CONSTRAINT `FK_1F9B6F4F8D93D6497` FOREIGN KEY (baseReadingTypeToTriggerID) REFERENCES `basereadingtype` (`baseReadingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
                 ADD CONSTRAINT `FK_1F9B6F4F8D93D6496` FOREIGN KEY (`baseReadingTypeThatTriggers`) REFERENCES `basereadingtype` (`baseReadingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE;
-
         ");
-
     }
 
     public function down(Schema $schema): void

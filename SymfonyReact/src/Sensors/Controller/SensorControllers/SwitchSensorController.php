@@ -14,7 +14,6 @@ use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Exceptions\ReadingTypeNotFoundException;
 use App\Sensors\Exceptions\SensorDataCurrentReadingUpdateBuilderException;
-use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;

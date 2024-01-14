@@ -16,9 +16,9 @@ use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateCurrentReadingRequestHandlerInterface
@@ -41,17 +41,17 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
      * @throws SensorPinNumberNotSetException
      * @throws SensorReadingTypeRepositoryFactoryException
      * @throws ORMException
-     * @throws NonUniqueResultException
-     * @throws OptimisticLockException
-     * @throws TransportExceptionInterface
+     * @throws HttpException
+     * @throws ExceptionInterface
+     * @throws TransportExceptionInterface|\HttpException
      */
     public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool
     {
-        $sensors = $this->sensorRepository->findSensorsByIDNoCache([$currentReadingUpdateMessageDTO->getSensorID()]);
-        if (empty($sensors)) {
+        $sensors = $this->sensorRepository->findSensorByIDNoCache($currentReadingUpdateMessageDTO->getSensorID());
+        if ($sensors === null) {
             throw new SensorNotFoundException();
         }
-        $sensor = $sensors[0];
+        $sensor = $sensors;
         $readingTypeCurrentReadingDTO = $currentReadingUpdateMessageDTO->getReadingTypeCurrentReadingDTO();
 
         $requestArgumentBuilder = $this->deviceSensorRequestArgumentBuilderFactory->fetchDeviceRequestArgumentBuilder(DeviceSensorRequestArgumentBuilderFactory::UPDATE_SENSOR_CURRENT_READING);
@@ -87,7 +87,6 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
                 $relay->setUpdatedAt();
                 $relayRepository->flush();
             }
-
 
             return true;
         }

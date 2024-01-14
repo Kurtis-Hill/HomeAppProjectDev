@@ -177,7 +177,7 @@ class SwitchSensorControllerTest extends WebTestCase
     {
         yield [
             'sensorType' => GenericRelay::class,
-            'sensorName' => SensorFixtures::RELAY_SENSOR_NAME,
+            'sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME,
             'currentReadings' => [
                 Relay::READING_TYPE => false
             ],
@@ -281,14 +281,14 @@ class SwitchSensorControllerTest extends WebTestCase
             'sensorData' => [
                 [
                     'sensorType' => GenericRelay::NAME,
-                    'sensorName' => SensorFixtures::RELAY_SENSOR_NAME,
+                    'sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME,
                     'currentReadings' => [
                         Relay::READING_TYPE => 'string bing',
                     ],
                 ],
                 [
                     'sensorType' => GenericRelay::NAME,
-                    'sensorName' => SensorFixtures::RELAY_SENSOR_NAME,
+                    'sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME,
                     'currentReadings' => [
                         Relay::READING_TYPE => [],
                     ],
@@ -336,7 +336,7 @@ class SwitchSensorControllerTest extends WebTestCase
         yield [
             'sensorData' => [
                 [
-                    'sensorName' => SensorFixtures::RELAY_SENSOR_NAME,
+                    'sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME,
                     'currentReadings' => [
                         'latitude' => Latitude::HIGH_READING,
                     ],

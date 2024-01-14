@@ -17,7 +17,7 @@ class OperatorValueCheckerConvertor
         mixed $valueThatTriggers
     ): bool {
         $operatorSymbol = $operator->getOperatorSymbol();
-
+//dd($operator);
         if ($value === 'false') {
             $value = false;
         }
@@ -42,6 +42,7 @@ class OperatorValueCheckerConvertor
             $valueThatTriggers = (float) $valueThatTriggers;
         }
 
+//        dd($operatorSymbol, Operator::OPERATOR_LESS_THAN);
         return match ($operatorSymbol) {
             Operator::OPERATOR_EQUAL => $value === $valueThatTriggers,
             Operator::OPERATOR_NOT_EQUAL => $value !== $valueThatTriggers,

@@ -16,9 +16,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: SensorTriggerRepository::class),
     ORM\Table(name: "sensortrigger"),
-    ORM\Index(columns: ["sensorID"], name: "IDX_1F9B6F4F8D93D649"),
-    ORM\Index(columns: ["sensorToTriggerID"], name: "IDX_1F9B6F4F8D93D6492"),
-    ORM\Index(columns: ["operatorID"], name: "IDX_1F9B6F4F8D93D6493"),
+    ORM\Index(columns: ["operatorID"], name: "operatorID"),
+    ORM\Index(columns: ["triggerTypeID"], name: "triggerTypeID"),
+    ORM\Index(columns: ["baseReadingTypeThatTriggers"], name: "baseReadingTypeThatTriggers"),
+    ORM\Index(columns: ["baseReadingTypeToTriggerID"], name: "baseReadingTypeToTriggerID"),
+    ORM\Index(columns: ["createdBy"], name: "createdBy"),
+    ORM\Index(columns: ["createdAt"], name: "createdAt"),
+    ORM\Index(columns: ["startTime"], name: "startTime"),
+    ORM\Index(columns: ["endTime"], name: "endTime"),
+    ORM\Index(columns: ["monday"], name: "monday"),
+    ORM\Index(columns: ["tuesday"], name: "tuesday"),
+    ORM\Index(columns: ["wednesday"], name: "wednesday"),
+    ORM\Index(columns: ["thursday"], name: "thursday"),
+    ORM\Index(columns: ["friday"], name: "friday"),
+    ORM\Index(columns: ["saturday"], name: "saturday"),
+    ORM\Index(columns: ["sunday"], name: "sunday"),
+    ORM\Index(columns: ["override"], name: "override"),
 ]
 class SensorTrigger
 {
@@ -139,6 +152,11 @@ class SensorTrigger
         ORM\Column(name: "sunday", type: "boolean", nullable: false),
     ]
     private bool $sunday = true;
+
+    #[
+        ORM\Column(name: "override", type: "boolean", nullable: false),
+    ]
+    private bool $override = false;
 
     public function __construct()
     {
@@ -318,5 +336,15 @@ class SensorTrigger
     public function setSunday(bool $sunday): void
     {
         $this->sunday = $sunday;
+    }
+
+    public function getOverride(): bool
+    {
+        return $this->override;
+    }
+
+    public function setOverride(bool $override): void
+    {
+        $this->override = $override;
     }
 }

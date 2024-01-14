@@ -23,6 +23,10 @@ services:
       calls:
           - setESPSendCurrentReadingProducer: [ '@send_current_sensor_reading_producer' ]
 
+  App\Sensors\SensorServices\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor:
+      arguments:
+          $sendCurrentReadingAMQPProducer: '@send_current_sensor_reading_producer'
+
   App\Sensors\Events\Subscribers\SensorUpdateEventSubscriber:
     calls:
       - setSensorDataUpdateProducer: [ '@upload_sensor_data_to_device_producer' ]

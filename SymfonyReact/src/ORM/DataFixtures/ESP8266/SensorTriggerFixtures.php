@@ -16,124 +16,160 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
 {
     private const FIXTURE_ORDER = 11;
 
-    private const SENSOR_TRIGGER_1 = [
-        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT,
-        'baseReadingTypeToTriggerID' => SensorFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY,
+    public const SENSOR_TRIGGER_1 = [
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT_BASE_READING_TYPE,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
         'valueThatTriggers' => 20,
         'startTime' => 2100,
         'endTime' => 2200,
-        'monday' => true,
-        'tuesday' => true,
-        'wednesday' => true,
-        'thursday' => true,
-        'friday' => true,
-        'saturday' => true,
-        'sunday' => true,
+        'days' => [
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => true,
+            'sunday' => true,
+        ],
         'triggerType' => TriggerTypeFixtures::RELAY_UP,
-        'operatorID' => OperatorsFixtures::EQUALS,
+        'operatorID' => OperatorsFixtures::GREATER_THAN_OR_EQUAL_TO,
         'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
         'createdAt' => '2021-09-26 19:30:00',
+        'override' => false,
     ];
 
-    private const SENSOR_TRIGGER_2 = [
-        'sensorID' => SensorFixtures::DALLAS_SENSOR_NAME,
-        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT,
-        'baseReadingTypeToTriggerID' => SensorFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY,
+    public const SENSOR_TRIGGER_2 = [
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT_BASE_READING_TYPE,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
         'triggerType' => TriggerTypeFixtures::RELAY_DOWN,
         'valueThatTriggers' => 14,
         'startTime' => 800,
         'endTime' => 2000,
-        'monday' => true,
-        'tuesday' => true,
-        'wednesday' => true,
-        'thursday' => true,
-        'friday' => true,
-        'saturday' => true,
-        'sunday' => true,
+        'days' => [
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => true,
+            'sunday' => true,
+        ],
         'operatorID' => OperatorsFixtures::GREATER_THAN,
         'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
         'createdAt' => '2021-09-26 19:30:00',
+        'override' => false,
     ];
 
-    private const SENSOR_TRIGGER_3 = [
-        'sensorID' => SensorFixtures::BMP_SENSOR_NAME,
-        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS,
-        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY,
-        'valueThatTriggers' => 25,
+    public const SENSOR_TRIGGER_3 = [
+        'baseReadingTypeThatTriggers' => SensorFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE_SOIL_BASE_READING_TYPE,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
+        'valueThatTriggers' => 1010,
         'startTime' => null,
         'endTime' => null,
-        'monday' => true,
-        'tuesday' => true,
-        'wednesday' => true,
-        'thursday' => true,
-        'friday' => true,
-        'saturday' => false,
-        'sunday' => false,
+        'days' => [
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => false,
+            'sunday' => false,
+        ],
         'triggerType' => TriggerTypeFixtures::RELAY_DOWN,
         'operatorID' => OperatorsFixtures::LESS_THAN,
         'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         'createdAt' => '2021-09-26 19:30:00',
+        'override' => false,
     ];
 
-    private const SENSOR_TRIGGER_4 = [
-        'sensorID' => SensorFixtures::MOTION_SENSOR_NAME,
-        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS,
-        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY,
-        'sensorToTriggerID' => SensorFixtures::RELAY_SENSOR_NAME,
+    public const SENSOR_TRIGGER_4 = [
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_MOTION_BASE_READING_TYPE,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
+        'sensorToTriggerID' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME,
         'valueThatTriggers' => false,
         'startTime' => 900,
         'endTime' => 1005,
-        'monday' => false,
-        'tuesday' => false,
-        'wednesday' => false,
-        'thursday' => false,
-        'friday' => false,
-        'saturday' => true,
-        'sunday' => true,
+        'days' => [
+            'monday' => false,
+            'tuesday' => false,
+            'wednesday' => false,
+            'thursday' => false,
+            'friday' => false,
+            'saturday' => true,
+            'sunday' => true,
+        ],
         'triggerType' => TriggerTypeFixtures::RELAY_UP,
-        'operatorID' => OperatorsFixtures::GREATER_THAN_OR_EQUAL_TO,
+        'operatorID' => OperatorsFixtures::EQUALS,
         'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         'createdAt' => '2021-09-26 19:30:00',
+        'override' => false,
     ];
 
-    private const SENSOR_TRIGGER_5 = [
-        'sensorID' => SensorFixtures::DALLAS_SENSOR_NAME,
-        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS,
-        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY,
+    public const SENSOR_TRIGGER_5 = [
+        'baseReadingTypeThatTriggers' => SensorFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_DHT_BASE_READING_TYPE,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
         'triggerType' => TriggerTypeFixtures::RELAY_UP,
         'valueThatTriggers' => 14,
         'startTime' => 800,
         'endTime' => 2000,
-        'monday' => true,
-        'tuesday' => true,
-        'wednesday' => true,
-        'thursday' => true,
-        'friday' => true,
-        'saturday' => true,
-        'sunday' => true,
+        'days' => [
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => true,
+            'sunday' => true,
+        ],
         'operatorID' => OperatorsFixtures::LESS_THAN_OR_EQUAL_TO,
         'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         'createdAt' => '2021-09-26 19:30:00',
+        'override' => false,
     ];
 
-    private const SENSOR_TRIGGER_6 = [
-        'sensorID' => SensorFixtures::SOIL_SENSOR_NAME,
+    public const SENSOR_TRIGGER_6 = [
         'triggerType' => TriggerTypeFixtures::RELAY_UP,
-        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS,
-        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY,
-        'valueThatTriggers' => 2542,
-        'monday' => true,
-        'tuesday' => true,
-        'wednesday' => true,
-        'thursday' => true,
-        'friday' => true,
-        'saturday' => true,
-        'sunday' => true,
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS_BASE_READING_TYPE,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
+        'valueThatTriggers' => 55,
+        'days' => [
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => true,
+            'sunday' => true,
+        ],
         'startTime' => null,
         'endTime' => null,
         'operatorID' => OperatorsFixtures::NOT_EQUALS,
         'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
         'createdAt' => '2021-09-26 19:30:00',
+        'override' => false,
+    ];
+
+    public const SENSOR_TRIGGER_7 = [
+        'baseReadingTypeThatTriggers' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_MOTION_BASE_READING_TYPE,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
+        'sensorToTriggerID' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME,
+        'valueThatTriggers' => false,
+        'startTime' => 900,
+        'endTime' => 1005,
+        'days' => [
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => false,
+            'sunday' => false,
+        ],
+        'triggerType' => TriggerTypeFixtures::RELAY_UP,
+        'operatorID' => OperatorsFixtures::EQUALS,
+        'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
+        'createdAt' => '2021-09-26 19:30:00',
+        'override' => true,
     ];
 
     public const SENSOR_TRIGGERS = [
@@ -143,6 +179,7 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
         self::SENSOR_TRIGGER_4,
         self::SENSOR_TRIGGER_5,
         self::SENSOR_TRIGGER_6,
+        self::SENSOR_TRIGGER_7,
     ];
 
     public function getOrder(): int
@@ -162,14 +199,15 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
             $sensorTriggerEntity->setCreatedBy($this->getReference($sensorTrigger['createdBy']));
             $sensorTriggerEntity->setStartTime($sensorTrigger['startTime']);
             $sensorTriggerEntity->setEndTime($sensorTrigger['endTime']);
-            $sensorTriggerEntity->setMonday($sensorTrigger['monday']);
-            $sensorTriggerEntity->setTuesday($sensorTrigger['tuesday']);
-            $sensorTriggerEntity->setWednesday($sensorTrigger['wednesday']);
-            $sensorTriggerEntity->setThursday($sensorTrigger['thursday']);
-            $sensorTriggerEntity->setFriday($sensorTrigger['friday']);
-            $sensorTriggerEntity->setSaturday($sensorTrigger['saturday']);
-            $sensorTriggerEntity->setSunday($sensorTrigger['sunday']);
+            $sensorTriggerEntity->setMonday($sensorTrigger['days']['monday']);
+            $sensorTriggerEntity->setTuesday($sensorTrigger['days']['tuesday']);
+            $sensorTriggerEntity->setWednesday($sensorTrigger['days']['wednesday']);
+            $sensorTriggerEntity->setThursday($sensorTrigger['days']['thursday']);
+            $sensorTriggerEntity->setFriday($sensorTrigger['days']['friday']);
+            $sensorTriggerEntity->setSaturday($sensorTrigger['days']['saturday']);
+            $sensorTriggerEntity->setSunday($sensorTrigger['days']['sunday']);
             $sensorTriggerEntity->setCreatedAt(new DateTime($sensorTrigger['createdAt']));
+            $sensorTriggerEntity->setOverride($sensorTrigger['override']);
             $manager->persist($sensorTriggerEntity);
         }
 

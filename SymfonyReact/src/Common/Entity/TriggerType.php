@@ -14,11 +14,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 ]
 class TriggerType
 {
-    private const EMAIL_TRIGGER = 'Email';
+    public const EMAIL_TRIGGER = 'Email';
 
-    private const RELAY_UP_TRIGGER = 'Relay Up';
+    public const RELAY_UP_TRIGGER = 'Relay Up';
 
-    private const RELAY_DOWN_TRIGGER = 'Relay Down';
+    public const RELAY_DOWN_TRIGGER = 'Relay Down';
 
     private const TRIGGER_TYPES = [
         self::EMAIL_TRIGGER,

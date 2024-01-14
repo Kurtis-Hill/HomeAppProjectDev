@@ -8,6 +8,7 @@ use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
@@ -75,4 +76,9 @@ interface SensorRepositoryInterface
         JoinQueryDTO $joinQueryDTO = null,
         array $readingTypeJoinQueryDTOs = [],
     ): array;
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findSensorByIDNoCache(int $sensorID): ?Sensor;
 }

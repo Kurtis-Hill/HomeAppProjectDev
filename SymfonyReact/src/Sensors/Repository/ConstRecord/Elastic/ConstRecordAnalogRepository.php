@@ -11,7 +11,6 @@ class ConstRecordAnalogRepository extends AbstractConstRecordRepository implemen
 {
     public function flush(): void
     {
-        $this->_em->flush();
     }
 
     public function find(): ?ConstAnalog

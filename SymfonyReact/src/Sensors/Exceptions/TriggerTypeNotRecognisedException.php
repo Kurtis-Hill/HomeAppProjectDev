@@ -2,7 +2,9 @@
 
 namespace App\Sensors\Exceptions;
 
-class TriggerTypeNotRecognisedException
-{
+use Exception;
 
+class TriggerTypeNotRecognisedException extends Exception
+{
+    public const MESSAGE = '%s Trigger type not recognised';
 }

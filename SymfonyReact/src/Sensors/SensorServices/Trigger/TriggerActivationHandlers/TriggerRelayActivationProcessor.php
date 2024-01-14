@@ -7,35 +7,35 @@ use App\Sensors\Builders\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBu
 use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTrigger;
+use App\Sensors\Repository\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
-use Symfony\Contracts\Service\Attribute\Required;
 
-class TriggerRelayActivationHandler implements TriggerHandlerInterface
+readonly class TriggerRelayActivationProcessor implements TriggerProcessorInterface
 {
-    private ProducerInterface $sendCurrentReadingAMQPProducer;
-
     public function __construct(
-        private readonly UpdateSensorCurrentReadingDTOBuilder $updateSensorCurrentReadingDTOBuilder,
+        private UpdateSensorCurrentReadingDTOBuilder $updateSensorCurrentReadingDTOBuilder,
+        private ProducerInterface $sendCurrentReadingAMQPProducer,
+        private BoolReadingBaseSensorRepository $boolReadingBaseSensorRepository,
     ) {
     }
 
     public function processTrigger(SensorTrigger $sensorTrigger): void
     {
         $sensorToTrigger = $sensorTrigger->getBaseReadingTypeToTriggerID();
-        $updateReadingDTO = $this->updateSensorCurrentReadingDTOBuilder->buildSensorSwitchRequestConsumerMessageDTO(
-            $sensorToTrigger->getSensor()->getSensorID(),
-            BoolCurrentReadingUpdateDTOBuilder::buildCurrentReadingUpdateDTO(
-                Relay::READING_TYPE,
-                $sensorTrigger->getTriggerType()->getTriggerTypeName() === TriggerType::RELAY_UP_TRIGGER
-            ),
-        );
-
-        $this->sendCurrentReadingAMQPProducer->publish(serialize($updateReadingDTO));
-    }
-
-    #[Required]
-    public function setESPSendCurrentReadingProducer(ProducerInterface $producer): void
-    {
-        $this->sendCurrentReadingAMQPProducer = $producer;
+        $boolSensor = $this->boolReadingBaseSensorRepository->findOneBy(['baseReadingType' => $sensorToTrigger->getBaseReadingTypeID()]);
+        if ($boolSensor !== null) {
+            $currentReading = $boolSensor->getCurrentReading();
+            $readingToBeRequested = $sensorTrigger->getTriggerType()->getTriggerTypeName() === TriggerType::RELAY_UP_TRIGGER;
+            if ($currentReading !== $readingToBeRequested) {
+                $updateReadingDTO = $this->updateSensorCurrentReadingDTOBuilder->buildSensorSwitchRequestConsumerMessageDTO(
+                    $sensorToTrigger->getSensor()->getSensorID(),
+                    BoolCurrentReadingUpdateDTOBuilder::buildCurrentReadingUpdateDTO(
+                        Relay::READING_TYPE,
+                        $readingToBeRequested
+                    ),
+                );
+                $this->sendCurrentReadingAMQPProducer->publish(serialize($updateReadingDTO));
+            }
+        }
     }
 }

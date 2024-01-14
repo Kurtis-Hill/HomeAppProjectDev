@@ -59,14 +59,8 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         $this->logger = $elasticLogger;
     }
 
-    /**
-     * @throws SensorNotFoundException
-     * @throws ReadingTypeNotExpectedException
-     * @throws ReadingTypeObjectBuilderException
-     */
     public function handleUpdateSensorCurrentReading(
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
-//        Devices $device,
     ): array {
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateDTO) {
             $readingTypeQueryDTOBuilder = $this->readingTypeQueryBuilderFactory->getReadingTypeQueryDTOBuilder($currentReadingUpdateDTO->getReadingType());

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\SensorServices\TriggerChecker;
+namespace App\Sensors\SensorServices\Trigger\TriggerChecker;
 
 use App\Common\Exceptions\OperatorConvertionException;
 use App\Common\Services\OperatorValueCheckerConvertor;
@@ -24,24 +24,20 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
     public function checkSensorForTriggers(AllSensorReadingTypeInterface $readingType, ?string $day = null, ?string $time = null): array
     {
         $allSensorTriggers = $this->sensorTriggerRepository->findAllSensorTriggersForDayAndTime(
-            $readingType->getSensor(),
+            $readingType,
             $day,
             $time
         );
-
         $triggeredTriggers = [];
         foreach ($allSensorTriggers as $sensorTrigger) {
             $operator = $sensorTrigger->getOperator();
             $valueThatTriggers = $sensorTrigger->getValueThatTriggers();
-
             $currentValue = $readingType->getCurrentReading();
-
             $hasNewReadingTriggered = OperatorValueCheckerConvertor::checkValuesAgainstOperator(
                 $operator,
                 $currentValue,
                 $valueThatTriggers
             );
-
             if ($hasNewReadingTriggered === true) {
                 $triggeredTriggers[] = $sensorTrigger;
             }

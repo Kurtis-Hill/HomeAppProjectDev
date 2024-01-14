@@ -7,16 +7,17 @@ use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadi
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\SensorNotFoundException;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface;
-use App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerCheckerInterface;
-use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\OptimisticLockException;
+use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\TriggerHandlerInterface;
+use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Throwable;
 
 readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCurrentSensorReadingInterface
 {
@@ -27,14 +28,13 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
         private SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory,
         private SensorOutOfBoundsHandlerInterface $outOfBoundsSensorService,
         private SensorConstantlyRecordHandlerInterface $constantlyRecordService,
-        private SensorReadingTriggerCheckerInterface $sensorReadingTriggerChecker,
+        private TriggerHandlerInterface $triggerHandler,
         private SensorRepositoryInterface $sensorRepository,
         private LoggerInterface $elasticLogger,
     ) {}
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorNotFoundException
      */
     #[ArrayShape(["errors"])]
@@ -42,7 +42,6 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
         UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
     ): array {
         $validationErrors = [];
-        $changed = [];
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateRequestDTO) {
             $currentValidationErrors = $this->validator->validate(
                 value: $currentReadingUpdateRequestDTO,
@@ -89,7 +88,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
 
             try {
                 $this->constantlyRecordService->processConstRecord($readingTypeObject);
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 $this->elasticLogger->error(
                     'Error processing constantly record',
                     [
@@ -103,7 +102,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
             if ($readingTypeObject instanceof StandardReadingSensorInterface) {
                 try {
                     $this->outOfBoundsSensorService->processOutOfBounds($readingTypeObject);
-                } catch (\Throwable $th) {
+                } catch (Throwable $th) {
                     $this->elasticLogger->error(
                         'Error processing out of bounds',
                         [
@@ -118,13 +117,20 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
             if ($readingTypeObject instanceof BoolReadingSensorInterface) {
                 $readingTypeObject->setRequestedReading($currentReadingUpdateRequestDTO->getCurrentReading());
             }
+
+            $this->triggerHandler->handleTrigger($readingTypeObject);
         }
 
         try {
             $this->sensorRepository->flush();
-        } catch (\Exception $exception) {
-            dd($exception);
-            dd('exception');
+        } catch (Exception $exception) {
+            $this->elasticLogger->error(
+                'Error flushing sensor repository',
+                [
+                    'exception' => $exception,
+                    'sensorName' => $updateSensorCurrentReadingConsumerDTO->getSensorName(),
+                ]
+            );
         }
 
         return $validationErrors;

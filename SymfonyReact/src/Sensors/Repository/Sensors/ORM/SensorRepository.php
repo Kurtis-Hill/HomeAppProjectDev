@@ -21,6 +21,7 @@ use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Cache;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
@@ -324,7 +325,6 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     #[ArrayShape([Sensor::class])]
     public function findSensorsByIDNoCache(array $sensorIDs, string $orderBy = 'ASC'): array
     {
-//        dd($sensorIDs);
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
         $expr = $qb->expr();
 
@@ -341,5 +341,27 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             );
 
         return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findSensorByIDNoCache(int $sensorID): ?Sensor
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+        $expr = $qb->expr();
+
+        $qb->setCacheable(false);
+        $qb->select()
+            ->where(
+                $expr->eq(Sensor::ALIAS . '.sensorID', ':sensorID')
+            )
+            ->setParameters(
+                [
+                    'sensorID' => $sensorID,
+                ]
+            );
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

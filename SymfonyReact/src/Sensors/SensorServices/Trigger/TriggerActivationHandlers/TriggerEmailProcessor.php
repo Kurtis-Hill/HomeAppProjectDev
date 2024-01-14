@@ -5,7 +5,7 @@ namespace App\Sensors\SensorServices\Trigger\TriggerActivationHandlers;
 use App\Sensors\Entity\SensorTrigger;
 use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
 
-class TriggerEmailHandler implements TriggerHandlerInterface
+class TriggerEmailProcessor implements TriggerProcessorInterface
 {
     public function processTrigger(SensorTrigger $sensorTrigger): void
     {

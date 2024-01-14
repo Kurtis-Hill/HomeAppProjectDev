@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\SensorServices\TriggerChecker;
+namespace App\Sensors\SensorServices\Trigger\TriggerChecker;
 
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 

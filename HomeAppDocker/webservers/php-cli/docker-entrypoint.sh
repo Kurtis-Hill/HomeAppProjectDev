@@ -15,11 +15,11 @@ if [ ${APP_ENV} = 'dev' ]; then
 	echo "dev container build"
 	echo "installing composer packages..."
   	composer install --prefer-dist --no-interaction
-	echo "Executing database migrations for test enviroment..."
+	echo "Executing database migrations for test environment..."
 	bin/console d:m:m --no-interaction --env=test
 	echo "...Test migrations complete"
 
-	echo "Executing database migrations for local enviroment..."
+	echo "Executing database migrations for local environment..."
 	bin/console doctrine:migrations:migrate -n
 	echo "...Local migrations complete"
 

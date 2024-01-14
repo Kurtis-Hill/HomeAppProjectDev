@@ -32,7 +32,8 @@ use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandlerVersionTwo;
-use App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerCheckerInterface;
+use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\TriggerHandlerInterface;
+use App\Sensors\SensorServices\Trigger\TriggerChecker\SensorReadingTriggerCheckerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Psr\Log\LoggerInterface;
@@ -51,7 +52,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
     private SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory;
 
-    private SensorReadingTriggerCheckerInterface $sensorReadingTriggerChecker;
+    private SensorReadingTriggerCheckerInterface $triggerHandler;
 
     private SensorRepositoryInterface $sensorRepository;
 
@@ -64,7 +65,6 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $this->validator = $this->diContainer->get(ValidatorInterface::class);
         $this->sensorReadingTypeRepositoryFactory = $this->diContainer->get(SensorReadingTypeRepositoryFactory::class);
         $this->sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
-        $this->sensorReadingTriggerChecker = $this->diContainer->get(SensorReadingTriggerCheckerInterface::class);
     }
 
     protected function tearDown(): void
@@ -85,9 +85,11 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
     ): void {
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
+        $triggerHandler = $this->createMock(TriggerHandlerInterface::class);
 
         $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
         $constRecordService->expects(self::never())->method('processConstRecord');
+        $triggerHandler->expects(self::never())->method('handleTrigger');
 
         $logger = $this->createMock(LoggerInterface::class);
         $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
@@ -95,7 +97,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $this->sensorReadingTypeRepositoryFactory,
             $outOfBoundsService,
             $constRecordService,
-            $this->sensorReadingTriggerChecker,
+            $triggerHandler,
             $this->sensorRepository,
             $logger,
         );
@@ -268,9 +270,11 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
     {
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
+        $triggerHandler = $this->createMock(TriggerHandlerInterface::class);
 
         $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
         $constRecordService->expects(self::never())->method('processConstRecord');
+        $triggerHandler->expects(self::never())->method('handleTrigger');
 
         $logger = $this->createMock(LoggerInterface::class);
         $sut = new UpdateCurrentSensorReadingsHandlerVersionTwo(
@@ -278,7 +282,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $this->sensorReadingTypeRepositoryFactory,
             $outOfBoundsService,
             $constRecordService,
-            $this->sensorReadingTriggerChecker,
+            $triggerHandler,
             $this->sensorRepository,
             $logger,
         );
@@ -311,8 +315,8 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $constRecordService->expects(self::never())->method('processConstRecord');
 
-        $sensorTriggerProcessor = $this->createMock(SensorReadingTriggerCheckerInterface::class);
-        $sensorTriggerProcessor->expects(self::never())->method('checkSensorForTriggers');
+        $triggerHandler = $this->createMock(TriggerHandlerInterface::class);
+        $triggerHandler->expects(self::never())->method('handleTrigger');
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects(self::never())->method('error');
@@ -322,7 +326,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $this->sensorReadingTypeRepositoryFactory,
             $outOfBoundsService,
             $constRecordService,
-            $sensorTriggerProcessor,
+            $triggerHandler,
             $this->sensorRepository,
             $logger,
         );
@@ -372,6 +376,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
+        $triggerHandler = $this->createMock(TriggerHandlerInterface::class);
 
         $sensorReadingTypes = array_merge(
             $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($firstSensor->getSensorID()),
@@ -386,6 +391,8 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         }
         $constRecordService->expects(self::exactly($sensorReadingTypesCount))->method('processConstRecord');
 
+        $triggerHandler->expects(self::exactly($sensorReadingTypesCount))->method('handleTrigger');
+
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects(self::never())->method('error');
 
@@ -394,7 +401,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $this->sensorReadingTypeRepositoryFactory,
             $outOfBoundsService,
             $constRecordService,
-            $this->sensorReadingTriggerChecker,
+            $triggerHandler,
             $this->sensorRepository,
             $logger,
         );

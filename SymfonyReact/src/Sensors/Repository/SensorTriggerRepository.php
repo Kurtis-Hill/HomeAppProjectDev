@@ -2,9 +2,9 @@
 
 namespace App\Sensors\Repository;
 
-use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTrigger;
-use App\Sensors\SensorServices\TriggerHelpers\TriggerDateTimeConvertor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\SensorServices\Trigger\TriggerHelpers\TriggerDateTimeConvertor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
@@ -39,7 +39,7 @@ class SensorTriggerRepository extends ServiceEntityRepository
      */
     #[ArrayShape([SensorTrigger::class])]
     public function findAllSensorTriggersForDayAndTime(
-        Sensor $sensor,
+        AllSensorReadingTypeInterface $sensorReadingType,
         ?string $day = null,
         ?string $time = null,
     ): array {
@@ -50,20 +50,31 @@ class SensorTriggerRepository extends ServiceEntityRepository
         $expr = $qb->expr();
 
         $qb->where(
-            $expr->eq('st.sensor', ':sensor'),
-            $expr->eq('st.' . $currentDay, true),
+            $expr->eq('st.baseReadingTypeThatTriggers', ':baseReadingTypeThatTriggers'),
+            $expr->eq('st.' . $currentDay, ':currentDay'),
+            $expr->eq('st.override', ':override'),
             $expr->orX(
                 $expr->isNull('st.startTime'),
                 $expr->isNull('st.endTime'),
-                $expr->andX(
-                    $expr->gte('st.startTime', ':currentTime'),
-                    $expr->lte('st.endTime', ':currentTime'),
-                )
+                $expr->orX(
+                    $expr->andX(
+                        $expr->lte('st.startTime', ':currentTime'),
+                        $expr->gte('st.endTime', ':currentTime'),
+                    ),
+                ),
+                $expr->orX(
+                    $expr->andX(
+                        $expr->gte('st.startTime', ':currentTime'),
+                        $expr->lte('st.endTime', ':currentTime'),
+                    ),
+                ),
             )
         )->setParameters(
             [
-                'sensor', $sensor,
+                'baseReadingTypeThatTriggers' => $sensorReadingType->getBaseReadingType()->getBaseReadingTypeID(),
                 'currentTime' => $currentTime,
+                'currentDay' => true,
+                'override' => false,
             ]
         );
 

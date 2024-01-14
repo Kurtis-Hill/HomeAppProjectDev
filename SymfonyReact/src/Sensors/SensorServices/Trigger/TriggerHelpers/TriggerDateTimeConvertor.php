@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\SensorServices\TriggerHelpers;
+namespace App\Sensors\SensorServices\Trigger\TriggerHelpers;
 
 class TriggerDateTimeConvertor
 {

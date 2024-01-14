@@ -1,33 +1,48 @@
 <?php
 
-namespace App\Sensors\SensorServices\SensorTriggerProcessor;
+namespace App\Sensors\SensorServices\Trigger\SensorTriggerProcessor;
 
 use App\Common\Exceptions\OperatorConvertionException;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerChecker;
+use App\Sensors\Exceptions\TriggerTypeNotRecognisedException;
+use App\Sensors\Factories\TriggerFactories\TriggerTypeHandlerFactory;
+use App\Sensors\SensorServices\Trigger\TriggerChecker\SensorReadingTriggerCheckerInterface;
+use Exception;
+use Psr\Log\LoggerInterface;
 
 readonly class TriggerHandler implements TriggerHandlerInterface
 {
     public function __construct(
-        private SensorReadingTriggerChecker $sensorReadingTriggerChecker,
+        private SensorReadingTriggerCheckerInterface $sensorReadingTriggerChecker,
+        private TriggerTypeHandlerFactory $triggerTypeHandlerFactory,
+        private LoggerInterface $elasticLogger,
     ) {}
 
     /**
      * @throws OperatorConvertionException
      */
-    public function processTriggers(AllSensorReadingTypeInterface $readingType): void
+    public function handleTrigger(AllSensorReadingTypeInterface $readingType): void
     {
         $triggeredTriggers = $this->sensorReadingTriggerChecker->checkSensorForTriggers($readingType);
 
         if (!empty($triggeredTriggers)) {
-            //send trigger to basereadingTypeToTrigger
             foreach ($triggeredTriggers as $trigger) {
-                $triggerType = $trigger->getTriggerType();
-                //sensor trigger factory that will build the dto for trigger type
+                $triggerTypeName = $trigger->getTriggerType()->getTriggerTypeName();
+
+                try {
+                    $triggerTypeHandler = $this->triggerTypeHandlerFactory->getTriggerTypeHandler($triggerTypeName);
+                } catch (TriggerTypeNotRecognisedException $e) {
+                    $this->elasticLogger->error($e->getMessage());
+                    continue;
+                }
+
+                try {
+                    $triggerTypeHandler->processTrigger($trigger);
+                } catch (Exception $e) {
+                    $this->elasticLogger->error(sprintf('Failed to process trigger %d', $trigger->getSensorTriggerID()),[$e->getMessage()]);
+                    continue;
+                }
             }
         }
-
-        //triggger type factory and return trigger processing service
-        //use the service to process the trigger
     }
 }
