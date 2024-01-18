@@ -6,5 +6,5 @@ use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 
 interface SensorReadingTriggerCheckerInterface
 {
-    public function checkSensorForTriggers(AllSensorReadingTypeInterface $readingType);
+    public function checkSensorForTriggers(AllSensorReadingTypeInterface $readingType, ?string $day = null, ?string $time = null): array;
 }
