@@ -3,9 +3,11 @@
 namespace App\Tests\Sensors\SensorService\Trigger\TriggerActivationHandlers;
 
 use App\Common\Entity\TriggerType;
+use App\Sensors\Builders\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
 use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTrigger;
 use App\Sensors\Repository\SensorTriggerRepository;
 use App\Sensors\SensorServices\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor;
@@ -63,27 +65,32 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
 
     public function test_relay_is_triggered_when_not_in_correct_state(): void
     {
-        $mockTrigger = $this->createMock(SensorTrigger::class);
+        /** @var Relay[] $allRelaySensors */
+        $allRelaySensors = $this->entityManager->getRepository(Relay::class)->findAll();
+        $relaySensor = $allRelaySensors[array_rand($allRelaySensors)];
+        $relaySensor->setCurrentReading(false);
 
-        $mockBaseReadingTypeToTriggerID = $this->createMock(BaseSensorReadingType::class);
-        $mockBaseReadingTypeToTriggerID->method('getBaseReadingTypeID')->willReturn(1);
-        $mockTrigger->method('getBaseReadingTypeToTriggerID')->willReturn($mockBaseReadingTypeToTriggerID);
-        $mockTriggerType = $this->createMock(TriggerType::class);
-        $mockTriggerType->method('getTriggerTypeName')->willReturn(TriggerType::RELAY_UP_TRIGGER);
+        $sensorTrigger = new SensorTrigger();
+        $sensorTrigger->setBaseReadingTypeToTriggerID($relaySensor->getBaseReadingType());
+        $sensorTrigger->setTriggerType($this->entityManager->getRepository(TriggerType::class)->findOneBy(['triggerTypeName' => TriggerType::RELAY_UP_TRIGGER]));
 
-        $mockUpdateSensorCurrentReadingDTOBuilder = $this->createMock(UpdateSensorCurrentReadingDTOBuilder::class);
-        $mockUpdateSensorCurrentReadingDTOBuilder->expects($this->once())->method('buildSensorSwitchRequestConsumerMessageDTO');
-
+        $updateSensorCurrentReadingDTOBuilder = $this->diContainer->get(UpdateSensorCurrentReadingDTOBuilder::class);
+        $message = $updateSensorCurrentReadingDTOBuilder->buildSensorSwitchRequestConsumerMessageDTO(
+            $relaySensor->getSensor()->getSensorID(),
+            BoolCurrentReadingUpdateDTOBuilder::buildCurrentReadingUpdateDTO(
+                Relay::READING_TYPE,
+                true
+            ),
+        );
         $mockCurrentReadingAMQPProducer = $this->createMock(ProducerInterface::class);
-        $mockCurrentReadingAMQPProducer->expects($this->once())->method('publish');
+        $mockCurrentReadingAMQPProducer->expects($this->once())->method('publish')->with(serialize($message));
 
         $boolReadingBaseSensorRepository = $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class);
         $sut = new TriggerRelayActivationProcessor(
-            $mockUpdateSensorCurrentReadingDTOBuilder,
+            $updateSensorCurrentReadingDTOBuilder,
             $mockCurrentReadingAMQPProducer,
             $boolReadingBaseSensorRepository,
         );
-        $sut->processTrigger($mockTrigger);
+        $sut->processTrigger($sensorTrigger);
     }
-
 }
