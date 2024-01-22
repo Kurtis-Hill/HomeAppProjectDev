@@ -2,7 +2,13 @@
 
 namespace App\Common\DTO\Response;
 
-class OperatorResponseDTO
+readonly class OperatorResponseDTO
 {
-
+    public function __construct(
+        private int $operatorID,
+        private string $operatorName,
+        private string $operatorSymbol,
+        private string $operatorDescription,
+    ) {
+    }
 }

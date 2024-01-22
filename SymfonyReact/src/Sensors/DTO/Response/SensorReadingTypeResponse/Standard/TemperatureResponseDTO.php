@@ -15,6 +15,7 @@ readonly class TemperatureResponseDTO extends AbstractStandardResponseDTO implem
 {
     public function __construct(
         private int $temperatureID,
+        int $baseReadingTypeID,
         SensorResponseDTO $sensor,
         float $currentReading,
         float $highReading,
@@ -24,6 +25,7 @@ readonly class TemperatureResponseDTO extends AbstractStandardResponseDTO implem
     ) {
         parent::__construct(
             sensor: $sensor,
+            baseReadingTypeID: $baseReadingTypeID,
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,

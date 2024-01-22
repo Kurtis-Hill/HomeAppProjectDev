@@ -22,6 +22,7 @@ class TemperatureResponseDTOBuilder implements SensorResponseDTOBuilderInterface
 
         return new TemperatureResponseDTO(
             $readingTypeObject->getReadingTypeID(),
+            $readingTypeObject->getBaseReadingType()->getBaseReadingTypeID(),
             SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),
             $readingTypeObject->getCurrentReading(),
             $readingTypeObject->getHighReading(),

@@ -13,6 +13,7 @@ readonly class RelayResponseDTO extends AbstractBoolResponseDTO implements AllSe
 {
     public function __construct(
         SensorResponseDTO $sensorResponseDTO,
+        int $baseReadingTypeID,
         int $boolID,
         bool $currentReading,
         bool $requestedReading,
@@ -24,6 +25,7 @@ readonly class RelayResponseDTO extends AbstractBoolResponseDTO implements AllSe
 
         parent::__construct(
             sensor: $sensorResponseDTO,
+            baseReadingTypeID: $baseReadingTypeID,
             boolID: $boolID,
             currentReading: $currentReading,
             requestedReading: $requestedReading,

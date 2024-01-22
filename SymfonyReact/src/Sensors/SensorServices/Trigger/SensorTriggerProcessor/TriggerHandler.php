@@ -24,7 +24,6 @@ readonly class TriggerHandler implements TriggerHandlerInterface
     public function handleTrigger(AllSensorReadingTypeInterface $readingType): void
     {
         $triggeredTriggers = $this->sensorReadingTriggerChecker->checkSensorForTriggers($readingType);
-
         if (!empty($triggeredTriggers)) {
             foreach ($triggeredTriggers as $trigger) {
                 $triggerTypeName = $trigger->getTriggerType()->getTriggerTypeName();

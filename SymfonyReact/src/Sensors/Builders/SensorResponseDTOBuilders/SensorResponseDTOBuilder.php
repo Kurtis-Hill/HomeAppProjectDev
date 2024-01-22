@@ -36,9 +36,6 @@ class SensorResponseDTOBuilder
         $this->security = $security;
     }
 
-    /**
-     * @throws ReadingTypeNotExpectedException
-     */
     public function buildFullSensorResponseDTOWithPermissions(Sensor $sensor, array $groups): SensorResponseDTO
     {
         if (

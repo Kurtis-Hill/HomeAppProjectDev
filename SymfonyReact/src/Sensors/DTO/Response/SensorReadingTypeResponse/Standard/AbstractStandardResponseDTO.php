@@ -13,6 +13,7 @@ readonly abstract class AbstractStandardResponseDTO
 {
     public function __construct(
         private SensorResponseDTO $sensor,
+        private int $baseReadingTypeID,
         private float $currentReading,
         private float $highReading,
         private float $lowReading,
@@ -20,6 +21,17 @@ readonly abstract class AbstractStandardResponseDTO
         private string $updated,
         private string $readingType,
     ) {
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getBaseReadingTypeID(): int
+    {
+        return $this->baseReadingTypeID;
     }
 
     #[Groups([

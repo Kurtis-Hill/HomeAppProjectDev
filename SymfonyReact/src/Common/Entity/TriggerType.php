@@ -35,13 +35,13 @@ class TriggerType
 
     #[
         ORM\Column(name: "triggerTypeName", type: "string", length: 255, nullable: false),
-        Assert\NotBlank(message: "Trigger type name cannot be blank"),
+        Assert\NotBlank(message: "TriggerControllers type name cannot be blank"),
     ]
     private string $triggerTypeName;
 
     #[
         ORM\Column(name: "triggerTypeDescription", type: "string", length: 255, nullable: false),
-        Assert\NotBlank(message: "Trigger type description cannot be blank"),
+        Assert\NotBlank(message: "TriggerControllers type description cannot be blank"),
     ]
     private string $triggerTypeDescription;
 

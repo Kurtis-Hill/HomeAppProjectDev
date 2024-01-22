@@ -145,7 +145,6 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             Join::WITH,
             'sensors.sensorID = ' . BaseSensorReadingType::ALIAS . '.sensor'
         );
-//        dd($readingTypeJoinQueryDTOs, $joinQueryDTO);
         if (!empty($readingTypeJoinQueryDTOs)) {
             $readingTypes = $this->prepareSensorJoinsForQuery($readingTypeJoinQueryDTOs, $qb);
             $selects[] = $readingTypes;
@@ -170,12 +169,12 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 'sensorName' => $sensorsName,
                 'deviceID' => $deviceID
             ]);
-        //dd($qb->getQuery()->getSQL());
+
         return array_filter($qb->getQuery()->getResult());
     }
 
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function findSensorObjectByDeviceIdAndSensorName(int $deviceId, string $sensorName): ?Sensor
     {

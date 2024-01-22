@@ -13,6 +13,7 @@ readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implement
 {
     public function __construct(
         private int $humidityID,
+        int $baseReadingTypeID,
         SensorResponseDTO $sensor,
         float $currentReading,
         float $highReading,
@@ -22,6 +23,7 @@ readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implement
     ) {
         parent::__construct(
             sensor: $sensor,
+            baseReadingTypeID: $baseReadingTypeID,
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,

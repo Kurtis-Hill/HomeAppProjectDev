@@ -22,6 +22,7 @@ class RelayResponseDTOBuilder implements SensorResponseDTOBuilderInterface
 
         return new RelayResponseDTO(
             sensorResponseDTO: SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),
+            baseReadingTypeID: $readingTypeObject->getBaseReadingType()->getBaseReadingTypeID(),
             boolID: $readingTypeObject->getBoolID(),
             currentReading: $readingTypeObject->getCurrentReading(),
             requestedReading: $readingTypeObject->getRequestedReading(),

@@ -42,32 +42,32 @@ class SensorReadingTypeDTOResponseBuilder
 
         $sensorReadingTypeResponseDTOs = [];
         foreach ($allStandardReadingTypes as $readingType) {
-            if ($readingType instanceof Temperature) {
-                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
-                $sensorReadingTypeResponseDTOs[Temperature::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
-            }
-            if ($readingType instanceof Humidity) {
-                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
-                $sensorReadingTypeResponseDTOs[Humidity::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
-            }
-            if ($readingType instanceof Latitude) {
-                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
-                $sensorReadingTypeResponseDTOs[Latitude::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
-                break;
-            }
-            if ($readingType instanceof Analog) {
-                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
-                $sensorReadingTypeResponseDTOs[Analog::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
-                break;
-            }
-            if ($readingType instanceof Motion) {
-                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Motion::getReadingTypeName());
-                $sensorReadingTypeResponseDTOs[Motion::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
-            }
-            if ($readingType instanceof Relay) {
-                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Relay::getReadingTypeName());
-                $sensorReadingTypeResponseDTOs[Relay::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
-            }
+//            if ($readingType instanceof Temperature) {
+            $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
+            $sensorReadingTypeResponseDTOs[$readingType::getReadingTypeName()] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+//            }
+//            if ($readingType instanceof Humidity) {
+//                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
+//                $sensorReadingTypeResponseDTOs[Humidity::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+//            }
+//            if ($readingType instanceof Latitude) {
+//                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
+//                $sensorReadingTypeResponseDTOs[Latitude::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+//                break;
+//            }
+//            if ($readingType instanceof Analog) {
+//                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($readingType::getReadingTypeName());
+//                $sensorReadingTypeResponseDTOs[Analog::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+//                break;
+//            }
+//            if ($readingType instanceof Motion) {
+//                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Motion::getReadingTypeName());
+//                $sensorReadingTypeResponseDTOs[Motion::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+//            }
+//            if ($readingType instanceof Relay) {
+//                $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder(Relay::getReadingTypeName());
+//                $sensorReadingTypeResponseDTOs[Relay::READING_TYPE] = $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($readingType);
+//            }
         }
 
         return $sensorReadingTypeResponseDTOs;

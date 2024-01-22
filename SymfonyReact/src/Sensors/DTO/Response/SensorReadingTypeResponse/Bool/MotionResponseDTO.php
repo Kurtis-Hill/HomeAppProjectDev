@@ -13,6 +13,7 @@ readonly class MotionResponseDTO extends AbstractBoolResponseDTO implements AllS
 {
     public function __construct(
         SensorResponseDTO $sensorResponseDTO,
+        int $baseReadingTypeID,
         int $boolID,
         bool $currentReading,
         bool $requestedReading,
@@ -24,13 +25,14 @@ readonly class MotionResponseDTO extends AbstractBoolResponseDTO implements AllS
 
         parent::__construct(
             sensor: $sensorResponseDTO,
+            baseReadingTypeID: $baseReadingTypeID,
             boolID: $boolID,
             currentReading: $currentReading,
             requestedReading: $requestedReading,
-            expectedReading: $expectedReading,
             constRecord: $constRecord,
             updatedAt: $updatedAt,
-            readingType: $type
+            readingType: $type,
+            expectedReading: $expectedReading
         );
     }
 }

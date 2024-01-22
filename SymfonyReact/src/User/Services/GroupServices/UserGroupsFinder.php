@@ -17,6 +17,9 @@ class UserGroupsFinder
     }
 
     #[ArrayShape([Group::class])]
+    /**
+     * @return Group[]
+     */
     public function getUsersGroups(User $user): array
     {
         return $user->isAdmin()

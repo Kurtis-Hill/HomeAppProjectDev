@@ -6,5 +6,5 @@ use Exception;
 
 class TriggerTypeNotRecognisedException extends Exception
 {
-    public const MESSAGE = '%s Trigger type not recognised';
+    public const MESSAGE = '%s TriggerControllers type not recognised';
 }

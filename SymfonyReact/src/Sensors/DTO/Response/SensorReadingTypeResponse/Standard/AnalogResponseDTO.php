@@ -15,6 +15,7 @@ readonly class AnalogResponseDTO extends AbstractStandardResponseDTO implements 
 {
     public function __construct(
         private int $analogID,
+        int $baseReadingTypeID,
         SensorResponseDTO $sensor,
         float $currentReading,
         float $highReading,
@@ -25,6 +26,7 @@ readonly class AnalogResponseDTO extends AbstractStandardResponseDTO implements 
         $type = Analog::READING_TYPE;
         parent::__construct(
             sensor: $sensor,
+            baseReadingTypeID: $baseReadingTypeID,
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,
