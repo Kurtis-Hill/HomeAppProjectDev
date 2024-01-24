@@ -4,7 +4,7 @@ namespace App\Tests\Sensors\SensorService\Trigger\TriggerActivationHandlers;
 
 use App\Common\Entity\TriggerType;
 use App\Sensors\Builders\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
-use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
+use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
@@ -48,7 +48,7 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
         $mockTriggerType = $this->createMock(TriggerType::class);
         $mockTriggerType->method('getTriggerTypeName')->willReturn(TriggerType::RELAY_UP_TRIGGER);
 
-        $mockUpdateSensorCurrentReadingDTOBuilder = $this->createMock(UpdateSensorCurrentReadingDTOBuilder::class);
+        $mockUpdateSensorCurrentReadingDTOBuilder = $this->createMock(UpdateSensorCurrentReadingTransportDTOBuilder::class);
         $mockUpdateSensorCurrentReadingDTOBuilder->expects($this->never())->method('buildSensorSwitchRequestConsumerMessageDTO');
 
         $mockCurrentReadingAMQPProducer = $this->createMock(ProducerInterface::class);
@@ -74,7 +74,7 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
         $sensorTrigger->setBaseReadingTypeToTriggerID($relaySensor->getBaseReadingType());
         $sensorTrigger->setTriggerType($this->entityManager->getRepository(TriggerType::class)->findOneBy(['triggerTypeName' => TriggerType::RELAY_UP_TRIGGER]));
 
-        $updateSensorCurrentReadingDTOBuilder = $this->diContainer->get(UpdateSensorCurrentReadingDTOBuilder::class);
+        $updateSensorCurrentReadingDTOBuilder = $this->diContainer->get(UpdateSensorCurrentReadingTransportDTOBuilder::class);
         $message = $updateSensorCurrentReadingDTOBuilder->buildSensorSwitchRequestConsumerMessageDTO(
             $relaySensor->getSensor()->getSensorID(),
             BoolCurrentReadingUpdateDTOBuilder::buildCurrentReadingUpdateDTO(

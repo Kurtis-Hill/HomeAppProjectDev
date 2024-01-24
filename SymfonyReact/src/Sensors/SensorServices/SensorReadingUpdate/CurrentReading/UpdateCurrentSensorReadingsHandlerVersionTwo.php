@@ -3,7 +3,7 @@
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Exceptions\SensorNotFoundException;
@@ -39,7 +39,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
      */
     #[ArrayShape(["errors"])]
     public function handleUpdateSensorCurrentReading(
-        UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
+        UpdateSensorCurrentReadingTransportMessageDTO $updateSensorCurrentReadingConsumerDTO,
     ): array {
         $validationErrors = [];
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateRequestDTO) {

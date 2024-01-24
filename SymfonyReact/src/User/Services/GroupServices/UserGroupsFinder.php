@@ -26,4 +26,12 @@ class UserGroupsFinder
             ? $this->groupNameRepository->findAll()
             : $user->getAssociatedGroups();
     }
+
+    public function getGroupIDs(User $user): array
+    {
+        $groups = $this->getUsersGroups($user);
+        return array_map(static function ($group) {
+            return $group->getGroupID();
+        }, $groups);
+    }
 }

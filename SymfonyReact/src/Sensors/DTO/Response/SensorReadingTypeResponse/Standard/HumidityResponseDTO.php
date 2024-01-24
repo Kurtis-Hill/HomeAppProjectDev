@@ -4,12 +4,11 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse\Standard;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implements AllSensorReadingTypeResponseDTOInterface, StandardReadingTypeResponseInterface, SensorReadingTypeResponseDTOInterface
+readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implements AllSensorReadingTypeResponseDTOInterface, StandardReadingTypeResponseInterface
 {
     public function __construct(
         private int $humidityID,

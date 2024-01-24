@@ -3,13 +3,12 @@
 namespace App\Sensors\DTO\Response\SensorReadingTypeResponse\Bool;
 
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-readonly class RelayResponseDTO extends AbstractBoolResponseDTO implements AllSensorReadingTypeResponseDTOInterface, SensorReadingTypeResponseDTOInterface, BoolReadingTypeResponseInterface
+readonly class RelayResponseDTO extends AbstractBoolResponseDTO implements AllSensorReadingTypeResponseDTOInterface, BoolReadingTypeResponseInterface
 {
     public function __construct(
         SensorResponseDTO $sensorResponseDTO,
@@ -21,8 +20,6 @@ readonly class RelayResponseDTO extends AbstractBoolResponseDTO implements AllSe
         string $updatedAt,
         ?bool $expectedReading = null,
     ) {
-        $type = Relay::READING_TYPE;
-
         parent::__construct(
             sensor: $sensorResponseDTO,
             baseReadingTypeID: $baseReadingTypeID,
@@ -31,7 +28,7 @@ readonly class RelayResponseDTO extends AbstractBoolResponseDTO implements AllSe
             requestedReading: $requestedReading,
             constRecord: $constRecord,
             updatedAt: $updatedAt,
-            readingType: $type,
+            readingType: Relay::READING_TYPE,
             expectedReading: $expectedReading
         );
     }

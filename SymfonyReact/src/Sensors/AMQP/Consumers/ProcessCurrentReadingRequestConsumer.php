@@ -5,7 +5,7 @@ namespace App\Sensors\AMQP\Consumers;
 
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
@@ -31,12 +31,12 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            /** @var UpdateSensorCurrentReadingMessageDTO $sensorData */
+            /** @var UpdateSensorCurrentReadingTransportMessageDTO $sensorData */
             $sensorData = unserialize(
                 $msg->getBody(),
                 [
                     'allowed_classes' => [
-                        UpdateSensorCurrentReadingMessageDTO::class,
+                        UpdateSensorCurrentReadingTransportMessageDTO::class,
                         AnalogCurrentReadingUpdateRequestDTO::class,
                         HumidityCurrentReadingUpdateRequestDTO::class,
                         LatitudeCurrentReadingUpdateRequestDTO::class,

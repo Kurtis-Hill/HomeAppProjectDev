@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Sensors\Builders\MessageBuilders;
+namespace App\Sensors\Builders\MessageResponseBuilders;
 
 use App\Sensors\DTO\Response\CurrentReadingResponse\CurrentReadingUpdateResponseDTO;
 

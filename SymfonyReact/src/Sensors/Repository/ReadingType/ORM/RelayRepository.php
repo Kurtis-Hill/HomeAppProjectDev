@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Repository\ReadingType\ORM;
 
+use App\Devices\Entity\Devices;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
@@ -104,6 +105,25 @@ class RelayRepository extends ServiceEntityRepository implements ReadingTypeRepo
                 )
             )
             ->setParameters(['sensor' => $sensorID]);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findReadingTypeUserHasAccessTo(array $groupsIDs): array
+    {
+        $qb = $this->createQueryBuilder('readingType');
+        $expr = $qb->expr();
+
+        $qb->select('readingType')
+            ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, 'baseReadingType.sensor = ' . Sensor::ALIAS . '.sensorID')
+            ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = '. Sensor::ALIAS . '.deviceID')
+            ->where(
+                $expr->in(
+                    Devices::ALIAS . '.groupID',
+                    ':groups')
+            )
+            ->setParameters(['groups' => $groupsIDs]);
 
         return $qb->getQuery()->getResult();
     }

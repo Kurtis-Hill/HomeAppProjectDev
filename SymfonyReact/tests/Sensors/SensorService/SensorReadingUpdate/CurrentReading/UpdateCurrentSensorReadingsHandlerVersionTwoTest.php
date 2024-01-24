@@ -2,7 +2,7 @@
 
 namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\CurrentReading;
 
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
@@ -109,7 +109,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $firstSensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorType])[0];
 
         $device = $firstSensor->getDevice();
-        $updateSensorCurrentReadingConsumerDTO =  new UpdateSensorCurrentReadingMessageDTO(
+        $updateSensorCurrentReadingConsumerDTO =  new UpdateSensorCurrentReadingTransportMessageDTO(
             sensorType: $sensorType::getReadingTypeName(),
             sensorName: $firstSensor->getSensorName(),
             currentReadings: array_values($currentReadings),
@@ -292,7 +292,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
         $device = $sensors[0]->getDevice();
 
-        $updateSensorCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateSensorCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             sensorType: Dht::NAME,
             sensorName: random_int(10, 32222),
             currentReadings: [
@@ -336,7 +336,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
         $sensor = $sensors[0];
 
-        $updateSensorCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateSensorCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             sensorType: Dht::NAME,
             sensorName: $sensor->getSensorName(),
             currentReadings: [
@@ -367,7 +367,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $firstSensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorReadingType])[0];
 
         $device = $firstSensor->getDevice();
-        $updateSensorCurrentReadingConsumerDTO =  new UpdateSensorCurrentReadingMessageDTO(
+        $updateSensorCurrentReadingConsumerDTO =  new UpdateSensorCurrentReadingTransportMessageDTO(
             sensorType: $sensorType,
             sensorName: $firstSensor->getSensorName(),
             currentReadings: array_values($currentReadings),

@@ -7,7 +7,7 @@ use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Exceptions\DeviceIPNotSetException;
 use App\Devices\Exceptions\DeviceRequestArgumentBuilderTypeNotFoundException;
 use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Exceptions\SensorNotFoundException;
@@ -33,7 +33,7 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
     ) {}
 
     /**
-     * @param RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO
+     * @param RequestSensorCurrentReadingUpdateTransportMessageDTO $currentReadingUpdateMessageDTO
      * @return bool
      * @throws DeviceIPNotSetException
      * @throws DeviceRequestArgumentBuilderTypeNotFoundException
@@ -45,7 +45,7 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
      * @throws ExceptionInterface
      * @throws TransportExceptionInterface|\HttpException
      */
-    public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool
+    public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateTransportMessageDTO $currentReadingUpdateMessageDTO): bool
     {
         $sensors = $this->sensorRepository->findSensorByIDNoCache($currentReadingUpdateMessageDTO->getSensorID());
         if ($sensors === null) {

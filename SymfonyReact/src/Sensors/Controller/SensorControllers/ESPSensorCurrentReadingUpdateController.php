@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
-use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
+use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
 use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
 use App\Sensors\Exceptions\SensorDataCurrentReadingUpdateBuilderException;
@@ -99,7 +99,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             }
             $readingTypeCurrentReadingDTOs = $currentReadingSensorDataRequest->handleCurrentReadingDTOCreation($sensorDataCurrentReadingUpdateDTO);
 
-            $updateReadingDTO = UpdateSensorCurrentReadingDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
+            $updateReadingDTO = UpdateSensorCurrentReadingTransportDTOBuilder::buildUpdateSensorCurrentReadingConsumerMessageDTO(
                 $sensorDataCurrentReadingUpdateDTO->getSensorType(),
                 $sensorDataCurrentReadingUpdateDTO->getSensorName(),
                 $readingTypeCurrentReadingDTOs,

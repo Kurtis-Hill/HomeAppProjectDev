@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Devices\AMQP\Consumers;
 
 use App\Devices\Exceptions\DeviceIPNotSetException;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
@@ -27,12 +27,12 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            /** @var RequestSensorCurrentReadingUpdateMessageDTO $sensorData */
+            /** @var RequestSensorCurrentReadingUpdateTransportMessageDTO $sensorData */
             $sensorData = unserialize(
                 $msg->getBody(),
                 [
                     'allowed_classes' => [
-                        RequestSensorCurrentReadingUpdateMessageDTO::class,
+                        RequestSensorCurrentReadingUpdateTransportMessageDTO::class,
                         BoolCurrentReadingUpdateDTO::class,
                     ]
                 ]

@@ -5,7 +5,7 @@ namespace App\Tests\Devices\AMQP\Consumers;
 use App\Common\Services\DeviceRequestHandler;
 use App\Devices\AMQP\Consumers\SensorSendUpdateReadingRequestConsumer;
 use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
@@ -71,7 +71,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         /** @var SensorRepository $sensorRepository */
         $sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
         $sensorID = $sensorRepository->findBy(['sensorTypeID' => $genericSensorType])[0]->getSensorID();
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $sensorID,
             $boolCurrentReadingUpdateDTO,
         );
@@ -126,7 +126,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $relayRepository = $this->diContainer->get(RelayRepository::class);
         /** @var Relay $genericSensorType */
         $sensorID = $relayRepository->findAll()[0]->getBaseReadingType()->getSensor()->getSensorID();
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $sensorID,
             $boolCurrentReadingUpdateDTO,
         );
@@ -179,7 +179,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         /** @var RelayRepository $sensorTypeRepository */
         $sensorTypeRepository = $this->diContainer->get(MotionRepository::class);
         $sensorID = $sensorTypeRepository->findAll()[0]->getBaseReadingType()->getSensor()->getSensorID();
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $sensorID,
             $boolCurrentReadingUpdateDTO,
         );

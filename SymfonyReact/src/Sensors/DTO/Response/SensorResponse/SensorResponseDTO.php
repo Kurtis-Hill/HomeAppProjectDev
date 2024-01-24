@@ -4,11 +4,8 @@ namespace App\Sensors\DTO\Response\SensorResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\DTO\Response\DeviceResponseDTO;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeEncapsulationResponseDTO;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use App\UserInterface\DTO\Response\CardView\CardViewResponseDTO;
-use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 

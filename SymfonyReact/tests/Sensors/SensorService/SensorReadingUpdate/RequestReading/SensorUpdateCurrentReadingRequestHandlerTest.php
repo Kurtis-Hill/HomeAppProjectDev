@@ -5,7 +5,7 @@ namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\RequestReading;
 use App\Common\Services\DeviceRequestHandler;
 use App\Devices\Exceptions\DeviceIPNotSetException;
 use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
@@ -84,7 +84,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             !$relay->getCurrentReading(),
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
@@ -140,7 +140,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             false,
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $sensorID,
             $boolCurrentReadingUpdateRequestDTO,
         );
@@ -186,7 +186,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             !$relay->getCurrentReading(),
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
@@ -229,7 +229,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             !$motion->getCurrentReading(),
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $motion->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
@@ -277,7 +277,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             !$relay->getCurrentReading(),
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );

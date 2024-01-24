@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace App\Sensors\Builders\MessageDTOBuilders;
 
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 
-class UpdateSensorCurrentReadingDTOBuilder
+class UpdateSensorCurrentReadingTransportDTOBuilder
 {
     public static function buildUpdateSensorCurrentReadingConsumerMessageDTO(
         string $sensorType,
         string $sensorName,
         array $readingTypeCurrentReadingDTOs,
         int $deviceID,
-    ): UpdateSensorCurrentReadingMessageDTO {
-        return new UpdateSensorCurrentReadingMessageDTO(
+    ): UpdateSensorCurrentReadingTransportMessageDTO {
+        return new UpdateSensorCurrentReadingTransportMessageDTO(
             $sensorType,
             $sensorName,
             $readingTypeCurrentReadingDTOs,
@@ -26,8 +26,8 @@ class UpdateSensorCurrentReadingDTOBuilder
     public function buildSensorSwitchRequestConsumerMessageDTO(
         int $sensorID,
         BoolCurrentReadingUpdateDTO $readingTypeCurrentReadingDTO,
-    ): RequestSensorCurrentReadingUpdateMessageDTO {
-        return new RequestSensorCurrentReadingUpdateMessageDTO(
+    ): RequestSensorCurrentReadingUpdateTransportMessageDTO {
+        return new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $sensorID,
             $readingTypeCurrentReadingDTO,
         );

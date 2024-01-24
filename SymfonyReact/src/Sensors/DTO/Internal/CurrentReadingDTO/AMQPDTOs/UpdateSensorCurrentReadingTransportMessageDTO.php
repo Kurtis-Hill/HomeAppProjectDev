@@ -7,7 +7,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-readonly class UpdateSensorCurrentReadingMessageDTO
+readonly class UpdateSensorCurrentReadingTransportMessageDTO
 {
     public function __construct(
         private string $sensorType,

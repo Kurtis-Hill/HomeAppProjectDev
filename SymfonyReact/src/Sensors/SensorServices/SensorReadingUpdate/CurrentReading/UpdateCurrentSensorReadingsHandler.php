@@ -3,7 +3,7 @@
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
 use App\Devices\Entity\Devices;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
@@ -60,7 +60,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
     }
 
     public function handleUpdateSensorCurrentReading(
-        UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
+        UpdateSensorCurrentReadingTransportMessageDTO $updateSensorCurrentReadingConsumerDTO,
     ): array {
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateDTO) {
             $readingTypeQueryDTOBuilder = $this->readingTypeQueryBuilderFactory->getReadingTypeQueryDTOBuilder($currentReadingUpdateDTO->getReadingType());

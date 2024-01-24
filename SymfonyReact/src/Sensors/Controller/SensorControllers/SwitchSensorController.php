@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
-use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingDTOBuilder;
+use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
 use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
@@ -56,7 +56,7 @@ class SwitchSensorController extends AbstractController
         ValidatorInterface $validator,
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequestHandler,
         SensorRepositoryInterface $sensorRepository,
-        UpdateSensorCurrentReadingDTOBuilder $updateSensorCurrentReadingDTOBuilder,
+        UpdateSensorCurrentReadingTransportDTOBuilder $updateSensorCurrentReadingDTOBuilder,
         EntityManagerInterface $entityManager,
         RelayRepository $relayRepository,
     ): JsonResponse {

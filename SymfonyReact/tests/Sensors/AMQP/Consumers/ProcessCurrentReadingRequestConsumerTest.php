@@ -5,7 +5,7 @@ namespace App\Tests\Sensors\AMQP\Consumers;
 use App\Devices\Entity\Devices;
 use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Sensors\AMQP\Consumers\ProcessCurrentReadingRequestConsumer;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
@@ -95,7 +95,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         }
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - 50);
 
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Soil::NAME,
             SensorFixtures::SENSORS[Soil::NAME],
             [$analogCurrentReadingUpdateMessage],
@@ -115,7 +115,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SOIL_SENSOR_TO_UPDATE]);
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - random_int(1, 50));
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Soil::NAME,
             self::SOIL_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],
@@ -142,7 +142,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SOIL_SENSOR_TO_UPDATE]);
 
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - 50);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Soil::NAME,
             self::SOIL_SENSOR_TO_UPDATE,
             [$humidCurrentReadingUpdateMessage],
@@ -169,7 +169,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::LDR_SENSOR_TO_UPDATE]);
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(LDR::HIGH_READING - random_int(1, 50));
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             LDR::NAME,
             self::LDR_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],
@@ -196,7 +196,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::LDR_SENSOR_TO_UPDATE]);
 
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - 50);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             LDR::NAME,
             self::LDR_SENSOR_TO_UPDATE,
             [$humidCurrentReadingUpdateMessage],
@@ -225,7 +225,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::DHT_SENSOR_TO_UPDATE]);
 
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Dht::NAME,
             self::DHT_SENSOR_TO_UPDATE,
             [$humidCurrentReadingUpdateMessage],
@@ -254,7 +254,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
         $tempCurrentReadingUpdateMessage = new TemperatureCurrentReadingUpdateRequestDTO(Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 10);
 
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Dht::NAME,
             self::DHT_SENSOR_TO_UPDATE,
             [$tempCurrentReadingUpdateMessage, $humidCurrentReadingUpdateMessage],
@@ -289,7 +289,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::DHT_SENSOR_TO_UPDATE]);
 
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 23);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Dht::NAME,
             self::DHT_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],
@@ -324,7 +324,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SHT_SENSOR_TO_UPDATE]);
 
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Sht::NAME,
             self::SHT_SENSOR_TO_UPDATE,
             [$humidCurrentReadingUpdateMessage],
@@ -354,7 +354,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
         $tempCurrentReadingUpdateMessage = new TemperatureCurrentReadingUpdateRequestDTO(Sht::HIGH_TEMPERATURE_READING_BOUNDARY - 10);
 
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Sht::NAME,
             self::SHT_SENSOR_TO_UPDATE,
             [$humidCurrentReadingUpdateMessage, $tempCurrentReadingUpdateMessage],
@@ -390,7 +390,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SHT_SENSOR_TO_UPDATE]);
 
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 23);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Sht::NAME,
             self::SHT_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],
@@ -428,7 +428,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         $tempCurrentReadingUpdateMessage = new TemperatureCurrentReadingUpdateRequestDTO(Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 10);
 
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Dallas::NAME,
             self::DALLAS_SENSOR_TO_UPDATE,
             [$tempCurrentReadingUpdateMessage],
@@ -455,7 +455,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::DALLAS_SENSOR_TO_UPDATE]);
 
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Dallas::NAME,
             self::DALLAS_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],
@@ -482,7 +482,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::BMP_SENSOR_TO_UPDATE]);
 
         $latitudeCurrentReadingUpdateMessage = new LatitudeCurrentReadingUpdateRequestDTO(Latitude::HIGH_READING - 20);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Bmp::NAME,
             self::BMP_SENSOR_TO_UPDATE,
             [$latitudeCurrentReadingUpdateMessage],
@@ -511,7 +511,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $tempCurrentReadingUpdateMessage = new TemperatureCurrentReadingUpdateRequestDTO(Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 10);
         $latitudeCurrentReadingUpdateMessage = new LatitudeCurrentReadingUpdateRequestDTO(Latitude::HIGH_READING - 20);
 
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Bmp::NAME,
             self::BMP_SENSOR_TO_UPDATE,
             [$humidCurrentReadingUpdateMessage, $tempCurrentReadingUpdateMessage, $latitudeCurrentReadingUpdateMessage],
@@ -553,7 +553,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::BMP_SENSOR_TO_UPDATE]);
 
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 22);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             Bmp::NAME,
             self::BMP_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],
@@ -595,7 +595,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_MOTION_SENSOR_TO_UPDATE]);
 
         $motionCurrentReadingUpdateMessage = new BoolCurrentReadingUpdateRequestDTO(false, Motion::READING_TYPE);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             GenericMotion::NAME,
             self::GENERIC_MOTION_SENSOR_TO_UPDATE,
             [$motionCurrentReadingUpdateMessage],
@@ -619,7 +619,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_MOTION_SENSOR_TO_UPDATE]);
 
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 22);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             GenericMotion::NAME,
             self::GENERIC_MOTION_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],
@@ -644,7 +644,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_RELAY_SENSOR_TO_UPDATE]);
 
         $relayCurrentReadingUpdateMessage = new BoolCurrentReadingUpdateRequestDTO(false, Relay::READING_TYPE);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             GenericRelay::NAME,
             self::GENERIC_RELAY_SENSOR_TO_UPDATE,
             [$relayCurrentReadingUpdateMessage],
@@ -668,7 +668,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::GENERIC_RELAY_SENSOR_TO_UPDATE]);
 
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 22);
-        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingMessageDTO(
+        $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
             GenericRelay::NAME,
             self::GENERIC_RELAY_SENSOR_TO_UPDATE,
             [$analogCurrentReadingUpdateMessage],

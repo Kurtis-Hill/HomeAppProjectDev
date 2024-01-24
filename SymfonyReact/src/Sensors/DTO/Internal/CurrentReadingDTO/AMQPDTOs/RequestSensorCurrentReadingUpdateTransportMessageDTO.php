@@ -6,7 +6,7 @@ use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
-readonly class RequestSensorCurrentReadingUpdateMessageDTO
+readonly class RequestSensorCurrentReadingUpdateTransportMessageDTO
 {
     public function __construct(
         private int $sensorID,
