@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 readonly abstract class AbstractBoolResponseDTO
 {
     public function __construct(
-        protected SensorResponseDTO $sensor,
+        protected ?SensorResponseDTO $sensor,
         protected int $baseReadingTypeID,
         protected int $boolID,
         protected bool $currentReading,
@@ -41,7 +41,7 @@ readonly abstract class AbstractBoolResponseDTO
 //        RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getSensor(): SensorResponseDTO
+    public function getSensor(): ?SensorResponseDTO
     {
         return $this->sensor;
     }

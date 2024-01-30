@@ -4,9 +4,7 @@
 namespace App\Common\API\Traits;
 
 use App\Common\API\HTTPStatusCodes;
-use App\Devices\Controller\GetDeviceController;
 use Doctrine\Common\Annotations\AnnotationReader;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
@@ -16,8 +14,9 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -340,19 +339,22 @@ trait HomeAppAPITrait
      */
     public function normalizeResponse(mixed $data, array $groups = []): mixed
     {
+        $context[AbstractNormalizer::CIRCULAR_REFERENCE_LIMIT] = 10;
+
         if (!empty($groups)) {
             $annotationClassMetadataFactory = new ClassMetadataFactory(
-                new AnnotationLoader(
+                new AttributeLoader(
                     new AnnotationReader()
                 )
             );
 
-            $context = ['groups' => $groups];
+            $context['groups'] = $groups;
         }
 
         $normalizer = [new ObjectNormalizer($annotationClassMetadataFactory ?? null)];
         $normalizer = new Serializer($normalizer);
 
+//        dd($context);
         return $normalizer->normalize($data, null, $context ?? []);
     }
 

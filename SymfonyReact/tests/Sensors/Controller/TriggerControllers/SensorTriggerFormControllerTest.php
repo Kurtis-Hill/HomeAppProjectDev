@@ -81,9 +81,11 @@ class SensorTriggerFormControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
         );
 
-        dd($this->client->getResponse()->getContent());
+//        dd($this->client->getResponse()->getContent());
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        dd($responseData);
+
+        
+//        dd($responseData);
     }
 
     public function test_relay_sensors_user_should_not_see_dont_appear(): void

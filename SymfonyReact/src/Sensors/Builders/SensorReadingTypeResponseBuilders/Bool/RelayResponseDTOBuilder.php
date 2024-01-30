@@ -31,5 +31,4 @@ class RelayResponseDTOBuilder implements SensorResponseDTOBuilderInterface
             expectedReading: $readingTypeObject->getExpectedReading(),
         );
     }
-
 }

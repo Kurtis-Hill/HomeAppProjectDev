@@ -8,6 +8,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Builders\Operator\OperatorResponseDTOBuilder;
 use App\Common\Repository\OperatorRepository;
 use App\Common\Repository\TriggerTypeRepository;
+use App\Common\Services\RequestTypeEnum;
 use App\Sensors\Builders\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Bool\RelayResponseDTOBuilder;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
@@ -47,7 +48,7 @@ class SensorTriggerFormController extends AbstractController
         $operatorDTOS = array_map(static function ($operator) {
             return OperatorResponseDTOBuilder::buildOperatorResponseDTO($operator);
         }, $allOperators);
-
+//dd($operatorDTOS);
         $allTriggers = $triggerTypeRepository->findAll();
         $triggerTypeDTOS = array_map(static function ($trigger) {
             return TriggerTypeResponseBuilder::buildTriggerTypeResponseDTO($trigger);
@@ -66,9 +67,8 @@ class SensorTriggerFormController extends AbstractController
 
         $relaysUserCanTrigger = $relayRepository->findReadingTypeUserHasAccessTo($userGroupsFinder->getGroupIDs($user));
         foreach ($relaysUserCanTrigger as $relay) {
-            $sensorsToChooseFrom[] = $relayResponseDTOBuilder->buildSensorReadingTypeResponseDTO($relay);
+            $relaysUserCanTrigger[] = $relayResponseDTOBuilder->buildSensorReadingTypeResponseDTO($relay);
         }
-
         $triggerFormEncapsulationDTO = new TriggerFormEncapsulationDTO(
             $operatorDTOS,
             $triggerTypeDTOS,
@@ -77,9 +77,8 @@ class SensorTriggerFormController extends AbstractController
         );
 
         try {
-            $normalizedResponse = $this->normalizeResponse($triggerFormEncapsulationDTO);
+            $normalizedResponse = $this->normalizeResponse($triggerFormEncapsulationDTO, [RequestTypeEnum::FULL->value]);
         } catch (ExceptionInterface $exception) {
-            dD($exception->getMessage());
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }
 
