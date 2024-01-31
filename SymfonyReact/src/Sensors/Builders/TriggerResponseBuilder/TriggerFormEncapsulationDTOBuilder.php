@@ -13,10 +13,10 @@ class TriggerFormEncapsulationDTOBuilder
         array $sensorDTOs,
     ): TriggerFormEncapsulationDTO {
         return new TriggerFormEncapsulationDTO(
-            operatorDTOs: $operatorDTOs,
-            triggerTypeDTOs: $triggerTypeDTOs,
-            relayDTOs: $relayDTOs,
-            sensorDTOs: $sensorDTOs,
+            operators: $operatorDTOs,
+            triggerTypes: $triggerTypeDTOs,
+            relays: $relayDTOs,
+            sensors: $sensorDTOs,
         );
     }
 }

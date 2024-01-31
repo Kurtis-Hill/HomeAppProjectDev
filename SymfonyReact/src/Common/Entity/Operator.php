@@ -27,6 +27,15 @@ class Operator
 
     public const OPERATOR_LESS_THAN = '<';
 
+    public const ALL_OPERATORS = [
+        self::OPERATOR_EQUAL,
+        self::OPERATOR_NOT_EQUAL,
+        self::OPERATOR_GREATER_THAN_OR_EQUAL,
+        self::OPERATOR_LESS_THAN_OR_EQUAL,
+        self::OPERATOR_GREATER_THAN,
+        self::OPERATOR_LESS_THAN,
+    ];
+
     #[
         ORM\Column(name: "operatorID", type: "integer", nullable: false),
         ORM\Id,

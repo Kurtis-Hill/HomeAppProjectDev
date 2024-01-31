@@ -20,7 +20,7 @@ class TriggerType
 
     public const RELAY_DOWN_TRIGGER = 'Relay Down';
 
-    private const TRIGGER_TYPES = [
+    public const ALL_TRIGGER_TYPES = [
         self::EMAIL_TRIGGER,
         self::RELAY_UP_TRIGGER,
         self::RELAY_DOWN_TRIGGER,

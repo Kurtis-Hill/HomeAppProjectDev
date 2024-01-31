@@ -13,13 +13,13 @@ readonly class TriggerFormEncapsulationDTO
 {
     public function __construct(
         #[ArrayShape([OperatorResponseDTO::class])]
-        private array $operatorDTOs,
+        private array $operators,
         #[ArrayShape([TriggerTypeResponseDTO::class])]
-        private array $triggerTypeDTOs,
+        private array $triggerTypes,
         #[ArrayShape([RelayResponseDTO::class])]
-        private array $relayDTOs,
+        private array $relays,
         #[ArrayShape([SensorResponseDTO::class])]
-        private array $sensorDTOs,
+        private array $sensors,
     ) {
     }
 
@@ -32,9 +32,9 @@ readonly class TriggerFormEncapsulationDTO
             RequestTypeEnum::SENSITIVE_ONLY->value,
         ])
     ]
-    public function getOperatorDTOs(): array
+    public function getOperators(): array
     {
-        return $this->operatorDTOs;
+        return $this->operators;
     }
 
     #[
@@ -46,9 +46,9 @@ readonly class TriggerFormEncapsulationDTO
             RequestTypeEnum::SENSITIVE_ONLY->value,
         ])
     ]
-    public function getTriggerTypeDTOs(): array
+    public function getTriggerTypes(): array
     {
-        return $this->triggerTypeDTOs;
+        return $this->triggerTypes;
     }
 
     #[
@@ -60,9 +60,9 @@ readonly class TriggerFormEncapsulationDTO
             RequestTypeEnum::SENSITIVE_ONLY->value,
         ])
     ]
-    public function getRelayDTOs(): array
+    public function getRelays(): array
     {
-        return $this->relayDTOs;
+        return $this->relays;
     }
 
     #[
@@ -74,8 +74,8 @@ readonly class TriggerFormEncapsulationDTO
             RequestTypeEnum::SENSITIVE_ONLY->value,
         ])
     ]
-    public function getSensorDTOs(): array
+    public function getSensors(): array
     {
-        return $this->sensorDTOs;
+        return $this->sensors;
     }
 }

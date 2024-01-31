@@ -66,13 +66,14 @@ class SensorTriggerFormController extends AbstractController
         }
 
         $relaysUserCanTrigger = $relayRepository->findReadingTypeUserHasAccessTo($userGroupsFinder->getGroupIDs($user));
+        $relaysUserCanTriggerDTOs = [];
         foreach ($relaysUserCanTrigger as $relay) {
-            $relaysUserCanTrigger[] = $relayResponseDTOBuilder->buildSensorReadingTypeResponseDTO($relay);
+            $relaysUserCanTriggerDTOs[] = $relayResponseDTOBuilder->buildSensorReadingTypeResponseDTO($relay);
         }
         $triggerFormEncapsulationDTO = new TriggerFormEncapsulationDTO(
             $operatorDTOS,
             $triggerTypeDTOS,
-            $relaysUserCanTrigger,
+            $relaysUserCanTriggerDTOs,
             $sensorsToChooseFrom,
         );
 
