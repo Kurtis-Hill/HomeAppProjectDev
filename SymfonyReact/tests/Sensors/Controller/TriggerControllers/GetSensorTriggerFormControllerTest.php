@@ -22,7 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SensorTriggerFormControllerTest extends WebTestCase
+class GetSensorTriggerFormControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 

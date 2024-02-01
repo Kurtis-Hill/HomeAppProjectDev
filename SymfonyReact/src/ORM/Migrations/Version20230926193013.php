@@ -59,7 +59,7 @@ final class Version20230926193013 extends AbstractMigration
             'CREATE TABLE `sensortrigger` 
                 (
                     `sensorTriggerID` INT NOT NULL AUTO_INCREMENT,
-                    `baseReadingTypeThatTriggers` INT NOT NULL,
+                    `baseReadingTypeThatTriggers` INT NULL,
                     `baseReadingTypeToTriggerID` INT NOT NULL,
                     `triggerTypeID` INT NOT NULL,
                     `valueThatTriggers` VARCHAR(255) NOT NULL,                

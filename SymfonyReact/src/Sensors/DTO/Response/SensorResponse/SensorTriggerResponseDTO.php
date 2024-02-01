@@ -1,0 +1,162 @@
+<?php
+
+namespace App\Sensors\DTO\Response\SensorResponse;
+
+use App\Common\DTO\Response\OperatorResponseDTO;
+use App\Common\Services\RequestTypeEnum;
+use App\Sensors\DTO\Response\TriggerTypeResponse\TriggerTypeResponseDTO;
+use App\Sensors\Entity\Sensor;
+use App\User\DTO\Response\UserDTOs\UserResponseDTO;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+readonly class SensorTriggerResponseDTO
+{
+    public function __construct(
+        private int $sensorTriggerID,
+        private OperatorResponseDTO $operator,
+        private TriggerTypeResponseDTO $triggerType,
+        private bool|float $valueThatTriggers,
+        private UserResponseDTO $createdBy,
+        private string $startTime,
+        private string $endTime,
+        private array $days,
+        private string $createdAt,
+        private string $updatedAt,
+        private ?Sensor $baseReadingTypeThatTriggersID,
+        private ?Sensor $baseReadingTypeThatIsTriggeredID,
+
+    ) {
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getSensorTriggerID(): int
+    {
+        return $this->sensorTriggerID;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getOperator(): OperatorResponseDTO
+    {
+        return $this->operator;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getTriggerType(): TriggerTypeResponseDTO
+    {
+        return $this->triggerType;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getValueThatTriggers(): bool|float
+    {
+        return $this->valueThatTriggers;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+//        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+//        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCreatedBy(): UserResponseDTO
+    {
+        return $this->createdBy;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getStartTime(): string
+    {
+        return $this->startTime;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getEndTime(): string
+    {
+        return $this->endTime;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getDays(): array
+    {
+        return $this->days;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getCreatedAt(): string
+    {
+        return $this->createdAt;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getUpdatedAt(): string
+    {
+        return $this->updatedAt;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getBaseReadingTypeThatTriggersID(): ?Sensor
+    {
+        return $this->baseReadingTypeThatTriggersID;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getBaseReadingTypeThatIsTriggeredID(): ?Sensor
+    {
+        return $this->baseReadingTypeThatIsTriggeredID;
+    }
+}

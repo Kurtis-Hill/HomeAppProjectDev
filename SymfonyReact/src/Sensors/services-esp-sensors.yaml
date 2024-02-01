@@ -148,8 +148,12 @@ services:
     arguments:
       $index: '@elastica.constrecord_analog_index'
 
-  App\Sensors\SensorServices\SensorTriggerProcessor\TriggerHandlerInterface:
-    alias: 'App\Sensors\SensorServices\SensorTriggerProcessor\TriggerHandler'
+  App\Sensors\SensorServices\SensorTriggerProcessor\ReadingTriggerHandlerInterface:
+    alias: 'App\Sensors\SensorServices\SensorTriggerProcessor\ReadingTriggerHandler'
+
+  App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface:
+    alias: 'App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface'
+
 ######################## End Of Sensors ######################################################################################
 ######################## Commands ######################################################################################
   App\Sensors\Command\Elasticsearch\IndicesCreation\ElasticCreateConstRecordIndicesCommand:

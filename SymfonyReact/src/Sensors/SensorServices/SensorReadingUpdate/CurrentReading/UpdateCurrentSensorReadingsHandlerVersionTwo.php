@@ -12,7 +12,7 @@ use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface;
-use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\TriggerHandlerInterface;
+use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\ReadingTriggerHandlerInterface;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
@@ -28,7 +28,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
         private SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory,
         private SensorOutOfBoundsHandlerInterface $outOfBoundsSensorService,
         private SensorConstantlyRecordHandlerInterface $constantlyRecordService,
-        private TriggerHandlerInterface $triggerHandler,
+        private ReadingTriggerHandlerInterface $triggerHandler,
         private SensorRepositoryInterface $sensorRepository,
         private LoggerInterface $elasticLogger,
     ) {}

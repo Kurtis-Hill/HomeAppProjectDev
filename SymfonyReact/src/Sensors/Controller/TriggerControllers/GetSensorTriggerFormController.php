@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor-trigger/form')]
-class SensorTriggerFormController extends AbstractController
+class GetSensorTriggerFormController extends AbstractController
 {
     use HomeAppAPITrait;
 
@@ -48,7 +48,7 @@ class SensorTriggerFormController extends AbstractController
         $operatorDTOS = array_map(static function ($operator) {
             return OperatorResponseDTOBuilder::buildOperatorResponseDTO($operator);
         }, $allOperators);
-//dd($operatorDTOS);
+
         $allTriggers = $triggerTypeRepository->findAll();
         $triggerTypeDTOS = array_map(static function ($trigger) {
             return TriggerTypeResponseBuilder::buildTriggerTypeResponseDTO($trigger);
@@ -62,7 +62,7 @@ class SensorTriggerFormController extends AbstractController
         $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams);
         $sensorsToChooseFrom = [];
         foreach ($usersSensors as $sensor) {
-            $sensorsToChooseFrom[] = $sensorResponseDTOBuilder->buildSensorResponseDTO($sensor);
+            $sensorsToChooseFrom[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [RequestTypeEnum::FULL->value]);
         }
 
         $relaysUserCanTrigger = $relayRepository->findReadingTypeUserHasAccessTo($userGroupsFinder->getGroupIDs($user));
@@ -78,15 +78,11 @@ class SensorTriggerFormController extends AbstractController
         );
 
         try {
-            $normalizedResponse = $this->normalizeResponse($triggerFormEncapsulationDTO, [RequestTypeEnum::FULL->value]);
-        } catch (ExceptionInterface $exception) {
+            $normalizedResponse = $this->normalizeResponse($triggerFormEncapsulationDTO);
+        } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
-    }
-
-    public function handleFormSubmission(Request $request): JsonResponse
-    {
     }
 }

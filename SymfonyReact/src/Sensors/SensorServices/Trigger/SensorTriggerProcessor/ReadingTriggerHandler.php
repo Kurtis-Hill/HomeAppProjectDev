@@ -10,7 +10,7 @@ use App\Sensors\SensorServices\Trigger\TriggerChecker\SensorReadingTriggerChecke
 use Exception;
 use Psr\Log\LoggerInterface;
 
-readonly class TriggerHandler implements TriggerHandlerInterface
+readonly class ReadingTriggerHandler implements ReadingTriggerHandlerInterface
 {
     public function __construct(
         private SensorReadingTriggerCheckerInterface $sensorReadingTriggerChecker,

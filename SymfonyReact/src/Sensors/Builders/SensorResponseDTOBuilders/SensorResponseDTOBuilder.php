@@ -36,7 +36,7 @@ class SensorResponseDTOBuilder
         $this->security = $security;
     }
 
-    public function buildFullSensorResponseDTOWithPermissions(Sensor $sensor, array $groups): SensorResponseDTO
+    public function buildFullSensorResponseDTOWithPermissions(Sensor $sensor, array $groups = []): SensorResponseDTO
     {
         if (
             !empty($groups)

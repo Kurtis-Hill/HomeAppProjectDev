@@ -35,6 +35,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 ]
 class SensorTrigger
 {
+    public const DAYS = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ];
+
     #[
         ORM\Column(name: "sensorTriggerID", type: "integer", nullable: false),
         ORM\Id,
@@ -46,7 +56,7 @@ class SensorTrigger
         ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
         ORM\JoinColumn(name: "baseReadingTypeThatTriggers", referencedColumnName: "baseReadingTypeID"),
     ]
-    private BaseSensorReadingType $baseReadingTypeThatTriggers;
+    private ?BaseSensorReadingType $baseReadingTypeThatTriggers;
 
     #[
         ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
@@ -168,12 +178,12 @@ class SensorTrigger
         return $this->sensorTriggerID;
     }
 
-    public function getBaseReadingTypeThatTriggers(): BaseSensorReadingType
+    public function getBaseReadingTypeThatTriggers(): ?BaseSensorReadingType
     {
         return $this->baseReadingTypeThatTriggers;
     }
 
-    public function setBaseReadingTypeThatTriggers(BaseSensorReadingType $baseReadingTypeThatTriggers): void
+    public function setBaseReadingTypeThatTriggers(?BaseSensorReadingType $baseReadingTypeThatTriggers): void
     {
         $this->baseReadingTypeThatTriggers = $baseReadingTypeThatTriggers;
     }

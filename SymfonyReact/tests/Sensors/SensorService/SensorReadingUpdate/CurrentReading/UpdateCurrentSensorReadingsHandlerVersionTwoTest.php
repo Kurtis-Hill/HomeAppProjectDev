@@ -32,7 +32,7 @@ use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandlerVersionTwo;
-use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\TriggerHandlerInterface;
+use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\ReadingTriggerHandlerInterface;
 use App\Sensors\SensorServices\Trigger\TriggerChecker\SensorReadingTriggerCheckerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -85,7 +85,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
     ): void {
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
-        $triggerHandler = $this->createMock(TriggerHandlerInterface::class);
+        $triggerHandler = $this->createMock(ReadingTriggerHandlerInterface::class);
 
         $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
         $constRecordService->expects(self::never())->method('processConstRecord');
@@ -270,7 +270,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
     {
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
-        $triggerHandler = $this->createMock(TriggerHandlerInterface::class);
+        $triggerHandler = $this->createMock(ReadingTriggerHandlerInterface::class);
 
         $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
         $constRecordService->expects(self::never())->method('processConstRecord');
@@ -315,7 +315,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $constRecordService->expects(self::never())->method('processConstRecord');
 
-        $triggerHandler = $this->createMock(TriggerHandlerInterface::class);
+        $triggerHandler = $this->createMock(ReadingTriggerHandlerInterface::class);
         $triggerHandler->expects(self::never())->method('handleTrigger');
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -376,7 +376,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
         $constRecordService = $this->createMock(SensorConstantlyRecordHandlerInterface::class);
         $outOfBoundsService = $this->createMock(SensorOutOfBoundsHandlerInterface::class);
-        $triggerHandler = $this->createMock(TriggerHandlerInterface::class);
+        $triggerHandler = $this->createMock(ReadingTriggerHandlerInterface::class);
 
         $sensorReadingTypes = array_merge(
             $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($firstSensor->getSensorID()),

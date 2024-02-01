@@ -26,6 +26,8 @@ class SensorVoter extends Voter
 
     public const GET_SENSOR = 'get-single-sensor';
 
+    public const CAN_CREATE_TRIGGER = 'can-create-trigger';
+
     /**
      * @param string $attribute
      * @param mixed $subject
@@ -40,6 +42,7 @@ class SensorVoter extends Voter
             self::DELETE_SENSOR,
             self::UPDATE_SENSOR,
             self::GET_SENSOR,
+            self::CAN_CREATE_TRIGGER,
         ])) {
             return false;
         }
@@ -67,8 +70,26 @@ class SensorVoter extends Voter
             self::DELETE_SENSOR => $this->canDeleteSensor($user, $subject),
             self::UPDATE_SENSOR => $this->canUpdateSensor($user, $subject),
             self::GET_SENSOR => $this->canGetSensor($user, $subject),
+            self::CAN_CREATE_TRIGGER => $this->canCreateTriggerForSensor($user, $subject),
             default => false
         };
+    }
+
+    private function canCreateTriggerForSensor(UserInterface $user, Sensor $sensor): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
+            return false;
+        }
+
+        return true;
     }
 
     private function canAddNewSensor(UserInterface $user, NewSensorDTO $newSensorDTO): bool

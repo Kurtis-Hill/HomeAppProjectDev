@@ -51,14 +51,6 @@ class AddCardController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
-//        try {
-//            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-//                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-//            );
-//        } catch (ValidatorProcessorException $e) {
-//            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-//        }
-
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();

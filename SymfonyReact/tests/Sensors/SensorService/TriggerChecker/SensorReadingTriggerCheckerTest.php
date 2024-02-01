@@ -64,7 +64,6 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
 
         self::assertNotNull($sensorReadingType);
 
-        $boolReadingBaseSensorRepository = $this->diContainer->get(BoolReadingBaseSensorRepository::class);
         $triggerDay = false;
         foreach ($sensorTriggerData['days'] as $day => $value) {
             if ($value === true) {
@@ -82,7 +81,8 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
             default => throw new \Exception('Operator not found'),
         };
         $sensorReadingType->setCurrentReading($currentValue);
-        $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
+
+        $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository);
         $result = $sut->checkSensorForTriggers(
             $sensorReadingType,
             $triggerDay,
@@ -262,7 +262,6 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
 
         self::assertNotNull($sensorReadingType);
 
-        $boolReadingBaseSensorRepository = $this->diContainer->get(BoolReadingBaseSensorRepository::class);
         $triggerDay = false;
         foreach ($sensorTriggerData['days'] as $day => $value) {
             if ($value === true) {
@@ -283,7 +282,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         };
 
         $sensorReadingType->setCurrentReading($currentValue);
-        $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
+        $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository);
         $result = $sut->checkSensorForTriggers(
             $sensorReadingType,
             $triggerDay,

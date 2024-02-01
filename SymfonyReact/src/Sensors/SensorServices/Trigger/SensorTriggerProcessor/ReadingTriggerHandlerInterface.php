@@ -4,7 +4,7 @@
 
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 
-interface TriggerHandlerInterface
+interface ReadingTriggerHandlerInterface
 {
     public function handleTrigger(AllSensorReadingTypeInterface $readingType): void;
 }

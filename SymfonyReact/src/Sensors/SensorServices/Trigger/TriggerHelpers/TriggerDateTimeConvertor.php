@@ -8,6 +8,7 @@ class TriggerDateTimeConvertor
     {
         $currentTime = $time ?? date('H:i');
         $currentTime = str_replace([':', ' '], '', $currentTime);
+
         return (int)$currentTime;
 
     }
@@ -15,6 +16,7 @@ class TriggerDateTimeConvertor
     public static function prepareDaysForComparison(?string $day): string
     {
         $currentDay = $day ?? date('l');
+
         return lcfirst($currentDay);
     }
 }

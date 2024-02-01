@@ -172,6 +172,29 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
         'override' => true,
     ];
 
+    public const SENSOR_TRIGGER_8 = [
+        'baseReadingTypeThatTriggers' => null,
+        'baseReadingTypeToTriggerID' => SensorFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
+        'sensorToTriggerID' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME,
+        'valueThatTriggers' => false,
+        'startTime' => 960,
+        'endTime' => 1050,
+        'days' => [
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => false,
+            'sunday' => false,
+        ],
+        'triggerType' => TriggerTypeFixtures::RELAY_UP,
+        'operatorID' => OperatorsFixtures::LESS_THAN_OR_EQUAL_TO,
+        'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
+        'createdAt' => '2021-09-26 19:30:00',
+        'override' => false,
+    ];
+
     public const SENSOR_TRIGGERS = [
         self::SENSOR_TRIGGER_1,
         self::SENSOR_TRIGGER_2,
@@ -180,6 +203,7 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
         self::SENSOR_TRIGGER_5,
         self::SENSOR_TRIGGER_6,
         self::SENSOR_TRIGGER_7,
+        self::SENSOR_TRIGGER_8,
     ];
 
     public function getOrder(): int
@@ -191,7 +215,7 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
     {
         foreach (self::SENSOR_TRIGGERS as $sensorTrigger) {
             $sensorTriggerEntity = new SensorTrigger();
-            $sensorTriggerEntity->setBaseReadingTypeThatTriggers($this->getReference($sensorTrigger['baseReadingTypeThatTriggers']));
+            $sensorTriggerEntity->setBaseReadingTypeThatTriggers($sensorTrigger['baseReadingTypeThatTriggers'] !== null ? $this->getReference($sensorTrigger['baseReadingTypeThatTriggers']) : null);
             $sensorTriggerEntity->setBaseReadingTypeToTriggerID($this->getReference($sensorTrigger['baseReadingTypeToTriggerID']));
             $sensorTriggerEntity->setTriggerType($this->getReference($sensorTrigger['triggerType']));
             $sensorTriggerEntity->setValueThatTriggers(SensorTriggerUserInputToStringConvertor::convertMixedToString($sensorTrigger['valueThatTriggers']));
