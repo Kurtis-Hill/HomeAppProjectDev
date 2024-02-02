@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Builders\TriggerResponseBuilder;
 
-use App\Sensors\DTO\Response\TriggerTypeResponse\TriggerFormEncapsulationDTO;
+use App\Sensors\DTO\Response\Trigger\TriggerTypeResponse\TriggerFormEncapsulationDTO;
 
 class TriggerFormEncapsulationDTOBuilder
 {

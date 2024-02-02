@@ -13,7 +13,7 @@ use App\Sensors\Builders\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Bool\RelayResponseDTOBuilder;
 use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Builders\TriggerResponseBuilder\TriggerTypeResponseBuilder;
-use App\Sensors\DTO\Response\TriggerTypeResponse\TriggerFormEncapsulationDTO;
+use App\Sensors\DTO\Response\Trigger\TriggerTypeResponse\TriggerFormEncapsulationDTO;
 use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\User\Entity\User;

@@ -4,6 +4,7 @@ namespace App\Sensors\SensorServices;
 
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Repository\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
 use App\Sensors\Repository\SensorReadingType\ORM\StandardReadingTypeRepository;
 use JetBrains\PhpStorm\ArrayShape;
@@ -32,5 +33,15 @@ class SensorReadingTypeFetcher
         $standardTypeSensors = $this->standardReadingTypeRepository->findBySensorID($sensor->getSensorID());
 
         return array_merge($boolTypeSensors, $standardTypeSensors);
+    }
+
+    public function fetchReadingTypeBasedOnBaseReadingType(int $baseReadingType): AllSensorReadingTypeInterface
+    {
+        $readingType = $this->standardReadingTypeRepository->findOneBy(['baseReadingType' => $baseReadingType]);
+        if ($readingType === null) {
+            $readingType = $this->boolReadingBaseSensorRepository->findOneBy(['baseReadingType' => $baseReadingType]);
+        }
+
+        return $readingType;
     }
 }

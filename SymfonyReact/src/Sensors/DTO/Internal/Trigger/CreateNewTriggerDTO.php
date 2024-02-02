@@ -16,7 +16,6 @@ readonly class CreateNewTriggerDTO
         private Operator $operator,
         private TriggerType $triggerType,
         private float $valueThatTriggers,
-        private array $days,
         private bool $monday,
         private bool $tuesday,
         private bool $wednesday,
@@ -51,11 +50,6 @@ readonly class CreateNewTriggerDTO
     public function getBaseReadingTypeThatIsTriggered(): ?BaseSensorReadingType
     {
         return $this->baseReadingTypeThatIsTriggered;
-    }
-
-    public function getDays(): array
-    {
-        return $this->days;
     }
 
     public function getValueThatTriggers(): float
@@ -103,7 +97,7 @@ readonly class CreateNewTriggerDTO
         return $this->sunday;
     }
 
-    public function getSensorTrigger(): SensorTrigger
+    public function getNewSensorTrigger(): SensorTrigger
     {
         return $this->sensorTrigger;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Response\TriggerTypeResponse;
+namespace App\Sensors\DTO\Response\Trigger\TriggerTypeResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use Symfony\Component\Serializer\Attribute\Groups;

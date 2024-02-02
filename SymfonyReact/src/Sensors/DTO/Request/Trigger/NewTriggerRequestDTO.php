@@ -5,6 +5,7 @@ namespace App\Sensors\DTO\Request\Trigger;
 use App\Sensors\Entity\SensorTrigger;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class NewTriggerRequestDTO
 {
@@ -121,5 +122,25 @@ class NewTriggerRequestDTO
     public function setStartTime(mixed $startTime): void
     {
         $this->startTime = $startTime;
+    }
+
+    public function getEndTime(): mixed
+    {
+        return $this->endTime;
+    }
+
+    public function setEndTime(mixed $endTime): void
+    {
+        $this->endTime = $endTime;
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        if ($this->getEndTime() < $this->getStartTime()) {
+            $context
+                ->buildViolation('Start time cannot be greater than end time')
+                ->addViolation();
+        }
     }
 }

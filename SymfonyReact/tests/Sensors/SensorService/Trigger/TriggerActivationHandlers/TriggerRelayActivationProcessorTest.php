@@ -71,7 +71,7 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
         $relaySensor->setCurrentReading(false);
 
         $sensorTrigger = new SensorTrigger();
-        $sensorTrigger->setBaseReadingTypeToTriggerID($relaySensor->getBaseReadingType());
+        $sensorTrigger->setBaseReadingTypeToTrigger($relaySensor->getBaseReadingType());
         $sensorTrigger->setTriggerType($this->entityManager->getRepository(TriggerType::class)->findOneBy(['triggerTypeName' => TriggerType::RELAY_UP_TRIGGER]));
 
         $updateSensorCurrentReadingDTOBuilder = $this->diContainer->get(UpdateSensorCurrentReadingTransportDTOBuilder::class);

@@ -12,6 +12,7 @@ use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[
     ORM\Entity(repositoryClass: SensorTriggerRepository::class),
@@ -62,7 +63,7 @@ class SensorTrigger
         ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
         ORM\JoinColumn(name: "baseReadingTypeToTriggerID", referencedColumnName: "baseReadingTypeID"),
     ]
-    private BaseSensorReadingType $baseReadingTypeToTriggerID;
+    private ?BaseSensorReadingType $baseReadingTypeToTriggerID;
 
     #[
         ORM\Column(name: "valueThatTriggers", type: "string", length: 255, nullable: false),
@@ -193,7 +194,7 @@ class SensorTrigger
         return $this->baseReadingTypeToTriggerID;
     }
 
-    public function setBaseReadingTypeToTriggerID(BaseSensorReadingType $baseReadingTypeToTriggerID): void
+    public function setBaseReadingTypeToTrigger(BaseSensorReadingType $baseReadingTypeToTriggerID): void
     {
         $this->baseReadingTypeToTriggerID = $baseReadingTypeToTriggerID;
     }
@@ -356,5 +357,15 @@ class SensorTrigger
     public function setOverride(bool $override): void
     {
         $this->override = $override;
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        if ($this->getEndTime() < $this->getStartTime()) {
+            $context
+                ->buildViolation('Start time cannot be greater than end time')
+                ->addViolation();
+        }
     }
 }

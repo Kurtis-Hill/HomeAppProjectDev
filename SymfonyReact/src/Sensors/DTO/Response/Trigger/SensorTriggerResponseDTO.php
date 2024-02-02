@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Sensors\DTO\Response\SensorResponse;
+namespace App\Sensors\DTO\Response\Trigger;
 
 use App\Common\DTO\Response\OperatorResponseDTO;
 use App\Common\Services\RequestTypeEnum;
-use App\Sensors\DTO\Response\TriggerTypeResponse\TriggerTypeResponseDTO;
+use App\Sensors\DTO\Response\Trigger\TriggerTypeResponse\TriggerTypeResponseDTO;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -19,11 +20,17 @@ readonly class SensorTriggerResponseDTO
         private UserResponseDTO $createdBy,
         private string $startTime,
         private string $endTime,
-        private array $days,
         private string $createdAt,
         private string $updatedAt,
-        private ?Sensor $baseReadingTypeThatTriggersID,
-        private ?Sensor $baseReadingTypeThatIsTriggeredID,
+        private bool $monday,
+        private bool $tuesday,
+        private bool $wednesday,
+        private bool $thursday,
+        private bool $friday,
+        private bool $saturday,
+        private bool $sunday,
+        private ?BaseSensorReadingType $baseReadingTypeThatTriggersID,
+        private ?BaseSensorReadingType $baseReadingTypeThatIsTriggeredID,
 
     ) {
     }
@@ -158,5 +165,82 @@ readonly class SensorTriggerResponseDTO
     public function getBaseReadingTypeThatIsTriggeredID(): ?Sensor
     {
         return $this->baseReadingTypeThatIsTriggeredID;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getMonday(): bool
+    {
+        return $this->monday;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getTuesday(): bool
+    {
+        return $this->tuesday;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getWednesday(): bool
+    {
+        return $this->wednesday;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getThursday(): bool
+    {
+        return $this->thursday;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getFriday(): bool
+    {
+        return $this->friday;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getSaturday(): bool
+    {
+        return $this->saturday;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getSunday(): bool
+    {
+        return $this->sunday;
     }
 }

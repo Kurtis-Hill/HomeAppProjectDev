@@ -5,6 +5,7 @@ namespace App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\Standard\StandardReadingTypeResponseInterface;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeObjectNotFoundException;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeResponseFactory;
@@ -42,5 +43,12 @@ class SensorReadingTypeDTOResponseBuilder
         }
 
         return $sensorReadingTypeResponseDTOs;
+    }
+
+    public function buildSensorReadingTypeResponseDTO(AllSensorReadingTypeInterface $sensorReadingType): AllSensorReadingTypeResponseDTOInterface
+    {
+        $sensorReadingTypeResponseBuilder = $this->sensorReadingTypeResponseFactory->getSensorReadingTypeDTOResponseBuilder($sensorReadingType::getReadingTypeName());
+
+        return $sensorReadingTypeResponseBuilder->buildSensorReadingTypeResponseDTO($sensorReadingType);
     }
 }

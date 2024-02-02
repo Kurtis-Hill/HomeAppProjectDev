@@ -3,7 +3,7 @@
 namespace App\Sensors\Builders\TriggerResponseBuilder;
 
 use App\Common\Entity\TriggerType;
-use App\Sensors\DTO\Response\TriggerTypeResponse\TriggerTypeResponseDTO;
+use App\Sensors\DTO\Response\Trigger\TriggerTypeResponse\TriggerTypeResponseDTO;
 
 class TriggerTypeResponseBuilder
 {

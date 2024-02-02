@@ -60,7 +60,7 @@ final class Version20230926193013 extends AbstractMigration
                 (
                     `sensorTriggerID` INT NOT NULL AUTO_INCREMENT,
                     `baseReadingTypeThatTriggers` INT NULL,
-                    `baseReadingTypeToTriggerID` INT NOT NULL,
+                    `baseReadingTypeToTriggerID` INT NULL,
                     `triggerTypeID` INT NOT NULL,
                     `valueThatTriggers` VARCHAR(255) NOT NULL,                
                     `operatorID` INT NOT NULL,                    

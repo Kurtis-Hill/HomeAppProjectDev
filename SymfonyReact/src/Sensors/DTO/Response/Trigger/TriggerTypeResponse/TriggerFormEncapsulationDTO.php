@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Sensors\DTO\Response\TriggerTypeResponse;
+namespace App\Sensors\DTO\Response\Trigger\TriggerTypeResponse;
 
 use App\Common\DTO\Response\OperatorResponseDTO;
 use App\Common\Services\RequestTypeEnum;

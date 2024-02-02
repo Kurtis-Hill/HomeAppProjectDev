@@ -152,7 +152,7 @@ services:
     alias: 'App\Sensors\SensorServices\SensorTriggerProcessor\ReadingTriggerHandler'
 
   App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface:
-    alias: 'App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface'
+    alias: 'App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandler'
 
 ######################## End Of Sensors ######################################################################################
 ######################## Commands ######################################################################################

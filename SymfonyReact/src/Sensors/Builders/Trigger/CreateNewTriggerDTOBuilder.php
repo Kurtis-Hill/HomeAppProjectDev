@@ -2,9 +2,15 @@
 
 namespace App\Sensors\Builders\Trigger;
 
+use App\Common\Entity\Operator;
+use App\Common\Entity\TriggerType;
 use App\Common\Repository\OperatorRepository;
 use App\Common\Repository\TriggerTypeRepository;
 use App\Sensors\DTO\Internal\Trigger\CreateNewTriggerDTO;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
+use App\Sensors\Exceptions\BaseReadingTypeNotFoundException;
+use App\Sensors\Exceptions\OperatorNotFoundException;
+use App\Sensors\Exceptions\TriggerTypeNotFoundException;
 use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use App\Sensors\SensorServices\Trigger\TriggerHelpers\TriggerDateTimeConvertor;
 use App\User\Entity\User;
@@ -18,7 +24,12 @@ readonly class CreateNewTriggerDTOBuilder
     ) {
     }
 
-    public function buildCreateNewTriggerDTO(
+    /**
+     * @throws OperatorNotFoundException
+     * @throws TriggerTypeNotFoundException
+     * @throws BaseReadingTypeNotFoundException
+     */
+    public function buildCreateNewTriggerDTOFromValues(
         int $operatorID,
         int $triggerTypeID,
         float $valueThatTriggers,
@@ -30,9 +41,48 @@ readonly class CreateNewTriggerDTOBuilder
         ?int $baseReadingTypeThatIsTriggeredID,
     ): CreateNewTriggerDTO {
         $operator = $this->operatorRepository->find($operatorID);
+        if ($operator === null) {
+            throw new OperatorNotFoundException(
+                sprintf(
+                    OperatorNotFoundException::MESSAGE,
+                    $operatorID
+                )
+            );
+        }
+
         $triggerType = $this->triggerTypeRepository->find($triggerTypeID);
-        $baseReadingTypeThatTriggers = $baseReadingTypeThatTriggersID !== null ? $this->baseSensorReadingTypeRepository->find($baseReadingTypeThatTriggersID) : null;
-        $baseReadingTypeThatIsTriggered = $baseReadingTypeThatIsTriggeredID !== null ? $this->baseSensorReadingTypeRepository->find($baseReadingTypeThatIsTriggeredID) : null;
+        if ($triggerType === null) {
+            throw new TriggerTypeNotFoundException(
+                sprintf(
+                    TriggerTypeNotFoundException::MESSAGE,
+                    $triggerTypeID
+                )
+            );
+        }
+
+        if ($baseReadingTypeThatTriggersID !== null) {
+            $baseReadingTypeThatTriggers = $this->baseSensorReadingTypeRepository->find($baseReadingTypeThatTriggersID);
+            if ($baseReadingTypeThatTriggers === null) {
+                throw new BaseReadingTypeNotFoundException(
+                    sprintf(
+                        BaseReadingTypeNotFoundException::MESSAGE,
+                        $baseReadingTypeThatTriggersID
+                    )
+                );
+            }
+        }
+
+        if ($baseReadingTypeThatIsTriggeredID !== null) {
+            $baseReadingTypeThatIsTriggered = $this->baseSensorReadingTypeRepository->find($baseReadingTypeThatIsTriggeredID);
+            if ($baseReadingTypeThatIsTriggered === null) {
+                throw new BaseReadingTypeNotFoundException(
+                    sprintf(
+                        BaseReadingTypeNotFoundException::MESSAGE,
+                        $baseReadingTypeThatIsTriggeredID
+                    )
+                );
+            }
+        }
 
         $monday = false;
         $tuesday = false;
@@ -54,11 +104,10 @@ readonly class CreateNewTriggerDTOBuilder
             };
         }
 
-        return new CreateNewTriggerDTO(
+        return self::buildCreateNewTriggerDTO(
             $operator,
             $triggerType,
             $valueThatTriggers,
-            $days,
             $monday,
             $tuesday,
             $wednesday,
@@ -66,9 +115,47 @@ readonly class CreateNewTriggerDTOBuilder
             $friday,
             $saturday,
             $sunday,
+            $startTime,
+            $endTime,
             $createdBy,
-            $baseReadingTypeThatTriggers,
-            $baseReadingTypeThatIsTriggered,
+            $baseReadingTypeThatTriggers ?? null,
+            $baseReadingTypeThatIsTriggered ?? null,
+        );
+    }
+
+    public static function buildCreateNewTriggerDTO(
+        Operator $operator,
+        TriggerType $triggerType,
+        float $valueThatTriggers,
+        bool $monday,
+        bool $tuesday,
+        bool $wednesday,
+        bool $thursday,
+        bool $friday,
+        bool $saturday,
+        bool $sunday,
+        float $startTime,
+        float $endTime,
+        User $createdBy,
+        ?BaseSensorReadingType $baseReadingTypeThatTriggers,
+        ?BaseSensorReadingType $baseReadingTypeThatIsTriggered,
+    ): CreateNewTriggerDTO {
+        return new CreateNewTriggerDTO(
+            $operator,
+            $triggerType,
+            $valueThatTriggers,
+            $monday,
+            $tuesday,
+            $wednesday,
+            $thursday,
+            $friday,
+            $saturday,
+            $sunday,
+            $startTime,
+            $endTime,
+            $createdBy,
+            $baseReadingTypeThatTriggers ?? null,
+            $baseReadingTypeThatIsTriggered ?? null,
         );
     }
 }

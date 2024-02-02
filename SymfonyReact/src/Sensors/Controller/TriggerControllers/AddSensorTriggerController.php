@@ -7,7 +7,11 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\Trigger\CreateNewTriggerDTOBuilder;
+use App\Sensors\Builders\TriggerResponseBuilder\SensorTriggerResponseDTOBuilder;
 use App\Sensors\DTO\Request\Trigger\NewTriggerRequestDTO;
+use App\Sensors\Exceptions\BaseReadingTypeNotFoundException;
+use App\Sensors\Exceptions\OperatorNotFoundException;
+use App\Sensors\Exceptions\TriggerTypeNotFoundException;
 use App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface;
 use App\Sensors\Voters\SensorVoter;
 use App\User\Entity\User;
@@ -27,11 +31,12 @@ class AddSensorTriggerController extends AbstractController
     use ValidatorProcessorTrait;
 
     #[Route('/add', name: 'create-sensor-trigger', methods: [Request::METHOD_POST])]
-    public function handleFormSubmission(
+    public function handleSensorTriggerFormSubmission(
         Request $request,
         ValidatorInterface $validator,
         CreateNewTriggerDTOBuilder $createNewTriggerDTOBuilder,
         TriggerCreationHandlerInterface $triggerCreationHandler,
+        SensorTriggerResponseDTOBuilder $sensorTriggerResponseDTOBuilder,
     ): JsonResponse {
         $newTriggerRequestDTO = new NewTriggerRequestDTO();
         try {
@@ -56,35 +61,44 @@ class AddSensorTriggerController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse();
         }
 
-        $createNewTriggerDTO = $createNewTriggerDTOBuilder->buildCreateNewTriggerDTO(
-            $newTriggerRequestDTO->getOperator(),
-            $newTriggerRequestDTO->getTriggerType(),
-            $newTriggerRequestDTO->getValueThatTriggers(),
-            $newTriggerRequestDTO->getDays(),
-            $newTriggerRequestDTO->getStartTime(),
-            $newTriggerRequestDTO->getEndTime(),
-            $user,
-            $newTriggerRequestDTO->getBaseReadingTypeThatTriggers(),
-            $newTriggerRequestDTO->getBaseReadingTypeThatIsTriggered(),
-        );
+        try {
+            $createNewTriggerDTO = $createNewTriggerDTOBuilder->buildCreateNewTriggerDTOFromValues(
+                $newTriggerRequestDTO->getOperator(),
+                $newTriggerRequestDTO->getTriggerType(),
+                $newTriggerRequestDTO->getValueThatTriggers(),
+                $newTriggerRequestDTO->getDays(),
+                $newTriggerRequestDTO->getStartTime(),
+                $newTriggerRequestDTO->getEndTime(),
+                $user,
+                $newTriggerRequestDTO->getBaseReadingTypeThatTriggers(),
+                $newTriggerRequestDTO->getBaseReadingTypeThatIsTriggered(),
+            );
+        } catch (OperatorNotFoundException | TriggerTypeNotFoundException | BaseReadingTypeNotFoundException $e) {
+            return $this->sendBadRequestJsonResponse([$e->getMessage()]);
+        }
 
         try {
             $this->denyAccessUnlessGranted(SensorVoter::CAN_CREATE_TRIGGER,
                 $createNewTriggerDTO->getBaseReadingTypeThatIsTriggered() !== null
                     ? $createNewTriggerDTO->getBaseReadingTypeThatIsTriggered()->getSensor()
-                    : $createNewTriggerDTO->getBaseReadingTypeThatTriggers()->getSensor()
+                    : $createNewTriggerDTO->getBaseReadingTypeThatTriggers()?->getSensor()
             );
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse();
         }
 
-        $errors = $triggerCreationHandler->createTrigger();
+        $errors = $triggerCreationHandler->createTrigger($createNewTriggerDTO);
         if (!empty($errors)) {
             return $this->sendBadRequestJsonResponse($errors);
         }
 
+        $responseDTO = $sensorTriggerResponseDTOBuilder->buildFullSensorTriggerResponseDTO($createNewTriggerDTO->getNewSensorTrigger());
+        try {
+            $normalizedResponse = $this->normalizeResponse($responseDTO);
+        } catch (NotEncodableValueException) {
+            return $this->sendMultiStatusJsonResponse([APIErrorMessages::PROCESS_SUCCESS_COULD_NOT_CREATE_RESPONSE]);
+        }
 
-
-        return $this->sendSuccessfulJsonResponse();
+        return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 }

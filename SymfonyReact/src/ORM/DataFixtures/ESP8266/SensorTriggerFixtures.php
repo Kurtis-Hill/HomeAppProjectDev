@@ -216,7 +216,7 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
         foreach (self::SENSOR_TRIGGERS as $sensorTrigger) {
             $sensorTriggerEntity = new SensorTrigger();
             $sensorTriggerEntity->setBaseReadingTypeThatTriggers($sensorTrigger['baseReadingTypeThatTriggers'] !== null ? $this->getReference($sensorTrigger['baseReadingTypeThatTriggers']) : null);
-            $sensorTriggerEntity->setBaseReadingTypeToTriggerID($this->getReference($sensorTrigger['baseReadingTypeToTriggerID']));
+            $sensorTriggerEntity->setBaseReadingTypeToTrigger($this->getReference($sensorTrigger['baseReadingTypeToTriggerID']));
             $sensorTriggerEntity->setTriggerType($this->getReference($sensorTrigger['triggerType']));
             $sensorTriggerEntity->setValueThatTriggers(SensorTriggerUserInputToStringConvertor::convertMixedToString($sensorTrigger['valueThatTriggers']));
             $sensorTriggerEntity->setOperator($this->getReference($sensorTrigger['operatorID']));
