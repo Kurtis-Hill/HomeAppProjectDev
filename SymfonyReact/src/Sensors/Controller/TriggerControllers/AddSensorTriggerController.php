@@ -13,6 +13,7 @@ use App\Sensors\Exceptions\BaseReadingTypeNotFoundException;
 use App\Sensors\Exceptions\OperatorNotFoundException;
 use App\Sensors\Exceptions\TriggerTypeNotFoundException;
 use App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface;
+use App\Sensors\SensorServices\Trigger\TriggerHelpers\TriggerDateTimeConvertor;
 use App\Sensors\Voters\SensorVoter;
 use App\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -46,7 +48,6 @@ class AddSensorTriggerController extends AbstractController
                 'json',
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $newTriggerRequestDTO]
             );
-
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
@@ -67,7 +68,7 @@ class AddSensorTriggerController extends AbstractController
                 $newTriggerRequestDTO->getTriggerType(),
                 $newTriggerRequestDTO->getValueThatTriggers(),
                 $newTriggerRequestDTO->getDays(),
-                $newTriggerRequestDTO->getStartTime(),
+                TriggerDateTimeConvertor::prepareTimesForComparison($newTriggerRequestDTO->getStartTime()),
                 $newTriggerRequestDTO->getEndTime(),
                 $user,
                 $newTriggerRequestDTO->getBaseReadingTypeThatTriggers(),
@@ -78,7 +79,8 @@ class AddSensorTriggerController extends AbstractController
         }
 
         try {
-            $this->denyAccessUnlessGranted(SensorVoter::CAN_CREATE_TRIGGER,
+            $this->denyAccessUnlessGranted(
+                SensorVoter::CAN_CREATE_TRIGGER,
                 $createNewTriggerDTO->getBaseReadingTypeThatIsTriggered() !== null
                     ? $createNewTriggerDTO->getBaseReadingTypeThatIsTriggered()->getSensor()
                     : $createNewTriggerDTO->getBaseReadingTypeThatTriggers()?->getSensor()
@@ -95,7 +97,7 @@ class AddSensorTriggerController extends AbstractController
         $responseDTO = $sensorTriggerResponseDTOBuilder->buildFullSensorTriggerResponseDTO($createNewTriggerDTO->getNewSensorTrigger());
         try {
             $normalizedResponse = $this->normalizeResponse($responseDTO);
-        } catch (NotEncodableValueException) {
+        } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::PROCESS_SUCCESS_COULD_NOT_CREATE_RESPONSE]);
         }
 

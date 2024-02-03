@@ -15,27 +15,28 @@ class NewTriggerRequestDTO
     private mixed $operator;
 
     #[
-        Assert\Type(type: ['int'], message: 'trigger type must be an {{ type }} you have provided {{ value }}')
+        Assert\Type(type: ['int'], message: 'trigger type must be an {{ type }} you have provided {{ value }}'),
     ]
     private mixed $triggerType;
 
     #[
-        Assert\Type(type: ['int', 'null'], message: 'reading type that triggers must be an {{ type }} you have provided {{ value }}')
+        Assert\Type(type: ['int', 'null'], message: 'base reading type that triggers must be an {{ type }} you have provided {{ value }}')
     ]
     private mixed $baseReadingTypeThatTriggers;
 
     #[
-        Assert\Type(type: ['int', 'null'], message: 'reading type that is triggered must be an {{ type }} you have provided {{ value }}')
+        Assert\Type(type: ['int', 'null'], message: 'base reading type that is triggered must be an {{ type }} you have provided {{ value }}')
     ]
     private mixed $baseReadingTypeThatIsTriggered;
 
     #[
         Assert\Type(type: ['array', 'null'], message: 'days must be an {{ type }} you have provided {{ value }}'),
-        Assert\Choice(
-            choices: SensorTrigger::DAYS,
-            message: 'Days must be of {{ choices }}',
-            groups: [CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
-        ),
+            Assert\All(
+                constraints: new Assert\Choice(
+                    choices: SensorTrigger::DAYS,
+                    message: 'Days must be of {{ choices }}',
+                ),
+            )
     ]
     private mixed $days;
 
@@ -45,12 +46,28 @@ class NewTriggerRequestDTO
     private mixed $valueThatTriggers;
 
     #[
-        Assert\Type(type: ['int'], message: 'start time must be an {{ type }} you have provided {{ value }}')
+        Assert\Sequentially([
+            new Assert\Type(type: ['int'], message: 'start time must be an {{ type }} you have provided {{ value }}'),
+            new Assert\Length(
+                min: 4,
+                max: 4,
+                exactMessage: 'Trigger type must be in 24 hour format',
+                maxMessage: 'Trigger type must be in 24 hour format',
+            ),
+        ])
     ]
     private mixed $startTime;
 
     #[
-        Assert\Type(type: ['int'], message: 'end time must be an {{ type }} you have provided {{ value }}')
+        Assert\Sequentially([
+            new Assert\Type(type: ['int'], message: 'end time must be an {{ type }} you have provided {{ value }}'),
+            new Assert\Length(
+                min: 4,
+                max: 4,
+                exactMessage: 'Trigger type must be in 24 hour format',
+                maxMessage: 'Trigger type must be in 24 hour format',
+            ),
+        ])
     ]
     private mixed $endTime;
 
