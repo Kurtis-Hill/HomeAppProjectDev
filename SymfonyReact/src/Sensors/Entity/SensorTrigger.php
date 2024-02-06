@@ -118,14 +118,12 @@ class SensorTrigger
     #[
         ORM\Column(name: "createdAt", type: "datetime", nullable: false),
         Assert\NotBlank(message: "Created at cannot be blank"),
-        Assert\DateTime(message: "Created at is not valid")
     ]
     private DateTimeInterface $createdAt;
 
     #[
         ORM\Column(name: "updatedAt", type: "datetime", nullable: false),
         Assert\NotBlank(message: "Updated at cannot be blank"),
-        Assert\DateTime(message: "Updated at is not valid")
     ]
     private DateTimeInterface $updatedAt;
 
@@ -234,8 +232,11 @@ class SensorTrigger
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeInterface $createdAt): void
+    public function setCreatedAt(?DateTimeInterface $createdAt = null): void
     {
+        if ($createdAt === null) {
+            $createdAt = new DateTimeImmutable('now');
+        }
         $this->createdAt = $createdAt;
     }
 

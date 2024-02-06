@@ -47,16 +47,23 @@ readonly class SensorTriggerResponseDTOBuilder
 
     public function buildFullSensorTriggerResponseDTO(SensorTrigger $sensorTrigger): SensorTriggerResponseDTO
     {
+
+        dd($sensorTrigger->getBaseReadingTypeToTriggerID());
         $baseReadingTypeToTriggerID = $this->readingTypeFetcher->fetchReadingTypeBasedOnBaseReadingType($sensorTrigger->getBaseReadingTypeToTriggerID()->getBaseReadingTypeID());
+        $baseReadingTypeToTrigger = $this->sensorReadingTypeDTOResponseBuilder->buildSensorReadingTypeResponseDTO($baseReadingTypeToTriggerID);
+
         $baseReadingTypeThatIsTriggeredID = $sensorTrigger->getBaseReadingTypeThatTriggers() !== null
             ? $this->readingTypeFetcher->fetchReadingTypeBasedOnBaseReadingType($sensorTrigger->getBaseReadingTypeThatTriggers()?->getBaseReadingTypeID())
             : null;
-
-        $baseReadingTypeToTrigger = $this->sensorReadingTypeDTOResponseBuilder->buildSensorReadingTypeResponseDTO($baseReadingTypeToTriggerID);
         if ($baseReadingTypeThatIsTriggeredID !== null) {
             $baseReadingTypeThatIsTriggered = $this->sensorReadingTypeDTOResponseBuilder->buildSensorReadingTypeResponseDTO($baseReadingTypeThatIsTriggeredID);
         }
 
-        return self::buildSensorTriggerResponseDTO($sensorTrigger, $baseReadingTypeToTrigger, $baseReadingTypeThatIsTriggered);
+//        dd($sensorTrigger);
+        return self::buildSensorTriggerResponseDTO(
+            $sensorTrigger,
+            $baseReadingTypeToTrigger ?? null,
+            $baseReadingTypeThatIsTriggered ?? null
+        );
     }
 }

@@ -77,13 +77,11 @@ class AddSensorTriggerController extends AbstractController
         } catch (OperatorNotFoundException | TriggerTypeNotFoundException | BaseReadingTypeNotFoundException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
-
+//dd($createNewTriggerDTO);
         try {
             $this->denyAccessUnlessGranted(
                 SensorVoter::CAN_CREATE_TRIGGER,
-                $createNewTriggerDTO->getBaseReadingTypeThatIsTriggered() !== null
-                    ? $createNewTriggerDTO->getBaseReadingTypeThatIsTriggered()->getSensor()
-                    : $createNewTriggerDTO->getBaseReadingTypeThatTriggers()?->getSensor()
+                $createNewTriggerDTO,
             );
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse();

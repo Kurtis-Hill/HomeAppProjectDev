@@ -31,12 +31,12 @@ class NewTriggerRequestDTO
 
     #[
         Assert\Type(type: ['array', 'null'], message: 'days must be an {{ type }} you have provided {{ value }}'),
-            Assert\All(
-                constraints: new Assert\Choice(
-                    choices: SensorTrigger::DAYS,
-                    message: 'Days must be of {{ choices }}',
-                ),
-            )
+        Assert\All(
+            constraints: new Assert\Choice(
+                choices: SensorTrigger::DAYS,
+                message: 'Days must be of {{ choices }}',
+            ),
+        )
     ]
     private mixed $days;
 
@@ -59,7 +59,7 @@ class NewTriggerRequestDTO
     private mixed $startTime;
 
     #[
-        Assert\Sequentially([
+        Assert\Sequentially( constraints: [
             new Assert\Type(type: ['int'], message: 'end time must be an {{ type }} you have provided {{ value }}'),
             new Assert\Length(
                 min: 4,

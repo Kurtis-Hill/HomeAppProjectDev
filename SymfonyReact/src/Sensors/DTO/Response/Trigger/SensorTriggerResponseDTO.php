@@ -4,8 +4,8 @@ namespace App\Sensors\DTO\Response\Trigger;
 
 use App\Common\DTO\Response\OperatorResponseDTO;
 use App\Common\Services\RequestTypeEnum;
+use App\Sensors\DTO\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\Trigger\TriggerTypeResponse\TriggerTypeResponseDTO;
-use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -29,8 +29,8 @@ readonly class SensorTriggerResponseDTO
         private bool $friday,
         private bool $saturday,
         private bool $sunday,
-        private ?BaseSensorReadingType $baseReadingTypeThatTriggersID,
-        private ?BaseSensorReadingType $baseReadingTypeThatIsTriggeredID,
+        private ?AllSensorReadingTypeResponseDTOInterface $baseReadingTypeThatTriggers,
+        private ?AllSensorReadingTypeResponseDTOInterface $baseReadingTypeThatIsTriggered,
 
     ) {
     }
@@ -118,17 +118,6 @@ readonly class SensorTriggerResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getDays(): array
-    {
-        return $this->days;
-    }
-
-    #[Groups([
-        RequestTypeEnum::FULL->value,
-        RequestTypeEnum::ONLY->value,
-        RequestTypeEnum::SENSITIVE_FULL->value,
-        RequestTypeEnum::SENSITIVE_ONLY->value,
-    ])]
     public function getCreatedAt(): string
     {
         return $this->createdAt;
@@ -151,9 +140,9 @@ readonly class SensorTriggerResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getBaseReadingTypeThatTriggersID(): ?Sensor
+    public function getBaseReadingTypeThatTriggers(): ?AllSensorReadingTypeResponseDTOInterface
     {
-        return $this->baseReadingTypeThatTriggersID;
+        return $this->baseReadingTypeThatTriggers;
     }
 
     #[Groups([
@@ -162,9 +151,9 @@ readonly class SensorTriggerResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getBaseReadingTypeThatIsTriggeredID(): ?Sensor
+    public function getBaseReadingTypeThatIsTriggered(): ?AllSensorReadingTypeResponseDTOInterface
     {
-        return $this->baseReadingTypeThatIsTriggeredID;
+        return $this->baseReadingTypeThatIsTriggered;
     }
 
     #[Groups([

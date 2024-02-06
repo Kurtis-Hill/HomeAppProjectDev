@@ -6,6 +6,7 @@ use App\Devices\Entity\Devices;
 use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
+use App\Sensors\DTO\Internal\Trigger\CreateNewTriggerDTO;
 use App\Sensors\Entity\Sensor;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -75,7 +76,7 @@ class SensorVoter extends Voter
         };
     }
 
-    private function canCreateTriggerForSensor(UserInterface $user, Sensor $sensor): bool
+    private function canCreateTriggerForSensor(UserInterface $user, CreateNewTriggerDTO $createNewTriggerDTO): bool
     {
         if (!$user instanceof User) {
             return false;
@@ -85,7 +86,25 @@ class SensorVoter extends Voter
             return true;
         }
 
-        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
+        if (
+            ($createNewTriggerDTO->getBaseReadingTypeThatIsTriggered() !== null)
+            && !in_array(
+                $createNewTriggerDTO->getBaseReadingTypeThatIsTriggered()->getSensor()->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(),
+                true
+            )
+        ) {
+            return false;
+        }
+
+        if (
+            ($createNewTriggerDTO->getBaseReadingTypeThatTriggers() !== null)
+            && !in_array(
+                $createNewTriggerDTO->getBaseReadingTypeThatTriggers()->getSensor()->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(),
+                true
+            )
+        ) {
             return false;
         }
 
