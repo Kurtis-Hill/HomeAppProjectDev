@@ -12,8 +12,10 @@ use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Sensors\Controller\TriggerControllers\AddSensorTriggerController;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTrigger;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\Repository\SensorTriggerRepository;
@@ -24,6 +26,7 @@ use App\User\Repository\ORM\GroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use JsonException;
+use Proxies\__CG__\App\Sensors\Entity\SensorType;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -398,8 +401,6 @@ class AddSensorTriggerControllerTest extends WebTestCase
         $baseReadingTypesNotApartOf = $this->baseSensorReadingTypeRepository->findBy(['sensor' => $sensorNotApartOf]);
         $baseReadingTypeThatTriggers = $baseReadingTypesNotApartOf[0];
 
-        $userToken = $this->setUserToken($this->client, UserDataFixtures::ADMIN_USER_EMAIL_TWO, UserDataFixtures::ADMIN_PASSWORD);
-
         $operator = $this->operatorRepository->findOneBy(['operatorSymbol' => $operatorSymbol]);
         $triggerType = $this->triggerTypeRepository->findOneBy(['triggerTypeName' => $triggerTypeName]);
 
@@ -408,7 +409,9 @@ class AddSensorTriggerControllerTest extends WebTestCase
         $devicesApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
         $deviceApartOf = $devicesApartOf[0];
 
-        $sensorsApartOf = $this->sensorRepository->findBy(['deviceID' => $deviceApartOf]);
+        /** @var GenericRelay $relaySensorType */
+        $relaySensorType = $this->entityManager->getRepository(GenericRelay::class)->findAll()[0];
+        $sensorsApartOf = $this->sensorRepository->findBy(['deviceID' => $deviceApartOf, 'sensorTypeID' => $relaySensorType->getSensorTypeID()]);
         $sensorApartOf = $sensorsApartOf[0];
 
         $baseReadingTypesApartOf = $this->baseSensorReadingTypeRepository->findBy(['sensor' => $sensorApartOf]);
@@ -420,7 +423,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_AUTHORIZATION' => 'Bearer ' . $userToken,
+                'HTTP_AUTHORIZATION' => 'Bearer ' . $this->userToken,
                 'CONTENT_TYPE' => 'application/json',
             ],
             json_encode(
@@ -463,17 +466,12 @@ class AddSensorTriggerControllerTest extends WebTestCase
         self::assertEquals($triggerType->getTriggerTypeID(), $triggerTypeResponse['triggerTypeID']);
         self::assertEquals($triggerType->getTriggerTypeName(), $triggerTypeResponse['triggerTypeName']);
         self::assertEquals($triggerType->getTriggerTypeDescription(), $triggerTypeResponse['triggerTypeDescription']);
-        dd(
-            $baseReadingTypeThatTriggers->getBaseReadingTypeID(),
-            $baseReadingTypeThatIsTriggered->getBaseReadingTypeID()
-        );
+
         $baseReadingTypeThatTriggersResponse = $payload['baseReadingTypeThatTriggers'];
         self::assertEquals($baseReadingTypeThatTriggersResponse['baseReadingTypeID'], $baseReadingTypeThatTriggers->getBaseReadingTypeID());
 
         $baseReadingTypeThatIsTriggeredResponse = $payload['baseReadingTypeThatIsTriggered'];
         self::assertEquals($baseReadingTypeThatIsTriggeredResponse['baseReadingTypeID'], $baseReadingTypeThatIsTriggered->getBaseReadingTypeID());
-
-//        dd($payload);
     }
 
     public function operatorAndTriggerTypeProvider(): Generator
@@ -519,8 +517,99 @@ class AddSensorTriggerControllerTest extends WebTestCase
         ];
     }
 
-    public function test_user_can_create_trigger_sensor_apart_of(): void
-    {
+    /**
+     * @dataProvider operatorAndTriggerTypeProvider
+     */
+    public function test_user_can_create_trigger_sensor_apart_of(
+        string $operatorSymbol,
+        string $triggerTypeName,
+    ): void {
+        /** @var User $regularUser */
+        $regularUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
+        $groupsUserIsNotApartOf = $this->groupRepository->findGroupsUserIsApartOf($regularUser);
 
+        $devicesNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
+        $deviceNotApartOf = $devicesNotApartOf[0];
+
+        $sensorsNotApartOf = $this->sensorRepository->findBy(['deviceID' => $deviceNotApartOf]);
+        $sensorNotApartOf = $sensorsNotApartOf[0];
+
+        $baseReadingTypesNotApartOf = $this->baseSensorReadingTypeRepository->findBy(['sensor' => $sensorNotApartOf]);
+        $baseReadingTypeThatTriggers = $baseReadingTypesNotApartOf[0];
+
+        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_TWO, UserDataFixtures::REGULAR_PASSWORD);
+
+        $operator = $this->operatorRepository->findOneBy(['operatorSymbol' => $operatorSymbol]);
+        $triggerType = $this->triggerTypeRepository->findOneBy(['triggerTypeName' => $triggerTypeName]);
+
+        $groupsUserIsApartOf = $regularUser->getAssociatedGroupIDs();
+
+        $devicesApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
+        $deviceApartOf = $devicesApartOf[0];
+
+        /** @var GenericRelay $relaySensorType */
+        $relaySensorType = $this->entityManager->getRepository(GenericRelay::class)->findAll()[0];
+        $sensorsApartOf = $this->sensorRepository->findBy(['deviceID' => $deviceApartOf, 'sensorTypeID' => $relaySensorType->getSensorTypeID()]);
+        $sensorApartOf = $sensorsApartOf[0];
+
+        $baseReadingTypesApartOf = $this->baseSensorReadingTypeRepository->findBy(['sensor' => $sensorApartOf]);
+        $baseReadingTypeThatIsTriggered = $baseReadingTypesApartOf[0];
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_SENSOR_TRIGGER_URL,
+            [],
+            [],
+            [
+                'HTTP_AUTHORIZATION' => 'Bearer ' . $userToken,
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            json_encode(
+                [
+                    'operator' => $operator->getOperatorID(),
+                    'triggerType' => $triggerType->getTriggerTypeID(),
+                    'baseReadingTypeThatTriggers' => $baseReadingTypeThatTriggers->getBaseReadingTypeID(),
+                    'baseReadingTypeThatIsTriggered' => $baseReadingTypeThatIsTriggered->getBaseReadingTypeID(),
+                    'days' => ['monday'],
+                    'valueThatTriggers' => 1.1,
+                    'startTime' => 1000,
+                    'endTime' => 2000,
+                ],
+                JSON_THROW_ON_ERROR
+            )
+        );
+
+        $response = $this->client->getResponse();
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $responseData = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertArrayNotHasKey('errors', $responseData);
+
+        $title = $responseData['title'];
+        self::assertEquals(AddSensorTriggerController::REQUEST_SUCCESSFUL, $title);
+
+        $payload = $responseData['payload'];
+        $sensorTriggerID = $payload['sensorTriggerID'];
+
+        $sensorTrigger = $this->sensorTriggerRepository->find($sensorTriggerID);
+        self::assertNotNull($sensorTrigger);
+
+        $operatorResponse = $payload['operator'];
+        self::assertEquals($operator->getOperatorID(), $operatorResponse['operatorID']);
+        self::assertEquals($operator->getOperatorName(), $operatorResponse['operatorName']);
+        self::assertEquals($operator->getOperatorSymbol(), $operatorResponse['operatorSymbol']);
+        self::assertEquals($operator->getOperatorDescription(), $operatorResponse['operatorDescription']);
+
+        $triggerTypeResponse = $payload['triggerType'];
+        self::assertEquals($triggerType->getTriggerTypeID(), $triggerTypeResponse['triggerTypeID']);
+        self::assertEquals($triggerType->getTriggerTypeName(), $triggerTypeResponse['triggerTypeName']);
+        self::assertEquals($triggerType->getTriggerTypeDescription(), $triggerTypeResponse['triggerTypeDescription']);
+
+        $baseReadingTypeThatTriggersResponse = $payload['baseReadingTypeThatTriggers'];
+        self::assertEquals($baseReadingTypeThatTriggersResponse['baseReadingTypeID'], $baseReadingTypeThatTriggers->getBaseReadingTypeID());
+
+        $baseReadingTypeThatIsTriggeredResponse = $payload['baseReadingTypeThatIsTriggered'];
+        self::assertEquals($baseReadingTypeThatIsTriggeredResponse['baseReadingTypeID'], $baseReadingTypeThatIsTriggered->getBaseReadingTypeID());
     }
 }

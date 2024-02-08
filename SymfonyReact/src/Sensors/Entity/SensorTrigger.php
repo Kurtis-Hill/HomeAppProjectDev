@@ -187,12 +187,12 @@ class SensorTrigger
         $this->baseReadingTypeThatTriggers = $baseReadingTypeThatTriggers;
     }
 
-    public function getBaseReadingTypeToTriggerID(): BaseSensorReadingType
+    public function getBaseReadingTypeToTriggerID(): ?BaseSensorReadingType
     {
         return $this->baseReadingTypeToTriggerID;
     }
 
-    public function setBaseReadingTypeToTrigger(BaseSensorReadingType $baseReadingTypeToTriggerID): void
+    public function setBaseReadingTypeToTrigger(?BaseSensorReadingType $baseReadingTypeToTriggerID): void
     {
         $this->baseReadingTypeToTriggerID = $baseReadingTypeToTriggerID;
     }

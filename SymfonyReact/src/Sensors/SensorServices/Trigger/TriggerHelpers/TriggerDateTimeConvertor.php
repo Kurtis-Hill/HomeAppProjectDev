@@ -17,6 +17,6 @@ class TriggerDateTimeConvertor
     {
         $currentDay = $day ?? date('l');
 
-        return lcfirst($currentDay);
+        return strtolower($currentDay);
     }
 }

@@ -22,7 +22,6 @@ readonly class TriggerCreationHandler implements TriggerCreationHandlerInterface
     {
         $newSensorType = $createNewTriggerDTO->getNewSensorTrigger();
 
-//dd($createNewTriggerDTO->getValueThatTriggers());
         $now = new DateTimeImmutable('now');
         $newSensorType->setTriggerType($createNewTriggerDTO->getTriggerType());
         $newSensorType->setOperator($createNewTriggerDTO->getOperator());
@@ -47,6 +46,7 @@ readonly class TriggerCreationHandler implements TriggerCreationHandlerInterface
             return $this->getValidationErrorAsArray($validationErrors);
         }
 
+//        dd($newSensorType);
         $this->sensorTriggerRepository->persist($newSensorType);
         $this->sensorTriggerRepository->flush();
 
