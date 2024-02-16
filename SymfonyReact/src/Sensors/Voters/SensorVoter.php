@@ -3,7 +3,7 @@
 namespace App\Sensors\Voters;
 
 use App\Devices\Entity\Devices;
-use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
+use App\Sensors\Builders\Request\SensorUpdateBuilders\SensorUpdateDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\DTO\Internal\Trigger\CreateNewTriggerDTO;

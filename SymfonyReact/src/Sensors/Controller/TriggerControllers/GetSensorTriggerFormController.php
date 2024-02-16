@@ -9,10 +9,11 @@ use App\Common\Builders\Operator\OperatorResponseDTOBuilder;
 use App\Common\Repository\OperatorRepository;
 use App\Common\Repository\TriggerTypeRepository;
 use App\Common\Services\RequestTypeEnum;
-use App\Sensors\Builders\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Bool\RelayResponseDTOBuilder;
-use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
-use App\Sensors\Builders\TriggerResponseBuilder\TriggerTypeResponseBuilder;
+use App\Sensors\Builders\Request\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
+use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\Bool\RelayResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Builders\Response\TriggerResponseBuilder\TriggerFormEncapsulationDTOBuilder;
+use App\Sensors\Builders\Response\TriggerResponseBuilder\TriggerTypeResponseBuilder;
 use App\Sensors\DTO\Response\Trigger\TriggerTypeResponse\TriggerFormEncapsulationDTO;
 use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
@@ -70,7 +71,8 @@ class GetSensorTriggerFormController extends AbstractController
         foreach ($relaysUserCanTrigger as $relay) {
             $relaysUserCanTriggerDTOs[] = $relayResponseDTOBuilder->buildSensorReadingTypeResponseDTO($relay);
         }
-        $triggerFormEncapsulationDTO = new TriggerFormEncapsulationDTO(
+
+        $triggerFormEncapsulationDTO = TriggerFormEncapsulationDTOBuilder::buildTriggerFormEncapsulationDTO(
             $operatorDTOS,
             $triggerTypeDTOS,
             $relaysUserCanTriggerDTOs,

@@ -4,15 +4,15 @@ namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\MessageResponseBuilders\CurrentReadingMessageUpdateDTOBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\CurrentReadingUpdateRequestBuilderInterface;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\CurrentReadingUpdateRequestBuilderInterface;
+use App\Sensors\Builders\Response\MessageResponseBuilders\CurrentReadingMessageUpdateDTOBuilder;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Response\CurrentReadingResponse\CurrentReadingUpdateResponseDTO;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
@@ -56,7 +56,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
             BoolCurrentReadingUpdateRequestDTO::class,
         ]
     )]
-    public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): array
+    public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateRequestDTO $sensorDataCurrentReadingUpdateDTO): array
     {
         foreach ($sensorDataCurrentReadingUpdateDTO->getCurrentReadings() as $readingType => $currentReading) {
             ++$this->readingTypeRequestAttempt;

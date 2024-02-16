@@ -3,12 +3,7 @@
 namespace App\Sensors\SensorServices\UpdateSensor;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
-use App\Sensors\DTO\Request\SensorUpdateDTO\UpdateSensorDetailsRequestDTO;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Exceptions\DeviceNotFoundException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 readonly class UpdateSensorHandler implements UpdateSensorInterface

@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
-use App\Sensors\Builders\SensorFilterDTOBuilders\SensorFilterDTOBuilder;
+use App\Sensors\Builders\Internal\SensorFilterDTOBuilders\SensorFilterDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\SensorFilterDTO;
 use App\Sensors\SensorServices\SensorFilter\SensorFilter;
 use App\User\Entity\Room;
@@ -89,7 +89,7 @@ class GetCardViewController extends AbstractController
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {
-            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()->getUserIdentifier()]);
+            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()?->getUserIdentifier()]);
 
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Card filters')]);
         }

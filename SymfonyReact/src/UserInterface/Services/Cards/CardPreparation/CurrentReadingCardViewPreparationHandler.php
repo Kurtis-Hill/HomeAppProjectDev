@@ -45,7 +45,7 @@ class CurrentReadingCardViewPreparationHandler
         $flatterResult = [];
         foreach ($cardResultUnFlattened as $result) {
             $sensorID = $result['sensors_sensorID'];
-            $flatterResult[$sensorID][] = array_filter($result, static function ($value, $key) {
+            $flatterResult[$sensorID][] = array_filter($result, static function ($value) {
                 return $value !== null;
             }, ARRAY_FILTER_USE_BOTH);
         }

@@ -6,9 +6,9 @@ use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
-use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
-use App\Sensors\Builders\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
+use App\Sensors\Builders\Internal\AMPQMessages\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
+use App\Sensors\Builders\Internal\AMPQMessages\CurrentReadingDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
+use App\Sensors\Builders\Request\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\SensorUpdateRequestDTO;
 use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
@@ -101,7 +101,7 @@ class SwitchSensorController extends AbstractController
 
             $sensor = $sensorRepository->findOneBy(['sensorName' => $sensorUpdateData['sensorName']]);
 
-            $sensorDataCurrentReadingUpdateRequestDTO = SensorDataCurrentReadingRequestDTOBuilder::buildSensorDataCurrentReadingUpdateDTO(
+            $sensorDataCurrentReadingUpdateRequestDTO = SensorDataCurrentReadingRequestDTOBuilder::buildSensorDataCurrentReadingUpdateRequestDTO(
                 sensorName: $sensorUpdateData['sensorName'],
                 sensorType: $sensor?->getSensorTypeObject()::getReadingTypeName(),
                 currentReadings: $sensorUpdateData['currentReadings'] ?? null,

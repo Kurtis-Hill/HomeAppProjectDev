@@ -5,7 +5,7 @@ namespace App\Devices\Factories;
 
 use App\Devices\Builders\DeviceRequestsArgumentBuilders\DeviceRequestArgumentBuilderInterface;
 use App\Devices\Exceptions\DeviceRequestArgumentBuilderTypeNotFoundException;
-use App\Sensors\Builders\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder;
+use App\Sensors\Builders\Request\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder;
 
 readonly class DeviceSensorRequestArgumentBuilderFactory
 {

@@ -9,7 +9,7 @@ use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\DTO\Response\DeviceResponseDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
-use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;

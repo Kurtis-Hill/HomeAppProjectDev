@@ -2,9 +2,12 @@
 
 namespace App\Sensors\Repository;
 
+use App\Devices\Entity\Devices;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTrigger;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\SensorServices\Trigger\TriggerHelpers\TriggerDateTimeConvertor;
+use App\User\Entity\Group;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
@@ -32,6 +35,25 @@ class SensorTriggerRepository extends ServiceEntityRepository
     public function flush(): void
     {
         $this->_em->flush();
+    }
+
+    public function findAllSensorTriggersForBaseReadingType(array $baseReadingTypeIDs): array
+    {
+        $qb = $this->createQueryBuilder('st');
+        $expr = $qb->expr();
+
+        $qb->where(
+            $expr->orX(
+                $expr->in('st.baseReadingTypeThatTriggers', ':baseReadingTypeThatTriggers'),
+                $expr->in('st.baseReadingTypeThatTriggers', ':baseReadingTypeThatTriggers'),
+            )
+        )->setParameters(
+            [
+                'baseReadingTypeThatTriggers' => $baseReadingTypeIDs,
+            ]
+        );
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

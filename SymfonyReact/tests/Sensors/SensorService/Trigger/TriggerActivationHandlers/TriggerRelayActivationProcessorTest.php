@@ -3,13 +3,12 @@
 namespace App\Tests\Sensors\SensorService\Trigger\TriggerActivationHandlers;
 
 use App\Common\Entity\TriggerType;
-use App\Sensors\Builders\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
-use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
+use App\Sensors\Builders\Internal\AMPQMessages\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
+use App\Sensors\Builders\Internal\AMPQMessages\CurrentReadingDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
 use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTrigger;
-use App\Sensors\Repository\SensorTriggerRepository;
 use App\Sensors\SensorServices\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;

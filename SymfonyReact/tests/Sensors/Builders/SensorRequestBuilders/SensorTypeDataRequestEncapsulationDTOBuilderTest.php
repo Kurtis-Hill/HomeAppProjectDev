@@ -2,11 +2,10 @@
 
 namespace App\Tests\Sensors\Builders\SensorRequestBuilders;
 
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Sensors\Builders\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
+use App\Sensors\Builders\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
 use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
-use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\AbstractSensorType;
+use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -113,7 +112,7 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
             );
         }
         if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Sht::NAME) {
-            $result = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
+            $result = \App\Sensors\Builders\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 sht: $singleSensorUpdateRequestDTOs,
             );
         }

@@ -11,10 +11,13 @@ use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\DTO\Request\UserDTOs\NewUserRequestDTO;
+use App\User\Exceptions\GroupExceptions\GroupMappingValidationException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\GroupExceptions\GroupValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Services\User\UserCreationHandler;
 use App\User\Voters\UserVoter;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
@@ -94,6 +97,8 @@ class AddUserController extends AbstractController
             );
         } catch (UserCreationValidationErrorsException|GroupValidationException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
+        } catch (GroupMappingValidationException|GroupNotFoundException|OptimisticLockException|UniqueConstraintViolationException|ORMException $e) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN]);
         }
 
         try {

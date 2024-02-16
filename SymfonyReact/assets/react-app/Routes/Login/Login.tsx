@@ -11,7 +11,7 @@ import Input from "../../Common/Components/Inputs/Input";
 import ColouredPage from "../../Common/Components/Pages/ColouredPage";
 import DotCircleSpinner from "../../Common/Components/Spinners/DotCircleSpinner";
 
-import { LoginFormUserInputsInterface } from "../../Authentication/Form/LoginFormUserInputsInterface";
+import { LoginUserInputsInterface } from "../../Authentication/Form/LoginUserInputsInterface";
 
 import { handleLogin, handleTokenRefresh } from "../../Authentication/Request/LoginRequest";
 import { handlePingRequest, PingInterface } from "../../Common/Request/Ping";
@@ -20,7 +20,7 @@ import { TokenRefreshResponseInterface } from '../../Authentication/Response/Tok
 import { setUserSession } from '../../Authentication/Session/UserSession';
 
 export default function Login(): void {
-    const [userInputs, setUserInputs] = useState<LoginFormUserInputsInterface>({});
+    const [userInputs, setUserInputs] = useState<LoginUserInputsInterface>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);
     const [pingResult, setPingResult] = useState<boolean>(true);
@@ -36,7 +36,7 @@ export default function Login(): void {
     const handleInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
         const value: string = event.target.value;
-        setUserInputs((values: LoginFormUserInputsInterface) => ({...values, [name]: value}))
+        setUserInputs((values: LoginUserInputsInterface) => ({...values, [name]: value}))
     }
 
     const validateUserInput = (): boolean => {

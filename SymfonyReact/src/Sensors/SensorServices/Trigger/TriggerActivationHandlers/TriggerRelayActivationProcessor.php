@@ -3,8 +3,8 @@
 namespace App\Sensors\SensorServices\Trigger\TriggerActivationHandlers;
 
 use App\Common\Entity\TriggerType;
-use App\Sensors\Builders\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
-use App\Sensors\Builders\MessageDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
+use App\Sensors\Builders\Internal\AMPQMessages\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
+use App\Sensors\Builders\Internal\AMPQMessages\CurrentReadingDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTrigger;
 use App\Sensors\Repository\SensorReadingType\ORM\BoolReadingBaseSensorRepository;

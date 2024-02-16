@@ -11,7 +11,8 @@ class SensorUpdateEvent extends Event
 
     public function __construct(
         protected SensorUpdateEventDTO $sensorUpdateEventDTO
-    ) {}
+    ) {
+    }
 
     public function getSensorUpdateEventDTO(): SensorUpdateEventDTO
     {

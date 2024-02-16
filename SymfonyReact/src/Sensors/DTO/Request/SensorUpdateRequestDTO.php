@@ -2,7 +2,7 @@
 
 namespace App\Sensors\DTO\Request;
 
-use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateRequestDTO;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\SerializedPath;
@@ -26,9 +26,9 @@ class SensorUpdateRequestDTO
             minMessage: "sensorData must contain at least {{ limit }} elements",
             maxMessage: "sensorData cannot contain more than {{ limit }} elements"
         ),
-        ArrayShape([SensorDataCurrentReadingUpdateDTO::class])
+        ArrayShape([SensorDataCurrentReadingUpdateRequestDTO::class])
     ]
-    /** @var SensorDataCurrentReadingUpdateDTO[] $sensorData */
+    /** @var SensorDataCurrentReadingUpdateRequestDTO[] $sensorData */
     private mixed $sensorData = null;
 
     public function getSensorData(): array

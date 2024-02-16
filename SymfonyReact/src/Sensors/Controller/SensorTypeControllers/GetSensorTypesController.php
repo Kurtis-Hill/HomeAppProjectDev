@@ -8,10 +8,8 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +23,7 @@ class GetSensorTypesController extends AbstractController
 
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    public function __construct(RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }

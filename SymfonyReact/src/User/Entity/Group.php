@@ -22,6 +22,8 @@ class Group
 
     public const ADMIN_GROUP_NAME = 'admin-group';
 
+    public const ALIAS = 'group';
+
     private const GROUP_NAME_MIN_LENGTH = 2;
 
     private const GROUP_NAME_MAX_LENGTH = 50;

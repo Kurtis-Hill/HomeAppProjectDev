@@ -2,13 +2,13 @@
 
 namespace App\Sensors\Factories\SensorReadingType;
 
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Bool\MotionResponseDTOBuilder;
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Bool\RelayResponseDTOBuilder;
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard\AnalogResponseDTOBuilder;
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard\HumidityResponseDTOBuilder;
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard\LatitudeResponseDTOBuilder;
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\Standard\TemperatureResponseDTOBuilder;
-use App\Sensors\Builders\SensorReadingTypeResponseBuilders\SensorResponseDTOBuilderInterface;
+use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\Bool\MotionResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\Bool\RelayResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\SensorResponseDTOBuilderInterface;
+use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\Standard\AnalogResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\Standard\HumidityResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\Standard\LatitudeResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\Standard\TemperatureResponseDTOBuilder;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;

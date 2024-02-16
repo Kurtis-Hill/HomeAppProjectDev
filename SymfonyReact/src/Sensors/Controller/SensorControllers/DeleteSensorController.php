@@ -8,7 +8,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\SensorServices\DeleteSensorService\DeleteSensorHandlerInterface;
 use App\Sensors\SensorServices\SensorDeletion\SensorDeletionInterface;

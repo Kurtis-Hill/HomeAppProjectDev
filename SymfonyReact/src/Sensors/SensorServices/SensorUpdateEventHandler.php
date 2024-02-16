@@ -2,8 +2,8 @@
 
 namespace App\Sensors\SensorServices;
 
-use App\Sensors\Builders\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
-use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
+use App\Sensors\Builders\Internal\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
+use App\Sensors\Builders\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Events\SensorUpdateEvent;
 use App\Sensors\Exceptions\SensorNotFoundException;

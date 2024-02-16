@@ -90,10 +90,10 @@ class NavBarDataProvider implements NavBarDataProviderInterface
         }
 
         return $this->navBarDTOBuilder->buildNavBarResponseDTO(
-           'Groups',
-           'users',
-           'groups',
-           $userGroupNavbarListLinkResponseDTO ?? [],
+            'Groups',
+            'users',
+            'groups',
+            $userGroupNavbarListLinkResponseDTO ?? [],
         );
     }
 

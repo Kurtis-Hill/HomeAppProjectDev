@@ -2,18 +2,13 @@
 
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Response\CurrentReadingResponse\CurrentReadingUpdateResponseDTO;
-use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use JetBrains\PhpStorm\ArrayShape;
 
 interface CurrentReadingSensorDataRequestHandlerInterface
@@ -31,7 +26,7 @@ interface CurrentReadingSensorDataRequestHandlerInterface
             BoolCurrentReadingUpdateRequestDTO::class,
         ]
     )]
-    public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): array;
+    public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateRequestDTO $sensorDataCurrentReadingUpdateDTO): array;
 
     public function getReadingTypeRequestAttempt(): int;
 
