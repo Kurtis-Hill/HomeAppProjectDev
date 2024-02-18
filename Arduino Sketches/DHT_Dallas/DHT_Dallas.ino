@@ -40,9 +40,9 @@
 //Web bits
 // Test
 //#define HOMEAPP_HOST "https://192.168.1.172"
-//#define HOMEAPP_HOST "https://192.168.1.158"
+#define HOMEAPP_HOST "https://192.168.1.158"
 // Prod
-#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
+//#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
 
@@ -2325,6 +2325,8 @@ void setup() {
   Serial.begin(DEVICE_SERIAL);
   Serial.println("Searial started");
 
+  //Wire.begin(D1, D2);
+  Wire.begin(5, 4);
   for (int i = 0; i <= DEVICE_LED_PIN_SANCTIONED; i++) {
     pinMode(ledPins[i], OUTPUT); 
     digitalWrite(ledPins[i], HIGH);
