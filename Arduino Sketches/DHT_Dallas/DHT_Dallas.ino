@@ -129,7 +129,7 @@ DallasTempData dallasTempData;
 
 //Relay
 #define RELAYNAME "GenericRelay"
-#define MAX_RELAYS 5
+#define MAX_RELAYS 8
 struct RelayData {
   char sensorName[MAX_RELAYS][25];
   bool currentReading[MAX_RELAYS];
