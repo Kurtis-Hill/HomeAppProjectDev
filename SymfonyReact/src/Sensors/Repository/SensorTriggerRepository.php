@@ -37,7 +37,7 @@ class SensorTriggerRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function findAllSensorTriggersForBaseReadingType(array $baseReadingTypeIDs): array
+    public function findAllSensorTriggersForBaseReadingTypes(array $baseReadingTypeIDs): array
     {
         $qb = $this->createQueryBuilder('st');
         $expr = $qb->expr();
