@@ -18,8 +18,8 @@ readonly class SensorTriggerResponseDTO
         private TriggerTypeResponseDTO $triggerType,
         private bool|float $valueThatTriggers,
         private UserResponseDTO $createdBy,
-        private string $startTime,
-        private string $endTime,
+        private ?string $startTime,
+        private ?string $endTime,
         private string $createdAt,
         private string $updatedAt,
         private bool $monday,
@@ -31,7 +31,6 @@ readonly class SensorTriggerResponseDTO
         private bool $sunday,
         private ?AllSensorReadingTypeResponseDTOInterface $baseReadingTypeThatTriggers,
         private ?AllSensorReadingTypeResponseDTOInterface $baseReadingTypeThatIsTriggered,
-
     ) {
     }
 
@@ -96,7 +95,7 @@ readonly class SensorTriggerResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getStartTime(): string
+    public function getStartTime(): ?string
     {
         return $this->startTime;
     }
@@ -107,7 +106,7 @@ readonly class SensorTriggerResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getEndTime(): string
+    public function getEndTime(): ?string
     {
         return $this->endTime;
     }

@@ -44,4 +44,27 @@ class SensorReadingTypeFetcher
 
         return $readingType;
     }
+
+    public function fetchReadingTypesBaseOnSensor(array $sensors): array
+    {
+        foreach ($sensors as $sensor) {
+            $sensorReadingTypes[] = $this->fetchAllSensorReadingTypesBySensor($sensor);
+        }
+
+        return $sensorReadingTypes ?? [];
+    }
+
+    public function fetchBaseReadingTypeIDsFromSensors(array $sensors): array
+    {
+        $sensorReadingTypes = $this->fetchReadingTypesBaseOnSensor($sensors);
+
+        $baseReadingTypeIDs = [];
+        foreach ($sensorReadingTypes as $sensorReadingType) {
+            foreach ($sensorReadingType as $item) {
+                $baseReadingTypeIDs[] = $item->getBaseReadingType()->getBaseReadingTypeID();
+            }
+        }
+
+        return $baseReadingTypeIDs;
+    }
 }

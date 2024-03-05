@@ -37,15 +37,15 @@ class SensorTriggerRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function findAllSensorTriggersForBaseReadingType(array $baseReadingTypeIDs): array
+    public function findAllSensorTriggersForBaseReadingIDs(array $baseReadingTypeIDs): array
     {
         $qb = $this->createQueryBuilder('st');
         $expr = $qb->expr();
 
         $qb->where(
-            $expr->orX(
+            $expr->andX(
                 $expr->in('st.baseReadingTypeThatTriggers', ':baseReadingTypeThatTriggers'),
-                $expr->in('st.baseReadingTypeThatTriggers', ':baseReadingTypeThatTriggers'),
+                $expr->in('st.baseReadingTypeToTriggers', ':baseReadingTypeThatTriggers'),
             )
         )->setParameters(
             [

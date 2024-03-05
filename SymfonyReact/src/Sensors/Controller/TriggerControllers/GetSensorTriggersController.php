@@ -11,6 +11,8 @@ use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Sensors\Builders\Request\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Sensors\Builders\Response\TriggerResponseBuilder\SensorTriggerResponseDTOBuilder;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
+use App\Sensors\Exceptions\UserNotAllowedException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\Repository\SensorTriggerRepository;
 use App\Sensors\SensorServices\SensorReadingTypeFetcher;
@@ -59,28 +61,17 @@ class GetSensorTriggersController extends AbstractController
         );
         $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams);
 
-//        /** @var AbstractBoolReadingBaseSensor[] $sensorReadingTypes */
-        $sensorReadingTypes = [];
-        foreach ($usersSensors as $sensor) {
-            $sensorReadingTypes[] = $sensorReadingTypeFetcher->fetchAllSensorReadingTypesBySensor($sensor);
-        }
-        $baseSensorReadingTypeIDs = array_map(static function ($sensorReadingType) {
-            $return = [];
-            foreach ($sensorReadingType as $item) {
-                $return[] = $item->getBaseReadingType()->getBaseReadingTypeID();
-            }
+        $baseReadingTypeIDs = $sensorReadingTypeFetcher->fetchBaseReadingTypeIDsFromSensors($usersSensors);
 
-            return $return;
-//            return $sensorReadingType->getBaseReadingType()->getBaseReadingTypeID();
-        }, $sensorReadingTypes);
-dd($baseSensorReadingTypeIDs);
-        $sensorTriggers = $sensorTriggerRepository->findAllSensorTriggersForBaseReadingType($baseSensorReadingTypeIDs);
-
-
+        $sensorTriggers = $sensorTriggerRepository->findAllSensorTriggersForBaseReadingIDs($baseReadingTypeIDs);
 
         $sensorTriggerResponseDTOs = [];
         foreach ($sensorTriggers as $sensorTrigger) {
-            $sensorTriggerResponseDTOs[] = $sensorTriggerResponseDTOBuilder->buildFullSensorTriggerResponseDTO($sensorTrigger);
+            try {
+                $sensorTriggerResponseDTOs[] = $sensorTriggerResponseDTOBuilder->buildFullSensorTriggerResponseDTO($sensorTrigger);
+            } catch (UserNotAllowedException $e) {
+                return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
+            }
         }
 
         try {
@@ -91,4 +82,10 @@ dd($baseSensorReadingTypeIDs);
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
+
+//    #[Route('{baseReadingType}/get', name: 'get-single-sensor-triggers', methods: [Request::METHOD_GET])]
+//    public function getSensorTriggersByBaseReadingTypeID(BaseSensorReadingType $baseSensorReadingType): JsonResponse
+//    {
+//
+//    }
 }

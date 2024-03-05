@@ -5,8 +5,10 @@ namespace App\Tests\Sensors\Controller\TriggerControllers;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Sensors\Controller\TriggerControllers\GetSensorTriggersController;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTrigger;
 use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
 use App\Sensors\Repository\Sensors\ORM\SensorRepository;
 use App\Tests\Traits\TestLoginTrait;
@@ -68,7 +70,7 @@ class GetSensorTriggerControllerTest extends WebTestCase
 
     public function test_getting_all_the_triggers_for_user(): void
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
         $groupsUserIsApartOf = $this->groupRepository->findGroupsUserIsApartOf($user);
         $groupsUserIsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($user);
 
@@ -76,7 +78,13 @@ class GetSensorTriggerControllerTest extends WebTestCase
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         $sensorsUserIsApartOf = $this->sensorRepository->findBy(['deviceID' => $devicesUserIsApartOf]);
+        $sensorIDsUserIsApartOf = array_map(static function (Sensor $sensor) {
+            return $sensor->getSensorID();
+        }, $sensorsUserIsApartOf);
         $sensorsUserIsNotApartOf = $this->sensorRepository->findBy(['deviceID' => $devicesUserIsNotApartOf]);
+        $sensorIDsUserIsNotApartOf = array_map(static function (Sensor $sensor) {
+            return $sensor->getSensorID();
+        }, $sensorsUserIsNotApartOf);
 
         $userToken = $this->setUserToken($this->client, $user->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
 
@@ -91,13 +99,89 @@ class GetSensorTriggerControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
 
         $response = json_decode($this->client->getResponse()->getContent(), true);
+        self::assertNotEmpty($response);
 
-        dd($response);
+        $title = $response['title'];
+        self::assertEquals(GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
+
+        $payload = $response['payload'];
+        self::assertNotEmpty($payload);
+
+        foreach ($payload as $triggerResponseData) {
+            self::assertArrayHasKey('sensorTriggerID', $triggerResponseData);
+            self::assertArrayHasKey('valueThatTriggers', $triggerResponseData);
+            self::assertArrayHasKey('triggerType', $triggerResponseData);
+            self::assertArrayHasKey('baseReadingTypeThatTriggers', $triggerResponseData);
+            self::assertArrayHasKey('baseReadingTypeThatIsTriggered', $triggerResponseData);
+            self::assertArrayHasKey('createdAt', $triggerResponseData);
+            self::assertArrayHasKey('createdBy', $triggerResponseData);
+            self::assertArrayHasKey('endTime', $triggerResponseData);
+            self::assertArrayHasKey('startTime', $triggerResponseData);
+            self::assertArrayHasKey('monday', $triggerResponseData);
+            self::assertArrayHasKey('tuesday', $triggerResponseData);
+            self::assertArrayHasKey('wednesday', $triggerResponseData);
+            self::assertArrayHasKey('thursday', $triggerResponseData);
+            self::assertArrayHasKey('friday', $triggerResponseData);
+            self::assertArrayHasKey('saturday', $triggerResponseData);
+            self::assertArrayHasKey('sunday', $triggerResponseData);
+            self::assertArrayHasKey('updatedAt', $triggerResponseData);
+
+            $responseBaseSensorIDThatIsTriggered = $triggerResponseData['baseReadingTypeThatIsTriggered']['sensor']['sensorID'];
+            $responseBaseSensorIDThatTriggers = $triggerResponseData['baseReadingTypeThatTriggers']['sensor']['sensorID'];
+
+            $shouldNotMatch = in_array($responseBaseSensorIDThatIsTriggered, $sensorIDsUserIsNotApartOf, true);
+            $shouldNotMatchTwo = in_array($responseBaseSensorIDThatTriggers, $sensorIDsUserIsNotApartOf, true);
+            self::assertFalse($shouldNotMatch && $shouldNotMatchTwo);
+
+            $shouldMatch = in_array($responseBaseSensorIDThatIsTriggered, $sensorIDsUserIsApartOf, true);
+            $shouldMatchTwo = in_array($responseBaseSensorIDThatTriggers, $sensorIDsUserIsApartOf, true);
+            self::assertTrue($shouldMatch || $shouldMatchTwo);
+        }
     }
 
     public function test_admin_gets_all_triggers(): void
     {
+        $this->client->request(
+            Request::METHOD_GET,
+            self::GET_SENSOR_TRIGGER_URL,
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer ' . $this->userToken]
+        );
 
+        self::assertResponseIsSuccessful();
+
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        self::assertNotEmpty($response);
+
+        $title = $response['title'];
+        self::assertEquals(GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
+
+        $payload = $response['payload'];
+        self::assertNotEmpty($payload);
+
+        $allTriggers = $this->entityManager->getRepository(SensorTrigger::class)->findAll();
+        self::assertCount(count($payload), $allTriggers);
+
+        foreach ($payload as $triggerResponseData) {
+            self::assertArrayHasKey('sensorTriggerID', $triggerResponseData);
+            self::assertArrayHasKey('valueThatTriggers', $triggerResponseData);
+            self::assertArrayHasKey('triggerType', $triggerResponseData);
+            self::assertArrayHasKey('baseReadingTypeThatTriggers', $triggerResponseData);
+            self::assertArrayHasKey('baseReadingTypeThatIsTriggered', $triggerResponseData);
+            self::assertArrayHasKey('createdAt', $triggerResponseData);
+            self::assertArrayHasKey('createdBy', $triggerResponseData);
+            self::assertArrayHasKey('endTime', $triggerResponseData);
+            self::assertArrayHasKey('startTime', $triggerResponseData);
+            self::assertArrayHasKey('monday', $triggerResponseData);
+            self::assertArrayHasKey('tuesday', $triggerResponseData);
+            self::assertArrayHasKey('wednesday', $triggerResponseData);
+            self::assertArrayHasKey('thursday', $triggerResponseData);
+            self::assertArrayHasKey('friday', $triggerResponseData);
+            self::assertArrayHasKey('saturday', $triggerResponseData);
+            self::assertArrayHasKey('sunday', $triggerResponseData);
+            self::assertArrayHasKey('updatedAt', $triggerResponseData);
+        }
     }
 
 }

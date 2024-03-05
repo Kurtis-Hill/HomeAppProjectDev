@@ -43,7 +43,7 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
 
         $mockBaseReadingTypeToTriggerID = $this->createMock(BaseSensorReadingType::class);
         $mockBaseReadingTypeToTriggerID->method('getBaseReadingTypeID')->willReturn(1);
-        $mockTrigger->method('getBaseReadingTypeToTriggerID')->willReturn($mockBaseReadingTypeToTriggerID);
+        $mockTrigger->method('getBaseReadingTypeToTriggers')->willReturn($mockBaseReadingTypeToTriggerID);
         $mockTriggerType = $this->createMock(TriggerType::class);
         $mockTriggerType->method('getTriggerTypeName')->willReturn(TriggerType::RELAY_UP_TRIGGER);
 

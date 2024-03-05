@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 
-import { NavbarListItemInterface, NavbarListInterface } from "./NavbarItemInterfaces";
 import SmallWhiteBoxDisplay from '../../../../OldApp/js/components/DisplayBoxes/SmallWhiteBoxDisplay';
 import { ListLinkItem } from '../Response/NavBarResponseInterface';
 

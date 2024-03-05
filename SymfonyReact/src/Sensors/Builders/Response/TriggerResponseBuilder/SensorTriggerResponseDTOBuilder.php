@@ -55,10 +55,13 @@ readonly class SensorTriggerResponseDTOBuilder
         );
     }
 
+    /**
+     * @throws UserNotAllowedException
+     */
     public function buildFullSensorTriggerResponseDTO(SensorTrigger $sensorTrigger): SensorTriggerResponseDTO
     {
-        $baseReadingTypeToTriggerID = $sensorTrigger->getBaseReadingTypeToTriggerID() !== null
-            ? $this->readingTypeFetcher->fetchReadingTypeBasedOnBaseReadingType($sensorTrigger->getBaseReadingTypeToTriggerID()->getBaseReadingTypeID())
+        $baseReadingTypeToTriggerID = $sensorTrigger->getBaseReadingTypeToTriggers() !== null
+            ? $this->readingTypeFetcher->fetchReadingTypeBasedOnBaseReadingType($sensorTrigger->getBaseReadingTypeToTriggers()->getBaseReadingTypeID())
             : null;
 
         if ($baseReadingTypeToTriggerID !== null) {

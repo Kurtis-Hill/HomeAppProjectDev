@@ -63,7 +63,7 @@ class SensorTrigger
         ORM\ManyToOne(targetEntity: BaseSensorReadingType::class),
         ORM\JoinColumn(name: "baseReadingTypeToTriggerID", referencedColumnName: "baseReadingTypeID"),
     ]
-    private ?BaseSensorReadingType $baseReadingTypeToTriggerID;
+    private ?BaseSensorReadingType $baseReadingTypeToTriggers;
 
     #[
         ORM\Column(name: "valueThatTriggers", type: "string", length: 255, nullable: false),
@@ -187,14 +187,14 @@ class SensorTrigger
         $this->baseReadingTypeThatTriggers = $baseReadingTypeThatTriggers;
     }
 
-    public function getBaseReadingTypeToTriggerID(): ?BaseSensorReadingType
+    public function getBaseReadingTypeToTriggers(): ?BaseSensorReadingType
     {
-        return $this->baseReadingTypeToTriggerID;
+        return $this->baseReadingTypeToTriggers;
     }
 
     public function setBaseReadingTypeToTrigger(?BaseSensorReadingType $baseReadingTypeToTriggerID): void
     {
-        $this->baseReadingTypeToTriggerID = $baseReadingTypeToTriggerID;
+        $this->baseReadingTypeToTriggers = $baseReadingTypeToTriggerID;
     }
 
     public function getValueThatTriggers(): string

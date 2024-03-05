@@ -18,7 +18,7 @@ class RelaySensorCardViewDTOBuilder extends AbstractBoolReadingTypeDTOBuilder
             Relay::READING_TYPE,
             $dateTime,
             $cardData['relay_currentReading'],
-            $cardData['relay_expectedReading'],
+            $cardData['relay_expectedReading'] ?? null,
             $cardData['relay_requestedReading'],
         );
     }
