@@ -31,10 +31,13 @@ readonly class SensorUpdateEventHandler
         $sensorsToUpdate = [];
         foreach ($sensors as $sensor) {
             /** @var Sensor[] $sensorsToUpdate */
-            $sensorsToUpdate = array_merge($this->sensorRepository->findSameSensorTypesOnSameDevice(
-                $sensor->getDevice()->getDeviceID(),
-                $sensor->getSensorTypeObject()->getSensorTypeID(),
-            ), $sensorsToUpdate);
+            $sensorsToUpdate = array_merge(
+                $this->sensorRepository->findSameSensorTypesOnSameDevice(
+                    $sensor->getDevice()->getDeviceID(),
+                    $sensor->getSensorTypeObject()->getSensorTypeID(),
+                ),
+                $sensorsToUpdate
+            );
         }
         if (empty($sensorsToUpdate)) {
             throw new SensorNotFoundException('No sensors found to update');

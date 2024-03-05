@@ -372,7 +372,11 @@ trait HomeAppAPITrait
         array $extraContexts = [],
         bool $docExtractor = false,
     ): mixed {
-        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $encoders = match ($format) {
+            'xml' => [new XmlEncoder()],
+            'json' => [new JsonEncoder()],
+            default => [new XmlEncoder(), new JsonEncoder()],
+        };
 
         if ($docExtractor === true) {
             $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);

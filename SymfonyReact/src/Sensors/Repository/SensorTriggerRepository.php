@@ -43,7 +43,7 @@ class SensorTriggerRepository extends ServiceEntityRepository
         $expr = $qb->expr();
 
         $qb->where(
-            $expr->andX(
+            $expr->orX(
                 $expr->in('st.baseReadingTypeThatTriggers', ':baseReadingTypeThatTriggers'),
                 $expr->in('st.baseReadingTypeToTriggers', ':baseReadingTypeThatTriggers'),
             )

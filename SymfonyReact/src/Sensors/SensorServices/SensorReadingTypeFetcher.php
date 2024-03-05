@@ -35,7 +35,7 @@ class SensorReadingTypeFetcher
         return array_merge($boolTypeSensors, $standardTypeSensors);
     }
 
-    public function fetchReadingTypeBasedOnBaseReadingType(int $baseReadingType): AllSensorReadingTypeInterface
+    public function fetchReadingTypeBasedOnBaseReadingType(int $baseReadingType): ?AllSensorReadingTypeInterface
     {
         $readingType = $this->standardReadingTypeRepository->findOneBy(['baseReadingType' => $baseReadingType]);
         if ($readingType === null) {

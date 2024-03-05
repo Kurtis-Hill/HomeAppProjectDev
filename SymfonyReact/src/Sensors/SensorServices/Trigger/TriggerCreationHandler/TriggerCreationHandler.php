@@ -41,12 +41,12 @@ readonly class TriggerCreationHandler implements TriggerCreationHandlerInterface
         $newSensorType->setOverride(false);
         $newSensorType->setCreatedAt(clone $now);
         $newSensorType->setUpdatedAt(clone $now);
+
         $validationErrors = $this->validator->validate($newSensorType);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->getValidationErrorAsArray($validationErrors);
         }
 
-//        dd($newSensorType);
         $this->sensorTriggerRepository->persist($newSensorType);
         $this->sensorTriggerRepository->flush();
 
