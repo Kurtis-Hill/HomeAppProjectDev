@@ -244,6 +244,12 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_DHT = 'RegularUserTwoDeviceRegularGroupTwoDht';
 
+    public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_LDR = 'RegularUserTwoDeviceRegularGroupTwoLDR';
+
+    public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_RELAY = 'RegularUserTwoDeviceRegularGroupTwoRelay';
+
+    public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_BMP = 'RegularUserTwoDeviceRegularGroupTwoBmp';
+
     /** one for each of the permission check devices */
     public const PERMISSION_CHECK_SENSORS = [
         self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT => [
@@ -401,7 +407,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'pinNumber' => 4,
         ],
 
-        'RegularUserTwoDeviceRegularGroupTwoBmp' => [
+        self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_BMP => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => self::REGULAR_2_BMP_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME],
@@ -444,7 +450,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'pinNumber' => 5,
         ],
 
-        'RegularUserTwoDeviceRegularGroupTwoRelay' => [
+        self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_RELAY => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => self::REGULAR_2_RELAY_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
@@ -531,7 +537,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             'pinNumber' => 7,
         ],
 
-        'RegularUserTwoDeviceRegularGroupTwoLDR' => [
+        self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_LDR => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
             'sensorName' => self::REGULAR_2_LDR_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],

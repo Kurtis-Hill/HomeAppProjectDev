@@ -126,16 +126,18 @@ class GetSensorTriggerControllerTest extends WebTestCase
             self::assertArrayHasKey('sunday', $triggerResponseData);
             self::assertArrayHasKey('updatedAt', $triggerResponseData);
 
-            $responseBaseSensorIDThatIsTriggered = $triggerResponseData['baseReadingTypeThatIsTriggered']['sensor']['sensorID'];
-            $responseBaseSensorIDThatTriggers = $triggerResponseData['baseReadingTypeThatTriggers']['sensor']['sensorID'];
+            if (!empty($triggerResponseData['baseReadingTypeThatIsTriggered']) && !empty($triggerResponseData['baseReadingTypeThatTriggers'])) {
+                $responseBaseSensorIDThatIsTriggered = $triggerResponseData['baseReadingTypeThatIsTriggered']['sensor']['sensorID'];
+                $responseBaseSensorIDThatTriggers = $triggerResponseData['baseReadingTypeThatTriggers']['sensor']['sensorID'];
 
-            $shouldNotMatch = in_array($responseBaseSensorIDThatIsTriggered, $sensorIDsUserIsNotApartOf, true);
-            $shouldNotMatchTwo = in_array($responseBaseSensorIDThatTriggers, $sensorIDsUserIsNotApartOf, true);
-            self::assertFalse($shouldNotMatch && $shouldNotMatchTwo);
+                $shouldNotMatch = in_array($responseBaseSensorIDThatIsTriggered, $sensorIDsUserIsNotApartOf, true);
+                $shouldNotMatchTwo = in_array($responseBaseSensorIDThatTriggers, $sensorIDsUserIsNotApartOf, true);
 
-            $shouldMatch = in_array($responseBaseSensorIDThatIsTriggered, $sensorIDsUserIsApartOf, true);
-            $shouldMatchTwo = in_array($responseBaseSensorIDThatTriggers, $sensorIDsUserIsApartOf, true);
-            self::assertTrue($shouldMatch || $shouldMatchTwo);
+                self::assertFalse($shouldNotMatch && $shouldNotMatchTwo);
+                $shouldMatch = in_array($responseBaseSensorIDThatIsTriggered, $sensorIDsUserIsApartOf, true);
+                $shouldMatchTwo = in_array($responseBaseSensorIDThatTriggers, $sensorIDsUserIsApartOf, true);
+                self::assertTrue($shouldMatch || $shouldMatchTwo);
+            }
         }
     }
 

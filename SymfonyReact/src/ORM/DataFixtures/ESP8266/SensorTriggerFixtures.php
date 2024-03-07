@@ -195,6 +195,28 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
         'override' => false,
     ];
 
+    public const SENSOR_TRIGGER_9 = [
+        'triggerType' => TriggerTypeFixtures::RELAY_UP,
+        'baseReadingTypeThatTriggers' => SensorFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_BMP,
+        'baseReadingTypeToTriggerID' => SensorFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_RELAY,
+        'valueThatTriggers' => 55,
+        'days' => [
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => true,
+            'sunday' => true,
+        ],
+        'startTime' => null,
+        'endTime' => null,
+        'operatorID' => OperatorsFixtures::NOT_EQUALS,
+        'createdBy' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
+        'createdAt' => '2021-09-26 19:30:00',
+        'override' => false,
+    ];
+
     public const SENSOR_TRIGGERS = [
         self::SENSOR_TRIGGER_1,
         self::SENSOR_TRIGGER_2,
@@ -204,6 +226,7 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
         self::SENSOR_TRIGGER_6,
         self::SENSOR_TRIGGER_7,
         self::SENSOR_TRIGGER_8,
+        self::SENSOR_TRIGGER_9,
     ];
 
     public function getOrder(): int

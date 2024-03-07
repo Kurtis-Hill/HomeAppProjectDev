@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { SensorTriggerResponseInterface } from '../../Sensors/Response/Sensor/Trigger/SensorTriggerResponseInterface';
 import { getAllSensorTriggerTypesRequest } from '../../Sensors/Request/Sensor/Trigger/GetAllTriggersRequest';
-import { BaseCard } from '../../UserInterface/Cards/Components/BaseCard';
-import DeleteButton from '../../Common/Components/Buttons/DeleteButton';
 import BaseModal from '../../Common/Components/Modals/BaseModal';
 import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
 import CloseButton from '../../Common/Components/Buttons/CloseButton';
+import TriggerCard from '../../Sensors/Components/Trigger/TriggerCard';
+import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
 
 export default function TriggerPage() {
     const [triggerData, setTriggerData] = useState<SensorTriggerResponseInterface[]>([]);
@@ -22,15 +22,28 @@ export default function TriggerPage() {
     const [selectedTriggerID, setSelectedTriggerID] = useState<number|null>(null);
 
     const fetchAllTriggerData = async () => {
+        setLoadingTriggerData(true);
         const response = await getAllSensorTriggerTypesRequest();
-        if (response.status === 200) {
+        console.log(response.data.payload);
+        if (response.status === 200 && Array.isArray(response.data.payload)) {
             setTriggerData(response.data.payload);
+            setLoadingTriggerData(false);
         } else {
             setTriggerDataErrors(response.data.errors);
+            setLoadingTriggerData(false);
         }
     }
 
-    const deleteTrigger = async (Event: Event) => {
+    const handleShowDeleteModal = (triggerID: number|null) => {
+        if (triggerID === null) {
+            setShowDeleteModal(false);    
+        } else {
+            setSelectedTriggerID(triggerID);
+            setShowDeleteModal(true);
+        }
+    }
+
+    const deleteTrigger = async (e: Event) => {
         // const response = await deleteTriggerRequest(triggerID);
         // if (response.status === 200) {
         //     fetchAllTriggerData();
@@ -49,75 +62,55 @@ export default function TriggerPage() {
                         {/* <div className="row"> */}
                             <h1>Triggers</h1>
                             {
-                                triggerData.map((sensorTriggerData: SensorTriggerResponseInterface, index: number) => {
-                                    return (
-                                        <>
-                                            <div key={index}>
-                                                <BaseCard loading={false}>
-                                                    {
-                                                        sensorTriggerData.baseReadingTypeThatTriggers
-                                                            ? <span>Sensor that triggers: {sensorTriggerData.baseReadingTypeThatIsTriggered.sensor.sensorName}</span>
-                                                            : null
-                                                    }
-                                                    <br />
-                                                    {
-                                                        sensorTriggerData.baseReadingTypeThatIsTriggered
-                                                            ? <span>Sensor that is triggered: {sensorTriggerData.baseReadingTypeThatIsTriggered.sensor.sensorName}</span>
-                                                            : null
-                                                    }
-                                                    <br />
-                                                    <span>Value that triggers: {sensorTriggerData.valueThatTriggers}</span>
-                                                    <br />
-                                                    <span>Operator: {sensorTriggerData.operator.operatorSymbol}</span>
-                                                    <br />
-                                                    <span>Monday: {sensorTriggerData.monday === true ? 'true' : 'false'}</span>
-                                                    <br />
-                                                    <span>Tuesday: {sensorTriggerData.tuesday === true ? 'true' : 'false'}</span>
-                                                    <br />
-                                                    <span>Wednesday: {sensorTriggerData.wednesday === true ? 'true' : 'false'}</span>
-                                                    <br />
-                                                    <span>Thursday: {sensorTriggerData.thursday === true ? 'true' : 'false'}</span>
-                                                    <br />
-                                                    <span>Friday: {sensorTriggerData.friday === true ? 'true' : 'false'}</span>
-                                                    <br />
-                                                    <span>Saturday: {sensorTriggerData.saturday === true ? 'true' : 'false'}</span>
-                                                    <br />
-                                                    <span>Sunday: {sensorTriggerData.sunday === true ? 'true' : 'false'}</span>
-                                                    <br />
-                                                    <DeleteButton clickFunction={setShowDeleteModal}></DeleteButton>
-                                                </BaseCard>
-                                            </div>
-                                            {
-                                                showDeleteModal === true
-                                                    ?
-                                                        <BaseModal
-                                                            title={`Delete Trigger`}
-                                                            modalShow={true}
-                                                            setShowModal={setShowDeleteModal}
-                                                        >
-                                                            <>
-                                                            Delete trigger ID: {selectedTriggerID}?
-                                                            <br />
-                                                            <SubmitButton
-                                                                type="submit"
-                                                                text='Delete Device'
-                                                                name='delete-device'
-                                                                action='submit'
-                                                                classes='add-new-submit-button'
-                                                                onClickFunction={deleteTrigger}
-                                                            />
-                                                            <CloseButton 
-                                                                close={setShowDeleteModal} 
-                                                                classes={"modal-cancel-button"} 
-                                                            />
-                                                            </>                                                   
-                                                        </BaseModal>
-                                                    :
-                                                        null
-                                            }
-                                        </>
-                                    )
-                                })
+                                loadingTriggerData === true
+                                    ?
+                                        <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row hidden-scroll" />
+                                    :                                        
+                                        triggerData.length > 0
+                                            ? 
+                                                triggerData.map((sensorTriggerData: SensorTriggerResponseInterface, index: number) => {
+                                                    return (
+                                                        <>
+                                                            <div key={index}>
+                                                                <TriggerCard 
+                                                                    sensorTriggerData={sensorTriggerData} 
+                                                                    handleShowDeleteModal={handleShowDeleteModal}
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )
+                                                })
+                                            : 
+                                                <h2>No Triggers to dispay</h2>
+
+                            }
+                            {
+                                showDeleteModal === true
+                                    ?
+                                        <BaseModal
+                                            title={`Delete Trigger`}
+                                            modalShow={showDeleteModal}
+                                            setShowModal={setShowDeleteModal}
+                                        >
+                                            <>
+                                                Delete trigger ID: <b>{selectedTriggerID}</b>?
+                                                <br />
+                                                <SubmitButton
+                                                    type="submit"
+                                                    text='Delete Device'
+                                                    name='delete-device'
+                                                    action='submit'
+                                                    classes='add-new-submit-button'
+                                                    onClickFunction={deleteTrigger}
+                                                />
+                                                <CloseButton 
+                                                    close={setShowDeleteModal} 
+                                                    classes={"modal-cancel-button"} 
+                                                />
+                                            </>                                                   
+                                        </BaseModal>
+                                    :
+                                        null
                             }
                     </div>
                 </div>

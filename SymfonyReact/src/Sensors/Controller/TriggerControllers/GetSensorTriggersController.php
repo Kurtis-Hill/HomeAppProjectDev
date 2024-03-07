@@ -22,6 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor-trigger/get/')]
@@ -34,6 +35,9 @@ class GetSensorTriggersController extends AbstractController
     {
     }
 
+    /**
+     * @throws AccessDeniedException
+     */
     #[Route('all', name: 'get-sensor-triggers', methods: [Request::METHOD_GET])]
     public function getSensorTriggers(
         Request $request,

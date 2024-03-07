@@ -8,6 +8,7 @@ use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
 use App\Sensors\DTO\Internal\Trigger\CreateNewTriggerDTO;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTrigger;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -29,6 +30,8 @@ class SensorVoter extends Voter
 
     public const CAN_CREATE_TRIGGER = 'can-create-trigger';
 
+    public const CAN_DELETE_TRIGGER = 'can-delete-trigger';
+
     /**
      * @param string $attribute
      * @param mixed $subject
@@ -44,6 +47,7 @@ class SensorVoter extends Voter
             self::UPDATE_SENSOR,
             self::GET_SENSOR,
             self::CAN_CREATE_TRIGGER,
+            self::CAN_DELETE_TRIGGER,
         ])) {
             return false;
         }
@@ -72,8 +76,44 @@ class SensorVoter extends Voter
             self::UPDATE_SENSOR => $this->canUpdateSensor($user, $subject),
             self::GET_SENSOR => $this->canGetSensor($user, $subject),
             self::CAN_CREATE_TRIGGER => $this->canCreateTriggerForSensor($user, $subject),
+            self::CAN_DELETE_TRIGGER => $this->canDeleteTriggerForSensor($user, $subject),
             default => false
         };
+    }
+
+    private function canDeleteTriggerForSensor(UserInterface $user, SensorTrigger $sensorTrigger): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        $baseReadingTypeThatTriggers = $sensorTrigger->getBaseReadingTypeThatTriggers();
+        $baseReadingTypeThatIsTriggered = $sensorTrigger->getBaseReadingTypeToTriggers();
+
+        $baseReadingTypeThatTriggersPasses = null;
+        if ($baseReadingTypeThatTriggers !== null) {
+            $baseReadingTypeThatTriggersPasses = in_array(
+                $baseReadingTypeThatTriggers->getSensor()->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(),
+                true
+            );
+        }
+
+
+        $baseReadingTypeThatIsTriggeredPasses = null;
+        if ($baseReadingTypeThatIsTriggered !== null) {
+            $baseReadingTypeThatIsTriggeredPasses = in_array(
+                $baseReadingTypeThatIsTriggered->getSensor()->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(),
+                true
+            );
+        }
+
+        return !($baseReadingTypeThatTriggersPasses === false || $baseReadingTypeThatIsTriggeredPasses === false);
     }
 
     private function canCreateTriggerForSensor(UserInterface $user, CreateNewTriggerDTO $createNewTriggerDTO): bool

@@ -11,6 +11,7 @@ import LatitudeResponseInterface from "../../ReadingTypes/SensorReadingTypeRespo
 import AnalogResponseInterface from "../../ReadingTypes/SensorReadingTypeResponseInterfaces/AnalogResponseInterface";
 
 export interface SensorTriggerResponseInterface {
+    sensorTriggerID: number,
     operator: OperatorResponseInterface,
     triggerType: TriggerTypeResponseInterface,
     valueThatTriggers: boolean|number,

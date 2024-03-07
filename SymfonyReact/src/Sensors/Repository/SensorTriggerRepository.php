@@ -102,4 +102,9 @@ class SensorTriggerRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function remove(SensorTrigger $sensorTrigger): void
+    {
+        $this->_em->remove($sensorTrigger);
+    }
 }
