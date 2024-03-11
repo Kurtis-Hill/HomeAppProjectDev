@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { SensorTriggerResponseInterface } from '../../Sensors/Response/Sensor/Trigger/SensorTriggerResponseInterface';
-import { getAllSensorTriggerTypesRequest } from '../../Sensors/Request/Sensor/Trigger/GetAllTriggersRequest';
+import { getAllSensorTriggerTypesRequest } from '../../Sensors/Request/Trigger/GetAllTriggersRequest';
 import BaseModal from '../../Common/Components/Modals/BaseModal';
 import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
 import CloseButton from '../../Common/Components/Buttons/CloseButton';
 import TriggerCard from '../../Sensors/Components/Trigger/TriggerCard';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
+import { deleteTriggerRequest } from '../../Sensors/Request/Trigger/DeleteTriggerRequest';
+import { BaseCard } from '../../UserInterface/Cards/Components/BaseCard';
+import AddNewTrigger from '../../Sensors/Components/Trigger/AddNewTrigger';
 
 export default function TriggerPage() {
     const [triggerData, setTriggerData] = useState<SensorTriggerResponseInterface[]>([]);
@@ -29,7 +32,6 @@ export default function TriggerPage() {
             setTriggerData(response.data.payload);
             setLoadingTriggerData(false);
         } else {
-            setTriggerDataErrors(response.data.errors);
             setLoadingTriggerData(false);
         }
     }
@@ -44,10 +46,10 @@ export default function TriggerPage() {
     }
 
     const deleteTrigger = async (e: Event) => {
-        // const response = await deleteTriggerRequest(triggerID);
-        // if (response.status === 200) {
-        //     fetchAllTriggerData();
-        // }
+        const response = await deleteTriggerRequest(selectedTriggerID);
+        if (response.status === 200) {
+            fetchAllTriggerData();
+        }
     } 
 
     useEffect(() => {
@@ -75,14 +77,36 @@ export default function TriggerPage() {
                                                                 <TriggerCard 
                                                                     sensorTriggerData={sensorTriggerData} 
                                                                     handleShowDeleteModal={handleShowDeleteModal}
+                                                                    showDeleteModal={showDeleteModal}
+                                                                    setShowDeleteModal={setShowDeleteModal}
                                                                 />
                                                             </div>
                                                         </>
                                                     )
                                                 })
                                             : 
-                                                <h2>No Triggers to dispay</h2>
+                                                <h2>No Triggers to display</h2>
 
+                            }
+                            {
+                                <BaseCard loading={false} setCardLoading={setAddNewModal} setVariableToUpdate={() => false}>
+                                    <h2>+ Add New Trigger</h2>
+                                </BaseCard>
+                            }
+                            {
+                                addNewModal === true
+                                ?
+                                    <>
+                                        <BaseModal
+                                            title={'Add New Trigger'}
+                                            modalShow={addNewModal}
+                                            setShowModal={setAddNewModal}
+                                        >
+                                            <AddNewTrigger />
+                                        </BaseModal>
+                                    </>
+                                :
+                                    null
                             }
                             {
                                 showDeleteModal === true
@@ -109,6 +133,19 @@ export default function TriggerPage() {
                                                 />
                                             </>                                                   
                                         </BaseModal>
+                                    :
+                                        null
+                            }
+                            {
+                                triggerDataErrors.length > 0
+                                    ?   
+                                        triggerDataErrors.map((error: string, index: number) => {
+                                            return (
+                                                <div key={index}>
+                                                    <h2>{error}</h2>
+                                                </div>
+                                            )
+                                        })
                                     :
                                         null
                             }

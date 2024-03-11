@@ -5,22 +5,20 @@ import { SensorTriggerResponseInterface } from '../../Response/Sensor/Trigger/Se
 import { BaseCard } from '../../../UserInterface/Cards/Components/BaseCard';
 import DeleteButton from '../../../Common/Components/Buttons/DeleteButton';
 
-export default function TriggerCard(props: {sensorTriggerData: SensorTriggerResponseInterface, handleShowDeleteModal: (triggerID: number) => void}) {
-    const { sensorTriggerData, handleShowDeleteModal } = props;
+export default function TriggerCard(props: {sensorTriggerData: SensorTriggerResponseInterface, handleShowDeleteModal: (triggerID: number) => void, showDeleteModal: boolean, setShowDeleteModal: (showDeleteModal: boolean) => void}) {
+    const { sensorTriggerData, handleShowDeleteModal, showDeleteModal, setShowDeleteModal } = props;
 
-    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-
-    useEffect(() => {
-        if (showDeleteModal === true) {
-            handleShowDeleteModal(sensorTriggerData.sensorTriggerID);
-        } else {
-            handleShowDeleteModal(null);
-        }
-    }, [showDeleteModal]);
+    if (showDeleteModal === true) {
+        handleShowDeleteModal(sensorTriggerData.sensorTriggerID);
+        setShowDeleteModal(true);
+    } else {
+        handleShowDeleteModal(null);
+        setShowDeleteModal(false);
+    }
 
     return (
         <>
-            <BaseCard loading={false}>
+            <BaseCard loading={false} setCardLoading={() => false} setVariableToUpdate={() => false}>
                 {
                     sensorTriggerData.baseReadingTypeThatTriggers
                         ? <span>Sensor that triggers: {sensorTriggerData.baseReadingTypeThatTriggers.sensor.sensorName}</span>
@@ -50,6 +48,7 @@ export default function TriggerCard(props: {sensorTriggerData: SensorTriggerResp
                 <span>Saturday: {sensorTriggerData.saturday === true ? 'true' : 'false'}</span>
                 <br />
                 <span>Sunday: {sensorTriggerData.sunday === true ? 'true' : 'false'}</span>
+                <br />
                 <br />
                 <DeleteButton clickFunction={setShowDeleteModal}></DeleteButton>
             </BaseCard>
