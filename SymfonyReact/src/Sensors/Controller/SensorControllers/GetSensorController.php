@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -97,11 +97,10 @@ class GetSensorController extends AbstractController
         $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO);
 
         $allowedSensors = $sensorUserFilter->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO);
-//dd($allowedSensors);
         foreach ($allowedSensors as $sensor) {
             $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);
         }
-//dd($sensorDTOs);
+
         if (empty($sensorDTOs)) {
             if (!empty($sensorUserFilter->getErrors())) {
                 return $this->sendBadRequestJsonResponse($sensorUserFilter->getErrors());
@@ -112,7 +111,6 @@ class GetSensorController extends AbstractController
 
         try {
             $normalizedResponse = $this->normalizeResponse($sensorDTOs, [$requestDTO->getResponseType()]);
-//            dd($normalizedResponse, [$requestDTO->getResponseType()], $sensorDTOs, $sensorDTOs[0]->getSensorReadingTypes());
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

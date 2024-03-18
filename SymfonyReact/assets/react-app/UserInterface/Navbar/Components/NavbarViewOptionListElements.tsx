@@ -83,10 +83,6 @@ export default function NavbarViewOptionListElements(props: {
     return (
         <React.Fragment>
             { navbarItems }
-
-            {/* {            
-                showAddNewDeviceModal === true
-                    ? */}
             <BaseModal 
                 title={'Add New Device'}
                 modalShow={showAddNewDeviceModal}
@@ -98,9 +94,6 @@ export default function NavbarViewOptionListElements(props: {
                     setRefreshNavDataFlag={props.setRefreshNavDataFlag}
                 />
             </BaseModal>
-                    {/* :
-                        null */}
-            {/* } */}
             {
                 showAddNewRoomModal === true
                     ?

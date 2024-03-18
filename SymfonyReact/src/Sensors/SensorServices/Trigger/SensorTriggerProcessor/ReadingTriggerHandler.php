@@ -4,6 +4,7 @@ namespace App\Sensors\SensorServices\Trigger\SensorTriggerProcessor;
 
 use App\Common\Exceptions\OperatorConvertionException;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Exceptions\BaseReadingTypeNotFoundException;
 use App\Sensors\Exceptions\TriggerTypeNotRecognisedException;
 use App\Sensors\Factories\TriggerFactories\TriggerTypeHandlerFactory;
 use App\Sensors\SensorServices\Trigger\TriggerChecker\SensorReadingTriggerCheckerInterface;
@@ -37,6 +38,9 @@ readonly class ReadingTriggerHandler implements ReadingTriggerHandlerInterface
 
                 try {
                     $triggerTypeHandler->processTrigger($trigger);
+                } catch (BaseReadingTypeNotFoundException) {
+                    $this->elasticLogger->error(sprintf('Base reading type needs to be set for a relay to be activated for trigger %d', $trigger->getSensorTriggerID()));
+                    continue;
                 } catch (Exception $e) {
                     $this->elasticLogger->error(sprintf('Failed to process trigger %d', $trigger->getSensorTriggerID()),[$e->getMessage()]);
                     continue;

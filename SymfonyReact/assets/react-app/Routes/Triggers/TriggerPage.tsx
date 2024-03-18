@@ -72,16 +72,14 @@ export default function TriggerPage() {
                                             ? 
                                                 triggerData.map((sensorTriggerData: SensorTriggerResponseInterface, index: number) => {
                                                     return (
-                                                        <>
-                                                            <div key={index}>
+                                                        <React.Fragment key={index}>
+                                                            <div>
                                                                 <TriggerCard 
                                                                     sensorTriggerData={sensorTriggerData} 
                                                                     handleShowDeleteModal={handleShowDeleteModal}
-                                                                    showDeleteModal={showDeleteModal}
-                                                                    setShowDeleteModal={setShowDeleteModal}
                                                                 />
                                                             </div>
-                                                        </>
+                                                        </React.Fragment>
                                                     )
                                                 })
                                             : 
@@ -101,8 +99,12 @@ export default function TriggerPage() {
                                             title={'Add New Trigger'}
                                             modalShow={addNewModal}
                                             setShowModal={setAddNewModal}
+                                            heightClasses="standard-modal-height"
                                         >
-                                            <AddNewTrigger />
+                                            <AddNewTrigger
+                                                closeForm={setAddNewModal}
+                                                resetData={fetchAllTriggerData}
+                                            />
                                         </BaseModal>
                                     </>
                                 :
@@ -114,7 +116,7 @@ export default function TriggerPage() {
                                         <BaseModal
                                             title={`Delete Trigger`}
                                             modalShow={showDeleteModal}
-                                            setShowModal={setShowDeleteModal}
+                                            setShowModal={setShowDeleteModal}                                            
                                         >
                                             <>
                                                 Delete trigger ID: <b>{selectedTriggerID}</b>?

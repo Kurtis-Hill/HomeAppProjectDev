@@ -40,7 +40,7 @@ class NewTriggerRequestDTO
     private mixed $days;
 
     #[
-        Assert\Type(type: ['bool', 'float'], message: 'value that triggers must be an {{ type }} you have provided {{ value }}')
+        Assert\Type(type: ['bool', 'float', 'int'], message: 'value that triggers must be an {{ type }} you have provided {{ value }}')
     ]
     private mixed $valueThatTriggers;
 
@@ -50,8 +50,8 @@ class NewTriggerRequestDTO
             new Assert\Length(
                 min: 4,
                 max: 4,
-                exactMessage: 'Trigger type must be in 24 hour format',
-                maxMessage: 'Trigger type must be in 24 hour format',
+                exactMessage: 'Start time must be in 24 hour format',
+                maxMessage: 'Start time must be in 24 hour format',
             ),
         ])
     ]
@@ -63,8 +63,8 @@ class NewTriggerRequestDTO
             new Assert\Length(
                 min: 4,
                 max: 4,
-                exactMessage: 'Trigger type must be in 24 hour format',
-                maxMessage: 'Trigger type must be in 24 hour format',
+                exactMessage: 'End time must be in 24 hour format',
+                maxMessage: 'End Time must be in 24 hour format',
             ),
         ])
     ]

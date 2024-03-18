@@ -60,7 +60,7 @@ class SensorTriggerRepository extends ServiceEntityRepository
      * @return SensorTrigger[]
      */
     #[ArrayShape([SensorTrigger::class])]
-    public function findAllSensorTriggersForDayAndTime(
+    public function findAllSensorTriggersForDayAndTimeForSensorThatTriggers(
         AllSensorReadingTypeInterface $sensorReadingType,
         ?string $day = null,
         ?string $time = null,
@@ -76,8 +76,10 @@ class SensorTriggerRepository extends ServiceEntityRepository
             $expr->eq('st.' . $currentDay, ':currentDay'),
             $expr->eq('st.override', ':override'),
             $expr->orX(
-                $expr->isNull('st.startTime'),
-                $expr->isNull('st.endTime'),
+                $expr->orX(
+                    $expr->isNull('st.startTime'),
+                    $expr->isNull('st.endTime'),
+                ),
                 $expr->orX(
                     $expr->andX(
                         $expr->lte('st.startTime', ':currentTime'),

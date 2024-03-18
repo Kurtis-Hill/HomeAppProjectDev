@@ -1,20 +1,14 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
 
 import { SensorTriggerResponseInterface } from '../../Response/Sensor/Trigger/SensorTriggerResponseInterface';
 import { BaseCard } from '../../../UserInterface/Cards/Components/BaseCard';
 import DeleteButton from '../../../Common/Components/Buttons/DeleteButton';
 
-export default function TriggerCard(props: {sensorTriggerData: SensorTriggerResponseInterface, handleShowDeleteModal: (triggerID: number) => void, showDeleteModal: boolean, setShowDeleteModal: (showDeleteModal: boolean) => void}) {
-    const { sensorTriggerData, handleShowDeleteModal, showDeleteModal, setShowDeleteModal } = props;
-
-    if (showDeleteModal === true) {
-        handleShowDeleteModal(sensorTriggerData.sensorTriggerID);
-        setShowDeleteModal(true);
-    } else {
-        handleShowDeleteModal(null);
-        setShowDeleteModal(false);
-    }
+export default function TriggerCard(props: {
+    sensorTriggerData: SensorTriggerResponseInterface,
+    handleShowDeleteModal: (triggerID: number) => void,
+}) {
+    const { sensorTriggerData, handleShowDeleteModal } = props;
 
     return (
         <>
@@ -50,7 +44,7 @@ export default function TriggerCard(props: {sensorTriggerData: SensorTriggerResp
                 <span>Sunday: {sensorTriggerData.sunday === true ? 'true' : 'false'}</span>
                 <br />
                 <br />
-                <DeleteButton clickFunction={setShowDeleteModal}></DeleteButton>
+                <DeleteButton clickFunction={() => handleShowDeleteModal(sensorTriggerData.sensorTriggerID)}></DeleteButton>
             </BaseCard>
         </>
     )
