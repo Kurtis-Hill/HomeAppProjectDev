@@ -23,8 +23,8 @@ readonly class CreateNewTriggerDTO
         private bool $friday,
         private bool $saturday,
         private bool $sunday,
-        private int $startTime,
-        private int $endTime,
+        private ?int $startTime,
+        private ?int $endTime,
         private User $createdBy,
         private ?BaseSensorReadingType $baseReadingTypeThatTriggers,
         private ?BaseSensorReadingType $baseReadingTypeThatIsTriggered,
@@ -102,12 +102,12 @@ readonly class CreateNewTriggerDTO
         return $this->sensorTrigger;
     }
 
-    public function getStartTime(): int
+    public function getStartTime(): ?int
     {
         return $this->startTime;
     }
 
-    public function getEndTime(): int
+    public function getEndTime(): ?int
     {
         return $this->endTime;
     }

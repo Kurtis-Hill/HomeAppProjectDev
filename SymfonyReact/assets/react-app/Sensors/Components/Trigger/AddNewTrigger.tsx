@@ -37,8 +37,8 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
         triggerType: 0,
         valueThatTriggers: '',
         operator: 0,
-        startTime: '',
-        endTime: '',
+        startTime: null,
+        endTime: null,
         days: {
             monday: true,
             tuesday: true,
@@ -52,7 +52,7 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
 
     useEffect(() => {
         handleGetAdNewTriggerFormRequest();   
-    }, [newTriggerRequest]);
+    }, []);
 
     const handleGetAdNewTriggerFormRequest = async () => {
         if (addNewTriggerFormInputs === null) {
@@ -60,6 +60,11 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
             if (addNewTriggerResponse.status === 200) {
                 console.log('response', addNewTriggerResponse)
                 setAddNewTriggerFormInputs(addNewTriggerResponse.data.payload);
+                setNewTriggerRequest((values: AddNewTriggerFormType) => ({
+                    ...values, 
+                    triggerType: addNewTriggerResponse.data.payload.triggerTypes[0].triggerTypeID,
+                    operator: addNewTriggerResponse.data.payload.operators[0].operatorID,
+                }));
             }
         }
     }
@@ -67,6 +72,11 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
     const handleSendNewTriggerRequest = async (e: Event) => {
         e.preventDefault();
         console.log('send new trigger request');
+
+        if (newTriggerRequest.sensorThatTriggers === 0 && newTriggerRequest.sensorToBeTriggered === 0) {
+            alert('You must select a sensor that triggers or a sensor to be triggered');
+            return;
+        }
 
         //run through the days and remove any that are false
         let days = [];
@@ -92,31 +102,17 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
             days.push(DaysEnum.Sunday);
         }
 
-        let startTimeInput: number|null = null;
-        if (newTriggerRequest.startTime !== null) {
-            startTimeInput = parseInt(newTriggerRequest.startTime.replace(':', ''));
-        }
-
-        let endTimeInput: number|null = null;
-        if (newTriggerRequest.endTime !== null) {
-            endTimeInput = parseInt(newTriggerRequest.endTime.replace(':', ''));
-            // if the amount of is less than 4 digits add a 0 to the front until there is 4 digits
-            for(let i = endTimeInput.toString().length; i < 4; ++i) {
-                endTimeInput = parseInt('0' + endTimeInput.toString());
-            }
-        }
-
         console.log('days', days)
 
         const addNewTriggerRequest: AddNewTriggerType = {
             operator: newTriggerRequest.operator,
             triggerType: newTriggerRequest.triggerType,
-            baseReadingTypeThatTriggers: newTriggerRequest.sensorThatTriggers,
-            baseReadingTypeThatIsTriggered: newTriggerRequest.sensorToBeTriggered,
+            baseReadingTypeThatTriggers: newTriggerRequest.sensorThatTriggers !== 0 ? newTriggerRequest.sensorThatTriggers : null,
+            baseReadingTypeThatIsTriggered: newTriggerRequest.sensorToBeTriggered !== 0 ? newTriggerRequest.sensorToBeTriggered : null,
             days: days,
             valueThatTriggers: newTriggerRequest.valueThatTriggers,
-            startTime: startTimeInput,
-            endTime: endTimeInput,
+            startTime: newTriggerRequest.startTime,
+            endTime: newTriggerRequest.endTime,
         }
         console.log('add new trigger request', addNewTriggerRequest)
 
@@ -185,39 +181,22 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
                         addNewTriggerFormInputs?.sensors.map((sensor: SensorResponseInterface) => {
                             let htmlElements: HTMLElement[] = [];
                             if (sensor.sensorReadingTypes.temperature) {
-                                // return (
                                 htmlElements.push(<option key={sensor.sensorReadingTypes.temperature.baseReadingTypeID} value={sensor.sensorReadingTypes.temperature.baseReadingTypeID}>{sensor.sensorReadingTypes.temperature.sensor.sensorName} temperature</option>);
-                                // )
                             }
                             if (sensor.sensorReadingTypes.humidity) {
                                 htmlElements.push(<option key={sensor.sensorReadingTypes.humidity.baseReadingTypeID} value={sensor.sensorReadingTypes.humidity.baseReadingTypeID}>{sensor.sensorReadingTypes.humidity.sensor.sensorName} humidity</option>);
-                                // return (
-                                    // <option key={index} value={sensor.sensorReadingTypes.humidity.baseReadingTypeID}>{sensor.sensorReadingTypes.humidity.sensor.sensorName} humidity</option>
-                                // )
                             }
                             if (sensor.sensorReadingTypes.relay) {
                                 htmlElements.push(<option key={sensor.sensorReadingTypes.relay.baseReadingTypeID} value={sensor.sensorReadingTypes.relay.baseReadingTypeID}>{sensor.sensorReadingTypes.relay.sensor.sensorName} relay</option>);
-                                // return (
-                                //     <option key={index} value={sensor.sensorReadingTypes.relay.baseReadingTypeID}>{sensor.sensorReadingTypes.relay.sensor.sensorName} relay</option>
-                                // )
                             }
                             if (sensor.sensorReadingTypes.analog) {
                                 htmlElements.push(<option key={sensor.sensorReadingTypes.analog.baseReadingTypeID} value={sensor.sensorReadingTypes.analog.baseReadingTypeID}>{sensor.sensorReadingTypes.analog.sensor.sensorName} analog</option>);
-                                // return (
-                                //     <option key={index} value={sensor.sensorReadingTypes.analog.baseReadingTypeID}>{sensor.sensorReadingTypes.analog.sensor.sensorName} analog</option>
-                                // )
                             }
                             if (sensor.sensorReadingTypes.latitude) {
                                 htmlElements.push(<option key={sensor.sensorReadingTypes.latitude.baseReadingTypeID} value={sensor.sensorReadingTypes.latitude.baseReadingTypeID}>{sensor.sensorReadingTypes.latitude.sensor.sensorName} latitude</option>);
-                                // return (
-                                //     <option key={index} value={sensor.sensorReadingTypes.latitude.baseReadingTypeID}>{sensor.sensorReadingTypes.latitude.sensor.sensorName} latitude</option>
-                                // )
                             }
                             if (sensor.sensorReadingTypes.motion) {
                                 htmlElements.push(<option key={sensor.sensorReadingTypes.motion.baseReadingTypeID} value={sensor.sensorReadingTypes.motion.baseReadingTypeID}>{sensor.sensorReadingTypes.motion.sensor.sensorName} motion</option>);
-                                // return (
-                                //     <option key={index} value={sensor.sensorReadingTypes.motion.baseReadingTypeID}>{sensor.sensorReadingTypes.motion.sensor.sensorName} motion</option>
-                                // )
                             }
                            
                             return htmlElements;

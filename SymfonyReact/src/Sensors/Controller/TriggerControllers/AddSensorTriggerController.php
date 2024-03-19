@@ -68,9 +68,9 @@ class AddSensorTriggerController extends AbstractController
                 $newTriggerRequestDTO->getTriggerType(),
                 $newTriggerRequestDTO->getValueThatTriggers(),
                 $newTriggerRequestDTO->getDays(),
-                TriggerDateTimeConvertor::prepareTimesForComparison($newTriggerRequestDTO->getStartTime()),
-                $newTriggerRequestDTO->getEndTime(),
                 $user,
+                $newTriggerRequestDTO->getStartTime() !== null ? TriggerDateTimeConvertor::prepareTimesForComparison($newTriggerRequestDTO->getStartTime()) : null,
+                $newTriggerRequestDTO->getEndTime() !== null ? TriggerDateTimeConvertor::prepareTimesForComparison($newTriggerRequestDTO->getEndTime()) : null,
                 $newTriggerRequestDTO->getBaseReadingTypeThatTriggers(),
                 $newTriggerRequestDTO->getBaseReadingTypeThatIsTriggered(),
             );

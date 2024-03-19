@@ -46,26 +46,26 @@ class NewTriggerRequestDTO
 
     #[
         Assert\Sequentially([
-            new Assert\Type(type: ['int'], message: 'start time must be an {{ type }} you have provided {{ value }}'),
-            new Assert\Length(
-                min: 4,
-                max: 4,
-                exactMessage: 'Start time must be in 24 hour format',
-                maxMessage: 'Start time must be in 24 hour format',
-            ),
+            new Assert\Type(type: ['string', 'null'], message: 'start time must be an {{ type }} you have provided {{ value }}'),
+//            new Assert\Length(
+//                min: 1,
+//                max: 4,
+//                exactMessage: 'Start time must be in 24 hour format',
+//                maxMessage: 'Start time must be in 24 hour format',
+//            ),
         ])
     ]
     private mixed $startTime;
 
     #[
         Assert\Sequentially( constraints: [
-            new Assert\Type(type: ['int'], message: 'end time must be an {{ type }} you have provided {{ value }}'),
-            new Assert\Length(
-                min: 4,
-                max: 4,
-                exactMessage: 'End time must be in 24 hour format',
-                maxMessage: 'End Time must be in 24 hour format',
-            ),
+            new Assert\Type(type: ['string', 'null'], message: 'end time must be an {{ type }} you have provided {{ value }}'),
+//            new Assert\Length(
+//                min: 1,
+//                max: 4,
+//                exactMessage: 'End time must be in 24 hour format',
+//                maxMessage: 'End Time must be in 24 hour format',
+//            ),
         ])
     ]
     private mixed $endTime;
