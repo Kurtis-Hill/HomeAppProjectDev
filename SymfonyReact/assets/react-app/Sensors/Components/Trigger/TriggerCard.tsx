@@ -29,6 +29,10 @@ export default function TriggerCard(props: {
                 <br />
                 <span>Operator: {sensorTriggerData.operator.operatorSymbol}</span>
                 <br />
+                <span>Start time {sensorTriggerData.startTime}</span>
+                <br />
+                <span>End time {sensorTriggerData.endTime}</span>
+                <br />
                 <span>Monday: {sensorTriggerData.monday === true ? 'true' : 'false'}</span>
                 <br />
                 <span>Tuesday: {sensorTriggerData.tuesday === true ? 'true' : 'false'}</span>

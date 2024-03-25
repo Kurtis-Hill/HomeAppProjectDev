@@ -105,6 +105,52 @@ class SensorTriggerRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return SensorTrigger[]
+     */
+    #[ArrayShape([SensorTrigger::class])]
+    public function findAllSensorTriggersForDayAndTime(
+        ?string $day = null,
+        ?string $time = null,
+    ): array {
+        $currentTime = TriggerDateTimeConvertor::prepareTimesForComparison($time);
+        $currentDay = TriggerDateTimeConvertor::prepareDaysForComparison($day);
+
+        $qb = $this->createQueryBuilder('st');
+        $expr = $qb->expr();
+
+        $qb->where(
+            $expr->eq('st.' . $currentDay, ':currentDay'),
+            $expr->eq('st.override', ':override'),
+            $expr->orX(
+                $expr->orX(
+                    $expr->isNull('st.startTime'),
+                    $expr->isNull('st.endTime'),
+                ),
+                $expr->orX(
+                    $expr->andX(
+                        $expr->lte('st.startTime', ':currentTime'),
+                        $expr->gte('st.endTime', ':currentTime'),
+                    ),
+                ),
+                $expr->orX(
+                    $expr->andX(
+                        $expr->gte('st.startTime', ':currentTime'),
+                        $expr->lte('st.endTime', ':currentTime'),
+                    ),
+                ),
+            )
+        )->setParameters(
+            [
+                'currentTime' => $currentTime,
+                'currentDay' => true,
+                'override' => false,
+            ]
+        );
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function remove(SensorTrigger $sensorTrigger): void
     {
         $this->_em->remove($sensorTrigger);

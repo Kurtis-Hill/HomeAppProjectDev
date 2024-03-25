@@ -4,7 +4,7 @@ namespace App\Sensors\SensorServices\Trigger\TriggerHelpers;
 
 class TriggerDateTimeConvertor
 {
-    public static function prepareTimesForComparison(?string $time): int
+    public static function prepareTimesForComparison(?string $time = null): int
     {
         $currentTime = $time ?? date('H:i');
         $currentTime = str_replace([':', ' '], '', $currentTime);
@@ -13,7 +13,7 @@ class TriggerDateTimeConvertor
 
     }
 
-    public static function prepareDaysForComparison(?string $day): string
+    public static function prepareDaysForComparison(?string $day = null): string
     {
         $currentDay = $day ?? date('l');
 

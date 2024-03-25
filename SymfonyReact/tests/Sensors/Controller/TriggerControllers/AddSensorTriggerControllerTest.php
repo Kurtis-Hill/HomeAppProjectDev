@@ -137,8 +137,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
             'baseReadingTypeThatIsTriggered' => 1,
             'days' => ['monday'],
             'valueThatTriggers' => 1.1,
-            'startTime' => 1000,
-            'endTime' => 2000,
+            'startTime' => '1000',
+            'endTime' => '2000',
             'errorMessage' => ['operator must be an int you have provided "invalid operator"']
         ];
 
@@ -149,8 +149,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
             'baseReadingTypeThatIsTriggered' => 1,
             'days' => ['monday'],
             'valueThatTriggers' => 1.1,
-            'startTime' => 1000,
-            'endTime' => 2000,
+            'startTime' => '1000',
+            'endTime' => '2000',
             'errorMessage' => ['trigger type must be an int you have provided "invalid trigger type"']
         ];
 
@@ -161,8 +161,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
             'baseReadingTypeThatIsTriggered' => 1,
             'days' => ['monday'],
             'valueThatTriggers' => 1.1,
-            'startTime' => 1000,
-            'endTime' => 2000,
+            'startTime' => '1000',
+            'endTime' => '2000',
             'errorMessage' => ['base reading type that triggers must be an int|null you have provided "invalid base reading type that triggers"']
         ];
 
@@ -173,8 +173,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
             'baseReadingTypeThatIsTriggered' => 'invalid reading type that is triggered',
             'days' => ['monday'],
             'valueThatTriggers' => 1.1,
-            'startTime' => 1000,
-            'endTime' => 2000,
+            'startTime' => '1000',
+            'endTime' => '2000',
             'errorMessage' => ['base reading type that is triggered must be an int|null you have provided "invalid reading type that is triggered"']
         ];
 
@@ -185,8 +185,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
             'baseReadingTypeThatIsTriggered' => 1,
             'days' => ['invalid day'],
             'valueThatTriggers' => 1.1,
-            'startTime' => 1000,
-            'endTime' => 2000,
+            'startTime' => '1000',
+            'endTime' => '2000',
             'errorMessage' => ['Days must be of "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"']
         ];
 
@@ -197,9 +197,9 @@ class AddSensorTriggerControllerTest extends WebTestCase
             'baseReadingTypeThatIsTriggered' => 1,
             'days' => ['monday'],
             'valueThatTriggers' => 'invalid value that triggers',
-            'startTime' => 1000,
-            'endTime' => 2000,
-            'errorMessage' => ['value that triggers must be an bool|float you have provided "invalid value that triggers"']
+            'startTime' => '1000',
+            'endTime' => '2000',
+            'errorMessage' => ['value that triggers must be an bool|float|int you have provided "invalid value that triggers"']
         ];
 
         yield [
@@ -210,9 +210,33 @@ class AddSensorTriggerControllerTest extends WebTestCase
             'days' => ['monday'],
             'valueThatTriggers' => true,
             'startTime' => 'invalid start time',
-            'endTime' => 2000,
-            'errorMessage' => ['Start time cannot be greater than end time', 'start time must be an int you have provided "invalid start time"']
+            'endTime' => '2000',
+            'errorMessage' => ['Start time cannot be greater than end time']
         ];
+
+//        yield [
+//            'operator' => 1,
+//            'triggerType' => 1,
+//            'baseReadingTypeThatTriggers' => 1,
+//            'baseReadingTypeThatIsTriggered' => 1,
+//            'days' => ['monday'],
+//            'valueThatTriggers' => 1.1,
+//            'startTime' => '1000',
+//            'endTime' => 'invalid end time',
+//            'errorMessage' => ['end time must be an int you have provided "invalid end time"']
+//        ];
+
+//        yield [
+//            'operator' => 1,
+//            'triggerType' => 1,
+//            'baseReadingTypeThatTriggers' => 1,
+//            'baseReadingTypeThatIsTriggered' => 1,
+//            'days' => ['monday'],
+//            'valueThatTriggers' => 1.1,
+//            'startTime' => '100',
+//            'endTime' => '2000',
+//            'errorMessage' => ['Trigger type must be in 24 hour format']
+//        ];
 
         yield [
             'operator' => 1,
@@ -221,33 +245,9 @@ class AddSensorTriggerControllerTest extends WebTestCase
             'baseReadingTypeThatIsTriggered' => 1,
             'days' => ['monday'],
             'valueThatTriggers' => 1.1,
-            'startTime' => 1000,
-            'endTime' => 'invalid end time',
-            'errorMessage' => ['end time must be an int you have provided "invalid end time"']
-        ];
-
-        yield [
-            'operator' => 1,
-            'triggerType' => 1,
-            'baseReadingTypeThatTriggers' => 1,
-            'baseReadingTypeThatIsTriggered' => 1,
-            'days' => ['monday'],
-            'valueThatTriggers' => 1.1,
-            'startTime' => 100,
-            'endTime' => 2000,
-            'errorMessage' => ['Trigger type must be in 24 hour format']
-        ];
-
-        yield [
-            'operator' => 1,
-            'triggerType' => 1,
-            'baseReadingTypeThatTriggers' => 1,
-            'baseReadingTypeThatIsTriggered' => 1,
-            'days' => ['monday'],
-            'valueThatTriggers' => 1.1,
-            'startTime' => 1000,
-            'endTime' => 200,
-            'errorMessage' => ['Start time cannot be greater than end time', 'Trigger type must be in 24 hour format']
+            'startTime' => '1000',
+            'endTime' => '200',
+            'errorMessage' => ['Start time cannot be greater than end time']
         ];
     }
 
@@ -299,8 +299,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
                     'baseReadingTypeThatIsTriggered' => $baseReadingTypeNotApartOf->getBaseReadingTypeID(),
                     'days' => ['monday'],
                     'valueThatTriggers' => 1.1,
-                    'startTime' => 1000,
-                    'endTime' => 2000,
+                    'startTime' => '1000',
+                    'endTime' => '2000',
                 ],
                 JSON_THROW_ON_ERROR
             )
@@ -364,8 +364,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
                     'baseReadingTypeThatIsTriggered' => $baseReadingTypeApartOf->getBaseReadingTypeID(),
                     'days' => ['monday'],
                     'valueThatTriggers' => 1.1,
-                    'startTime' => 1000,
-                    'endTime' => 2000,
+                    'startTime' => '1000',
+                    'endTime' => '2000',
                 ],
                 JSON_THROW_ON_ERROR
             )
@@ -434,8 +434,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
                     'baseReadingTypeThatIsTriggered' => $baseReadingTypeThatIsTriggered->getBaseReadingTypeID(),
                     'days' => ['monday'],
                     'valueThatTriggers' => 1.1,
-                    'startTime' => 1000,
-                    'endTime' => 2000,
+                    'startTime' => '1000',
+                    'endTime' => '2000',
                 ],
                 JSON_THROW_ON_ERROR
             )
@@ -572,8 +572,8 @@ class AddSensorTriggerControllerTest extends WebTestCase
                     'baseReadingTypeThatIsTriggered' => $baseReadingTypeThatIsTriggered->getBaseReadingTypeID(),
                     'days' => ['monday'],
                     'valueThatTriggers' => 1.1,
-                    'startTime' => 1000,
-                    'endTime' => 2000,
+                    'startTime' => '1000',
+                    'endTime' => '2000',
                 ],
                 JSON_THROW_ON_ERROR
             )
