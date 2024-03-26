@@ -2,9 +2,12 @@
 
 namespace App\Sensors\Command;
 
-use App\Sensors\Repository\SensorTriggerRepository;
-use App\Sensors\SensorServices\Trigger\TriggerHelpers\TriggerDateTimeConvertor;
+use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
+use App\Sensors\Repository\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
+use App\Sensors\Repository\SensorReadingType\ORM\StandardReadingTypeRepository;
+use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\ReadingTriggerHandler;
 use DateTimeImmutable;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,14 +22,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class TriggerCheckCommand extends Command
 {
     public function __construct(
-        private readonly SensorTriggerRepository $sensorTriggerRepository,
+        private readonly ReadingTriggerHandler $readingTriggerHandler,
+        private readonly StandardReadingTypeRepository $standardReadingTypeRepository,
+        private readonly BoolReadingBaseSensorRepository $boolReadingBaseSensorRepository,
+        private LoggerInterface $elasticLogger,
     ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-
         $this->setDescription('Check for any triggers to be activated.');
     }
 
@@ -39,20 +44,20 @@ class TriggerCheckCommand extends Command
 
         $now = new DateTimeImmutable();
 
-        $currentTime = TriggerDateTimeConvertor::prepareTimesForComparison();
-        $currentDay = TriggerDateTimeConvertor::prepareDaysForComparison();
-
         $output->writeln(sprintf('Current time: %s', $now->format('d-m-Y H:i:s')));
+        $this->elasticLogger->info(sprintf('Trigger check started at %s', $now->format('d-m-Y H:i:s'));
 
-        $triggers = $this->sensorTriggerRepository->findAllSensorTriggersForDayAndTime(
-            $currentDay,
-            $currentTime,
-        );
+        $allStandardSensors = $this->standardReadingTypeRepository->findAll();
+        $allBoolSensors = $this->boolReadingBaseSensorRepository->findAll();
+        $allSensors = array_merge($allStandardSensors, $allBoolSensors);
 
-        $output->writeln(sprintf('%d Triggers found.', count($triggers)));
+        foreach ($allSensors as $sensor) {
+            $this->readingTriggerHandler->handleTrigger(
+                $sensor,
+            );
+        }
 
-
-
+        $output->writeln('Triggers checked.');
 
         return Command::SUCCESS;
     }

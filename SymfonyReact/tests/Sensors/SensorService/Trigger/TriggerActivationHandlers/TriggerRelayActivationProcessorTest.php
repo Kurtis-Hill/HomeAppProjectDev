@@ -39,11 +39,17 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
 
     public function test_relay_isnt_triggered_when_already_in_correct_state(): void
     {
-        $mockTrigger = $this->createMock(SensorTrigger::class);
+        /** @var Relay[] $allRelaySensors */
+        $allRelaySensors = $this->entityManager->getRepository(Relay::class)->findAll();
+        $relaySensor = $allRelaySensors[array_rand($allRelaySensors)];
+        $relaySensor->setCurrentReading(true);
+
+        $sensorTrigger = new SensorTrigger();
+        $sensorTrigger->setBaseReadingTypeToTrigger($relaySensor->getBaseReadingType());
+        $sensorTrigger->setTriggerType($this->entityManager->getRepository(TriggerType::class)->findOneBy(['triggerTypeName' => TriggerType::RELAY_UP_TRIGGER]));
 
         $mockBaseReadingTypeToTriggerID = $this->createMock(BaseSensorReadingType::class);
         $mockBaseReadingTypeToTriggerID->method('getBaseReadingTypeID')->willReturn(1);
-        $mockTrigger->method('getBaseReadingTypeToTriggers')->willReturn($mockBaseReadingTypeToTriggerID);
         $mockTriggerType = $this->createMock(TriggerType::class);
         $mockTriggerType->method('getTriggerTypeName')->willReturn(TriggerType::RELAY_UP_TRIGGER);
 
@@ -59,7 +65,7 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
             $mockCurrentReadingAMQPProducer,
             $boolReadingBaseSensorRepository,
         );
-        $sut->processTrigger($mockTrigger);
+        $sut->processTrigger($sensorTrigger);
     }
 
     public function test_relay_is_triggered_when_not_in_correct_state(): void
