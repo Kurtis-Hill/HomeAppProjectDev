@@ -51,4 +51,8 @@ echo "Starting supervisor..."
 supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf
 echo "Supervisor Started..."
 
+echo "Starting cron..."
+service cron start
+echo "Cron Started..."
+
 exec "$@"

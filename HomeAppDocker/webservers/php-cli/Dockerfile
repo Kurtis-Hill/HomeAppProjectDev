@@ -6,7 +6,8 @@ RUN apt-get update -y && apt-get install -y \
 git \
 unzip \
 zip \
-supervisor
+supervisor \
+cron 
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -20,6 +21,12 @@ RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache pcntl-7.4 socket
 COPY ./auth/auth.json /root/.composer/auth.json
 
 COPY ./supervisor/ /etc/supervisor/conf.d/
+
+COPY ./cron/crontab /etc/cron.d/crontab
+
+RUN chmod 0644 /etc/cron.d/crontab
+
+RUN touch /var/log/cron.log
 
 COPY ./php-cli/docker-entrypoint.sh /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint

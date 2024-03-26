@@ -2,7 +2,6 @@
 
 namespace App\Sensors\Command;
 
-use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use App\Sensors\Repository\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
 use App\Sensors\Repository\SensorReadingType\ORM\StandardReadingTypeRepository;
 use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\ReadingTriggerHandler;
@@ -25,7 +24,7 @@ class TriggerCheckCommand extends Command
         private readonly ReadingTriggerHandler $readingTriggerHandler,
         private readonly StandardReadingTypeRepository $standardReadingTypeRepository,
         private readonly BoolReadingBaseSensorRepository $boolReadingBaseSensorRepository,
-        private LoggerInterface $elasticLogger,
+        private readonly LoggerInterface $elasticLogger,
     ) {
         parent::__construct();
     }
@@ -45,7 +44,7 @@ class TriggerCheckCommand extends Command
         $now = new DateTimeImmutable();
 
         $output->writeln(sprintf('Current time: %s', $now->format('d-m-Y H:i:s')));
-        $this->elasticLogger->info(sprintf('Trigger check started at %s', $now->format('d-m-Y H:i:s'));
+        $this->elasticLogger->info(sprintf('Trigger check started at %s', $now->format('d-m-Y H:i:s')));
 
         $allStandardSensors = $this->standardReadingTypeRepository->findAll();
         $allBoolSensors = $this->boolReadingBaseSensorRepository->findAll();
