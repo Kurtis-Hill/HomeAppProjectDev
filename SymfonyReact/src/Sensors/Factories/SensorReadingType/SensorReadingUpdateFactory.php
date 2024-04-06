@@ -2,13 +2,13 @@
 
 namespace App\Sensors\Factories\SensorReadingType;
 
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\Bool\MotionSensorUpdateBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\Bool\RelaySensorUpdateBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard\AnalogSensorUpdateBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard\HumiditySensorUpdateBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard\LatitudeSensorUpdateBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\Standard\TemperatureSensorUpdateBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\Bool\MotionSensorUpdateBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\Bool\RelaySensorUpdateBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\Standard\AnalogSensorUpdateBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\Standard\HumiditySensorUpdateBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\Standard\LatitudeSensorUpdateBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\Standard\TemperatureSensorUpdateBuilder;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;

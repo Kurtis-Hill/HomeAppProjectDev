@@ -33,7 +33,7 @@ export function UserUpdate(props: { userID: number }) {
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
-        group: userData.group,
+        group: userData.groups,
         profilePicture: userData.profilePicture,
         roles: userData.roles,
         newPassword: '',

@@ -4,6 +4,7 @@ import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
 
 export default interface MotionResponseInterface {
     boolID: number,
+    baseReadingTypeID: number,
     constRecord: ConstRecordType,
     currentReading: boolean,
     expectedReading: boolean,

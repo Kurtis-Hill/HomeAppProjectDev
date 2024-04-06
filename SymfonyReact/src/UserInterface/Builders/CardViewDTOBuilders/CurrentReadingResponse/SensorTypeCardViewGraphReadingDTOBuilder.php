@@ -3,16 +3,16 @@
 namespace App\UserInterface\Builders\CardViewDTOBuilders\CurrentReadingResponse;
 
 use App\UserInterface\DTO\Response\CurrentCardReadingDTO\UserViewSensorTypeCardDataResponseDTOInterface;
-use Symfony\Component\Intl\Exception\NotImplementedException;
+use RuntimeException;
 
 class SensorTypeCardViewGraphReadingDTOBuilder implements SensorTypeCardViewDTOBuilder
 {
     /**
-     * @throws NotImplementedException
+     * @throws RuntimeException
      */
     public function buildTrimmedDownSensorTypeCardViewDTO(array $cardData): ?UserViewSensorTypeCardDataResponseDTOInterface
     {
-        throw new NotImplementedException('SensorTypeCardViewGraphReadingDTOBuilder:makeDTO');
+        throw new RuntimeException('Method not implemented');
     }
 
 }

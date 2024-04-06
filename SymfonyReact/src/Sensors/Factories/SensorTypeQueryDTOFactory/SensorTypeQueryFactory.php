@@ -2,10 +2,15 @@
 
 namespace App\Sensors\Factories\SensorTypeQueryDTOFactory;
 
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\GenericMotionQueryTypeDTOBuilder;
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\GenericRelayQueryTypeDTOBuilder;
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\LdrQueryTypeDTOBuilder;
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\ShtQueryTpeDTOBuilder;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\BmpQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\DallasQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\DHTQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\GenericMotionQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\GenericRelayQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\LdrQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\SensorTypeQueryDTOBuilderInterface;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\ShtQueryTpeDTOBuilder;
+use App\Sensors\Builders\Internal\SensorTypeQueryDTOBuilders\SoilQueryTypeDTOBuilder;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -14,11 +19,6 @@ use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\LDR;
 use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\BmpQueryTypeDTOBuilder;
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\SensorTypeQueryDTOBuilderInterface;
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\DallasQueryTypeDTOBuilder;
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\DHTQueryTypeDTOBuilder;
-use App\Sensors\Builders\SensorTypeQueryDTOBuilders\SoilQueryTypeDTOBuilder;
 use App\UserInterface\Exceptions\SensorTypeBuilderFailureException;
 
 readonly class SensorTypeQueryFactory

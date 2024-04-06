@@ -1,10 +1,10 @@
 export interface NavBarResponseInterface {
     title: string;
-    payload: IndividualNavBarResponse[];
+    payload: IndividualNavBarElement[];
     errors?: Array<string>
 }
 
-export interface IndividualNavBarResponse {
+export interface IndividualNavBarElement {
     header: string;
     icon: string;
     itemName: string;

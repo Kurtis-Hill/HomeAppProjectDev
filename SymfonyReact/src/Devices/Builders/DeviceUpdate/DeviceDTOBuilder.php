@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Builders\DeviceUpdate;
 
@@ -92,7 +93,6 @@ readonly class DeviceDTOBuilder
     /**
      * @throws RoomNotFoundException
      * @throws GroupNotFoundException
-     * @throws ORMException
      */
     public function buildNewDeviceDTOFromNewDeviceRequest(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
     {

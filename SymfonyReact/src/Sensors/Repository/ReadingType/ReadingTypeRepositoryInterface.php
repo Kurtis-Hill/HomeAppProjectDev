@@ -2,6 +2,7 @@
 
 namespace App\Sensors\Repository\ReadingType;
 
+use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -37,9 +38,16 @@ interface ReadingTypeRepositoryInterface
     /**
      * @throws NonUniqueResultException
      */
-    public function getOneBySensorNameID(int $sensorNameID);
+    public function findOneBySensorNameID(int $sensorNameID): ?AllSensorReadingTypeInterface;
 
-//    public function findOneByNamr
+    public function findOneBySensorName(string $sensorName): ?AllSensorReadingTypeInterface;
 
-//    public function findAllBySensorName(string $name);
+    public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void;
+
+    /**
+     * @param int $sensorID
+     *
+     * @return BaseReadingTypeInterface[]
+     */
+    public function findBySensorID(int $sensorID): array;
 }

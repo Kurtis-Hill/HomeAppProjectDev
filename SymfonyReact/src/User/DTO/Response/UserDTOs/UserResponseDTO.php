@@ -5,6 +5,7 @@ namespace App\User\DTO\Response\UserDTOs;
 use App\Common\Services\RequestTypeEnum;
 use App\User\DTO\Response\GroupDTOs\GroupResponseDTO;
 use DateTimeInterface;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 readonly class UserResponseDTO
@@ -18,8 +19,8 @@ readonly class UserResponseDTO
         private DateTimeInterface $createdAt,
         private ?string $profilePicture = null,
         private ?array $roles = [],
-        private ?bool $canEdit,
-        private ?bool $canDelete,
+        private ?bool $canEdit = null,
+        private ?bool $canDelete = null,
     ) {
     }
 
@@ -67,10 +68,14 @@ readonly class UserResponseDTO
         return $this->email;
     }
 
-    #[Groups([
-        RequestTypeEnum::FULL->value,
-        RequestTypeEnum::SENSITIVE_FULL->value,
-    ])]
+    #[
+        Groups([
+            RequestTypeEnum::FULL->value,
+
+            RequestTypeEnum::SENSITIVE_FULL->value,
+        ]),
+
+    ]
     public function getGroup(): GroupResponseDTO
     {
         return $this->group;

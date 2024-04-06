@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Entity\ConstantRecording;
 
-use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use DateTimeInterface;
 
 interface ConstantlyRecordEntityInterface
@@ -33,7 +33,7 @@ interface ConstantlyRecordEntityInterface
 
     public function getSensorReadingObject();
 
-    public function setSensorReadingObject(AllSensorReadingTypeInterface $sensorReadingTypeID): void;
+    public function setSensorReadingObject(BaseSensorReadingType $sensorReadingTypeID): void;
 
 //    /**
 //     * @param AllSensorReadingTypeInterface $sensorReadingTypeID

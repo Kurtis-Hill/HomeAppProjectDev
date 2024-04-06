@@ -90,7 +90,6 @@ class GetDeviceControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
@@ -105,7 +104,6 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertTrue($payload['canEdit']);
         self::assertTrue($payload['canDelete']);
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-
     }
 
     public function test_get_device_admin_full_response(): void
@@ -130,7 +128,6 @@ class GetDeviceControllerTest extends WebTestCase
             [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
@@ -157,6 +154,7 @@ class GetDeviceControllerTest extends WebTestCase
         self::assertEquals($createdByUser->getFirstName(), $createdByResponse['firstName']);
         self::assertEquals($createdByUser->getLastName(), $createdByResponse['lastName']);
         self::assertEquals($createdByUser->getEmail(), $createdByResponse['email']);
+
         self::assertEquals($createdByUser->getGroup()->getGroupID(), $createdByResponse['group']['groupID']);
         self::assertEquals($createdByUser->getGroup()->getGroupName(), $createdByResponse['group']['groupName']);
         self::assertEquals($createdByUser->getProfilePic(), $createdByResponse['profilePicture']);
@@ -208,7 +206,6 @@ class GetDeviceControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
-
         );
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 
@@ -237,7 +234,6 @@ class GetDeviceControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -270,7 +266,6 @@ class GetDeviceControllerTest extends WebTestCase
             [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
-
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -325,7 +320,6 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_device_of_group_user_is_assigned_to_regular_user_response_type_only(): void
     {
-
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
         /** @var Devices[] $devices */
@@ -346,7 +340,6 @@ class GetDeviceControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
-
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -410,7 +403,6 @@ class GetDeviceControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
-
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -442,7 +434,6 @@ class GetDeviceControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -472,7 +463,6 @@ class GetDeviceControllerTest extends WebTestCase
             ['limit' => $limit, 'page' => $page],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -547,7 +537,6 @@ class GetDeviceControllerTest extends WebTestCase
             ['limit' => $limit, 'page' => $page],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);

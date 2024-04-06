@@ -11,7 +11,6 @@ class ConstRecordHumidityRepository extends AbstractConstRecordRepository implem
 {
     public function flush(): void
     {
-        $this->_em->flush();
     }
 
     public function find(): ?ConstHumid

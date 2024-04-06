@@ -4,7 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse\Bool;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -12,7 +12,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 readonly abstract class AbstractBoolResponseDTO
 {
     public function __construct(
-        protected SensorResponseDTO $sensor,
+        protected ?SensorResponseDTO $sensor,
+        protected int $baseReadingTypeID,
         protected int $boolID,
         protected bool $currentReading,
         protected bool $requestedReading,
@@ -25,11 +26,22 @@ readonly abstract class AbstractBoolResponseDTO
 
     #[Groups([
         RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getBaseReadingTypeID(): int
+    {
+        return $this->baseReadingTypeID;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
 //        RequestTypeEnum::ONLY->value,
 //        RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
-    public function getSensor(): SensorResponseDTO
+    public function getSensor(): ?SensorResponseDTO
     {
         return $this->sensor;
     }
@@ -119,6 +131,6 @@ readonly abstract class AbstractBoolResponseDTO
     ])]
     public function getSensorType(): string
     {
-        return SensorType::BOOL_READING_SENSOR_TYPE;
+        return AbstractSensorType::BOOL_READING_SENSOR_TYPE;
     }
 }

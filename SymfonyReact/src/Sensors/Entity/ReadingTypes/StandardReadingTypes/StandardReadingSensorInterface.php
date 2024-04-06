@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
-
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\Sensor;
 
 interface StandardReadingSensorInterface
@@ -14,7 +14,6 @@ interface StandardReadingSensorInterface
 
     public function setSensor(Sensor $id);
 
-
     /**
      * Sensor Reading Methods
      */
@@ -24,11 +23,11 @@ interface StandardReadingSensorInterface
 
     public function getUpdatedAt(): \DateTimeInterface;
 
-    public function setCurrentReading(int|float|string $currentReading): void;
+    public function setCurrentReading(int|float $currentReading): void;
 
-    public function setHighReading(int|float|string $reading): void;
+    public function setHighReading(int|float $reading): void;
 
-    public function setLowReading(int|float|string $reading): void;
+    public function setLowReading(int|float $reading): void;
 
     public function setUpdatedAt(): void;
 
@@ -49,4 +48,8 @@ interface StandardReadingSensorInterface
     public function getReadingType(): string;
 
     public static function getReadingTypeName(): string;
+
+    public function getBaseReadingType(): BaseSensorReadingType;
+
+    public function setBaseReadingType(BaseSensorReadingType $readingType): void;
 }

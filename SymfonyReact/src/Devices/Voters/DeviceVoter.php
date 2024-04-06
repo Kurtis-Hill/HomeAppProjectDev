@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Voters;
 
@@ -6,7 +7,6 @@ use App\Devices\DTO\Internal\NewDeviceDTO;
 use App\Devices\DTO\Internal\UpdateDeviceDTO;
 use App\Devices\Entity\Devices;
 use App\User\Entity\Group;
-use App\User\Entity\Room;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -88,11 +88,13 @@ class DeviceVoter extends Voter
         );
 
         return $checkCommon ?? true;
-
     }
 
     private function canUpdateDevice(UserInterface $user, UpdateDeviceDTO $updateDeviceDTO): bool
     {
+        if (!$user instanceof User) {
+            return false;
+        }
         $commonSuccess = $this->checkCommon(
             $user,
             $updateDeviceDTO->getDeviceToUpdate()->getGroupObject(),
@@ -102,12 +104,12 @@ class DeviceVoter extends Voter
         }
 
         if (($updateDeviceDTO->getProposedGroupNameToUpdateTo() !== null) && !in_array(
-                $updateDeviceDTO->getProposedGroupNameToUpdateTo()->getGroupID(),
-                $user->getAssociatedgroupIDs(),
-                true
-            )) {
-                return false;
-            }
+            $updateDeviceDTO->getProposedGroupNameToUpdateTo()->getGroupID(),
+            $user->getAssociatedgroupIDs(),
+            true
+        )) {
+            return false;
+        }
 
         return true;
     }
@@ -115,8 +117,8 @@ class DeviceVoter extends Voter
     private function cadDeleteDevice(UserInterface $user, Devices $devices): bool
     {
         $checkCommon = $this->checkCommon(
-                $user,
-                $devices->getGroupObject(),
+            $user,
+            $devices->getGroupObject(),
         );
 
         return $checkCommon ?? true;

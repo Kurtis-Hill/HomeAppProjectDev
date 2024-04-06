@@ -2,9 +2,9 @@
 
 namespace App\Sensors\Factories\SensorUpdateFactory;
 
-use App\Sensors\Builders\SensorUpdateBuilders\BoolSensorUpdateBuilder\BoolSensorReadingUpdateBuilder;
-use App\Sensors\Builders\SensorUpdateBuilders\SensorReadingUpdateBuilderInterface;
-use App\Sensors\Builders\SensorUpdateBuilders\StandardSensorUpdateBuilder\StandardSensorReadingUpdateBuilder;
+use App\Sensors\Builders\Request\SensorUpdateBuilders\BoolSensorUpdateBuilder\BoolSensorReadingUpdateBuilder;
+use App\Sensors\Builders\Request\SensorUpdateBuilders\SensorReadingUpdateBuilderInterface;
+use App\Sensors\Builders\Request\SensorUpdateBuilders\StandardSensorUpdateBuilder\StandardSensorReadingUpdateBuilder;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;

@@ -9,15 +9,14 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\PaginationCalculator;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\Devices\DeviceServices\GetDevices\DevicesForUserInterface;
-use App\Sensors\Builders\ReadingTypeResponseBuilders\ReadingTypeResponseBuilder;
+use App\Sensors\Builders\Response\ReadingTypeResponseBuilders\ReadingTypeResponseBuilder;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use App\Sensors\Repository\SensorReadingType\ReadingTypeRepositoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'reading-types/', name: 'reading_types')]
@@ -67,7 +66,7 @@ class GetReadingTypeController extends AbstractController
         }
 
         try {
-            $normalizedReadingTypesDTOs = $this->normalizeResponse($readingTypeResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedReadingTypesDTOs = $this->normalize($readingTypeResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $this->logger->error($e->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
 
@@ -91,7 +90,7 @@ class GetReadingTypeController extends AbstractController
         $readingTypeResponseDTO = ReadingTypeResponseBuilder::buildReadingTypeResponseDTO($readingType);
 
         try {
-            $normalizedReadingTypesDTOs = $this->normalizeResponse($readingTypeResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedReadingTypesDTOs = $this->normalize($readingTypeResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $this->logger->error($e->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
 

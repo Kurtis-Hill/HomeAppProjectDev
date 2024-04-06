@@ -7,17 +7,19 @@ use App\Devices\Builders\Request\DeviceRequestEncapsulationBuilder;
 use App\Devices\Exceptions\DeviceIPNotSetException;
 use App\Devices\Exceptions\DeviceRequestArgumentBuilderTypeNotFoundException;
 use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Exceptions\SensorPinNumberNotSetException;
-use App\Sensors\Exceptions\SensorTypeException;
-use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
+use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateCurrentReadingRequestHandlerInterface
 {
@@ -25,26 +27,30 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
 
     public function __construct(
         private SensorRepositoryInterface $sensorRepository,
-        private SensorTypeRepositoryFactory $sensorTypeRepositoryFactory,
+        private SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory,
         private DeviceSensorRequestArgumentBuilderFactory $deviceSensorRequestArgumentBuilderFactory,
         private DeviceRequestHandlerInterface $deviceRequestHandler,
     ) {}
 
     /**
-     * @throws SensorNotFoundException
+     * @param RequestSensorCurrentReadingUpdateTransportMessageDTO $currentReadingUpdateMessageDTO
+     * @return bool
      * @throws DeviceIPNotSetException
-     * @throws SensorTypeException
-     * @throws ExceptionInterface
      * @throws DeviceRequestArgumentBuilderTypeNotFoundException
+     * @throws SensorNotFoundException
      * @throws SensorPinNumberNotSetException
+     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws ORMException
+     * @throws HttpException
+     * @throws ExceptionInterface
+     * @throws TransportExceptionInterface|\HttpException
      */
-    public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateMessageDTO $currentReadingUpdateMessageDTO): bool
+    public function handleUpdateSensorReadingRequest(RequestSensorCurrentReadingUpdateTransportMessageDTO $currentReadingUpdateMessageDTO): bool
     {
-        $sensors = $this->sensorRepository->findSensorsByIDNoCache([$currentReadingUpdateMessageDTO->getSensorID()]);
-        if (empty($sensors)) {
+        $sensor = $this->sensorRepository->findSensorByIDNoCache($currentReadingUpdateMessageDTO->getSensorID());
+        if ($sensor === null) {
             throw new SensorNotFoundException();
         }
-        $sensor = $sensors[0];
         $readingTypeCurrentReadingDTO = $currentReadingUpdateMessageDTO->getReadingTypeCurrentReadingDTO();
 
         $requestArgumentBuilder = $this->deviceSensorRequestArgumentBuilderFactory->fetchDeviceRequestArgumentBuilder(DeviceSensorRequestArgumentBuilderFactory::UPDATE_SENSOR_CURRENT_READING);
@@ -57,28 +63,29 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
             endpoint: self::SENSOR_SWITCH_ENDPOINT
         );
 
-        // on success return true and set current reading of the sensor reading type to requested value
-        $sensorTypeRepository = $this->sensorTypeRepositoryFactory->getSensorTypeRepository($sensor->getSensorTypeObject()->getSensorType());
-        $sensorType = $sensorTypeRepository->findOneBy(['sensor' => $sensor->getSensorID()]);
-        if (!$sensorType instanceof GenericRelay) {
-            throw new SensorTypeException(sprintf(SensorTypeException::SENSOR_TYPE_NOT_ALLOWED, $sensorType->getReadingTypeName()));
+        $relay = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository(Relay::getReadingTypeName())->findOneBySensorNameID($sensor->getSensorID());
+        if (!$relay instanceof Relay) {
+            throw new SensorReadingTypeRepositoryFactoryException();
         }
 
         $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
             $deviceEncapsulationRequestDTO
         );
-//dd($sensor);
 
         if ($deviceResponse->getStatusCode() === Response::HTTP_OK) {
-            if ($sensorType instanceof GenericRelay) {
-                $relay = $sensorType->getRelay();
+            $sensorTypeObject = $sensor->getSensorTypeObject();
+            if ($sensorTypeObject instanceof GenericRelay) {
+                $relayRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository(Relay::getReadingTypeName());
+                $relay = $relayRepository->findOneBySensorNameID($sensor->getSensorID());
+                if (!$relay instanceof Relay) {
+                    throw new SensorReadingTypeRepositoryFactoryException();
+                }
                 $relay->setCurrentReading(
                     $readingTypeCurrentReadingDTO->getCurrentReading()
                 );
                 $relay->setUpdatedAt();
+                $relayRepository->flush();
             }
-
-            $sensorTypeRepository->flush();
 
             return true;
         }

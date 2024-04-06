@@ -5,12 +5,14 @@ namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\RequestReading;
 use App\Common\Services\DeviceRequestHandler;
 use App\Devices\Exceptions\DeviceIPNotSetException;
 use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Exceptions\SensorNotFoundException;
+use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Exceptions\SensorTypeException;
+use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
 use App\Sensors\Repository\ReadingType\ORM\MotionRepository;
 use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
@@ -53,7 +55,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
     {
         $sensorRepository = $this->diContainer->get(SensorRepository::class);
 
-        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorReadingTypeRepositoryFactory::class);
 
         $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
 
@@ -64,7 +66,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
         $mockLogger->expects(self::once())->method('info');
 
         $deviceRequestHandler = new DeviceRequestHandler(
-          $httpClient,
+            $httpClient,
             $mockLogger,
         );
 
@@ -82,15 +84,16 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             !$relay->getCurrentReading(),
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-            $relay->getSensorID(),
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
+            $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
 
         $result = $sut->handleUpdateSensorReadingRequest($requestSensorCurrentReadingUpdateMessageDTO);
         self::assertTrue($result);
 
-        $relayAfterUpdate = $this->relayRepository->findOneBy(['sensor' => $relay->getSensorID()]);
+        $relayAfterUpdate = $this->relayRepository->findBySensorID($relay->getBaseReadingType()->getSensor()->getSensorID())[0];
+
         self::assertEquals(
             $boolCurrentReadingUpdateRequestDTO->getCurrentReading(),
             $relayAfterUpdate->getCurrentReading(),
@@ -101,7 +104,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
     {
         $sensorRepository = $this->diContainer->get(SensorRepository::class);
 
-        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorReadingTypeRepositoryFactory::class);
 
         $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
 
@@ -137,7 +140,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             false,
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
             $sensorID,
             $boolCurrentReadingUpdateRequestDTO,
         );
@@ -150,7 +153,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
     {
         $sensorRepository = $this->diContainer->get(SensorRepository::class);
 
-        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorReadingTypeRepositoryFactory::class);
 
         $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
 
@@ -183,8 +186,8 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             !$relay->getCurrentReading(),
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-            $relay->getSensorID(),
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
+            $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
 
@@ -197,7 +200,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
     {
         $sensorRepository = $this->diContainer->get(SensorRepository::class);
 
-        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorReadingTypeRepositoryFactory::class);
 
         $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
 
@@ -226,12 +229,12 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             !$motion->getCurrentReading(),
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-            $motion->getSensorID(),
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
+            $motion->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
 
-        $this->expectException(SensorTypeException::class);
+        $this->expectException(SensorReadingTypeRepositoryFactoryException::class);
 
         $sut->handleUpdateSensorReadingRequest($requestSensorCurrentReadingUpdateMessageDTO);
     }
@@ -245,7 +248,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
     {
         $sensorRepository = $this->diContainer->get(SensorRepository::class);
 
-        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorTypeRepositoryFactory::class);
+        $sensorTypeRepositoryFactory = $this->diContainer->get(SensorReadingTypeRepositoryFactory::class);
 
         $deviceSensorRequestArgumentBuilderFactory = $this->diContainer->get(DeviceSensorRequestArgumentBuilderFactory::class);
 
@@ -274,15 +277,16 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             !$relay->getCurrentReading(),
         );
 
-        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateMessageDTO(
-            $relay->getSensorID(),
+        $requestSensorCurrentReadingUpdateMessageDTO = new RequestSensorCurrentReadingUpdateTransportMessageDTO(
+            $relay->getBaseReadingType()->getSensor()->getSensorID(),
             $boolCurrentReadingUpdateRequestDTO,
         );
 
         $result = $sut->handleUpdateSensorReadingRequest($requestSensorCurrentReadingUpdateMessageDTO);
         self::assertFalse($result);
 
-        $relayAfterUpdate = $this->relayRepository->findOneBy(['sensor' => $relay->getSensorID()]);
+        $relayAfterUpdate = $this->relayRepository->findBySensorID($relay->getBaseReadingType()->getSensor()->getSensorID())[0];
+
         self::assertNotSame(
             $boolCurrentReadingUpdateRequestDTO->getCurrentReading(),
             $relayAfterUpdate->getCurrentReading(),

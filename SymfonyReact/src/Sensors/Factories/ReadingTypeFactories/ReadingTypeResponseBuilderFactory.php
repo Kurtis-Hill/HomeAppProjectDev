@@ -2,9 +2,9 @@
 
 namespace App\Sensors\Factories\ReadingTypeFactories;
 
-use App\Sensors\Builders\ReadingTypeResponseBuilders\BoolReadingTypeResponseBuilder;
-use App\Sensors\Builders\ReadingTypeResponseBuilders\ReadingTypeResponseBuilderInterface;
-use App\Sensors\Builders\ReadingTypeResponseBuilders\StandardReadingTypeResponseBuilder;
+use App\Sensors\Builders\Response\ReadingTypeResponseBuilders\BoolReadingTypeResponseBuilder;
+use App\Sensors\Builders\Response\ReadingTypeResponseBuilders\ReadingTypeResponseBuilderInterface;
+use App\Sensors\Builders\Response\ReadingTypeResponseBuilders\StandardReadingTypeResponseBuilder;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;

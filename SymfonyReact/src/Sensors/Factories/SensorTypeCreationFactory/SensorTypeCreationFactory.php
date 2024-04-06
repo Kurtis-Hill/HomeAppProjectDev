@@ -2,15 +2,15 @@
 
 namespace App\Sensors\Factories\SensorTypeCreationFactory;
 
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Bool\GenericMotionNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Bool\GenericRelayNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\NewSensorReadingTypeBuilderInterface;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\BmpNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\DallasNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\DhtNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\LDRNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\ShtNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\Standard\SoilNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Bool\GenericMotionNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Bool\GenericRelayNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\NewSensorReadingTypeBuilderInterface;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\BmpNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\DallasNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\DhtNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\LDRNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\ShtNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\SoilNewReadingTypeBuilder;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
@@ -21,7 +21,7 @@ use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorTypeException;
 
-class SensorTypeCreationFactory
+readonly class SensorTypeCreationFactory
 {
     public function __construct(
         private BmpNewReadingTypeBuilder $bmpSensorReadingTypeBuilder,
@@ -32,7 +32,8 @@ class SensorTypeCreationFactory
         private GenericRelayNewReadingTypeBuilder $genericRelaySensorReadingTypeBuilder,
         private LDRNewReadingTypeBuilder $ldrSensorReadingTypeBuilder,
         private ShtNewReadingTypeBuilder $shtSensorReadingTypeBuilder
-    ) {}
+    ) {
+    }
 
     /**
      * @throws SensorTypeException

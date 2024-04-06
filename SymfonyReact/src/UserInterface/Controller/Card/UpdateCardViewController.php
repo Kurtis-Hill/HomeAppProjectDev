@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -90,9 +90,9 @@ class UpdateCardViewController extends AbstractController
 
         $cardViewResponseDTO = CardResponseDTOBuilder::buildCardResponseDTO($cardViewObject);
         try {
-            $normalizedResponseData = $this->normalizeResponse($cardViewResponseDTO);
+            $normalizedResponseData = $this->normalize($cardViewResponseDTO);
         } catch (ExceptionInterface) {
-            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Request Successful']);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], 'Request Successful');
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponseData);

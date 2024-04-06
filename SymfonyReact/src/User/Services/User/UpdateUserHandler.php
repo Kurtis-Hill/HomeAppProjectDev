@@ -67,7 +67,7 @@ class UpdateUserHandler
             if (!$user instanceof User) {
                 throw new UserNotAllowedException();
             }
-            if (!$this->security->getUser()?->isAdmin()) {
+            if (!$user->isAdmin()) {
                 $passwordVerified = $this->userPasswordHasher->isPasswordValid($userToUpdate, $userUpdateDTO->getOldPassword() ?? '');
                 if (!$passwordVerified) {
                     throw new IncorrectUserPasswordException(IncorrectUserPasswordException::MESSAGE);

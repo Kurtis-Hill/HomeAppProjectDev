@@ -18,13 +18,11 @@ use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
-use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -101,8 +99,6 @@ class UpdateDeviceController extends AbstractController
                 $deviceUpdateRequestDTO,
                 $deviceToUpdate,
             );
-        } catch (NonUniqueResultException | ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room or group name')]);
         } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
         }
@@ -126,7 +122,7 @@ class UpdateDeviceController extends AbstractController
 
         $deviceUpdateSuccessResponseDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($deviceToUpdate);
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($deviceUpdateSuccessResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }

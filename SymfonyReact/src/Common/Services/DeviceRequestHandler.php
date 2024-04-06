@@ -1,12 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Common\Services;
 
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Devices\DTO\Request\DeviceRequest\DeviceRequestEncapsulationDTO;
 use Exception;
+use HttpException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -20,13 +24,16 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
     ) {}
 
     /**
+     * @throws ExceptionInterface
      * @throws Exception
+     * @throws TransportExceptionInterface
+     * @throws HttpException
      */
     public function handleDeviceRequest(
         DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO,
         array $groups = []
     ): ResponseInterface {
-        $normalizedResponse = $this->normalizeResponse(
+        $normalizedRequest = $this->normalize(
             $deviceRequestEncapsulationDTO->getDeviceRequestDTO(),
             $groups,
         );
@@ -34,7 +41,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
             'Sending request to device',
             [
                 'device' => $deviceRequestEncapsulationDTO->getFullDeviceUrl(),
-                'request' => $normalizedResponse,
+                'request' => $normalizedRequest,
             ]);
 
         try {
@@ -47,7 +54,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                             'Content-Type' => 'application/json',
                             'Accept' => 'application/json',
                         ],
-                    'json' => $normalizedResponse,
+                    'json' => $normalizedRequest,
                 ]
             );
         } catch (Exception $e) {
@@ -55,7 +62,17 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                 'Sending request to device failed',
                 [
                     'device' => $deviceRequestEncapsulationDTO->getFullDeviceUrl(),
-                    'request' => $normalizedResponse,
+                    'request' => $normalizedRequest,
+                    'exception' => $e->getMessage(),
+                ]
+            );
+            throw $e;
+        } catch (TransportExceptionInterface $e) {
+            $this->elasticLogger->error(
+                'Sending request to device failed',
+                [
+                    'device' => $deviceRequestEncapsulationDTO->getFullDeviceUrl(),
+                    'request' => $normalizedRequest,
                     'exception' => $e->getMessage(),
                 ]
             );

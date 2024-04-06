@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -112,7 +112,7 @@ class AddNewRoomController extends AbstractController
 
         $newRoomResponseDTO = RoomResponseDTOBuilder::buildRoomResponseDTO($newRoom);
         try {
-            $normalizedResponse = $this->normalizeResponse($newRoomResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($newRoomResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['Request successful but failed to normalize response']);
         }

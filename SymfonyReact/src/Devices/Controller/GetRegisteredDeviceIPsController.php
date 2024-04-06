@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Controller;
 
@@ -10,7 +11,8 @@ use App\Devices\Builders\DeviceResponse\DeviceIPResponseDTOBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 
 class GetRegisteredDeviceIPsController extends AbstractController
@@ -30,11 +32,13 @@ class GetRegisteredDeviceIPsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceIPs);
+            $normalizedResponse = $this->normalize($deviceIPs);
 
             return $this->sendSuccessfulJsonResponse($normalizedResponse);
         } catch (NotNormalizableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+        } catch (ExceptionInterface $e) {
+            return $this->sendInternalServerErrorJsonResponse();
         }
     }
 }

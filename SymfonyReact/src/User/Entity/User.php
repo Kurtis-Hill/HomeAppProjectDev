@@ -17,11 +17,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[
     ORM\Entity(repositoryClass: UserRepository::class),
-    ORM\Table(name: "user"),
+    ORM\Table(name: "users"),
     ORM\UniqueConstraint(name: "email", columns: ["email"]),
     ORM\Index(columns: ["groupID"], name: "GroupName"),
-    ORM\UniqueConstraint(name: "email", columns: ["email"]),
     ORM\Index(columns: ["profilePic"], name: "profilePic"),
+    ORM\Index(columns: ["roles"], name: "roles"),
+    ORM\Index(columns: ["createdAt"], name: "createdAt"),
 ]
 #[UniqueEntity(fields: ['email'], message: 'Email already exists')]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
@@ -37,7 +38,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public const DEFAULT_PROFILE_PICTURE = 'guest.jpg';
 
-    public const USER_TYPE = 'user';
+//    public const USER_TYPE = 'user';
 
     #[
         ORM\Column(name: "userID", type: "integer", nullable: false),
@@ -119,7 +120,12 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private Group|int $groupID;
 
     #[
-        ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"]),
+        ORM\Column(
+            name: "createdAt",
+            type: "datetime",
+            nullable: false,
+//            options: ["default" => "current_timestamp()"]
+        ),
     ]
     private DateTimeInterface $createdAt;
 
@@ -143,22 +149,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function setUserGroupMappingEntities(array $userGroupMappingEntities): void
     {
         $this->userGroupMappingEntities = $userGroupMappingEntities;
-    }
-
-    public function getUsersGroupName(): Group
-    {
-        return $this->groupID;
-    }
-
-    #[ArrayShape([Group::class])]
-    public function getGroupMappings(): array
-    {
-        /** @var GroupMapping $groupName */
-        foreach ($this->userGroupMappingEntities as $groupName) {
-            $groupNameArray[] = $groupName->getGroup();
-        }
-
-        return $groupNameArray ?? [];
     }
 
     #[ArrayShape(['int'])]
@@ -201,9 +191,20 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $groupNames;
     }
 
-    public function getUsername(): string
+    public function getUsersGroupName(): ?Group
     {
-        return $this->email;
+        return $this->groupID;
+    }
+
+    #[ArrayShape([Group::class])]
+    public function getGroupMappings(): array
+    {
+        /** @var GroupMapping $groupName */
+        foreach ($this->userGroupMappingEntities as $groupName) {
+            $groupNameArray[] = $groupName->getGroup();
+        }
+
+        return $groupNameArray ?? [];
     }
 
     #[ArrayShape(['ROLES'])]
@@ -212,7 +213,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return array_unique($this->roles);
     }
 
-    public function setRoles(array $roles = []): self
+    public function setRoles(?array $roles): self
     {
         $this->roles = $roles ?? [self::ROLE_USER];
 

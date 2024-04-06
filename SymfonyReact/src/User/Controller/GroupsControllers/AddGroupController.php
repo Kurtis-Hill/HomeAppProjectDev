@@ -10,7 +10,7 @@ use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\GroupName\AddNewGroupNameDTOBuilder;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\DTO\Request\GroupDTOs\NewGroupRequestDTO;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupExceptions\GroupValidationException;
@@ -23,7 +23,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -98,9 +98,9 @@ class AddGroupController extends AbstractController
             return $this->sendBadRequestJsonResponse([sprintf(APIErrorMessages::OBJECT_ALREADY_EXISTS, $newGroupDTO->getGroupName())]);
         }
 
-        $groupResponseDTO = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($newGroup);
+        $groupResponseDTO = GroupResponseDTOBuilder::buildGroupNameResponseDTO($newGroup);
         try {
-            $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedGroupResponseDTO = $this->normalize($groupResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Group Saved']);
         }

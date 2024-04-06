@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\UserInterface\Services\Cards\CardPreparation;
 
@@ -14,7 +15,7 @@ class CurrentReadingCardViewPreparationHandler
 {
     private CardViewRepositoryInterface $cardViewRepository;
 
-    public function __construct(CardViewRepositoryInterface $cardViewRepository,)
+    public function __construct(CardViewRepositoryInterface $cardViewRepository)
     {
         $this->cardViewRepository = $cardViewRepository;
     }
@@ -34,11 +35,32 @@ class CurrentReadingCardViewPreparationHandler
             default => CardState::INDEX_ONLY
         };
 
-        return $this->cardViewRepository->getAllCardSensorDataForUser(
+        $cardResultUnFlattened = $this->cardViewRepository->findAllCardSensorDataForUser(
             $user,
             $cardViewTwo,
             $cardDataPostFilterDTO,
             $cardViewTypeFilterDTO
         );
+
+        $flatterResult = [];
+        foreach ($cardResultUnFlattened as $result) {
+            $sensorID = $result['sensors_sensorID'];
+            $flatterResult[$sensorID][] = array_filter($result, static function ($value) {
+                return $value !== null;
+            }, ARRAY_FILTER_USE_BOTH);
+        }
+
+        $flatteredMergedResult = [];
+        foreach ($flatterResult as $flattenedResultKey => $flattenedResultValue) {
+            if (count($flattenedResultValue) > 1) {
+                array_walk_recursive($flattenedResultValue, static function ($a, $b) use (&$flatteredMergedResult, $flattenedResultKey) {
+                    $flatteredMergedResult[$flattenedResultKey][$b] = $a;
+                });
+                continue;
+            }
+            $flatteredMergedResult[$flattenedResultKey] = $flattenedResultValue[0];
+        }
+
+        return $flatteredMergedResult;
     }
 }

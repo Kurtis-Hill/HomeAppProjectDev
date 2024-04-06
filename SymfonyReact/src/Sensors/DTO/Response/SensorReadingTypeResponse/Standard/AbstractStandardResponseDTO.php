@@ -4,7 +4,7 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse\Standard;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -13,6 +13,7 @@ readonly abstract class AbstractStandardResponseDTO
 {
     public function __construct(
         private SensorResponseDTO $sensor,
+        private int $baseReadingTypeID,
         private float $currentReading,
         private float $highReading,
         private float $lowReading,
@@ -20,6 +21,17 @@ readonly abstract class AbstractStandardResponseDTO
         private string $updated,
         private string $readingType,
     ) {
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getBaseReadingTypeID(): int
+    {
+        return $this->baseReadingTypeID;
     }
 
     #[Groups([
@@ -96,7 +108,7 @@ readonly abstract class AbstractStandardResponseDTO
     ])]
     public function getSensorType(): string
     {
-        return SensorType::STANDARD_READING_SENSOR_TYPE;
+        return AbstractSensorType::STANDARD_READING_SENSOR_TYPE;
     }
 
     #[Groups([

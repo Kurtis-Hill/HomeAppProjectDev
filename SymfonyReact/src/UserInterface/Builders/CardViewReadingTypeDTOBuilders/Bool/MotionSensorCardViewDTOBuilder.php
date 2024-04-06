@@ -12,7 +12,7 @@ class MotionSensorCardViewDTOBuilder extends AbstractBoolReadingTypeDTOBuilder
         if (empty($cardData['motion_boolID'])) {
             return null;
         }
-        $dateTime = $this->formatDateTime($cardData['motion_updatedAt']);
+        $dateTime = $this->formatDateTime($cardData['baseReadingType_updatedAt']);
 
         return $this->getBoolCardViewDTO(
             Motion::READING_TYPE,

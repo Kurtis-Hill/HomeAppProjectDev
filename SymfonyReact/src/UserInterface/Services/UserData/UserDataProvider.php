@@ -19,18 +19,14 @@ class UserDataProvider
 
     private GroupRepository $groupNameRepository;
 
-    private UserGroupsFinder $getGroupNamesHandler;
-
     private array $errors = [];
 
     public function __construct(
         RoomRepositoryInterface $roomRepository,
         GroupRepository $groupNameRepository,
-        UserGroupsFinder $getGroupNamesHandler,
     ) {
         $this->roomRepository = $roomRepository;
         $this->groupNameRepository = $groupNameRepository;
-        $this->getGroupNamesHandler = $getGroupNamesHandler;
     }
 
     #[ArrayShape([UserDataResponseDTO::class])]

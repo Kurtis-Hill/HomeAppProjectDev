@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Controller;
 
@@ -12,11 +13,13 @@ use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
@@ -35,6 +38,10 @@ class DeleteDeviceController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
+    /**
+     * @throws RoomNotFoundException
+     * @throws GroupNotFoundException
+     */
     #[
         Route(
             path: '{deviceID}/delete',
@@ -73,7 +80,7 @@ class DeleteDeviceController extends AbstractController
         $deviceToDelete->setDeviceID($deviceDeletedID);
         $deviceDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($deviceToDelete);
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($deviceDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $normalizedResponse = null;
         }

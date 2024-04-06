@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
@@ -37,7 +37,6 @@ class RegistrationController extends AbstractController
         Request $request,
         UserCreationHandler $userCreationHandler,
     ): Response {
-        return $this->json('not implemented');
         $user = new User();
 
         $form = $this->createForm(RegistrationForm::class, $user);

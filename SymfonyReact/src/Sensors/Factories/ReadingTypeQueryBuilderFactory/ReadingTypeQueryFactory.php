@@ -3,13 +3,13 @@
 namespace App\Sensors\Factories\ReadingTypeQueryBuilderFactory;
 
 
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\AnalogQueryTypeDTOBuilder;
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\HumidityQueryTypeDTOBuilder;
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\LatitudeQueryTypeDTOBuilder;
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\MotionQueryTypeDTOBuilder;
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\RelayQueryTypeDTOBuilder;
-use App\Sensors\Builders\ReadingTypeQueryDTOBuilders\TemperatureQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeQueryDTOBuilders\AnalogQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeQueryDTOBuilders\HumidityQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeQueryDTOBuilders\LatitudeQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeQueryDTOBuilders\MotionQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeQueryDTOBuilders\ReadingTypeQueryDTOBuilderInterface;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeQueryDTOBuilders\RelayQueryTypeDTOBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeQueryDTOBuilders\TemperatureQueryTypeDTOBuilder;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;

@@ -21,7 +21,6 @@ use App\Sensors\Exceptions\SensorUpdateFactoryException;
 use App\Sensors\Factories\ReadingTypeFactories\ReadingTypeResponseBuilderFactory;
 use App\Sensors\Factories\SensorUpdateFactory\SensorReadingUpdateFactory;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorServices\SensorReadingTypes\SensorReadingTypeUpdateHandler;
 use App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface;
 use App\Sensors\Voters\SensorVoter;
 use Doctrine\ORM\Exception\ORMException;
@@ -32,7 +31,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -102,6 +101,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
         $sensorProcessingErrors = [];
         $validationErrors = [];
+//        dd($updateBoundaryReadingRequestDTO->getSensorData());
         foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateData) {
             try {
                 $sensorUpdateBuilder = $sensorUpdateFactory->getSensorUpdateBuilder($updateData['readingType'] ?? null);
@@ -145,7 +145,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 $validationError = $updateSensorBoundaryReadingsService->processBoundaryDataDTO(
                     $updateBoundaryDataDTO,
                     $sensorReadingTypeObject,
-                    $sensorObject->getSensorTypeObject()->getSensorType(),
+                    $sensorObject->getSensorTypeObject()::getReadingTypeName(),
                 );
             } catch (SensorReadingUpdateFactoryException|ReadingTypeNotExpectedException|ReadingTypeNotSupportedException $exception) {
                 $sensorProcessingErrors[] = $exception->getMessage();
@@ -175,7 +175,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($this->getSuccessFullyProcessedResponseDTOs(), [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($this->getSuccessFullyProcessedResponseDTOs(), [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

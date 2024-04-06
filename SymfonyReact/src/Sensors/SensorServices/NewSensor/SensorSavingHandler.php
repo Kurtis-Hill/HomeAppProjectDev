@@ -2,15 +2,11 @@
 
 namespace App\Sensors\SensorServices\NewSensor;
 
-use App\Sensors\Builders\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Events\SensorUpdateEvent;
-use App\Sensors\Exceptions\SensorNotFoundException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorUpdateEventHandler;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 readonly class SensorSavingHandler
 {

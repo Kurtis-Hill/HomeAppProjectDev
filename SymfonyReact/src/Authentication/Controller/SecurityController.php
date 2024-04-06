@@ -3,11 +3,11 @@
 namespace App\Authentication\Controller;
 
 use App\User\Entity\User;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -33,9 +33,9 @@ class SecurityController extends AbstractController
      * FOR DEVELOPMENT ONLY
      */
     #[Route('/HomeApp/ssl', name: 'ssl')]
-    public function showSSLConfig()
+    public function showSSLConfig(EntityManager $entityManager)
     {
-        $ssl = $this->getDoctrine()->getRepository(User::class)->showSSL();
+        $ssl = $entityManager->getRepository(User::class)->showSSL();
 
         foreach ($ssl as $value) {
             foreach ($value as $key => $sslConfig) {

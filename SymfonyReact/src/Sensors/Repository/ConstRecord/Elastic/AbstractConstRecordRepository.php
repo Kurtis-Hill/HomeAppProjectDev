@@ -2,7 +2,6 @@
 
 namespace App\Sensors\Repository\ConstRecord\Elastic;
 
-use App\Sensors\Builders\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\Elastic\ConstRecordPersistenceDTOBuilder;
 use App\Sensors\DTO\Request\ConstRecord\Elastic\ConstRecordElasticPersistenceDTO;
 use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
 use Elastica\Document;
@@ -28,7 +27,7 @@ abstract class AbstractConstRecordRepository
 
     public function persist(ConstantlyRecordEntityInterface $outOfBoundsEntity): void
     {
-        $outOfBoundsUpdateDTO = ConstRecordPersistenceDTOBuilder::buildConstRecordElasticPersistenceDTO($outOfBoundsEntity);
+        $outOfBoundsUpdateDTO = \App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\ConstRecordCreationBuilders\Elastic\ConstRecordPersistenceDTOBuilder::buildConstRecordElasticPersistenceDTO($outOfBoundsEntity);
 
         $serializedUpdateDTO = $this->serializeOutOfBoundsEntity($outOfBoundsUpdateDTO);
         $this->index->addDocument(

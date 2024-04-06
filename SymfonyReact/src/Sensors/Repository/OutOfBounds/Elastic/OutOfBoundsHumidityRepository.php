@@ -10,6 +10,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Doctrine\Persistence\ManagerRegistry;
+use Elastica\Exception\NotImplementedException;
 use JetBrains\PhpStorm\ArrayShape;
 
 
@@ -17,7 +18,7 @@ class OutOfBoundsHumidityRepository extends AbstractOutOfBoundsRepository implem
 {
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->index->refresh();
     }
 
     public function find(): ?OutOfRangeHumid

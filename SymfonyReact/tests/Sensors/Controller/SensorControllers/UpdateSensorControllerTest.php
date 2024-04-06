@@ -237,6 +237,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_admin_can_change_sensor_to_device_not_apart_of(): void
     {
+
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
 
@@ -285,7 +286,6 @@ class UpdateSensorControllerTest extends WebTestCase
             json_encode(['deviceID' => $deviceID, 'sensorName' => $newSensorName, 'pinNumber' => 10]),
         );
 
-//        dd($this->client->getResponse()->getContent());
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
             true,
@@ -298,7 +298,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
         self::assertEquals($newSensorName, $payload['sensorName']);
         self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
-        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
 
 //        /** @var Sensor $sensorAfterUpdate */
@@ -436,7 +436,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
         self::assertEquals($sensorToUpdate->getSensorName(), $payload['sensorName']);
         self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
-//        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+//        self::assertEquals($sensorToUpdate->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
         self::assertEquals($pinNumber, $payload['pinNumber']);
     }
@@ -472,7 +472,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
         self::assertEquals($newSensorName, $payload['sensorName']);
         self::assertEquals($sensorToUpdate->getDevice()->getDeviceName(), $payload['device']['deviceName']);
-        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
         self::assertEquals($sensorToUpdate->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
         self::assertEquals($sensorToUpdate->getPinNumber(), $payload['pinNumber']);
     }
@@ -517,7 +517,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensor->getSensorID(), $payload['sensorID']);
         self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
         self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
-        self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensor->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
         self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
         self::assertEquals($randomPin, $payload['pinNumber']);
     }
@@ -531,7 +531,7 @@ class UpdateSensorControllerTest extends WebTestCase
 //
 //        $randomPin = $devicePinsInUse[1];
 //
-////        dd($randomPin);
+    ////        dd($randomPin);
 //
 //        /** @var Sensor $sensor */
 //        $sensor = $this->sensorRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
@@ -598,7 +598,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensor->getSensorID(), $payload['sensorID']);
         self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
         self::assertEquals($sensor->getDevice()->getDeviceName(), $payload['device']['deviceName']);
-        self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensor->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
         self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
         self::assertEquals($sensor->getPinNumber(), $payload['pinNumber']);
         self::assertEquals($newReadingInterval, $payload['readingInterval']);
@@ -674,7 +674,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getSensorID(), $payload['sensorID']);
         self::assertEquals($newSensorName, $payload['sensorName']);
         self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
-        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
 
         /** @var Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorToUpdate->getSensorID()]);
@@ -727,7 +727,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($sensorToUpdate->getDevice()->getRoomObject()->getRoomID(), $payload['device']['room']['roomID']);
         self::assertArrayNotHasKey('secret', $payload['device']);
 
-        self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorType(), $payload['sensorType']['sensorTypeName']);
+        self::assertEquals($sensorToUpdate->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
         self::assertEquals($sensorToUpdate->getSensorTypeObject()->getSensorTypeID(), $payload['sensorType']['sensorTypeID']);
         self::assertEquals($sensorToUpdate->getSensorTypeObject()->getDescription(), $payload['sensorType']['sensorTypeDescription']);
     }

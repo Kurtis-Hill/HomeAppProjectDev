@@ -23,6 +23,10 @@ services:
       calls:
           - setESPSendCurrentReadingProducer: [ '@send_current_sensor_reading_producer' ]
 
+  App\Sensors\SensorServices\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor:
+      arguments:
+          $sendCurrentReadingAMQPProducer: '@send_current_sensor_reading_producer'
+
   App\Sensors\Events\Subscribers\SensorUpdateEventSubscriber:
     calls:
       - setSensorDataUpdateProducer: [ '@upload_sensor_data_to_device_producer' ]
@@ -37,7 +41,7 @@ services:
 
 ######################## Update Sensor Reading Services ######################################################
   App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
-    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandler'
+    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandlerVersionTwo'
 
   App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandlerInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler'
@@ -78,6 +82,9 @@ services:
 
   App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandler'
+
+  App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerCheckerInterface:
+    alias: 'App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerChecker'
 
 ######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface:
@@ -140,6 +147,13 @@ services:
   App\Sensors\Repository\ConstRecord\Elastic\ConstRecordAnalogRepository:
     arguments:
       $index: '@elastica.constrecord_analog_index'
+
+  App\Sensors\SensorServices\SensorTriggerProcessor\ReadingTriggerHandlerInterface:
+    alias: 'App\Sensors\SensorServices\SensorTriggerProcessor\ReadingTriggerHandler'
+
+  App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface:
+    alias: 'App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandler'
+
 ######################## End Of Sensors ######################################################################################
 ######################## Commands ######################################################################################
   App\Sensors\Command\Elasticsearch\IndicesCreation\ElasticCreateConstRecordIndicesCommand:

@@ -61,4 +61,6 @@ class APIErrorMessages
     public const DEVICE_RESTART_FAILED = 'Device restart failed';
 
     public const DEVICE_RESET_FAILED = 'Device reset failed';
+
+    public const PROCESS_SUCCESS_COULD_NOT_CREATE_RESPONSE = 'Process success, could not create response';
 }

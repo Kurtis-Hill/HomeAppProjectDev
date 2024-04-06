@@ -2,8 +2,8 @@
 
 namespace App\Sensors\SensorServices;
 
-use App\Sensors\Builders\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
-use App\Sensors\Builders\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
+use App\Sensors\Builders\Internal\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
+use App\Sensors\Builders\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Events\SensorUpdateEvent;
 use App\Sensors\Exceptions\SensorNotFoundException;
@@ -31,10 +31,13 @@ readonly class SensorUpdateEventHandler
         $sensorsToUpdate = [];
         foreach ($sensors as $sensor) {
             /** @var Sensor[] $sensorsToUpdate */
-            $sensorsToUpdate = array_merge($this->sensorRepository->findSameSensorTypesOnSameDevice(
-                $sensor->getDevice()->getDeviceID(),
-                $sensor->getSensorTypeObject()->getSensorTypeID(),
-            ), $sensorsToUpdate);
+            $sensorsToUpdate = array_merge(
+                $this->sensorRepository->findSameSensorTypesOnSameDevice(
+                    $sensor->getDevice()->getDeviceID(),
+                    $sensor->getSensorTypeObject()->getSensorTypeID(),
+                ),
+                $sensorsToUpdate
+            );
         }
         if (empty($sensorsToUpdate)) {
             throw new SensorNotFoundException('No sensors found to update');

@@ -8,6 +8,7 @@ use App\User\Builders\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
 use App\User\Builders\User\NewUserBuilder;
 use App\User\Entity\Group;
 use App\User\Entity\User;
+use App\User\Exceptions\GroupExceptions\GroupMappingValidationException;
 use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\GroupExceptions\GroupValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
@@ -75,6 +76,7 @@ class UserCreationHandler
      * @throws UserCreationValidationErrorsException
      * @throws GroupValidationException
      * @throws GroupNotFoundException
+     * @throws GroupMappingValidationException
      */
     public function handleNewUserCreation(
         string $firstName,
@@ -134,6 +136,9 @@ class UserCreationHandler
 
     /**
      * @throws GroupNotFoundException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws GroupMappingValidationException
      */
     private function addNewUserToSharedUserGroups(User $user): void
     {
@@ -179,13 +184,9 @@ class UserCreationHandler
             return null;
         }
 
-        return $newName ?? null;
+        return $newName;
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function saveUser(User $user): bool
     {
         try {
@@ -194,7 +195,6 @@ class UserCreationHandler
 
             return true;
         } catch (ORMException|OptimisticLockException) {
-            $this->groupRepository->remove($user->getGroup());
             $this->logger->error(
                 sprintf(
                     LogMessages::ERROR_CREATING_NEW_USER,

@@ -2,7 +2,7 @@
 
 namespace App\Tests\Sensors\Builders\RequestSensorCurrentReadingUpdateArgumentBuilder;
 
-use App\Sensors\Builders\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder;
+use App\Sensors\Builders\Request\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\Sensor;
@@ -17,7 +17,7 @@ class RequestSensorCurrentReadingUpdateArgumentBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sut = new RequestSensorCurrentReadingUpdateArgumentBuilder();
+        $this->sut = new \App\Sensors\Builders\Request\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder();
         parent::setUp();
     }
     public function test_building_dto_correctly(): void

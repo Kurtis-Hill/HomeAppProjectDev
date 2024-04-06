@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorOutOfBoundsCreationBuilders\Elastic;
+
+use App\Sensors\DTO\Request\OutOfBounds\Elastic\OutOfBoundsElasticPersistenceDTO;
+use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
+
+class OutOfBoundsPersistenceDTOBuilder
+{
+    public static function buildOutOfBoundsPersistenceDTO(OutOfBoundsEntityInterface $outOfBoundsEntity): OutOfBoundsElasticPersistenceDTO
+    {
+        return new OutOfBoundsElasticPersistenceDTO(
+            $outOfBoundsEntity->getBaseSensorReadingType()->getSensorID(),
+            $outOfBoundsEntity->getSensorReading(),
+            $outOfBoundsEntity->getCreatedAt(),
+        );
+    }
+}

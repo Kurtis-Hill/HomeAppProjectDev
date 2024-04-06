@@ -16,7 +16,7 @@ use App\User\Repository\ORM\RoomRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/', name: 'get-user-rooms')]
@@ -61,7 +61,7 @@ class GetRoomsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($roomResponseDTO ?? [], [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($roomResponseDTO ?? [], [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
