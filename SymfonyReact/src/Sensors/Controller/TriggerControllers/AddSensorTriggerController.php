@@ -94,7 +94,7 @@ class AddSensorTriggerController extends AbstractController
 
         $responseDTO = $sensorTriggerResponseDTOBuilder->buildFullSensorTriggerResponseDTO($createNewTriggerDTO->getNewSensorTrigger());
         try {
-            $normalizedResponse = $this->normalizeResponse($responseDTO);
+            $normalizedResponse = $this->normalize($responseDTO);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::PROCESS_SUCCESS_COULD_NOT_CREATE_RESPONSE]);
         }

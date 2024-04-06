@@ -31,7 +31,7 @@ class NavBarController extends AbstractController
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }
         try {
-            $normalizedResponse = $this->normalizeResponse($navbarDTOs);
+            $normalizedResponse = $this->normalize($navbarDTOs);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

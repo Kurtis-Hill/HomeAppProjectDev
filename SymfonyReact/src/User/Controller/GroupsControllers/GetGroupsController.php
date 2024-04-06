@@ -61,7 +61,7 @@ class GetGroupsController extends AbstractController
         }
 
         try {
-            $normalizedGroupNames = $this->normalizeResponse($groupNameDTOs, [$requestDTO->getResponseType()]);
+            $normalizedGroupNames = $this->normalize($groupNameDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['something went wrong preparing the data']);
         }

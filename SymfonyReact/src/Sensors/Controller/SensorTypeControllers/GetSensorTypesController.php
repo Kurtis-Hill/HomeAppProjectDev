@@ -48,7 +48,7 @@ class GetSensorTypesController extends AbstractController
         }
 
         try {
-            $normalisedResponse = $this->normalizeResponse($sensorTypeResponseDTO, [$requestDTO->getResponseType()]);
+            $normalisedResponse = $this->normalize($sensorTypeResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['error preparing data']);
         }

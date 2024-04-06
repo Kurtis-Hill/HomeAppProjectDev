@@ -123,7 +123,7 @@ class AddGroupMappingController extends AbstractController
         $groupNameMappingResponseDTO = GroupNameMappingResponseBuilder::buildGroupNameFullResponseDTO($groupNameMappingDTO->getNewGroupMapping());
 
         try {
-            $normalizedResponse = $this->normalizeResponse($groupNameMappingResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($groupNameMappingResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Group name mapping Saved']);
         }

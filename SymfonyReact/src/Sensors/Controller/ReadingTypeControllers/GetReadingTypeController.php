@@ -66,7 +66,7 @@ class GetReadingTypeController extends AbstractController
         }
 
         try {
-            $normalizedReadingTypesDTOs = $this->normalizeResponse($readingTypeResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedReadingTypesDTOs = $this->normalize($readingTypeResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $this->logger->error($e->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
 
@@ -90,7 +90,7 @@ class GetReadingTypeController extends AbstractController
         $readingTypeResponseDTO = ReadingTypeResponseBuilder::buildReadingTypeResponseDTO($readingType);
 
         try {
-            $normalizedReadingTypesDTOs = $this->normalizeResponse($readingTypeResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedReadingTypesDTOs = $this->normalize($readingTypeResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $this->logger->error($e->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
 

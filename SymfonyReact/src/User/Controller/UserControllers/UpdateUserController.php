@@ -124,7 +124,7 @@ class UpdateUserController extends AbstractController
         $userResponseDTO = UserResponseBuilder::buildUserResponseDTO($userToUpdate);
 
         try {
-            $normalizedUser = $this->normalizeResponse($userResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedUser = $this->normalize($userResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Updated User']);
         }

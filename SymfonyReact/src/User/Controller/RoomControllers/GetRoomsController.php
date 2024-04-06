@@ -61,7 +61,7 @@ class GetRoomsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($roomResponseDTO ?? [], [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($roomResponseDTO ?? [], [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

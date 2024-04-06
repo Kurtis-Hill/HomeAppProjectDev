@@ -112,7 +112,7 @@ class AddNewRoomController extends AbstractController
 
         $newRoomResponseDTO = RoomResponseDTOBuilder::buildRoomResponseDTO($newRoom);
         try {
-            $normalizedResponse = $this->normalizeResponse($newRoomResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($newRoomResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['Request successful but failed to normalize response']);
         }

@@ -110,7 +110,7 @@ class AddUserController extends AbstractController
 
         $userResponseDTO = UserResponseBuilder::buildUserResponseDTO($newUser);
         try {
-            $normalizedUserResponseDTO = $this->normalizeResponse($userResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedUserResponseDTO = $this->normalize($userResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['User created']);
         }

@@ -52,7 +52,7 @@ class GetSingleUserController extends AbstractController
 
         $userResponse = $userResponseBuilder->buildFullUserResponseDTO($user);
         try {
-            $normalizedDTO = $this->normalizeResponse($userResponse, [$requestDTO->getResponseType()]);
+            $normalizedDTO = $this->normalize($userResponse, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], 'Get User');
         }

@@ -32,7 +32,7 @@ class GetRegisteredDeviceIPsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceIPs);
+            $normalizedResponse = $this->normalize($deviceIPs);
 
             return $this->sendSuccessfulJsonResponse($normalizedResponse);
         } catch (NotNormalizableValueException) {

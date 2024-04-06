@@ -33,7 +33,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
         DeviceRequestEncapsulationDTO $deviceRequestEncapsulationDTO,
         array $groups = []
     ): ResponseInterface {
-        $normalizedResponse = $this->normalizeResponse(
+        $normalizedRequest = $this->normalize(
             $deviceRequestEncapsulationDTO->getDeviceRequestDTO(),
             $groups,
         );
@@ -41,7 +41,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
             'Sending request to device',
             [
                 'device' => $deviceRequestEncapsulationDTO->getFullDeviceUrl(),
-                'request' => $normalizedResponse,
+                'request' => $normalizedRequest,
             ]);
 
         try {
@@ -54,7 +54,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                             'Content-Type' => 'application/json',
                             'Accept' => 'application/json',
                         ],
-                    'json' => $normalizedResponse,
+                    'json' => $normalizedRequest,
                 ]
             );
         } catch (Exception $e) {
@@ -62,7 +62,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                 'Sending request to device failed',
                 [
                     'device' => $deviceRequestEncapsulationDTO->getFullDeviceUrl(),
-                    'request' => $normalizedResponse,
+                    'request' => $normalizedRequest,
                     'exception' => $e->getMessage(),
                 ]
             );
@@ -72,7 +72,7 @@ class DeviceRequestHandler implements DeviceRequestHandlerInterface
                 'Sending request to device failed',
                 [
                     'device' => $deviceRequestEncapsulationDTO->getFullDeviceUrl(),
-                    'request' => $normalizedResponse,
+                    'request' => $normalizedRequest,
                     'exception' => $e->getMessage(),
                 ]
             );

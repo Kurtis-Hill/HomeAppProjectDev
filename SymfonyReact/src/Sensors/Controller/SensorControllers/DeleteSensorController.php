@@ -62,7 +62,7 @@ class DeleteSensorController extends AbstractController
         $sensorResponseData = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
 
         try {
-            $normalizedSensorResponseData = $this->normalizeResponse($sensorResponseData, [$requestDTO->getResponseType()]);
+            $normalizedSensorResponseData = $this->normalize($sensorResponseData, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $this->logger->error($e->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
 

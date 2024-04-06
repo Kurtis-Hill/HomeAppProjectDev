@@ -79,7 +79,7 @@ class GetSensorTriggersController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($sensorTriggerResponseDTOs, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($sensorTriggerResponseDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }

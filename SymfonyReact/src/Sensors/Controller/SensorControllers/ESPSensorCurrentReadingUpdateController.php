@@ -116,7 +116,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             && $currentReadingSensorDataRequest->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequest->getSuccessfulRequests())
         ) {
             try {
-                $normalizedResponse = $this->normalizeResponse($currentReadingSensorDataRequest->getSuccessfulRequests());
+                $normalizedResponse = $this->normalize($currentReadingSensorDataRequest->getSuccessfulRequests());
                 $normalizedResponse = array_map('current', $normalizedResponse);
             } catch (ExceptionInterface) {
                 return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
@@ -137,7 +137,7 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         // Complete Failed return
         if (empty($currentReadingSensorDataRequest->getSuccessfulRequests())) {
             try {
-                $normalizedResponse = $this->normalizeResponse($mergedErrors);
+                $normalizedResponse = $this->normalize($mergedErrors);
                 if (count($normalizedResponse) > 0) {
                     $normalizedResponse = array_unique($normalizedResponse);
                 }
@@ -150,11 +150,11 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
 
         // Partial Success return
         try {
-            $normalizedErrorResponse = $this->normalizeResponse($mergedErrors);
+            $normalizedErrorResponse = $this->normalize($mergedErrors);
             if (count($normalizedErrorResponse) > 0) {
                 $normalizedErrorResponse = array_unique($normalizedErrorResponse);
             }
-            $normalizedSuccessResponse = $this->normalizeResponse(
+            $normalizedSuccessResponse = $this->normalize(
                 $currentReadingSensorDataRequest->getSuccessfulRequests(),
             );
             if (count($normalizedSuccessResponse) > 0) {

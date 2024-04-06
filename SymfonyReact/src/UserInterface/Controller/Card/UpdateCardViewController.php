@@ -90,7 +90,7 @@ class UpdateCardViewController extends AbstractController
 
         $cardViewResponseDTO = CardResponseDTOBuilder::buildCardResponseDTO($cardViewObject);
         try {
-            $normalizedResponseData = $this->normalizeResponse($cardViewResponseDTO);
+            $normalizedResponseData = $this->normalize($cardViewResponseDTO);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], 'Request Successful');
         }

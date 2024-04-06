@@ -223,7 +223,7 @@ class GetCardViewController extends AbstractController
         }
 
         try {
-            $responseData = $this->normalizeResponse($cardDTOs);
+            $responseData = $this->normalize($cardDTOs);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }

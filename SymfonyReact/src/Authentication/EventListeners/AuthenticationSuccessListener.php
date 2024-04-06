@@ -65,7 +65,7 @@ class AuthenticationSuccessListener
             );
 
             try {
-                $responseMessage = $this->normalizeResponse($userAuthenticationDTO);
+                $responseMessage = $this->normalize($userAuthenticationDTO);
             } catch (ExceptionInterface) {
                 $responseMessage['error'] = sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'UserExceptions authentication ');
             }
@@ -103,7 +103,7 @@ class AuthenticationSuccessListener
 
                 $deviceAuthenticationResponse = new DeviceAuthenticationResponse($data['token']);
                 try {
-                    $responseMessage = $this->normalizeResponse($deviceAuthenticationResponse);
+                    $responseMessage = $this->normalize($deviceAuthenticationResponse);
                 } catch (ExceptionInterface) {
                     $responseMessage['error'] = sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'Device authentication ');
                     $this->logger->error($responseMessage['error']);

@@ -176,7 +176,7 @@ class SwitchSensorController extends AbstractController
             && $currentReadingSensorDataRequestHandler->getReadingTypeRequestAttempt() === count($currentReadingSensorDataRequestHandler->getSuccessfulRequests())
         ) {
             try {
-                $normalizedResponse = $this->normalizeResponse($currentReadingSensorDataRequestHandler->getSuccessfulRequests());
+                $normalizedResponse = $this->normalize($currentReadingSensorDataRequestHandler->getSuccessfulRequests());
                 $normalizedResponse = array_map('current', $normalizedResponse);
             } catch (ExceptionInterface) {
                 return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
@@ -193,7 +193,7 @@ class SwitchSensorController extends AbstractController
         // Complete Failed return
         if (empty($currentReadingSensorDataRequestHandler->getSuccessfulRequests())) {
             try {
-                $normalizedResponse = $this->normalizeResponse($errors);
+                $normalizedResponse = $this->normalize($errors);
                 if (count($normalizedResponse) > 0) {
                     $normalizedResponse = array_unique($normalizedResponse);
                 }
@@ -206,11 +206,11 @@ class SwitchSensorController extends AbstractController
 
         // Partial Success return
         try {
-            $normalizedErrorResponse = $this->normalizeResponse($errors);
+            $normalizedErrorResponse = $this->normalize($errors);
             if (count($normalizedErrorResponse) > 0) {
                 $normalizedErrorResponse = array_unique($normalizedErrorResponse);
             }
-            $normalizedSuccessResponse = $this->normalizeResponse(
+            $normalizedSuccessResponse = $this->normalize(
                 $currentReadingSensorDataRequestHandler->getSuccessfulRequests(),
             );
             if (count($normalizedSuccessResponse) > 0) {

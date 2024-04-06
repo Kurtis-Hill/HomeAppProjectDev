@@ -175,7 +175,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($this->getSuccessFullyProcessedResponseDTOs(), [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($this->getSuccessFullyProcessedResponseDTOs(), [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

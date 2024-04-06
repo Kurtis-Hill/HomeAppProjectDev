@@ -337,7 +337,7 @@ trait HomeAppAPITrait
     /**
      * @throws ExceptionInterface
      */
-    public function normalizeResponse(mixed $data, array $groups = []): mixed
+    public function normalize(mixed $data, array $groups = []): mixed
     {
         $context[AbstractNormalizer::CIRCULAR_REFERENCE_LIMIT] = 10;
 

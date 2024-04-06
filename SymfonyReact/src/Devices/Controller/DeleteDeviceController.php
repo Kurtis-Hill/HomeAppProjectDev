@@ -80,7 +80,7 @@ class DeleteDeviceController extends AbstractController
         $deviceToDelete->setDeviceID($deviceDeletedID);
         $deviceDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($deviceToDelete);
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($deviceDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $normalizedResponse = null;
         }

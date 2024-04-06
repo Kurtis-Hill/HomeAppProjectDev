@@ -92,7 +92,7 @@ class GetDeviceController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceDTOs);
+            $normalizedResponse = $this->normalize($deviceDTOs);
         } catch (ExceptionInterface $e) {
             $this->logger->error(
                 sprintf(
@@ -157,7 +157,7 @@ class GetDeviceController extends AbstractController
         );
 
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($deviceDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Get device'));
 

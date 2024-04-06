@@ -80,7 +80,7 @@ class GetSensorTriggerFormController extends AbstractController
         );
 
         try {
-            $normalizedResponse = $this->normalizeResponse($triggerFormEncapsulationDTO);
+            $normalizedResponse = $this->normalize($triggerFormEncapsulationDTO);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }

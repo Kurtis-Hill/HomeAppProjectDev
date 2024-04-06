@@ -119,7 +119,7 @@ class AddNewDeviceController extends AbstractController
 
         $newDeviceResponseDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($device);
         try {
-            $response = $this->normalizeResponse($newDeviceResponseDTO, [$requestDTO->getResponseType()]);
+            $response = $this->normalize($newDeviceResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $deleteDeviceHandler->deleteDevice($device);
             $this->logger->error($e, $e->getTrace());

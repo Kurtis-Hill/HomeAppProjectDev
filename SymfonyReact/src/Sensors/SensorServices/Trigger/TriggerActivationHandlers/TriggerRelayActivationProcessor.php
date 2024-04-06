@@ -31,6 +31,7 @@ readonly class TriggerRelayActivationProcessor implements TriggerProcessorInterf
         }
         $boolSensor = $this->boolReadingBaseSensorRepository->findOneBy(['baseReadingType' => $sensorToTrigger->getBaseReadingTypeID()]);
         if ($boolSensor !== null) {
+//            dd($boolSensor);
             $currentReading = $boolSensor->getCurrentReading();
             $readingToBeRequested = $sensorTrigger->getTriggerType()->getTriggerTypeName() === TriggerType::RELAY_UP_TRIGGER;
             if ($currentReading !== $readingToBeRequested) {

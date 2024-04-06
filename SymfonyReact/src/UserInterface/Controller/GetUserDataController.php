@@ -29,7 +29,7 @@ class GetUserDataController extends AbstractController
             $this->sendBadRequestJsonResponse($userDataProvider->getProcessErrors());
         }
 
-        $userDataResponse = $this->normalizeResponse($userData);
+        $userDataResponse = $this->normalize($userData);
 
         return $this->sendSuccessfulJsonResponse($userDataResponse);
     }

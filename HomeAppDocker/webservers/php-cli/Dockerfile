@@ -22,7 +22,7 @@ COPY ./auth/auth.json /root/.composer/auth.json
 
 COPY ./supervisor/ /etc/supervisor/conf.d/
 
-COPY ./cron/crontab /etc/cron.d/crontab
+COPY ./php-cli/cron/crontab /etc/cron.d/crontab
 
 RUN chmod 0644 /etc/cron.d/crontab
 

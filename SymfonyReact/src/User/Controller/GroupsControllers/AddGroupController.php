@@ -100,7 +100,7 @@ class AddGroupController extends AbstractController
 
         $groupResponseDTO = GroupResponseDTOBuilder::buildGroupNameResponseDTO($newGroup);
         try {
-            $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedGroupResponseDTO = $this->normalize($groupResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Group Saved']);
         }

@@ -57,7 +57,7 @@ class GetGroupNameMappingsController extends AbstractController
         }
 
         try {
-            $normalizedGroupNameMappingResponseDTOs = $this->normalizeResponse($groupNameMappingResponseDTOs, [$requestDTO->getResponseType()]);
+            $normalizedGroupNameMappingResponseDTOs = $this->normalize($groupNameMappingResponseDTOs, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
