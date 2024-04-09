@@ -4,13 +4,14 @@ namespace App\Sensors\Repository\OutOfBounds\Elastic;
 
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeLatitude;
 use App\Sensors\Repository\OutOfBounds\OutOfBoundsRepositoryInterface;
+use Elastica\Exception\NotImplementedException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class OutOfBoundsLatitudeRepository extends AbstractOutOfBoundsRepository implements OutOfBoundsRepositoryInterface
 {
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->index->refresh();
     }
 
     public function find(): ?OutOfRangeLatitude

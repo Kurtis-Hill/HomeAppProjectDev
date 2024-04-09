@@ -7,7 +7,7 @@ use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\User;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
@@ -214,16 +214,16 @@ class UpdateCardViewControllerTest extends WebTestCase
         /** @var CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
-        $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
+        $cardColourRepository = $this->entityManager->getRepository(Colour::class);
         $iconRepository = $this->entityManager->getRepository(Icons::class);
         $cardStateRepository = $this->entityManager->getRepository(CardState::class);
 
         if ($wrongColour === true) {
             while (true) {
                 $randomColour = random_int(1, 10000);
-                /** @var CardColour $cardColour */
+                /** @var Colour $cardColour */
                 $cardColour = $cardColourRepository->findOneBy(['colourID' => $randomColour]);
-                if (!$cardColour instanceof CardColour) {
+                if (!$cardColour instanceof Colour) {
                     $cardColour = $randomColour;
                     break;
                 }
@@ -237,7 +237,7 @@ class UpdateCardViewControllerTest extends WebTestCase
                 $randomIcon = random_int(1, 10000);
                 /** @var Icons $cardIcon */
                 $cardIcon = $iconRepository->findOneBy(['iconID' => $randomIcon]);
-                if (!$cardIcon instanceof CardColour) {
+                if (!$cardIcon instanceof Colour) {
                     $cardIcon = $randomIcon;
                     break;
                 }
@@ -326,7 +326,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         bool $nullCardIcon,
         bool $nullCardState,
     ): void {
-        $cardColourRepository = $this->entityManager->getRepository(CardColour::class);
+        $cardColourRepository = $this->entityManager->getRepository(Colour::class);
         $iconRepository = $this->entityManager->getRepository(Icons::class);
         $cardStateRepository = $this->entityManager->getRepository(CardState::class);
 

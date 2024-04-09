@@ -80,6 +80,13 @@ services:
       tags:
         - { name: 'console.command' }
 
+    app.listener.redirect_404_to_homepage:
+      class: App\UserInterface\EventListener\RedirectHomePage
+      arguments:
+        - "@router"
+      tags:
+        - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
 #    Psr\Log\LoggerInterface:
 #      alias: 'App\Common\Logs\ElasticLogger'
 #    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~

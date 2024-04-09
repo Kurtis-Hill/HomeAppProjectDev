@@ -31,7 +31,7 @@ export function MainPageTop() {
     return (
         <React.Fragment>
             <RequestInterceptor />
-            <ResponseComponent />
+            <ResponseComponent refreshNavBar={setRefreshNavbar} />
             <div id="page-top">
                 <div id="wrapper">
                     <UserDataContextProvider children={undefined}>

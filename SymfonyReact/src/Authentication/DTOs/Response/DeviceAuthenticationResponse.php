@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Authentication\DTOs\Response;
 
@@ -10,10 +11,6 @@ class DeviceAuthenticationResponse
 {
     private string $token;
 
-//    private string $refreshToken;
-
-    private DeviceAuthenticationIPRequestDTO $deviceIps;
-
     public function __construct(string $token)
     {
         $this->token = $token;
@@ -23,9 +20,4 @@ class DeviceAuthenticationResponse
     {
         return $this->token;
     }
-
-//    public function getRefreshToken(): string
-//    {
-//        return $this->refreshToken;
-//    }
 }

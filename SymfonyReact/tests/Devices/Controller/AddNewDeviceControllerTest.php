@@ -71,7 +71,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->groupName = $this->entityManager->getRepository(Group::class)->findOneByName(UserDataFixtures::ADMIN_GROUP_ONE);
-        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName( RoomFixtures::LIVING_ROOM);
+        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName(RoomFixtures::LIVING_ROOM);
         $this->userToken = $this->setUserToken($this->client);
     }
 
@@ -436,7 +436,6 @@ class AddNewDeviceControllerTest extends WebTestCase
                 'Device IP value is array and not a valid string|null',
             ],
         ];
-
     }
 
     public function test_adding_device_name_too_long(): void

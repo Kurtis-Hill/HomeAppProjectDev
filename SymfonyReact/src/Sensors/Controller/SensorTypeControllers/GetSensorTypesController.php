@@ -8,14 +8,12 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\Sensors\Builders\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorTypeDTOBuilders\SensorTypeResponseDTOBuilder;
 use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor-types')]
@@ -25,7 +23,7 @@ class GetSensorTypesController extends AbstractController
 
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    public function __construct(RequestQueryParameterHandler $requestQueryParameterHandler)
     {
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
@@ -41,7 +39,6 @@ class GetSensorTypesController extends AbstractController
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
         $sensorTypes = $sensorTypeRepository->findAllSensorTypes();
-
         foreach ($sensorTypes as $sensorType) {
             $sensorTypeResponseDTO[] = $responseDTOBuilder->buildSensorTypeResponseDTO($sensorType);
         }
@@ -51,7 +48,7 @@ class GetSensorTypesController extends AbstractController
         }
 
         try {
-            $normalisedResponse = $this->normalizeResponse($sensorTypeResponseDTO, [$requestDTO->getResponseType()]);
+            $normalisedResponse = $this->normalize($sensorTypeResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['error preparing data']);
         }

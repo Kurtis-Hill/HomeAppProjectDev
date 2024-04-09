@@ -12,13 +12,13 @@ class RelaySensorCardViewDTOBuilder extends AbstractBoolReadingTypeDTOBuilder
         if (empty($cardData['relay_boolID'])) {
             return null;
         }
-        $dateTime = $this->formatDateTime($cardData['relay_updatedAt']);
+        $dateTime = $this->formatDateTime($cardData['baseReadingType_updatedAt']);
 
         return $this->getBoolCardViewDTO(
             Relay::READING_TYPE,
             $dateTime,
             $cardData['relay_currentReading'],
-            $cardData['relay_expectedReading'],
+            $cardData['relay_expectedReading'] ?? null,
             $cardData['relay_requestedReading'],
         );
     }

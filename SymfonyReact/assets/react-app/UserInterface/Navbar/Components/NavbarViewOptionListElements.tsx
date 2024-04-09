@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useMemo } from 'react';
 
-import { IndividualNavBarResponse, NavBarResponseInterface } from "../Response/NavBarResponseInterface";
+import { IndividualNavBarElement, NavBarResponseInterface } from "../Response/NavBarResponseInterface";
 import NavbarListItem from './NavbarListItem'
 import { BuildNavbarItem } from '../Builders/NavbarItemBuilder';
 import BaseModal from '../../../Common/Components/Modals/BaseModal';
@@ -42,7 +42,7 @@ export default function NavbarViewOptionListElements(props: {
         
         if (navbarResponseData.payload) {
             for (let i = 0; i < navbarResponseData.payload.length; i++) {
-                const individualNavBarItem: IndividualNavBarResponse = navbarResponseData.payload[i];
+                const individualNavBarItem: IndividualNavBarElement = navbarResponseData.payload[i];
                 let showAddNewModalFlag: (show: boolean) => void|null = null;
                 let addNewText: string = '+Add New';
 
@@ -83,10 +83,6 @@ export default function NavbarViewOptionListElements(props: {
     return (
         <React.Fragment>
             { navbarItems }
-
-            {/* {            
-                showAddNewDeviceModal === true
-                    ? */}
             <BaseModal 
                 title={'Add New Device'}
                 modalShow={showAddNewDeviceModal}
@@ -98,9 +94,6 @@ export default function NavbarViewOptionListElements(props: {
                     setRefreshNavDataFlag={props.setRefreshNavDataFlag}
                 />
             </BaseModal>
-                    {/* :
-                        null */}
-            {/* } */}
             {
                 showAddNewRoomModal === true
                     ?

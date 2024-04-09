@@ -4,17 +4,15 @@ namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
 use App\Common\API\APIErrorMessages;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\CurrentReadingDTOBuilders\CurrentReadingMessageUpdateDTOBuilder;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\CurrentReadingUpdateRequestBuilderInterface;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBuilderInterface;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\CurrentReadingUpdateRequestBuilderInterface;
+use App\Sensors\Builders\Response\MessageResponseBuilders\CurrentReadingMessageUpdateDTOBuilder;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateDTO;
+use App\Sensors\DTO\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Response\CurrentReadingResponse\CurrentReadingUpdateResponseDTO;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
@@ -22,13 +20,10 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Exceptions\ReadingTypeNotSupportedException;
 use App\Sensors\Exceptions\SensorReadingUpdateFactoryException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingUpdateFactory;
 use App\Sensors\Factories\SensorTypeReadingTypeCheckerFactory\SensorTypeCheckerFactory;
-use App\Sensors\Repository\Sensors\SensorTypeRepositoryInterface;
-use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -38,58 +33,19 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
 
     use ValidatorProcessorTrait;
 
-    private ValidatorInterface $validator;
-
-    private SensorReadingUpdateFactory $sensorReadingUpdateFactory;
-
-    private SensorTypeCheckerFactory $sensorTypeTypeCheckerFactory;
-
-    #[ArrayShape([Bmp::NAME, Dallas::NAME, Dht::NAME, Soil::NAME, GenericMotion::NAME, GenericRelay::NAME])]
-    private array $allSensorTypes = [];
-
-    private int $readingTypeRequestAttempt = 0;
-
-    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
-    private array $successfulRequests = [];
-
-    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
-    private array $validationErrors = [];
-
-    #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
-    private array $errors = [];
-
     public function __construct(
-        ValidatorInterface $validator,
-        SensorReadingUpdateFactory $sensorReadingUpdateFactory,
-        SensorTypeCheckerFactory $sensorTypeReadingTypeCheckerFactory,
-    ) {
-        $this->validator = $validator;
-        $this->sensorReadingUpdateFactory = $sensorReadingUpdateFactory;
-        $this->sensorTypeTypeCheckerFactory = $sensorTypeReadingTypeCheckerFactory;
-    }
-
-    public function processSensorUpdateData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO, array $validationGroups): bool
-    {
-        return $this->validateSensorData($sensorDataCurrentReadingUpdateDTO, $validationGroups);
-    }
-
-    private function validateSensorData(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO, array $validationGroups): bool
-    {
-        $objectValidationErrors = $this->validator->validate(
-            $sensorDataCurrentReadingUpdateDTO,
-            null,
-            $validationGroups
-        );
-
-        if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
-            foreach ($objectValidationErrors as $error) {
-                $this->validationErrors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO($this->getValidationErrorsAsStrings($error));
-            }
-            $passedValidation = false;
-        }
-
-        return $passedValidation ?? true;
-    }
+        private readonly ValidatorInterface $validator,
+        private readonly SensorReadingUpdateFactory $sensorReadingUpdateFactory,
+        private readonly SensorTypeCheckerFactory $sensorTypeReadingTypeCheckerFactory,
+        private readonly  SensorTypeCheckerFactory $sensorTypeTypeCheckerFactory,
+        #[ArrayShape([Bmp::NAME, Dallas::NAME, Dht::NAME, Soil::NAME, GenericMotion::NAME, GenericRelay::NAME])]
+        private readonly array $allSensorTypes = [],
+        private int $readingTypeRequestAttempt = 0,
+        #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
+        private array $successfulRequests = [],
+        #[ArrayShape([CurrentReadingUpdateResponseDTO::class])]
+        private array $validationErrors = [],
+    ) {}
 
     #[ArrayShape(
         [
@@ -100,7 +56,7 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
             BoolCurrentReadingUpdateRequestDTO::class,
         ]
     )]
-    public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateDTO $sensorDataCurrentReadingUpdateDTO): array
+    public function handleCurrentReadingDTOCreation(SensorDataCurrentReadingUpdateRequestDTO $sensorDataCurrentReadingUpdateDTO): array
     {
         foreach ($sensorDataCurrentReadingUpdateDTO->getCurrentReadings() as $readingType => $currentReading) {
             ++$this->readingTypeRequestAttempt;
@@ -114,8 +70,14 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
                 continue;
             }
 
-            $sensorTypeUpdateDTOBuilder = $this->getSensorTypeUpdateDTOBuilder($readingType);
+            try {
+                $sensorTypeUpdateDTOBuilder = $this->sensorReadingUpdateFactory->getReadingTypeUpdateBuilder($readingType);
+            } catch (SensorReadingUpdateFactoryException $e) {
+                $this->validationErrors[] = $e->getMessage();
+                continue;
+            }
             if (!$sensorTypeUpdateDTOBuilder instanceof CurrentReadingUpdateRequestBuilderInterface) {
+                $this->validationErrors[] = 'Sensor type update builder is not an instance of CurrentReadingUpdateRequestBuilderInterface';
                 continue;
             }
             $readingTypeCurrentReadingDTO = $sensorTypeUpdateDTOBuilder->buildRequestCurrentReadingUpdateDTO($currentReading);
@@ -142,7 +104,10 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         try {
             $sensorReadingTypeChecker = $this->sensorTypeTypeCheckerFactory->fetchSensorReadingTypeChecker($sensorType);
         } catch (SensorTypeNotFoundException $e) {
-            $this->errors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO($e->getMessage());
+            $this->validationErrors = [
+                $e->getMessage(),
+                ...$this->validationErrors
+            ];
 
             return false;
         }
@@ -150,13 +115,14 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         $readingTypeValidForSensorType = $sensorReadingTypeChecker->checkReadingTypeIsValid($readingType);
 
         if ($readingTypeValidForSensorType === false) {
-            $this->errors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO(
+            $this->validationErrors = [
                 sprintf(
                     APIErrorMessages::READING_TYPE_NOT_VALID_FOR_SENSOR,
                     $readingType,
                     $sensorType
-                )
-            );
+                ),
+                ...$this->validationErrors,
+            ];
 
             return false;
         }
@@ -164,28 +130,17 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
         return true;
     }
 
-    public function getSensorTypeUpdateDTOBuilder(string $readingType): ?ReadingTypeUpdateBoundaryReadingBuilderInterface
-    {
-        try {
-            return $this->sensorReadingUpdateFactory->getReadingTypeUpdateBuilder($readingType);
-        } catch (SensorReadingUpdateFactoryException $e) {
-            $this->errors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO($e->getMessage());
-        }
-
-        return null;
-    }
-
-    /**
-     * @throws ReadingTypeNotSupportedException
-     */
     private function validateSensorTypeDTO(
         AbstractCurrentReadingUpdateRequestDTO $currentReadingUpdateRequestDTO,
         string $sensorType
     ): bool {
-        $objectValidationErrors = $this->validator->validate($currentReadingUpdateRequestDTO, null, $sensorType);
+        $objectValidationErrors = $this->validator->validate(value: $currentReadingUpdateRequestDTO, groups: $sensorType);
         if ($this->checkIfErrorsArePresent($objectValidationErrors)) {
             foreach ($objectValidationErrors as $error) {
-                $this->validationErrors[] = CurrentReadingMessageUpdateDTOBuilder::buildCurrentReadingResponseDTO($this->getValidationErrorsAsStrings($error));
+                $this->validationErrors = [
+                    $this->getValidationErrorsAsStrings($error),
+                    ...$this->validationErrors
+                ];
             }
             return false;
         }
@@ -209,11 +164,5 @@ class CurrentReadingSensorDataRequestHandler implements CurrentReadingSensorData
     public function getValidationErrors(): array
     {
         return $this->validationErrors;
-    }
-
-    #[ArrayShape(['errors'])]
-    public function getErrors(): array
-    {
-        return $this->errors;
     }
 }

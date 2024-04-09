@@ -60,6 +60,10 @@ class CardViewVoter extends Voter
         }
 
         $devices = $sensor->getDevice();
+        if (!$user instanceof User) {
+            return false;
+        }
+
         if (!in_array(
             $devices->getGroupObject()->getGroupID(),
             $user->getAssociatedGroupIDs(),
@@ -84,22 +88,18 @@ class CardViewVoter extends Voter
             return $checkCommon;
         }
 
-        if ($cardView->getUserID()->getUserID() !== $user->getUserID()) {
+        if (!$user instanceof User) {
             return false;
         }
 
-        return true;
+        return $cardView->getUserID()->getUserID() === $user->getUserID();
     }
 
     private function viewRoomCardData(UserInterface $user, Room $room): bool
     {
         $checkCommon = $this->checkCommon($user);
 
-        if ($checkCommon !== null) {
-            return $checkCommon;
-        }
-
-        return true;
+        return $checkCommon ?? true;
     }
 
     private function viewDeviceCardData(UserInterface $user, Devices $devices): bool
@@ -110,7 +110,9 @@ class CardViewVoter extends Voter
             return $checkCommon;
         }
 
-        /** @var $user User */
+        if (!$user instanceof User) {
+            return false;
+        }
         if (!in_array(
             $devices->getGroupObject()->getGroupID(),
             $user->getAssociatedGroupIDs(),

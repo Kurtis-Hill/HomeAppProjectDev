@@ -33,6 +33,4 @@ class CardResponseDTOBuilder
             CardStateDTOBuilder::buildCardStateResponseDTO($cardView->getCardStateID()),
         );
     }
-
-
 }

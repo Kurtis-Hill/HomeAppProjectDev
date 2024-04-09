@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Builders\Request;
 
-use App\Devices\DTO\Request\DeviceRequest\DeviceRequestDTOInterface;
 use App\Devices\DTO\Request\DeviceRequest\DeviceLoginCredentialsUpdateRequestDTO;
 
 class DeviceLoginCredentialsUpdateRequestDTOBuilder

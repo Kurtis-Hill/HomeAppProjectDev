@@ -24,6 +24,9 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
         parent::__construct($registry, User::class);
     }
 
+    /**
+     * @throws UnsupportedUserException
+     */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newEncodedPassword): void
     {
         if (!$user instanceof User) {
@@ -44,16 +47,18 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
 //    {
 //    }
 
-    public function showSSL()
+    /**
+     * @return array
+     */
+    public function showSSL(): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
         $raw = "SHOW STATUS LIKE 'Ssl_cipher'";
 
         $stmt = $conn->prepare($raw);
-        $result = $stmt->execute();
 
-        return $stmt->fetchAll();
+        return $stmt->executeQuery()->fetchAssociative();
     }
 
     public function findOneById(int $id): ?User

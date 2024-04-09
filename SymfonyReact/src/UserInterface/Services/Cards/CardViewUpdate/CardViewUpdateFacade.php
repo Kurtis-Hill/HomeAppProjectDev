@@ -4,7 +4,7 @@ namespace App\UserInterface\Services\Cards\CardViewUpdate;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\UserInterface\DTO\Internal\CardUpdateDTO\CardUpdateDTO;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
@@ -42,8 +42,8 @@ class CardViewUpdateFacade implements CardViewUpdateInterface
     public function updateAllCardViewObjectProperties(CardUpdateDTO $cardUpdateDTO, CardView $cardView): array
     {
         if ($cardUpdateDTO->getCardColourID() !== null) {
-            $cardColour = $this->cardColourRepository->findOneById($cardUpdateDTO->getCardColourID());
-            if (!$cardColour instanceof CardColour) {
+            $cardColour = $this->cardColourRepository->find($cardUpdateDTO->getCardColourID());
+            if (!$cardColour instanceof Colour) {
                 $errors[] = 'Colour not found';
             } else {
                 $cardView->setCardColourID($cardColour);
@@ -51,7 +51,7 @@ class CardViewUpdateFacade implements CardViewUpdateInterface
         }
 
         if ($cardUpdateDTO->getCardIconID() !== null) {
-            $cardIcon = $this->iconsRepository->findOneById($cardUpdateDTO->getCardIconID());
+            $cardIcon = $this->iconsRepository->find($cardUpdateDTO->getCardIconID());
             if (!$cardIcon instanceof Icons) {
                 $errors[] = 'Icon not found';
             } else {
@@ -60,7 +60,7 @@ class CardViewUpdateFacade implements CardViewUpdateInterface
         }
 
         if ($cardUpdateDTO->getCardStateID()) {
-            $cardState = $this->cardStateRepository->findOneById($cardUpdateDTO->getCardStateID());
+            $cardState = $this->cardStateRepository->find($cardUpdateDTO->getCardStateID());
             if (!$cardState instanceof CardState) {
                 $errors[] = 'Card State state not found';
             } else {

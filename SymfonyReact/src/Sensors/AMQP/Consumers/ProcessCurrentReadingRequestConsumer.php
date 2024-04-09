@@ -1,17 +1,17 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Sensors\AMQP\Consumers;
 
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
@@ -25,19 +25,18 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
         private UpdateCurrentSensorReadingInterface $sensorDeviceDataQueueConsumerService,
         private DeviceRepositoryInterface $deviceRepository,
         private LoggerInterface $elasticLogger,
-    ) {
-    }
+    ) {}
 
     // @ADD new current reading type dtos to allowed_classes array
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            /** @var UpdateSensorCurrentReadingMessageDTO $sensorData */
+            /** @var UpdateSensorCurrentReadingTransportMessageDTO $sensorData */
             $sensorData = unserialize(
                 $msg->getBody(),
                 [
                     'allowed_classes' => [
-                        UpdateSensorCurrentReadingMessageDTO::class,
+                        UpdateSensorCurrentReadingTransportMessageDTO::class,
                         AnalogCurrentReadingUpdateRequestDTO::class,
                         HumidityCurrentReadingUpdateRequestDTO::class,
                         LatitudeCurrentReadingUpdateRequestDTO::class,
@@ -55,7 +54,6 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
             $device = $this->deviceRepository->find($sensorData->getDeviceID());
         } catch (ORMException $exception) {
             $this->elasticLogger->error('expection message: ' . $exception->getMessage());
-
             return false;
         } catch (Exception $e) {
             $this->elasticLogger->error('expection message: ' . $e->getMessage());
@@ -65,11 +63,14 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
 
         if ($device instanceof Devices) {
             try {
-                return $this->sensorDeviceDataQueueConsumerService->handleUpdateSensorCurrentReading(
+                $validationErrors = $this->sensorDeviceDataQueueConsumerService->handleUpdateSensorCurrentReading(
                     $sensorData,
                     $device
                 );
-            } catch (ORMException | OptimisticLockException $e) {
+                if ($validationErrors) {
+                    $this->elasticLogger->error('Validation errors', ['errors' => $validationErrors]);
+                }
+            } catch (ORMException|OptimisticLockException $e) {
                 $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 
                 return false;

@@ -7,6 +7,7 @@ use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\GenericMotion;
 use App\Sensors\Entity\SensorTypes\GenericRelay;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -25,6 +26,7 @@ readonly class SingleSensorUpdateRequestDTO implements SensorUpdateRequestDTOInt
         Soil::NAME,
         GenericMotion::NAME,
         LDR::NAME,
+        Sht::NAME,
     ])]
     public function getSensorName(): string
     {
@@ -38,6 +40,7 @@ readonly class SingleSensorUpdateRequestDTO implements SensorUpdateRequestDTOInt
         Soil::NAME,
         GenericMotion::NAME,
         LDR::NAME,
+        Sht::NAME,
     ])]
     public function getPinNumber(): int
     {
@@ -51,6 +54,7 @@ readonly class SingleSensorUpdateRequestDTO implements SensorUpdateRequestDTOInt
         Soil::NAME,
         GenericMotion::NAME,
         LDR::NAME,
+        Sht::NAME,
     ])]
     public function getReadingInterval(): int
     {

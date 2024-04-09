@@ -14,6 +14,7 @@ use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface;
 use App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface;
 use App\Devices\DTO\Request\NewDeviceRequestDTO;
+use App\Devices\Exceptions\DeviceCreationFailureException;
 use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
@@ -23,7 +24,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -46,6 +47,12 @@ class AddNewDeviceController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
+    /**
+     * @throws RoomNotFoundException
+     * @throws ORMException
+     * @throws DeviceCreationFailureException
+     * @throws GroupNotFoundException
+     */
     #[Route('/add', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
@@ -91,10 +98,6 @@ class AddNewDeviceController extends AbstractController
             );
         } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
-        } catch (ORMException $e) {
-            $this->logger->error($e->getMessage());
-
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Device')]);
         }
 
         try {
@@ -116,7 +119,7 @@ class AddNewDeviceController extends AbstractController
 
         $newDeviceResponseDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($device);
         try {
-            $response = $this->normalizeResponse($newDeviceResponseDTO, [$requestDTO->getResponseType()]);
+            $response = $this->normalize($newDeviceResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface $e) {
             $deleteDeviceHandler->deleteDevice($device);
             $this->logger->error($e, $e->getTrace());

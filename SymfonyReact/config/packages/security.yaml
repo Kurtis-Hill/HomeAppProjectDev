@@ -93,6 +93,6 @@ security:
         - { path: ^/HomeApp/api/user, roles: ROLE_USER }
 
 #        DEV
-        - { path: ^/HomeApp/api/JIT, roles: PUBLIC_ACCESS }
-        - { path: ^/HomeApp/ssl, roles: PUBLIC_ACCESS }
-        - { path: ^/HomeApp/api/user/csrfToken, roles: PUBLIC_ACCESS }
+#         - { path: ^/HomeApp/api/JIT, roles: PUBLIC_ACCESS }
+#         - { path: ^/HomeApp/ssl, roles: PUBLIC_ACCESS }
+#         - { path: ^/HomeApp/api/user/csrfToken, roles: PUBLIC_ACCESS }

@@ -3,10 +3,12 @@
 namespace App\Sensors\Voters;
 
 use App\Devices\Entity\Devices;
-use App\Sensors\Builders\SensorUpdateBuilders\SensorUpdateDTOBuilder;
+use App\Sensors\Builders\Request\SensorUpdateBuilders\SensorUpdateDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\NewSensorDTO;
 use App\Sensors\DTO\Internal\Sensor\UpdateSensorDTO;
+use App\Sensors\DTO\Internal\Trigger\CreateNewTriggerDTO;
 use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTrigger;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -20,13 +22,15 @@ class SensorVoter extends Voter
 
     public const DEVICE_UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading';
 
-    public const USER_UPDATE_SENSOR_CURRENT_READING = 'update-sensor-current-reading-user';
-
     public const DELETE_SENSOR = 'delete-sensor';
 
     public const UPDATE_SENSOR = 'update-sensor';
 
     public const GET_SENSOR = 'get-single-sensor';
+
+    public const CAN_CREATE_TRIGGER = 'can-create-trigger';
+
+    public const CAN_DELETE_TRIGGER = 'can-delete-trigger';
 
     /**
      * @param string $attribute
@@ -42,7 +46,8 @@ class SensorVoter extends Voter
             self::DELETE_SENSOR,
             self::UPDATE_SENSOR,
             self::GET_SENSOR,
-            self::USER_UPDATE_SENSOR_CURRENT_READING,
+            self::CAN_CREATE_TRIGGER,
+            self::CAN_DELETE_TRIGGER,
         ])) {
             return false;
         }
@@ -59,6 +64,9 @@ class SensorVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
+        if (!$user instanceof UserInterface) {
+            return false;
+        }
 
         return match ($attribute) {
             self::ADD_NEW_SENSOR => $this->canAddNewSensor($user, $subject),
@@ -67,13 +75,13 @@ class SensorVoter extends Voter
             self::DELETE_SENSOR => $this->canDeleteSensor($user, $subject),
             self::UPDATE_SENSOR => $this->canUpdateSensor($user, $subject),
             self::GET_SENSOR => $this->canGetSensor($user, $subject),
-//            self::USER_UPDATE_SENSOR_CURRENT_READING => $this->userCanUpdateSensor($user, $sensorReadingType),
-
+            self::CAN_CREATE_TRIGGER => $this->canCreateTriggerForSensor($user, $subject),
+            self::CAN_DELETE_TRIGGER => $this->canDeleteTriggerForSensor($user, $subject),
             default => false
         };
     }
 
-    private function userCanUpdateSensor(UserInterface $user, Sensor $sensor): bool
+    private function canDeleteTriggerForSensor(UserInterface $user, SensorTrigger $sensorTrigger): bool
     {
         if (!$user instanceof User) {
             return false;
@@ -83,7 +91,60 @@ class SensorVoter extends Voter
             return true;
         }
 
-        if (!in_array($sensor->getDevice()->getGroupObject()->getGroupID(), $user->getAssociatedGroupIDs(), true)) {
+        $baseReadingTypeThatTriggers = $sensorTrigger->getBaseReadingTypeThatTriggers();
+        $baseReadingTypeThatIsTriggered = $sensorTrigger->getBaseReadingTypeToTriggers();
+
+        $baseReadingTypeThatTriggersPasses = null;
+        if ($baseReadingTypeThatTriggers !== null) {
+            $baseReadingTypeThatTriggersPasses = in_array(
+                $baseReadingTypeThatTriggers->getSensor()->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(),
+                true
+            );
+        }
+
+
+        $baseReadingTypeThatIsTriggeredPasses = null;
+        if ($baseReadingTypeThatIsTriggered !== null) {
+            $baseReadingTypeThatIsTriggeredPasses = in_array(
+                $baseReadingTypeThatIsTriggered->getSensor()->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(),
+                true
+            );
+        }
+
+        return !($baseReadingTypeThatTriggersPasses === false || $baseReadingTypeThatIsTriggeredPasses === false);
+    }
+
+    private function canCreateTriggerForSensor(UserInterface $user, CreateNewTriggerDTO $createNewTriggerDTO): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if (
+            ($createNewTriggerDTO->getBaseReadingTypeThatIsTriggered() !== null)
+            && !in_array(
+                $createNewTriggerDTO->getBaseReadingTypeThatIsTriggered()->getSensor()->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(),
+                true
+            )
+        ) {
+            return false;
+        }
+
+        if (
+            ($createNewTriggerDTO->getBaseReadingTypeThatTriggers() !== null)
+            && !in_array(
+                $createNewTriggerDTO->getBaseReadingTypeThatTriggers()->getSensor()->getDevice()->getGroupObject()->getGroupID(),
+                $user->getAssociatedGroupIDs(),
+                true
+            )
+        ) {
             return false;
         }
 

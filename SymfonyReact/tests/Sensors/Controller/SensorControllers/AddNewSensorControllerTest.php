@@ -9,15 +9,18 @@ use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Sensors\Controller\SensorControllers\AddNewSensorController;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\BoolSensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Dallas;
@@ -33,6 +36,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\DuplicateSensorException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
@@ -96,45 +100,50 @@ class AddNewSensorControllerTest extends WebTestCase
     public function newSensorSimpleDataProvider(): Generator
     {
         yield [
-            'sensor' => Dht::NAME,
+            'sensor' => Dht::class,
             'sensorName' => 'dhtTest'
         ];
 
         yield [
-            'sensor' => Bmp::NAME,
+            'sensor' => Bmp::class,
             'sensorName' => 'bmpTest'
         ];
 
         yield [
-            'sensor' => Soil::NAME,
+            'sensor' => Soil::class,
             'sensorName' => 'soilTest'
         ];
 
         yield [
-            'sensor' => Dallas::NAME,
+            'sensor' => Dallas::class,
             'sensorName' => 'dallasTest'
         ];
 
         yield [
-            'sensor' => GenericMotion::NAME,
+            'sensor' => GenericMotion::class,
             'sensorName' => 'genericMotionTest'
         ];
 
         yield [
-            'sensor' => GenericRelay::NAME,
+            'sensor' => GenericRelay::class,
             'sensorName' => 'genericRelayTest'
         ];
 
         yield [
-            'sensor' => LDR::NAME,
+            'sensor' => LDR::class,
             'sensorName' => 'ldrTest'
+        ];
+
+        yield [
+            'sensor' => Sht::class,
+            'sensorName' => 'shtTest'
         ];
     }
 
     public function newSensorExtendedDataProvider(): Generator
     {
         yield [
-            'sensor' => Dht::NAME,
+            'sensor' => Dht::class,
             'sensorName' => 'dhtTest',
             'class' => Dht::class,
             [
@@ -144,7 +153,7 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => Bmp::NAME,
+            'sensor' => Bmp::class,
             'sensorName' => 'bmpTest',
             'class' => Bmp::class,
             [
@@ -155,7 +164,7 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => Soil::NAME,
+            'sensor' => Soil::class,
             'sensorName' => 'soilTest',
             'class' => Soil::class,
             [
@@ -164,7 +173,7 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => Dallas::NAME,
+            'sensor' => Dallas::class,
             'sensorName' => 'dallasTest',
             'class' => Dallas::class,
             [
@@ -173,7 +182,7 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => GenericMotion::NAME,
+            'sensor' => GenericMotion::class,
             'sensorName' => 'genericMotionTest',
             'class' => GenericMotion::class,
             [
@@ -182,7 +191,7 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => GenericRelay::NAME,
+            'sensor' => GenericRelay::class,
             'sensorName' => 'genericRelayTest',
             'class' => GenericRelay::class,
             [
@@ -191,11 +200,21 @@ class AddNewSensorControllerTest extends WebTestCase
         ];
 
         yield [
-            'sensor' => LDR::NAME,
+            'sensor' => LDR::class,
             'sensorName' => 'ldrTest',
             'class' => LDR::class,
             [
                 'analog' => Analog::class
+            ]
+        ];
+
+        yield [
+            'sensor' => Sht::class,
+            'sensorName' => 'shtTest',
+            'class' => Sht::class,
+            [
+                'temperature' => Temperature::class,
+                'humidity' => Humidity::class,
             ]
         ];
     }
@@ -205,8 +224,8 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_add_new_sensor_correct_details(string $sensorType, string $sensorName): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorTypeObject */
+        $sensorTypeObject = $this->entityManager->getRepository($sensorType)->findAll()[0];
 
         $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($this->device->getDeviceID());
 
@@ -220,7 +239,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $readingInterval = 1000;
         $formData = [
             'sensorName' => $sensorName,
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'sensorTypeID' => $sensorTypeObject->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
             'pinNumber' => $randomPin,
             'readingInterval' => $readingInterval,
@@ -255,7 +274,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
         self::assertEquals($responseData['payload']['pinNumber'], $sensor->getPinNumber());
         self::assertEquals($responseData['payload']['readingInterval'], $sensor->getReadingInterval());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
         self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
@@ -266,13 +285,13 @@ class AddNewSensorControllerTest extends WebTestCase
 
     /**
      * @dataProvider newSensorSimpleDataProvider
-     * @param string $sensorType
+     * @param string $sensorTypeString
      * @param string $sensorName
      */
-    public function test_can_not_add_new_sensor_with_special_characters(string $sensorType, string $sensorName): void
+    public function test_can_not_add_new_sensor_with_special_characters(string $sensorTypeString, string $sensorName): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         $formData = [
             'sensorName' => '&' . $sensorName,
@@ -304,13 +323,13 @@ class AddNewSensorControllerTest extends WebTestCase
 
     /**
      * @dataProvider newSensorSimpleDataProvider
-     * @param string $sensorType
+     * @param string $sensorTypeString
      * @param string $sensorName
      */
-    public function test_can_not_add_new_sensor_with_long_name(string $sensorType, string $sensorName): void
+    public function test_can_not_add_new_sensor_with_long_name(string $sensorTypeString, string $sensorName): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         $formData = [
             'sensorName' => 'TestingTestingTesti' . $sensorName,
@@ -342,10 +361,10 @@ class AddNewSensorControllerTest extends WebTestCase
     /**
      * @dataProvider newSensorSimpleDataProvider
      */
-    public function test_can_not_add_new_sensor_with_short_name(string $sensorType): void
+    public function test_can_not_add_new_sensor_with_short_name(string $sensorTypeString): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         $formData = [
             'sensorName' => 'T',
@@ -377,12 +396,12 @@ class AddNewSensorControllerTest extends WebTestCase
     /**
      * @dataProvider newSensorSimpleDataProvider
      */
-    public function test_cannot_add_new_sensor_with_identical_name(string $sensorType): void
+    public function test_cannot_add_new_sensor_with_identical_name(string $sensorTypeString): void
     {
         /** @var Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]['referenceName']]);
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['deviceID' => $device->getDeviceID()])[0];
 
@@ -418,13 +437,13 @@ class AddNewSensorControllerTest extends WebTestCase
 
     /**
      * @dataProvider newSensorSimpleDataProvider
-     * @param string $sensorType
+     * @param string $sensorTypeString
      * @param string $sensorName
      */
-    public function test_cannot_add_new_sensor_with_none_existent_device_id(string $sensorType, string $sensorName): void
+    public function test_cannot_add_new_sensor_with_none_existent_device_id(string $sensorTypeString, string $sensorName): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         while (true) {
             $randomID = random_int(0, 1000000);
@@ -465,8 +484,8 @@ class AddNewSensorControllerTest extends WebTestCase
     {
         while (true) {
             $randomID = random_int(0, 1000000);
-            $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $randomID]);
-            if (!$sensorType instanceof SensorType) {
+            $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorTypeID' => $randomID]);
+            if (!$sensorType instanceof AbstractSensorType) {
                 break;
             }
         }
@@ -502,10 +521,10 @@ class AddNewSensorControllerTest extends WebTestCase
     /**
      * @dataProvider newSensorExtendedDataProvider
      */
-    public function test_can_add_sensor_and_card_details_admin(string $sensorType, string $sensorName, string $class, array $sensors): void
+    public function test_can_add_sensor_and_card_details_admin(string $sensorTypeString, string $sensorName, string $class, array $sensors): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         $formData = [
             'sensorName' => $sensorName,
@@ -532,12 +551,12 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
 
         /** @var SensorTypeInterface $sensorTypeObject */
-        $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
+        $sensorTypeObject = $this->entityManager->getRepository($class)->findAll()[0];
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
         foreach ($sensors as $sensorTypeClass) {
-            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
+            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findBySensorID($sensor->getSensorID())[0];
             self::assertInstanceOf($sensorTypeClass, $sensorType);
         }
 
@@ -551,7 +570,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
         self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
@@ -564,10 +583,10 @@ class AddNewSensorControllerTest extends WebTestCase
     /**
      * @dataProvider newSensorExtendedDataProvider
      */
-    public function test_can_add_sensor_and_card_details_admin_group_not_apart_of(string $sensorType, string $sensorName, string $class, array $sensors): void
+    public function test_can_add_sensor_and_card_details_admin_group_not_apart_of(string $sensorTypeString, string $sensorName, string $class, array $sensors): void
     {
-        /** @var SensorType $sensorTypeMappingObject */
-        $sensorTypeMappingObject = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorTypeObject */
+        $sensorTypeObject = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
         /** @var GroupRepository $groupNameRepository */
@@ -601,7 +620,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         $formData = [
             'sensorName' => $sensorName . '1',
-            'sensorTypeID' => $sensorTypeMappingObject->getSensorTypeID(),
+            'sensorTypeID' => $sensorTypeObject->getSensorTypeID(),
             'deviceID' => $device->getDeviceID(),
             'pinNumber' => $randomPin,
         ];
@@ -628,46 +647,59 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var SensorTypeInterface $sensorTypeObject */
-        $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
+//        /** @var SensorTypeInterface $sensorTypeObject */
+//        $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
         /** @var CardView $cardView */
-        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
+        $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensor]);
 
-        foreach ($sensors as $sensorTypeClass) {
-            /** @var SensorTypeInterface $sensorType */
-            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
-            self::assertInstanceOf($sensorTypeClass, $sensorType);
-        }
-
+        $newReadingTypeObjects = array_merge(
+            $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($sensor->getSensorID()),
+            $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBySensorID($sensor->getSensorID()),
+        );
+        self::assertNotEmpty($newReadingTypeObjects);
+//        dd($newReadingTypeObjects, $sensor);
+//        dd($newReadingTypeObjects);
         if ($sensorTypeObject instanceof SensorTypeInterface) {
-            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
-            self::assertEquals($sensorTypeObject->getReadingTypeName(), $sensor->getSensorTypeObject()->getSensorType());
+            //            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
+            self::assertEquals($sensorTypeObject::getReadingTypeName(), $sensor->getSensorTypeObject()::getReadingTypeName());
         }
-        if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorTypeObject->getTemperature()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof HumidityReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorTypeObject->getHumidObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorTypeObject->getHumidObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxAnalog(), $sensorTypeObject->getAnalogObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinAnalog(), $sensorTypeObject->getAnalogObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof LatitudeReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxLatitude(), $sensorTypeObject->getLatitudeObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinLatitude(), $sensorTypeObject->getLatitudeObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface) {
-            self::assertNull($sensorTypeObject->getMotion()->getExpectedReading());
-            self::assertFalse($sensorTypeObject->getMotion()->getRequestedReading());
-            self::assertFalse($sensorTypeObject->getMotion()->getCurrentReading());
-        }
-        if ($sensorTypeObject instanceof RelayReadingTypeInterface) {
-            self::assertNull($sensorTypeObject->getRelay()->getExpectedReading());
-            self::assertFalse($sensorTypeObject->getRelay()->getRequestedReading());
-            self::assertFalse($sensorTypeObject->getRelay()->getCurrentReading());
+        /** @var AllSensorReadingTypeInterface $sensorTypeClass */
+        foreach ($newReadingTypeObjects as $sensorTypeClass) {
+            /** @var AllSensorReadingTypeInterface $sensorType */
+            $sensorType = $this->entityManager->getRepository($sensorTypeClass::class)->findBySensorID($sensor->getSensorID())[0];
+            self::assertInstanceOf($sensorTypeClass::class, $sensorType);
+            //        dd($sensorTypeMappingObject, $sensorType);
+//            dd(
+//                $sensorTypeObject->getMaxTemperature(),
+//                $sensorTypeClass,
+//            );
+            if ($sensorTypeClass instanceof TemperatureReadingTypeInterface) {
+                self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeClass->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorTypeClass->getLowReading());
+            }
+            if ($sensorTypeClass instanceof HumidityReadingTypeInterface) {
+//                dd($sensorTypeClass, $sensorTypeObject);
+                self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorTypeClass->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorTypeClass->getLowReading());
+            }
+            if ($sensorTypeClass instanceof AnalogReadingTypeInterface) {
+                self::assertEquals($sensorTypeObject->getMaxAnalog(), $sensorTypeClass->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinAnalog(), $sensorTypeClass->getLowReading());
+            }
+            if ($sensorTypeClass instanceof LatitudeReadingTypeInterface) {
+                self::assertEquals($sensorTypeObject->getMaxLatitude(), $sensorTypeClass->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinLatitude(), $sensorTypeClass->getLowReading());
+            }
+            if ($sensorTypeClass instanceof MotionSensorReadingTypeInterface) {
+                self::assertNull($sensorTypeClass->getExpectedReading());
+                self::assertFalse($sensorTypeClass->getRequestedReading());
+                self::assertFalse($sensorTypeClass->getCurrentReading());
+            }
+            if ($sensorTypeClass instanceof RelayReadingTypeInterface) {
+                self::assertNull($sensorTypeClass->getExpectedReading());
+                self::assertFalse($sensorTypeClass->getRequestedReading());
+                self::assertFalse($sensorTypeClass->getCurrentReading());
+            }
         }
 
         self::assertInstanceOf(Sensor::class, $sensor);
@@ -679,7 +711,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
         self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
@@ -692,10 +724,10 @@ class AddNewSensorControllerTest extends WebTestCase
     /**
      * @dataProvider newSensorExtendedDataProvider
      */
-    public function test_can_add_sensor_and_card_details_regular_user_admin_group_is_apart_of(string $sensorType, string $sensorName, string $class, array $sensors): void
+    public function test_can_add_sensor_and_card_details_regular_user_admin_group_is_apart_of(string $sensorTypeString, string $sensorName, string $class, array $sensors): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorTypeMappingObject */
+        $sensorTypeMappingObject = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         $userToken = $this->setUserToken(
             $this->client,
@@ -707,7 +739,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         $formData = [
             'sensorName' => $sensorName,
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
+            'sensorTypeID' => $sensorTypeMappingObject->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
             'pinNumber' => $pinNumber,
             'readingInterval' => Sensor::DEFAULT_READING_INTERVAL,
@@ -731,45 +763,41 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
         /** @var SensorTypeInterface $sensorTypeObject */
-        $sensorTypeObject = $this->entityManager->getRepository($class)->findOneBy(['sensor' => $sensorID]);
+        $sensorTypeObject = $this->entityManager->getRepository($class)->findAll()[0];
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
 
         foreach ($sensors as $sensorTypeClass) {
             /** @var AllSensorReadingTypeInterface $sensorType */
-            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findOneBy(['sensor' => $sensorID]);
+            $sensorType = $this->entityManager->getRepository($sensorTypeClass)->findBySensorID($sensor->getSensorID())[0];
             self::assertInstanceOf($sensorTypeClass, $sensorType);
-        }
 
-        if ($sensorTypeObject instanceof SensorTypeInterface) {
-            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
-            self::assertEquals($sensorTypeObject->getReadingTypeName(), $sensor->getSensorTypeObject()->getSensorType());
-        }
-        if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeObject->getTemperature()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorTypeObject->getTemperature()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof HumidityReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorTypeObject->getHumidObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorTypeObject->getHumidObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxAnalog(), $sensorTypeObject->getAnalogObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinAnalog(), $sensorTypeObject->getAnalogObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof LatitudeReadingTypeInterface) {
-            self::assertEquals($sensorTypeObject->getMaxLatitude(), $sensorTypeObject->getLatitudeObject()->getHighReading());
-            self::assertEquals($sensorTypeObject->getMinLatitude(), $sensorTypeObject->getLatitudeObject()->getLowReading());
-        }
-        if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface) {
-            self::assertNull($sensorTypeObject->getMotion()->getExpectedReading());
-            self::assertFalse($sensorTypeObject->getMotion()->getRequestedReading());
-            self::assertFalse($sensorTypeObject->getMotion()->getCurrentReading());
-        }
-        if ($sensorTypeObject instanceof RelayReadingTypeInterface) {
-            self::assertNull($sensorTypeObject->getRelay()->getExpectedReading());
-            self::assertFalse($sensorTypeObject->getRelay()->getRequestedReading());
-            self::assertFalse($sensorTypeObject->getRelay()->getCurrentReading());
+            if ($sensorTypeObject instanceof TemperatureReadingTypeInterface && $sensorType instanceof Temperature) {
+                self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorType->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorType->getLowReading());
+            }
+            if ($sensorTypeObject instanceof HumidityReadingTypeInterface && $sensorType instanceof Humidity) {
+                self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorType->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorType->getLowReading());
+            }
+            if ($sensorTypeObject instanceof AnalogReadingTypeInterface && $sensorType instanceof Analog) {
+                self::assertEquals($sensorTypeObject->getMaxAnalog(), $sensorType->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinAnalog(), $sensorType->getLowReading());
+            }
+            if ($sensorTypeObject instanceof LatitudeReadingTypeInterface && $sensorType instanceof Latitude) {
+                self::assertEquals($sensorTypeObject->getMaxLatitude(), $sensorType->getHighReading());
+                self::assertEquals($sensorTypeObject->getMinLatitude(), $sensorType->getLowReading());
+            }
+            if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface && $sensorType instanceof Motion) {
+                self::assertNull($sensorType->getExpectedReading());
+                self::assertFalse($sensorType->getRequestedReading());
+                self::assertFalse($sensorType->getCurrentReading());
+            }
+            if ($sensorTypeObject instanceof RelayReadingTypeInterface && $sensorType instanceof Relay) {
+                self::assertNull($sensorType->getExpectedReading());
+                self::assertFalse($sensorType->getRequestedReading());
+                self::assertFalse($sensorType->getCurrentReading());
+            }
         }
 
         self::assertInstanceOf(Sensor::class, $sensor);
@@ -785,7 +813,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals($responseData['payload']['pinNumber'], $sensor->getPinNumber());
         self::assertEquals($pinNumber, $sensor->getPinNumber());
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $responseData['payload']['readingInterval']);
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()->getSensorType());
+        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
         self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
         self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
         self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
@@ -831,8 +859,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     public function test_adding_sensor_with_negative_pin(): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 
@@ -863,8 +891,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     public function test_adding_reading_interval_wrong_data_type(): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 
@@ -896,8 +924,8 @@ class AddNewSensorControllerTest extends WebTestCase
 
     public function test_adding_reading_interval_with_interval_too_low(): void
     {
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => Dht::NAME]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
 
         $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
 
@@ -930,15 +958,15 @@ class AddNewSensorControllerTest extends WebTestCase
     /**
      * @dataProvider newSensorSimpleDataProvider
      */
-    public function test_add_new_sensor_when_not_part_of_associated_device_group_regular_user(string $sensorType, string $sensorName): void
+    public function test_add_new_sensor_when_not_part_of_associated_device_group_regular_user(string $sensorTypeString, string $sensorName): void
     {
         $token = $this->setUserToken(
             $this->client,
             UserDataFixtures::REGULAR_USER_EMAIL_ONE,
             UserDataFixtures::REGULAR_PASSWORD
         );
-        /** @var SensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(SensorType::class)->findOneBy(['sensorType' => $sensorType]);
+        /** @var AbstractSensorType $sensorType */
+        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         /** @var GroupRepository $groupRepository */
         $groupRepository = $this->entityManager->getRepository(Group::class);

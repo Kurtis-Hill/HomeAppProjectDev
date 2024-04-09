@@ -2,42 +2,47 @@
 
 namespace App\Sensors\Entity\ReadingTypes\StandardReadingTypes;
 
-use App\Sensors\Entity\Sensor;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
 use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\ReadingSymbolInterface;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SHTTemperatureConstraint;
 use App\Sensors\Repository\ReadingType\ORM\TemperatureRepository;
-use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[
     ORM\Entity(repositoryClass: TemperatureRepository::class),
-    ORM\Table(name: "temperature"),
-    ORM\UniqueConstraint(name: "temp_ibfk_1", columns: ["sensorID"]),
 ]
-class Temperature extends AbstractStandardReadingType implements StandardReadingSensorInterface, AllSensorReadingTypeInterface, ReadingSymbolInterface
+class Temperature extends AbstractStandardReadingType implements ReadingSymbolInterface
 {
     public const READING_TYPE = 'temperature';
 
     public const READING_SYMBOL = '°C';
 
     #[
-        ORM\Column(name: 'tempID', type: "integer", nullable: false),
-        ORM\Id,
-        ORM\GeneratedValue(strategy: "IDENTITY"),
+        DallasTemperatureConstraint(
+            groups: [Dallas::NAME]
+        ),
+        DHTTemperatureConstraint(
+            groups: [Dht::NAME]
+        ),
+        BMP280TemperatureConstraint(
+            groups:[Bmp::NAME]
+        ),
+        SHTTemperatureConstraint(
+            groups:[Sht::NAME]
+        ),
     ]
-    private int $tempID;
+    protected float $currentReading;
 
-    #[ORM\Column(name: 'tempReading', type: "float", precision: 10, scale: 0, nullable: false)]
+//    #[ORM\Column(name: 'highTemp', type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "26"])]
     #[
         DallasTemperatureConstraint(
             groups: [Dallas::NAME]
@@ -47,26 +52,15 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
         ),
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
-        )
-    ]
-    private float $currentReading;
-
-    #[ORM\Column(name: 'highTemp', type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "26"])]
-    #[
-        DallasTemperatureConstraint(
-            groups: [Dallas::NAME]
         ),
-        DHTTemperatureConstraint(
-            groups: [Dht::NAME]
-        ),
-        BMP280TemperatureConstraint(
-            groups:[Bmp::NAME]
+        SHTTemperatureConstraint(
+            groups:[Sht::NAME]
         ),
         Assert\Callback([self::class, 'validate'])
     ]
-    private float $highTemp = 50;
+    protected float $highReading = 50;
 
-    #[ORM\Column(name: 'lowTemp', type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "12"]),]
+//    #[ORM\Column(name: 'lowTemp', type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "12"]),]
     #[
         DallasTemperatureConstraint(
             groups: [Dallas::NAME]
@@ -77,99 +71,93 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
         ),
+        SHTTemperatureConstraint(
+            groups:[Sht::NAME]
+        ),
     ]
-    private float $lowTemp = 10;
+    protected float $lowReading = 10;
 
-    #[ORM\Column(name: 'constRecord', type: "boolean", nullable: false, options: ["default" => "0"])]
-    #[Assert\Type("bool")]
-    private bool $constRecord = false;
+//    #[ORM\Column(name: 'constRecord', type: "boolean", nullable: false, options: ["default" => "0"])]
+//    #[Assert\Type("bool")]
+//    private bool $constRecord = false;
 
-    #[ORM\Column(name: 'updatedAt', type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]
-    #[Assert\NotBlank(message: 'temperature date time name should not be blank')]
-    private DateTimeInterface $updatedAt;
-
-    #[
-        ORM\ManyToOne(targetEntity: Sensor::class),
-        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
-    ]
-    private Sensor $sensor;
+//    #[ORM\Column(name: 'updatedAt', type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]
+//    #[Assert\NotBlank(message: 'temperature date time name should not be blank')]
+//    private DateTimeInterface $updatedAt;
+//
+//    #[
+//        ORM\ManyToOne(targetEntity: Sensor::class),
+//        ORM\JoinColumn(name: "sensorID", referencedColumnName: "sensorID"),
+//    ]
+//    private Sensor $sensor;
 
     public function getSensorID(): int
     {
-        return $this->tempID;
+        return $this->getReadingTypeID();
     }
 
-    public function setSensorID(int $id): void
-    {
-        $this->tempID = $id;
-    }
+//    public function getSensor(): Sensor
+//    {
+//        return $this->sensor;
+//    }
 
-    public function getSensor(): Sensor
-    {
-        return $this->sensor;
-    }
+//    public function setSensor(Sensor $id): void
+//    {
+//        $this->sensor = $id;
+//    }
 
-    public function setSensor(Sensor $id): void
-    {
-        $this->sensor = $id;
-    }
-
-    /**
-     * Sensor Reading Methods
-     */
-    #[Pure] public function getCurrentReading(): int|float
-    {
-        return $this->currentReading;
-    }
-
-    public function getHighReading(): int|float
-    {
-        return $this->highTemp;
-    }
-
-    public function getLowReading(): int|float
-    {
-        return $this->lowTemp;
-    }
-
-    public function getUpdatedAt(): DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setCurrentReading(int|float|string|bool $reading): void
-    {
-        $this->currentReading = $reading;
-    }
+//    /**
+//     * Sensor Reading Methods
+//     */
+//    #[Pure]
+//    public function getCurrentReading(): int|float
+//    {
+//        return $this->currentReading;
+//    }
+//
+//    public function getHighReading(): int|float
+//    {
+//        return $this->highReading;
+//    }
+//
+//    public function getLowReading(): int|float
+//    {
+//        return $this->lowReading;
+//    }
+//
+//    public function setCurrentReading(int|float|string|bool $reading): void
+//    {
+//        $this->currentReading = $reading;
+//    }
 
     public function setHighReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
-            $this->highTemp = $reading;
+            $this->highReading = (float)$reading;
         }
     }
 
     public function setLowReading(int|float|string $reading): void
     {
         if (is_numeric($reading)) {
-            $this->lowTemp = $reading;
+            $this->lowReading = $reading;
         }
     }
 
-    public function setUpdatedAt(): void
-    {
-        $this->updatedAt = new DateTimeImmutable('now');
-    }
+//    public function setUpdatedAt(): void
+//    {
+//        $this->updatedAt = new DateTimeImmutable('now');
+//    }
 
-    public function getConstRecord(): bool
-    {
-        return $this->constRecord;
-    }
+//    public function getConstRecord(): bool
+//    {
+//        return $this->constRecord;
+//    }
 
-    public function setConstRecord(bool $constRecord): void
-    {
-        $this->constRecord = $constRecord;
-    }
+//    public function setConstRecord(bool $constRecord): void
+//    {
+//        $this->constRecord = $constRecord;
+//    }
 
     public function getReadingType(): string
     {
@@ -186,7 +174,7 @@ class Temperature extends AbstractStandardReadingType implements StandardReading
         return self::READING_TYPE;
     }
 
-    #[Assert\Callback(groups: [Dht::NAME, Dallas::NAME, Bmp::NAME])]
+    #[Assert\Callback(groups: [Dht::NAME, Dallas::NAME, Bmp::NAME, Sht::NAME])]
     public function validate(ExecutionContextInterface $context): void
     {
         if ($this->getHighReading() < $this->getLowReading()) {

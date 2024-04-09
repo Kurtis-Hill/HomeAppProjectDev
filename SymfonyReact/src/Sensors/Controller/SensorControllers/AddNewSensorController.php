@@ -9,11 +9,9 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\SensorCreationBuilders\NewSensorDTOBuilder;
-use App\Sensors\Builders\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
-use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Builders\Internal\SensorCreationBuilders\NewSensorDTOBuilder;
+use App\Sensors\Builders\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Request\AddNewSensorRequestDTO;
-use App\Sensors\Events\SensorUpdateEvent;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\SensorRequestException;
 use App\Sensors\Exceptions\SensorTypeNotFoundException;
@@ -29,7 +27,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -56,8 +54,8 @@ class AddNewSensorController extends AbstractController
     public function addNewSensor(
         Request $request,
         NewSensorCreationInterface $newSensorCreationService,
-        ReadingTypeCreationInterface $readingTypeCreation,
         CardCreationHandlerInterface $cardCreationService,
+        ReadingTypeCreationInterface $readingTypeCreation,
         SensorDeletionInterface $deleteSensorService,
         NewSensorDTOBuilder $newSensorDTOBuilder,
         ValidatorInterface $validator,
@@ -106,12 +104,10 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::QUERY_FAILURE, 'Sensor data']);
         } catch (SensorRequestException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
-        }
-        catch (DeviceNotFoundException|SensorTypeNotFoundException $e) {
+        } catch (DeviceNotFoundException|SensorTypeNotFoundException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
         }
 
-//        dd($newSensorDTO);
         try {
             $this->denyAccessUnlessGranted(SensorVoter::ADD_NEW_SENSOR, $newSensorDTO);
         } catch (AccessDeniedException) {
@@ -136,15 +132,14 @@ class AddNewSensorController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-        $sensorReadingTypeCreationErrors = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
-        if (!empty($sensorReadingTypeCreationErrors)) {
-            try {
+        $sensorReadingTypesCreated = $readingTypeCreation->handleSensorReadingTypeCreation($sensor);
+        foreach ($sensorReadingTypesCreated as $sensorReadingType) {
+            $readingTypeValidationErrors = $validator->validate(value: $sensorReadingType, groups: [$sensor->getSensorTypeObject()::getReadingTypeName()]);
+            if ($this->checkIfErrorsArePresent($readingTypeValidationErrors)) {
                 $deleteSensorService->deleteSensor($sensor);
-            } catch (ORMException $e) {
-                $this->logger->error('Failed to create sensor reading types for sensor', ['sensor' => $sensor->getSensorID(), 'stack' => $e->getTrace()]);
-            }
 
-            return $this->sendBadRequestJsonResponse($sensorReadingTypeCreationErrors);
+                return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($readingTypeValidationErrors));
+            }
         }
 
         $this->logger->info('Created sensor', ['user' => $this->getUser()?->getUserIdentifier()]);
@@ -153,7 +148,7 @@ class AddNewSensorController extends AbstractController
 
         $sensorResponseDTO = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
         try {
-            $normalizedResponse = $this->normalizeResponse($sensorResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($sensorResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

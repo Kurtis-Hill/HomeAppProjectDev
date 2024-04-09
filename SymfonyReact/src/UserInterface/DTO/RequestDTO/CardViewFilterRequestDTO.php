@@ -3,7 +3,7 @@
 namespace App\UserInterface\DTO\RequestDTO;
 
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Forms\CustomFormValidatos\SensorRequestValidators\ReadingTypeRequestConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorRequestValidators\SensorTypeRequestConstraint;
 use Symfony\Component\Validator\Constraints as Assert;

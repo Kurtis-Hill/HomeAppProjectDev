@@ -4,17 +4,17 @@ namespace App\Sensors\DTO\Response\SensorReadingTypeResponse\Standard;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\SensorResponse\SensorResponseDTO;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[Immutable]
-readonly class LatitudeResponseDTO extends AbstractStandardResponseDTO implements AllSensorReadingTypeResponseDTOInterface, StandardReadingTypeResponseInterface, SensorReadingTypeResponseDTOInterface
+readonly class LatitudeResponseDTO extends AbstractStandardResponseDTO implements AllSensorReadingTypeResponseDTOInterface, StandardReadingTypeResponseInterface
 {
     public function __construct(
         private int $latitudeID,
+        int $baseReadingTypeID,
         SensorResponseDTO $sensor,
         float $currentReading,
         float $highReading,
@@ -24,6 +24,7 @@ readonly class LatitudeResponseDTO extends AbstractStandardResponseDTO implement
     ) {
         parent::__construct(
             sensor: $sensor,
+            baseReadingTypeID: $baseReadingTypeID,
             currentReading: $currentReading,
             highReading: $highReading,
             lowReading: $lowReading,

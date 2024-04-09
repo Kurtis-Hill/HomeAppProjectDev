@@ -15,7 +15,6 @@ class SensorTypeCardViewCurrentReadingDTOBuilder extends AbstractSensorTypeViewD
         $formattedSensorData = $cardBuilder->formatScalarCardSensorData($cardData);
 
         $formattedSensorData = array_values(array_filter($formattedSensorData));
-
         if (empty($formattedSensorData)) {
             return null;
         }

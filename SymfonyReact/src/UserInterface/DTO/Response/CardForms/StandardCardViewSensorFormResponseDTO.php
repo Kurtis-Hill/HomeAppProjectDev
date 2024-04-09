@@ -19,9 +19,9 @@ readonly class StandardCardViewSensorFormResponseDTO implements CardViewSensorFo
         private IconResponseDTO $currentCardIcon,
         private ColourResponseDTO $currentCardColour,
         private StateResponseDTO $currentViewState,
-        private string $cardViewID,
+        private int $cardViewID,
         private CardUserSelectionEncapsulationDTO $cardUserSelectionOptions,
-        #[ArrayShape([StandardCardViewReadingResponseDTO::class||BoolCardViewReadingResponseDTO::class])]
+        #[ArrayShape([StandardCardViewReadingResponseDTO::class|BoolCardViewReadingResponseDTO::class])]
         private array $sensorData,
     ) {
     }

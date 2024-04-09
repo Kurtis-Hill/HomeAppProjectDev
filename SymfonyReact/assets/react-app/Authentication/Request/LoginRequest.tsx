@@ -6,11 +6,11 @@ import { setUserSession, refreshUserTokens } from '../Session/UserSession';
 import { LoginResponseInterface } from "../Response/LoginResponseInterface";
 import { TokenRefreshResponseInterface } from "../Response/TokenRefreshResponseInterface";
 
-import { LoginFormUserInputsInterface } from "../Form/LoginFormUserInputsInterface"
+import { LoginUserInputsInterface } from "../Form/LoginUserInputsInterface"
 
 import { getRefreshToken } from '../Tokens/GetAPITokens'; 
 
-export async function handleLogin(userInputs: LoginFormUserInputsInterface): Promise<AxiosResponse> {
+export async function handleLogin(userInputs: LoginUserInputsInterface): Promise<AxiosResponse> {
     const loginCheckResponse: AxiosResponse = await axios.post(
         `${apiURL}login_check`,
         userInputs

@@ -1,6 +1,4 @@
-import * as React from "react";
-
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { getToken } from "../../../Authentication/Tokens/GetAPITokens";
 
 export function RequestInterceptor(): void {

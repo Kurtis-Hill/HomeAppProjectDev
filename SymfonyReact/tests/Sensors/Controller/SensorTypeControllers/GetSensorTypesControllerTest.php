@@ -2,7 +2,7 @@
 
 namespace App\Tests\Sensors\Controller\SensorTypeControllers;
 
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
@@ -47,8 +47,8 @@ class GetSensorTypesControllerTest extends WebTestCase
 
     public function test_wrong_token_returns_error(): void
     {
-        /** @var SensorType[] $sensorTypes */
-        $sensorTypes = $this->entityManager->getRepository(SensorType::class)->findAll();
+        /** @var AbstractSensorType[] $sensorTypes */
+        $sensorTypes = $this->entityManager->getRepository(AbstractSensorType::class)->findAll();
 
         $this->client->request(
             Request::METHOD_GET,
@@ -76,18 +76,17 @@ class GetSensorTypesControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
-
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
-        self::assertCount(count(SensorType::ALL_SENSOR_TYPES), $payload);
+        self::assertCount(count(AbstractSensorType::ALL_SENSOR_TYPES), $payload);
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_all_data_base_entries_are_returned(): void
     {
-        /** @var SensorType[] $sensorTypes */
-        $sensorTypes = $this->entityManager->getRepository(SensorType::class)->findAll();
+        /** @var AbstractSensorType[] $sensorTypes */
+        $sensorTypes = $this->entityManager->getRepository(AbstractSensorType::class)->findAll();
 
         $this->client->request(
             Request::METHOD_GET,
@@ -101,11 +100,11 @@ class GetSensorTypesControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $payload = $responseData['payload'];
 
-        /** @var SensorType $sensorTypeFromDB */
+        /** @var AbstractSensorType $sensorTypeFromDB */
         foreach ($payload as $sensorType) {
             foreach ($sensorTypes as $sensorTypeFromDB) {
                 if ($sensorType['sensorTypeID'] === $sensorTypeFromDB->getSensorTypeID()) {
-                    self::assertEquals($sensorType['sensorTypeName'], $sensorTypeFromDB->getSensorType());
+                    self::assertEquals($sensorType['sensorTypeName'], $sensorTypeFromDB::getReadingTypeName());
                     self::assertEquals($sensorType['sensorTypeDescription'], $sensorTypeFromDB->getDescription());
                 }
             }

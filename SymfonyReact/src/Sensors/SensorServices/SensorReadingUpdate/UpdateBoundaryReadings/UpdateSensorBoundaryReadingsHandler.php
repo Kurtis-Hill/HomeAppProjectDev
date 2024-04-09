@@ -3,11 +3,10 @@
 namespace App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeUpdateBuilders\ReadingTypeUpdateBoundaryReadingBuilderInterface;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateBoolReadingTypeBoundaryReadingsDTO;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateBoundaryReadingDTOInterface;
 use App\Sensors\DTO\Internal\BoundaryReadings\UpdateStandardReadingTypeBoundaryReadingsDTO;
-use App\Sensors\DTO\Request\SensorUpdateDTO\BoolSensorUpdateBoundaryDataDTO;
 use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
@@ -50,13 +49,13 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
     public function getSensorReadingTypeObject(int $sensorID, string $readingType): AllSensorReadingTypeInterface
     {
         $repository = $this->sensorReadingUpdateRepositoryFactory->getSensorReadingTypeRepository($readingType);
-        $sensorReadingTypeObject = $repository->getOneBySensorNameID($sensorID);
+        $sensorReadingTypeObject = $repository->findOneBySensorNameID($sensorID);
 
         if ($sensorReadingTypeObject === null) {
             throw new SensorReadingTypeObjectNotFoundException(SensorReadingTypeRepositoryFactoryException::READING_TYPE_NOT_FOUND);
         }
 
-        return $repository->getOneBySensorNameID($sensorID);
+        return $repository->findOneBySensorNameID($sensorID);
     }
 
 

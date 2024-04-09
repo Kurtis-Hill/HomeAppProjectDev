@@ -17,10 +17,21 @@ class UserGroupsFinder
     }
 
     #[ArrayShape([Group::class])]
+    /**
+     * @return Group[]
+     */
     public function getUsersGroups(User $user): array
     {
         return $user->isAdmin()
             ? $this->groupNameRepository->findAll()
             : $user->getAssociatedGroups();
+    }
+
+    public function getGroupIDs(User $user): array
+    {
+        $groups = $this->getUsersGroups($user);
+        return array_map(static function ($group) {
+            return $group->getGroupID();
+        }, $groups);
     }
 }

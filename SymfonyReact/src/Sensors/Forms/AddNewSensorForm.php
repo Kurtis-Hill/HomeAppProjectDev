@@ -6,7 +6,7 @@ use App\Common\API\APIErrorMessages;
 use App\Common\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -31,7 +31,7 @@ class AddNewSensorForm extends AbstractType
                 ]
             ])
             ->add('sensorTypeID', EntityType::class, [
-                'class' => SensorType::class
+                'class' => AbstractSensorType::class
             ])
             ->add('deviceNameID', EntityType::class, [
                 'class' => Devices::class

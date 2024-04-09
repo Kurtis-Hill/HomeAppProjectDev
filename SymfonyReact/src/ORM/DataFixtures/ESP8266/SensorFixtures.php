@@ -3,6 +3,8 @@
 namespace App\ORM\DataFixtures\ESP8266;
 
 use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
@@ -26,6 +28,7 @@ use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
 use DateInterval;
@@ -99,302 +102,496 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
                 Analog::READING_TYPE =>  Analog::class,
             ],
         ],
+
+        Sht::NAME => [
+            'alias' => Sht::NAME,
+            'object' => Sht::class,
+            'readingTypes' => [
+                Temperature::READING_TYPE =>  Temperature::class,
+                Humidity::READING_TYPE => Humidity::class,
+            ],
+        ],
     ];
 
-    public const RELAY_SENSOR_NAME = 'AdDev1Relay';
 
-    public const DHT_SENSOR_NAME = 'AdminDevice1Dht';
+    public const ADMIN_1_DHT_SENSOR_NAME = 'AdminDevice1Dht';
+
+    public const ADMIN_2_DHT_SENSOR_NAME = 'AdminDevice2Dht';
+
+    public const ADMIN_3_DHT_SENSOR_NAME = 'AdminDevice3Dht';
+
+    public const REGULAR_1_DHT_SENSOR_NAME = 'UserDevice1Dht';
+
+    public const REGULAR_2_DHT_SENSOR_NAME = 'UserDevice2Dht';
+
+    public const REGULAR_3_DHT_SENSOR_NAME = 'UserDevice3Dht';
+
+
+    public const ADMIN_1_DALLAS_SENSOR_NAME = 'AdminDevice1Dallas';
+
+    public const ADMIN_2_DALLAS_SENSOR_NAME = 'AdminDevice2Dallas';
+
+    public const ADMIN_3_DALLAS_SENSOR_NAME = 'AdminDevice3Dallas';
+
+    public const REGULAR_1_DALLAS_SENSOR_NAME = 'UserDevice1Dallas';
+
+    public const REGULAR_2_DALLAS_SENSOR_NAME = 'UserDevice2Dallas';
+
+    public const REGULAR_3_DALLAS_SENSOR_NAME = 'UserDevice3Dallas';
+
+
+    public const ADMIN_1_BMP_SENSOR_NAME = 'AdDev1Bmp280';
+
+    public const ADMIN_2_BMP_SENSOR_NAME = 'AdDev2Bmp280';
+
+    public const ADMIN_3_BMP_SENSOR_NAME = 'AdDev3Bmp280';
+
+    public const REGULAR_1_BMP_SENSOR_NAME = 'UsDev1Bmp280';
+
+    public const REGULAR_2_BMP_SENSOR_NAME = 'UsDev2Bmp280';
+
+    public const REGULAR_3_BMP_SENSOR_NAME = 'UsDev3Bmp280';
+
+
+    public const ADMIN_1_SOIL_SENSOR_NAME = 'AdminDev1Soil';
+
+    public const ADMIN_2_SOIL_SENSOR_NAME = 'AdminDev2Soil';
+
+    public const ADMIN_3_SOIL_SENSOR_NAME = 'AdminDev3Soil';
+
+    public const REGULAR_1_SOIL_SENSOR_NAME = 'UsrDev1Soil';
+
+    public const REGULAR_2_SOIL_SENSOR_NAME = 'UsrDev2Soil';
+
+    public const REGULAR_3_SOIL_SENSOR_NAME = 'UsrDev3Soil';
+
+
+    public const ADMIN_1_RELAY_SENSOR_NAME = 'AdDev1Relay';
+
+    public const ADMIN_2_RELAY_SENSOR_NAME = 'AdDev2Relay';
+
+    public const ADMIN_3_RELAY_SENSOR_NAME = 'AdDev3Relay';
+
+    public const REGULAR_1_RELAY_SENSOR_NAME = 'UsDev1Relay';
+
+    public const REGULAR_2_RELAY_SENSOR_NAME = 'UsDev2Relay';
+
+    public const REGULAR_3_RELAY_SENSOR_NAME = 'UsDev3Relay';
+
+
+    public const ADMIN_1_MOTION_SENSOR_NAME = 'AdDev1Motion';
+
+    public const ADMIN_2_MOTION_SENSOR_NAME = 'AdDev2Motion';
+
+    public const ADMIN_3_MOTION_SENSOR_NAME = 'AdDev3Motion';
+
+    public const REGULAR_1_MOTION_SENSOR_NAME = 'UsDev1Motion';
+
+    public const REGULAR_2_MOTION_SENSOR_NAME = 'UsDev2Motion';
+
+    public const REGULAR_3_MOTION_SENSOR_NAME = 'UsDev3Motion';
+
+
+    public const ADMIN_1_LDR_SENSOR_NAME = 'AdDev1LDR';
+
+    public const ADMIN_2_LDR_SENSOR_NAME = 'AdDev2LDR';
+
+    public const ADMIN_3_LDR_SENSOR_NAME = 'AdDev3LDR';
+
+    public const REGULAR_1_LDR_SENSOR_NAME = 'UsDev1LDR';
+
+    public const REGULAR_2_LDR_SENSOR_NAME = 'UsDev2LDR';
+
+    public const REGULAR_3_LDR_SENSOR_NAME = 'UsDev3LDR';
+
+    public const ADMIN_1_SHT_SENSOR_NAME = 'AdDev1SHT';
+
+    public const ADMIN_2_SHT_SENSOR_NAME = 'AdDev2SHT';
+
+    public const ADMIN_3_SHT_SENSOR_NAME = 'AdDev3SHT';
+
+    public const REGULAR_1_SHT_SENSOR_NAME = 'UsDev1SHT';
+
+    public const REGULAR_2_SHT_SENSOR_NAME = 'UsDev2SHT';
+
+    public const REGULAR_3_SHT_SENSOR_NAME = 'UsDev3SHT';
+
+    public const ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT = 'AdminUserOneDeviceAdminGroupOneDht';
+
+    public const ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT = 'AdminUserOneDeviceRegularGroupTwoDht';
+
+    public const REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY = 'RegularUserTwoDeviceAdminGroupOneRelay';
+
+    public const ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS = 'AdminUserTwoDeviceAdminGroupTwoDallas';
+
+    public const ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT_BASE_READING_TYPE = 'AdminUserOneDeviceAdminGroupOneDhtBaseReadingType';
+
+    public const ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT_BASE_READING_TYPE = 'AdminUserOneDeviceRegularGroupTwoDhtBaseReadingType';
+
+    public const REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE = 'RegularUserTwoDeviceAdminGroupOneRelayBaseReadingType';
+
+    public const ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS_BASE_READING_TYPE = 'AdminUserTwoDeviceAdminGroupTwoDallasBaseReadingType';
+    //AdminUserOneDeviceAdminGroupOneRelay
+    public const ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY = 'AdminUserOneDeviceAdminGroupOneRelay';
+
+    public const ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE = 'AdminUserOneDeviceAdminGroupOneRelayBaseReadingType';
+
+    public const REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE_SOIL_BASE_READING_TYPE = 'RegularUserOneDeviceRegularGroupOneSoilBaseReadingType';
+
+    public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_DHT_BASE_READING_TYPE = 'RegularUserTwoDeviceRegularGroupTwoDhtBaseReadingType';
+
+    public const ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_MOTION_BASE_READING_TYPE = 'AdminUserOneDeviceAdminGroupOneMotionBaseReadingType';
+
+    public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_DHT = 'RegularUserTwoDeviceRegularGroupTwoDht';
+
+    public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_LDR = 'RegularUserTwoDeviceRegularGroupTwoLDR';
+
+    public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_RELAY = 'RegularUserTwoDeviceRegularGroupTwoRelay';
+
+    public const REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_BMP = 'RegularUserTwoDeviceRegularGroupTwoBmp';
 
     /** one for each of the permission check devices */
     public const PERMISSION_CHECK_SENSORS = [
-        'AdminUserOneDeviceAdminGroupOneDht' => [
+        self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => self::DHT_SENSOR_NAME,
+            'sensorName' => self::ADMIN_1_DHT_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME],
             'pinNumber' => 1,
+            'temperatureBaseReadingTypeName' => self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_DHT_BASE_READING_TYPE,
         ],
-        'AdminUserOneDeviceRegularGroupTwoDht' => [
+        self::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'AdminDevice2Dht',
+            'sensorName' => self::ADMIN_2_DHT_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME],
             'pinNumber' => 1,
+            'temperatureBaseReadingTypeName' => self::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO_DHT_BASE_READING_TYPE,
         ],
         'AdminUserTwoDeviceAdminGroupTwoDht' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
-            'sensorName' => 'AdminDevice3Dht',
+            'sensorName' => self::ADMIN_3_DHT_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME],
             'pinNumber' => 1,
         ],
         'RegularUserOneDeviceRegularGroupOneDht' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
-            'sensorName' => 'UserDevice1Dht',
+            'sensorName' => self::REGULAR_1_DHT_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME],
             'pinNumber' => 1,
+
         ],
-        'RegularUserTwoDeviceRegularGroupTwoDht' => [
+        self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_DHT => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'UserDevice2Dht',
+            'sensorName' => self::REGULAR_2_DHT_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME],
             'pinNumber' => 1,
+            'humidityBaseReadingTypeName' => self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_DHT_BASE_READING_TYPE,
         ],
         'RegularUserTwoDeviceAdminGroupOneDht' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'UserDevice3Dht',
+            'sensorName' => self::REGULAR_3_DHT_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dht::NAME],
             'pinNumber' => 1,
         ],
 
         'AdminUserOneDeviceAdminGroupOneDallas' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdminDevice1Dallas',
+            'sensorName' => self::ADMIN_1_DALLAS_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME],
             'pinNumber' => 2,
         ],
 
         'AdminUserOneDeviceRegularGroupTwoDallas' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'AdminDevice2Dallas',
+            'sensorName' => self::ADMIN_2_DALLAS_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME],
             'pinNumber' => 2,
         ],
 
-        'AdminUserTwoDeviceAdminGroupTwoDallas' => [
+        self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
-            'sensorName' => 'AdminDevice3Dallas',
+            'sensorName' => self::ADMIN_3_DALLAS_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME],
             'pinNumber' => 2,
+            'temperatureBaseReadingTypeName' => self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO_DALLAS_BASE_READING_TYPE,
         ],
 
         'RegularUserOneDeviceRegularGroupOneDallas' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
-            'sensorName' => 'UserDev1DS180',
+            'sensorName' => self::REGULAR_1_DALLAS_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME],
             'pinNumber' => 2,
         ],
 
         'RegularUserTwoDeviceRegularGroupTwoDallas' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'UserDev2DS180',
+            'sensorName' => self::REGULAR_2_DALLAS_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME],
             'pinNumber' => 2,
         ],
 
         'RegularUserTwoDeviceAdminGroupOneDallas' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'UserDev3DS180',
+            'sensorName' => self::REGULAR_3_DALLAS_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Dallas::NAME],
             'pinNumber' => 2,
         ],
 
         'AdminUserOneDeviceAdminGroupOneSoil' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdminDev1Soil',
+            'sensorName' => self::ADMIN_1_SOIL_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME],
             'pinNumber' => 3,
         ],
 
         'AdminUserOneDeviceRegularGroupTwoSoil' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'AdminDev2Soil',
+            'sensorName' => self::ADMIN_2_SOIL_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME],
             'pinNumber' => 3,
         ],
 
         'AdminUserTwoDeviceAdminGroupTwoSoil' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
-            'sensorName' => 'AdminDev3Soil',
+            'sensorName' => self::ADMIN_3_SOIL_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME],
             'pinNumber' => 3,
         ],
 
         'RegularUserOneDeviceRegularGroupOneSoil' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
-            'sensorName' => 'UsrDev1Soil',
+            'sensorName' => self::REGULAR_1_SOIL_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME],
             'pinNumber' => 3,
+            'analogBaseReadingTypeName' => self::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE_SOIL_BASE_READING_TYPE,
         ],
 
         'RegularUserTwoDeviceRegularGroupTwoSoil' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'UsrDev2Soil',
+            'sensorName' => self::REGULAR_2_SOIL_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME],
             'pinNumber' => 3,
         ],
 
         'RegularUserTwoDeviceAdminGroupOneSoil' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'UsrDev3Soil',
+            'sensorName' => self::REGULAR_3_SOIL_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Soil::NAME],
             'pinNumber' => 3,
         ],
 
         'AdminUserOneDeviceAdminGroupOneBmp' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdDev1Bmp280',
+            'sensorName' => self::ADMIN_1_BMP_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME],
             'pinNumber' => 4,
         ],
 
         'AdminUserOneDeviceRegularGroupTwoBmp' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'AdDev2Bmp280',
+            'sensorName' => self::ADMIN_2_BMP_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME],
             'pinNumber' => 4,
         ],
 
         'AdminUserTwoDeviceAdminGroupTwoBmp' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
-            'sensorName' => 'AdDev3Bmp280',
+            'sensorName' => self::ADMIN_3_BMP_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME],
             'pinNumber' => 4,
         ],
 
         'RegularUserOneDeviceRegularGroupOneBmp' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
-            'sensorName' => 'UsDev1Bmp280',
+            'sensorName' => self::REGULAR_1_BMP_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME],
             'pinNumber' => 4,
         ],
 
-        'RegularUserTwoDeviceRegularGroupTwoBmp' => [
+        self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_BMP => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'UsDev2Bmp280',
+            'sensorName' => self::REGULAR_2_BMP_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME],
             'pinNumber' => 4,
         ],
 
         'RegularUserTwoDeviceAdminGroupOneBmp' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'UsDev3Bmp280',
+            'sensorName' => self::REGULAR_3_BMP_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[Bmp::NAME],
             'pinNumber' => 4,
         ],
 
-        'AdminUserOneDeviceAdminGroupOneRelay' => [
+        self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => self::RELAY_SENSOR_NAME,
+            'sensorName' => self::ADMIN_1_RELAY_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
             'pinNumber' => 5,
+            'relayBaseReadingTypeName' => self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
         ],
 
         'AdminUserOneDeviceRegularGroupTwoRelay' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'AdDev2Relay',
+            'sensorName' => self::ADMIN_2_RELAY_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
             'pinNumber' => 5,
         ],
 
         'AdminUserTwoDeviceAdminGroupTwoRelay' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
-            'sensorName' => 'AdDev3Relay',
+            'sensorName' => self::ADMIN_3_RELAY_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
             'pinNumber' => 5,
         ],
 
         'RegularUserOneDeviceRegularGroupOneRelay' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
-            'sensorName' => 'UsDev1Relay',
+            'sensorName' => self::REGULAR_1_RELAY_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
             'pinNumber' => 5,
         ],
 
-        'RegularUserTwoDeviceRegularGroupTwoRelay' => [
+        self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_RELAY => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'UsDev2Relay',
+            'sensorName' => self::REGULAR_2_RELAY_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
             'pinNumber' => 5,
         ],
 
-        'RegularUserTwoDeviceAdminGroupOneRelay' => [
+        self::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'UsDev3Relay',
+            'sensorName' => self::REGULAR_3_RELAY_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericRelay::NAME],
             'pinNumber' => 5,
+            'baseReadingTypeName' => self::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE_RELAY_BASE_READING_TYPE,
         ],
 
         'AdminUserOneDeviceAdminGroupOneMotion' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdDev1Motion',
+            'sensorName' => self::ADMIN_1_MOTION_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
             'pinNumber' => 6,
+            'motionBaseReadingTypeName' => self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE_MOTION_BASE_READING_TYPE,
         ],
 
         'AdminUserOneDeviceRegularGroupTwoMotion' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'AdDev2Motion',
+            'sensorName' => self::ADMIN_2_MOTION_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
             'pinNumber' => 6,
         ],
 
         'AdminUserTwoDeviceAdminGroupTwoMotion' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
-            'sensorName' => 'AdDev3Motion',
+            'sensorName' => self::ADMIN_3_MOTION_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
             'pinNumber' => 6,
         ],
 
         'RegularUserOneDeviceRegularGroupOneMotion' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
-            'sensorName' => 'UsDev1Motion',
+            'sensorName' => self::REGULAR_1_MOTION_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
             'pinNumber' => 6,
         ],
 
         'RegularUserTwoDeviceAdminGroupOneMotion' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'UsDev3Motion',
+            'sensorName' => self::REGULAR_2_MOTION_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
             'pinNumber' => 6,
         ],
 
         'RegularUserTwoDeviceRegularGroupTwoMotion' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'UsDev2Motion',
+            'sensorName' => self::REGULAR_3_MOTION_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[GenericMotion::NAME],
             'pinNumber' => 6,
         ],
 
-//        //LDR
+        //LDR
         'AdminUserOneDeviceAdminGroupOneLDR' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'AdDev1LDR',
+            'sensorName' => self::ADMIN_1_LDR_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
             'pinNumber' => 7,
         ],
 
         'AdminUserOneDeviceRegularGroupTwoLDR' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'AdDev2LDR',
+            'sensorName' => self::ADMIN_2_LDR_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
             'pinNumber' => 7,
         ],
 
         'AdminUserTwoDeviceAdminGroupTwoLDR' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
-            'sensorName' => 'AdDev3LDR',
+            'sensorName' => self::ADMIN_3_LDR_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
             'pinNumber' => 7,
         ],
 
         'RegularUserOneDeviceRegularGroupOneLDR' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
-            'sensorName' => 'UsDev1LDR',
+            'sensorName' => self::REGULAR_1_LDR_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
             'pinNumber' => 7,
         ],
 
-        'RegularUserTwoDeviceRegularGroupTwoLDR' => [
+        self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO_LDR => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
-            'sensorName' => 'UsDev2LDR',
+            'sensorName' => self::REGULAR_2_LDR_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
             'pinNumber' => 7,
         ],
 
         'RegularUserTwoDeviceAdminGroupOneLDR' => [
             'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
-            'sensorName' => 'UsDev3LDR',
+            'sensorName' => self::REGULAR_3_LDR_SENSOR_NAME,
             'sensors' => self::ALL_SENSOR_TYPE_DATA[LDR::NAME],
             'pinNumber' => 7,
+        ],
+
+        //SHT
+        'AdminUserOneDeviceAdminGroupOneSHT' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE],
+            'sensorName' => self::ADMIN_1_SHT_SENSOR_NAME,
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[Sht::NAME],
+            'pinNumber' => 8,
+        ],
+
+        'AdminUserOneDeviceRegularGroupTwoSHT' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO],
+            'sensorName' => self::ADMIN_2_SHT_SENSOR_NAME,
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[Sht::NAME],
+            'pinNumber' => 8,
+        ],
+
+        'AdminUserTwoDeviceAdminGroupTwoSHT' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO],
+            'sensorName' => self::ADMIN_3_SHT_SENSOR_NAME,
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[Sht::NAME],
+            'pinNumber' => 8,
+        ],
+
+        'RegularUserOneDeviceRegularGroupOneSHT' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE],
+            'sensorName' => self::REGULAR_1_SHT_SENSOR_NAME,
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[Sht::NAME],
+            'pinNumber' => 8,
+        ],
+
+        'RegularUserTwoDeviceRegularGroupTwoSHT' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO],
+            'sensorName' => self::REGULAR_2_SHT_SENSOR_NAME,
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[Sht::NAME],
+            'pinNumber' => 8,
+        ],
+
+        'RegularUserTwoDeviceAdminGroupOneSHT' => [
+            'device' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE],
+            'sensorName' => self::REGULAR_3_SHT_SENSOR_NAME,
+            'sensors' => self::ALL_SENSOR_TYPE_DATA[Sht::NAME],
+            'pinNumber' => 8,
         ],
     ];
 
@@ -412,6 +609,9 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'AdminUserOneDeviceAdminGroupOneMotion',
         'AdminUserOneDeviceRegularGroupTwoMotion',
         'AdminUserOneDeviceAdminGroupOneLDR',
+        'AdminUserOneDeviceRegularGroupTwoLDR',
+        'AdminUserOneDeviceAdminGroupOneSHT',
+        'AdminUserOneDeviceRegularGroupTwoSHT',
     ];
 
     public const ADMIN_USER_TWO_OWNED_SENSORS = [
@@ -422,6 +622,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'AdminUserTwoDeviceAdminGroupTwoRelay',
         'AdminUserTwoDeviceAdminGroupTwoMotion',
         'AdminUserTwoDeviceAdminGroupTwoLDR',
+        'AdminUserTwoDeviceAdminGroupTwoSHT',
     ];
 
     public const REGULAR_USER_ONE_OWNED_SENSORS = [
@@ -432,6 +633,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserOneDeviceRegularGroupOneRelay',
         'RegularUserOneDeviceRegularGroupOneMotion',
         'RegularUserOneDeviceRegularGroupOneLDR',
+        'RegularUserOneDeviceRegularGroupOneSHT',
     ];
 
     public const REGULAR_USER_TWO_OWNED_SENSORS = [
@@ -446,6 +648,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserTwoDeviceRegularGroupTwoRelay',
         'RegularUserTwoDeviceRegularGroupTwoMotion',
         'RegularUserTwoDeviceRegularGroupTwoLDR',
+        'RegularUserTwoDeviceRegularGroupTwoSHT',
     ];
 
     public const GROUP_ONE_SENSORS = [
@@ -461,6 +664,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'RegularUserTwoDeviceAdminGroupOneRelay',
         'AdminUserOneDeviceAdminGroupOneMotion',
         'RegularUserTwoDeviceAdminGroupOneMotion',
+        'RegularUserTwoDeviceAdminGroupOneLDR',
     ];
 
     public const GROUP_TWO_SENSORS = [
@@ -481,6 +685,8 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         'AdminUserOneDeviceRegularGroupTwoMotion',
         'RegularUserTwoDeviceRegularGroupTwoMotion',
         'AdminUserTwoDeviceAdminGroupTwoMotion',
+        'RegularUserTwoDeviceRegularGroupTwoLDR',
+        'RegularUserTwoDeviceRegularGroupTwoSHT',
     ];
 
     public const SENSORS = [
@@ -491,6 +697,7 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
         GenericRelay::NAME => 'AdminRelaySensor',
         GenericMotion::NAME => 'AdminMotionSensor',
         LDR::NAME => 'AdminLDRSensor',
+        Sht::NAME => 'AdminSHTSensor',
     ];
 
     public function getOrder(): int
@@ -500,27 +707,28 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        foreach (self::PERMISSION_CHECK_SENSORS as $sensorKey => $sensorDetails) {
-            $minueteInterval = random_int(0, 59);
-            $createdAt = (new DateTime('now'))->add(new DateInterval('PT' . $minueteInterval . 'M'));
-                $sensor = new Sensor();
+        foreach (self::PERMISSION_CHECK_SENSORS as $ref => $sensorDetails) {
+            $minuteInterval = random_int(0, 59);
+            $createdAt = (new DateTime('now'))->add(new DateInterval('PT' . $minuteInterval . 'M'));
+            $sensor = new Sensor();
             $sensor->setDevice($this->getReference($sensorDetails['device']['referenceName']));
             $sensor->setSensorName($sensorDetails['sensorName']);
             $sensor->setSensorTypeID($this->getReference($sensorDetails['sensors']['alias']));
             $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
             $sensor->setPinNumber($sensorDetails['pinNumber']);
-            $sensor->setCreatedAt($createdAt);
             $this->addReference($sensorDetails['sensorName'], $sensor);
             $manager->persist($sensor);
 
             $newSensorType = new $sensorDetails['sensors']['object']();
 
-            foreach ($sensorDetails['sensors']['readingTypes'] as $readingType) {
+            foreach ($sensorDetails['sensors']['readingTypes'] as $key => $readingType) {
                 $this->setSensorObjects(
+                    $ref,
                     $readingType,
                     $sensor,
                     $newSensorType,
-                    $manager
+                    $manager,
+                    $sensorDetails,
                 );
             }
         }
@@ -536,57 +744,104 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
      * @throws Exception
      */
     private function setSensorObjects(
+        string $refName,
         string $readingTypeObjects,
         Sensor $newSensor,
         SensorTypeInterface $newSensorType,
-        ObjectManager $manager
+        ObjectManager $manager,
+        array $sensorDetails,
     ): void {
-        $newObject = new $readingTypeObjects();
+        try {
+            $newObject = new $readingTypeObjects();
+            if ($newObject instanceof BaseReadingTypeInterface) {
+                $baseReadingType = new BaseSensorReadingType();
+                $baseReadingType->setSensor($newSensor);
+                $baseReadingType->setCreatedAt(new DateTimeImmutable('now'));
+                $baseReadingType->setUpdatedAt();
+                $manager->persist($baseReadingType);
+                $manager->flush();
 
-        if ($newObject instanceof AllSensorReadingTypeInterface) {
-            $newObject->setSensor($newSensor);
-            $newSensorType->setSensor($newSensor);
-            $newObject->setUpdatedAt();
+                $newObject->setBaseReadingType($baseReadingType);
+                if (
+                    !empty($sensorDetails['temperatureBaseReadingTypeName'])
+                    && $newObject instanceof Temperature
+                ) {
+                    $this->setReference($sensorDetails['temperatureBaseReadingTypeName'], $baseReadingType);
+                }
+                if (
+                    !empty($sensorDetails['humidityBaseReadingTypeName'])
+                    && $newObject instanceof Humidity
+                ) {
+                    $this->setReference($sensorDetails['humidityBaseReadingTypeName'], $baseReadingType);
+                }
+                if (
+                    !empty($sensorDetails['analogBaseReadingTypeName'])
+                    && $newObject instanceof Analog
+                ) {
+                    $this->setReference($sensorDetails['analogBaseReadingTypeName'], $baseReadingType);
+                }
+                if (
+                    !empty($sensorDetails['latitudeBaseReadingTypeName'])
+                    && $newObject instanceof Latitude
+                ) {
+                    $this->setReference($sensorDetails['latitudeBaseReadingTypeName'], $baseReadingType);
+                }
+                if (
+                    !empty($sensorDetails['motionBaseReadingTypeName'])
+                    && $newObject instanceof Motion
+                ) {
+                    $this->setReference($sensorDetails['motionBaseReadingTypeName'], $baseReadingType);
+                }
+                if (
+                    !empty($sensorDetails['relayBaseReadingTypeName'])
+                    && $newObject instanceof Relay
+                ) {
+                    $this->setReference($sensorDetails['relayBaseReadingTypeName'], $baseReadingType);
+                }
+            }
+
+
+            if ($newObject instanceof AllSensorReadingTypeInterface) {
+                $newObject->setUpdatedAt();
+                $newObject->setCreatedAt(new DateTimeImmutable('now'));
+            }
+
+            if ($newObject instanceof StandardReadingSensorInterface) {
+                if ($newSensorType instanceof StandardSensorTypeInterface) {
+                    if ($newSensorType instanceof TemperatureReadingTypeInterface && $newObject instanceof Temperature) {
+                        $newObject->setCurrentReading($newSensorType->getMinTemperature());
+                        $newObject->setLowReading($newSensorType->getMinTemperature());
+                        $newObject->setHighReading($newSensorType->getMaxTemperature());
+                    }
+                    if ($newSensorType instanceof HumidityReadingTypeInterface && $newObject instanceof Humidity) {
+                        $newObject->setCurrentReading($newSensorType->getMinHumidity());
+                        $newObject->setLowReading($newSensorType->getMinHumidity());
+                        $newObject->setHighReading($newSensorType->getMaxHumidity());
+                    }
+                    if ($newSensorType instanceof LatitudeReadingTypeInterface && $newObject instanceof Latitude) {
+                        $newObject->setCurrentReading($newSensorType->getMinLatitude());
+                        $newObject->setLowReading($newSensorType->getMinLatitude());
+                        $newObject->setHighReading($newSensorType->getMaxLatitude());
+                    }
+                    if ($newSensorType instanceof AnalogReadingTypeInterface && $newObject instanceof Analog) {
+                        $newObject->setCurrentReading($newSensorType->getMinAnalog());
+                        $newObject->setLowReading($newSensorType->getMinAnalog());
+                        $newObject->setHighReading($newSensorType->getMaxAnalog());
+                    }
+                }
+            } elseif ($newObject instanceof BoolReadingSensorInterface) {
+                $newObject->setCurrentReading(true);
+                $newObject->setExpectedReading(true);
+                $newObject->setCurrentReading(true);
+                $newObject->setRequestedReading(true);
+            } else {
+                throw new Exception('Sensor type not found');
+            }
+        } catch (Exception $e) {
+            dd($e, $newObject, $newSensorType, $newSensor);
         }
-        if ($newObject instanceof StandardReadingSensorInterface) {
-            if ($newSensorType instanceof StandardSensorTypeInterface) {
-                if ($newSensorType instanceof TemperatureReadingTypeInterface && $newObject instanceof Temperature) {
-                    $newObject->setCurrentReading($newSensorType->getMinTemperature());
-                    $newSensorType->setTemperature($newObject);
-                }
-                if ($newSensorType instanceof HumidityReadingTypeInterface && $newObject instanceof Humidity) {
-                    $newObject->setCurrentReading($newSensorType->getMinHumidity());
-                    $newSensorType->setHumidObject($newObject);
-                }
-                if ($newSensorType instanceof LatitudeReadingTypeInterface && $newObject instanceof Latitude) {
-                    $newObject->setCurrentReading($newSensorType->getMinLatitude());
-                    $newSensorType->setLatitudeObject($newObject);
-                }
-                if ($newSensorType instanceof AnalogReadingTypeInterface && $newObject instanceof Analog) {
-                    $newObject->setCurrentReading($newSensorType->getMinAnalog());
-                    $newObject->setLowReading($newSensorType->getMinAnalog());
-                    $newObject->setHighReading($newSensorType->getMaxAnalog());
-                    $newSensorType->setAnalogObject($newObject);
-                }
-            }
-        } elseif ($newObject instanceof BoolReadingSensorInterface) {
-            $newObject->setCurrentReading(true);
-            $newObject->setExpectedReading(true);
-            $newObject->setCurrentReading(true);
-            $newObject->setRequestedReading(true);
-            $newObject->setCreatedAt(new DateTimeImmutable('now'));
-            $newObject->setUpdatedAt();
-            if ($newSensorType instanceof MotionSensorReadingTypeInterface) {
-                $newSensorType->setMotion($newObject);
-                $manager->persist($newSensorType);
-            }
-            if ($newSensorType instanceof RelayReadingTypeInterface) {
-                $newSensorType->setRelay($newObject);
-            }
-        } else {
-            throw new Exception('Sensor type not found');
-        }
-        $manager->persist($newSensorType);
+
+        $this->setReference($refName, $baseReadingType);
         $manager->persist($newObject);
     }
 }

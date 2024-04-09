@@ -5,6 +5,7 @@ namespace App\Sensors\Repository\Sensors\ORM;
 use App\Common\Query\Traits\QueryJoinBuilderTrait;
 use App\Devices\Entity\Devices;
 use App\Sensors\DTO\Internal\Sensor\GetSensorQueryDTO;
+use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
@@ -20,6 +21,7 @@ use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\UserInterface\Entity\Card\CardView;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Cache;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
@@ -43,7 +45,6 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
 
     public function persist(Sensor $sensorReadingData): void
     {
-
         $this->getEntityManager()->persist($sensorReadingData);
     }
 
@@ -74,7 +75,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             ->innerJoin(Devices::class, 'device', Join::WITH, Devices::ALIAS.'.deviceID = sensor.deviceID')
             ->where(
                 $expr->eq('sensor.sensorName', ':sensorName'),
-                    $expr->eq('device.groupID', ':groupName'),
+                $expr->eq('device.groupID', ':groupName'),
             )
             ->setParameters(
                 [
@@ -107,7 +108,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         return $qb->getQuery()->getResult();
     }
 
-    public function getSensorReadingTypeDataBySensor(
+    public function findSensorReadingTypeDataBySensor(
         Sensor $sensors,
         array $sensorTypeJoinDTOs
     ): SensorTypeInterface {
@@ -131,14 +132,19 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         Sensor::class | Dht::class | Bmp::class | Dallas::class | Soil::class,
         Temperature::class, Analog::class, Humidity::class, Latitude::class,
     ])]
-    public function getSensorTypeAndReadingTypeObjectsForSensor(
+    public function findSensorTypeAndReadingTypeObjectsForSensor(
         int $deviceID,
         string $sensorsName,
         JoinQueryDTO $joinQueryDTO = null,
         array $readingTypeJoinQueryDTOs = [],
     ): array {
         $qb = $this->createQueryBuilder('sensors');
-
+        $qb->leftJoin(
+            BaseSensorReadingType::class,
+            BaseSensorReadingType::ALIAS,
+            Join::WITH,
+            'sensors.sensorID = ' . BaseSensorReadingType::ALIAS . '.sensor'
+        );
         if (!empty($readingTypeJoinQueryDTOs)) {
             $readingTypes = $this->prepareSensorJoinsForQuery($readingTypeJoinQueryDTOs, $qb);
             $selects[] = $readingTypes;
@@ -168,7 +174,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     }
 
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function findSensorObjectByDeviceIdAndSensorName(int $deviceId, string $sensorName): ?Sensor
     {
@@ -334,5 +340,27 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
             );
 
         return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findSensorByIDNoCache(int $sensorID): ?Sensor
+    {
+        $qb = $this->createQueryBuilder(Sensor::ALIAS);
+        $expr = $qb->expr();
+
+        $qb->setCacheable(false);
+        $qb->select()
+            ->where(
+                $expr->eq(Sensor::ALIAS . '.sensorID', ':sensorID')
+            )
+            ->setParameters(
+                [
+                    'sensorID' => $sensorID,
+                ]
+            );
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

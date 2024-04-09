@@ -4,6 +4,7 @@ type HumidityString = 'humidity';
 
 export default interface HumidityResponseInterface {
     humidityID: number,
+    baseReadingTypeID: number,
     sensor: SensorResponseInterface,
     currentReading: number,
     highReading: number,

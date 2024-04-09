@@ -3,7 +3,7 @@
 namespace App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading;
 
 use App\Devices\Entity\Devices;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingMessageDTO;
+use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
 use App\Sensors\DTO\Internal\CurrentReadingDTO\ReadingTypeUpdateCurrentReadingDTO;
 use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AbstractCurrentReadingUpdateRequestDTO;
 use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
@@ -59,24 +59,18 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         $this->logger = $elasticLogger;
     }
 
-    /**
-     * @throws SensorNotFoundException
-     * @throws ReadingTypeNotExpectedException
-     * @throws ReadingTypeObjectBuilderException
-     */
     public function handleUpdateSensorCurrentReading(
-        UpdateSensorCurrentReadingMessageDTO $updateSensorCurrentReadingConsumerDTO,
-        Devices $device,
-    ): bool {
+        UpdateSensorCurrentReadingTransportMessageDTO $updateSensorCurrentReadingConsumerDTO,
+    ): array {
         foreach ($updateSensorCurrentReadingConsumerDTO->getCurrentReadings() as $currentReadingUpdateDTO) {
             $readingTypeQueryDTOBuilder = $this->readingTypeQueryBuilderFactory->getReadingTypeQueryDTOBuilder($currentReadingUpdateDTO->getReadingType());
             $sensorReadingTypeQueryDTOs[] = $readingTypeQueryDTOBuilder->buildReadingTypeJoinQueryDTO();
         }
 
         if (empty($sensorReadingTypeQueryDTOs)) {
-            return true;
+            return ['No reading types found'];
         }
-        $sensorReadingObjects = $this->sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+        $sensorReadingObjects = $this->sensorRepository->findSensorTypeAndReadingTypeObjectsForSensor(
             $updateSensorCurrentReadingConsumerDTO->getDeviceID(),
             $updateSensorCurrentReadingConsumerDTO->getSensorName(),
             null,
@@ -130,7 +124,7 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
                     | SensorReadingUpdateFactoryException
                     | ReadingTypeObjectBuilderException $e
                 ) {
-                    $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
+                    $this->logger->error($e->getMessage());
                     continue;
                 }
             }
@@ -138,11 +132,11 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
         try {
             $this->sensorRepository->flush();
         } catch (ORMException|OptimisticLockException $e) {
-            $this->logger->error($e->getMessage(), ['device' => $device->getDeviceID()]);
+            $this->logger->error($e->getMessage());
 
-            return false;
+            return $validationErrors ?? [];
         }
 
-        return true;
+        return $validationErrors ?? [];
     }
 }

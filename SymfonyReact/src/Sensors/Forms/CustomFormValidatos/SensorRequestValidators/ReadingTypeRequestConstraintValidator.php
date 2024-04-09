@@ -10,6 +10,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class ReadingTypeRequestConstraintValidator extends ConstraintValidator
 {
+    /**
+     * @throws UnexpectedTypeException
+     */
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ReadingTypeRequestConstraint) {
