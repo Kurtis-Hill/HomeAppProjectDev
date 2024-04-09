@@ -1,0 +1,2 @@
+# crontab to run command every minute
+* * * * * /var/www/html/bin/console app:trigger-check
