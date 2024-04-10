@@ -1,10 +1,8 @@
-import axios, { AxiosPromise } from 'axios';
-import { apiURL } from '../../../Common/URLs/CommonURLs';
+import axios, {AxiosPromise} from 'axios';
+import {apiURL} from '../../../Common/URLs/CommonURLs';
 
-export async function getNewTriggerForm(): Promise<AxiosPromise> {
-    const newTriggerFormRequest = await axios.get(
+export async function getNewTriggerForm(): AxiosPromise {
+    return await axios.get(
         `${apiURL}sensor-trigger/form/get`,
     );
-
-    return newTriggerFormRequest;
 }

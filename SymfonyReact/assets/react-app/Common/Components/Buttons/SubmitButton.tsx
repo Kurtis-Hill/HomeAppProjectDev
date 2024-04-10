@@ -6,7 +6,7 @@ export default function SubmitButton(props: {
     action?: string|null; 
     classes?: string|null;
     type?: string|null 
-    onClickFunction?: (e: Event) => void|null; 
+    onClickFunction?: Function;
 }) {
     const text: string = props.text;
     const name: string = props.name ?? 'submit';

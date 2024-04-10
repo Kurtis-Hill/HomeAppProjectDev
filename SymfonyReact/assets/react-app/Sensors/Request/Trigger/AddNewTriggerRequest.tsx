@@ -14,7 +14,7 @@ export type AddNewTriggerType = {
     endTime: number|null;
 };
 
-export async function addNewTriggerForm(triggerData: AddNewTriggerType): Promise<AxiosPromise> {
+export async function addNewTriggerForm(triggerData: AddNewTriggerType): AxiosPromise {
     const addNewTriggerRequest = await axios.post(
         `${apiURL}sensor-trigger/form/add`,
         triggerData,
