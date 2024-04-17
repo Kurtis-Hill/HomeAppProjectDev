@@ -56,11 +56,11 @@ readonly class DeviceSettingsUpdateRequestHandler
             self::SETTINGS_ENDPOINT
         );
 
-            $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
-            $deviceEncapsulationRequestDTO,
-            $deviceSettingsUpdateDTO->getPassword() !== null
-                ? [self::PASSWORD_PRESENT, DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS]
-                : [self::PASSWORD_NOT_PRESENT, DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS]
+        $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
+        $deviceEncapsulationRequestDTO,
+        $deviceSettingsUpdateDTO->getPassword() !== null
+            ? [self::PASSWORD_PRESENT, DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS]
+            : [self::PASSWORD_NOT_PRESENT, DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS]
         );
 
         return $deviceResponse->getStatusCode() === Response::HTTP_OK;

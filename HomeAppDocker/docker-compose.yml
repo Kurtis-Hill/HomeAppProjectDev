@@ -27,6 +27,7 @@ services:
     volumes:
       - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl:ro
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       maria-db:
         condition: service_healthy
@@ -59,6 +60,7 @@ services:
     volumes:
       - ../SymfonyReact:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       maria-db:
         condition: service_healthy
@@ -86,6 +88,7 @@ services:
       - ./mariadb/db_data:/var/lib/mysql:rw,delegated
       - ../SSL/custom:/etc/mysql/ssl:ro
       - ./mariadb/dumps:/dumps:rw,delegated
+      - /etc/localtime:/etc/localtime:ro
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$MARIADB_PASSWORD
       interval: 5s
@@ -121,6 +124,7 @@ services:
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
         - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        - /etc/localtime:/etc/localtime:ro
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -142,6 +146,7 @@ services:
       - /bin/sh
       - -c
       - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}" && sysctl vm.overcommit_memory=1
+      - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
@@ -166,7 +171,7 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
       - xpack.security.transport.ssl.certificate=$CERTS_DIR/es01/es01.crt
       - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
-    volumes: ['data01:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
+    volumes: ['data01:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR', '/etc/localtime:/etc/localtime:ro']
     healthcheck:
       test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200/_cluster/health?wait_for_status=green&timeout=50s >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 15s
@@ -196,7 +201,7 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
       - xpack.security.transport.ssl.certificate=$CERTS_DIR/es02/es02.crt
       - xpack.security.transport.ssl.key=$CERTS_DIR/es02/es02.key
-    volumes: ['data02:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
+    volumes: ['data02:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR', '/etc/localtime:/etc/localtime:ro']
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
