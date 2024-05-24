@@ -6,27 +6,27 @@ use App\Sensors\Entity\SensorTrigger;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class NewTriggerRequestDTO
+class SensorTriggerUpdateRequestDTO
 {
     #[
-        Assert\Type(type: ['int'], message: 'operator must be an {{ type }} you have provided {{ value }}')
+        Assert\Type(type: ['int', 'null'], message: 'operator must be an {{ type }} you have provided {{ value }}')
     ]
-    private mixed $operator;
+    private mixed $operator = null;
 
     #[
-        Assert\Type(type: ['int'], message: 'trigger type must be an {{ type }} you have provided {{ value }}'),
+        Assert\Type(type: ['int', 'null'], message: 'trigger type must be an {{ type }} you have provided {{ value }}'),
     ]
-    private mixed $triggerType;
+    private mixed $triggerType = null;
 
     #[
         Assert\Type(type: ['int', 'null'], message: 'base reading type that triggers must be an {{ type }} you have provided {{ value }}')
     ]
-    private mixed $baseReadingTypeThatTriggers;
+    private mixed $baseReadingTypeThatTriggers = null;
 
     #[
         Assert\Type(type: ['int', 'null'], message: 'base reading type that is triggered must be an {{ type }} you have provided {{ value }}')
     ]
-    private mixed $baseReadingTypeThatIsTriggered;
+    private mixed $baseReadingTypeThatIsTriggered = null;
 
     #[
         Assert\Type(type: ['array', 'null'], message: 'days must be an {{ type }} you have provided {{ value }}'),
@@ -37,25 +37,24 @@ class NewTriggerRequestDTO
             ),
         )
     ]
-    private mixed $days;
+    private mixed $days = null;
 
     #[
-        Assert\Type(type: ['bool', 'float', 'int'], message: 'value that triggers must be an {{ type }} you have provided {{ value }}')
+        Assert\Type(type: ['bool', 'float', 'int', 'null'], message: 'value that triggers must be an {{ type }} you have provided {{ value }}')
     ]
-    private mixed $valueThatTriggers;
+    private mixed $valueThatTriggers = null;
 
-    #[
-        Assert\Sequentially([
-            new Assert\Type(type: ['string', 'null'], message: 'start time must be an {{ type }} you have provided {{ value }}'),
-//            new Assert\Length(
-//                min: 1,
-//                max: 4,
-//                exactMessage: 'Start time must be in 24 hour format',
-//                maxMessage: 'Start time must be in 24 hour format',
-//            ),
-        ])
+    #[Assert\Sequentially([
+    new Assert\Type(type: ['string', 'null'], message: 'start time must be an {{ type }} you have provided {{ value }}'),
+    //            new Assert\Length(
+    //                min: 1,
+    //                max: 4,
+    //                exactMessage: 'Start time must be in 24 hour format',
+    //                maxMessage: 'Start time must be in 24 hour format',
+    //            ),
+    ])
     ]
-    private mixed $startTime;
+    private mixed $startTime = null;
 
     #[
         Assert\Sequentially(constraints: [
@@ -68,26 +67,14 @@ class NewTriggerRequestDTO
 //            ),
         ])
     ]
-    private mixed $endTime;
+    private mixed $endTime = null;
+
+    #[Assert\Type(type: ['bool', 'null'], message: 'override must be an {{ type }} you have provided {{ value }}')]
+    private mixed $override = null;
 
     public function getOperator(): mixed
     {
         return $this->operator;
-    }
-
-    public function getTriggerType(): mixed
-    {
-        return $this->triggerType;
-    }
-
-    public function getBaseReadingTypeThatTriggers(): mixed
-    {
-        return $this->baseReadingTypeThatTriggers;
-    }
-
-    public function getBaseReadingTypeThatIsTriggered(): mixed
-    {
-        return $this->baseReadingTypeThatIsTriggered;
     }
 
     public function setOperator(mixed $operator): void
@@ -95,14 +82,29 @@ class NewTriggerRequestDTO
         $this->operator = $operator;
     }
 
+    public function getTriggerType(): mixed
+    {
+        return $this->triggerType;
+    }
+
     public function setTriggerType(mixed $triggerType): void
     {
         $this->triggerType = $triggerType;
     }
 
+    public function getBaseReadingTypeThatTriggers(): mixed
+    {
+        return $this->baseReadingTypeThatTriggers;
+    }
+
     public function setBaseReadingTypeThatTriggers(mixed $baseReadingTypeThatTriggers): void
     {
         $this->baseReadingTypeThatTriggers = $baseReadingTypeThatTriggers;
+    }
+
+    public function getBaseReadingTypeThatIsTriggered(): mixed
+    {
+        return $this->baseReadingTypeThatIsTriggered;
     }
 
     public function setBaseReadingTypeThatIsTriggered(mixed $baseReadingTypeThatIsTriggered): void
@@ -150,10 +152,20 @@ class NewTriggerRequestDTO
         $this->endTime = $endTime;
     }
 
+    public function getOverride(): mixed
+    {
+        return $this->override;
+    }
+
+    public function setOverride(mixed $override): void
+    {
+        $this->override = $override;
+    }
+
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context): void
     {
-        if ($this->getEndTime() < $this->getStartTime()) {
+        if (($this->getEndTime() && $this->getStartTime()) && $this->getEndTime() < $this->getStartTime()) {
             $context
                 ->buildViolation('Start time cannot be greater than end time')
                 ->addViolation();

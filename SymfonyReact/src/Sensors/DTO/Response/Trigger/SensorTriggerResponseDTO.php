@@ -29,6 +29,7 @@ readonly class SensorTriggerResponseDTO
         private bool $friday,
         private bool $saturday,
         private bool $sunday,
+        private bool $override,
         private ?AllSensorReadingTypeResponseDTOInterface $baseReadingTypeThatTriggers,
         private ?AllSensorReadingTypeResponseDTOInterface $baseReadingTypeThatIsTriggered,
     ) {
@@ -153,6 +154,17 @@ readonly class SensorTriggerResponseDTO
     public function getBaseReadingTypeThatIsTriggered(): ?AllSensorReadingTypeResponseDTOInterface
     {
         return $this->baseReadingTypeThatIsTriggered;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getOverride(): bool
+    {
+        return $this->override;
     }
 
     #[Groups([

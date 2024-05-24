@@ -50,6 +50,7 @@ readonly class SensorTriggerResponseDTOBuilder
             $sensorTrigger->getFriday(),
             $sensorTrigger->getSaturday(),
             $sensorTrigger->getSunday(),
+            $sensorTrigger->getOverride(),
             $baseReadingTypeThatTriggersDTO,
             $baseReadingTypeThatIsTriggeredDTO,
         );

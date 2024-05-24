@@ -27,14 +27,14 @@ export async function handleLogin(userInputs: LoginUserInputsInterface): Promise
 
 export async function handleTokenRefresh(): Promise<AxiosResponse> {
     const refreshToken: string = getRefreshToken();
-    try {
+    // try {
         const refreshTokenResponse: AxiosResponse = await axios.post(
             `${apiURL}token/refresh`,
             { refreshToken : refreshToken }
         )
 
         return refreshTokenResponse;
-    } catch (err) {
-        const error = err as Error | AxiosError;
-    }
+    // } catch (err) {
+    //     const error = err as Error | AxiosError;
+    // }
 }
