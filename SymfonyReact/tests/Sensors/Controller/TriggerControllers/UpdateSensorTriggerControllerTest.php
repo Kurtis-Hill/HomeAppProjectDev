@@ -294,15 +294,15 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
 
         $groupsUserIsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($regularUser);
 
-        $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
+        $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
-        $sensorsUserIsApartOf = $this->sensorRepository->findBy(['deviceID' => $devicesUserIsApartOf]);
+        $sensorsUserIsNotApartOf = $this->sensorRepository->findBy(['deviceID' => $devicesUserIsNotApartOf]);
 
-        $baseReadingTypesBySensor = $this->baseSensorReadingTypeRepository->findBy(['sensor' => $sensorsUserIsApartOf]);
+        $baseReadingTypesBySensor = $this->baseSensorReadingTypeRepository->findBy(['sensor' => $sensorsUserIsNotApartOf]);
 
-        $sensorTriggerUserIsApartOf = $this->sensorTriggerRepository->findBy(['baseReadingTypeThatTriggers' => $baseReadingTypesBySensor]);
+        $sensorTriggerUserIsNotApartOf = $this->sensorTriggerRepository->findBy(['baseReadingTypeThatTriggers' => $baseReadingTypesBySensor]);
 
-        $sensorTriggerUserIsApartOf = $sensorTriggerUserIsApartOf[array_rand($sensorTriggerUserIsApartOf)];
+        $sensorTriggerUserIsNotApartOf = $sensorTriggerUserIsNotApartOf[array_rand($sensorTriggerUserIsNotApartOf)];
 
         $randomOperator = $this->operatorRepository->findAll();
         /** @var Operator $randomOperator */
@@ -314,7 +314,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
         $userToken = $this->setUserToken($this->client, $regularUser->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_TRIGGER_URL, $sensorTriggerUserIsApartOf->getSensorTriggerID()),
+            sprintf(self::UPDATE_TRIGGER_URL, $sensorTriggerUserIsNotApartOf->getSensorTriggerID()),
             [],
             [],
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],

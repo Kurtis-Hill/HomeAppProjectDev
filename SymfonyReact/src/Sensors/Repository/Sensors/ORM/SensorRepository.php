@@ -225,7 +225,8 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         if ($getSensorQueryDTO->getDeviceIDs() !== null) {
             $qb->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . '.deviceID = ' . Sensor::ALIAS . '.deviceID')
                 ->andWhere(
-                    $qb->expr()->in(Devices::ALIAS . '.deviceID', ':deviceID')
+                    $qb->expr()->in(Devices::ALIAS . '.deviceID', ':deviceID'),
+
                 )
                 ->setParameters(
                     [

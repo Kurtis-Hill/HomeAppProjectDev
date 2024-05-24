@@ -10,14 +10,12 @@ export function RelayUpdateRequestCommand(props: { sensor: SensorResponseInterfa
     
     const [relayState, setRelayState] = useState<boolean>(sensor.sensorReadingTypes?.relay?.currentReading ?? false);
 
-    console.log('before click', relayState);
     const handleRelayUpdate = async (e: Event) => {
         const target = e.target as HTMLInputElement;
         const value = target.checked as boolean;
 
         setRelayState((currentState: boolean) => value)            
         
-        console.log('current state', relayState);
         const switchSensorResponse = await switchSensorRequest({
             'sensorData': [
                 {
@@ -37,7 +35,7 @@ export function RelayUpdateRequestCommand(props: { sensor: SensorResponseInterfa
     }
 
     if (sensor?.sensorType?.sensorTypeName === SensorTypesEnum.GenericRelay) {
-        const shouldBeChecked = relayState;;
+        const shouldBeChecked = relayState;
         // const disabled = sensor.sensorReadingTypes.relay.currentReading === true !== sensor.sensorReadingTypes.relay.requestedReading;
         const disabled = false;
 

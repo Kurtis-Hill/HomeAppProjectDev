@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 
 import { SensorTriggerResponseInterface } from '../../Response/Sensor/Trigger/SensorTriggerResponseInterface';
 import { BaseCard } from '../../../UserInterface/Cards/Components/BaseCard';
@@ -7,12 +8,16 @@ import DeleteButton from '../../../Common/Components/Buttons/DeleteButton';
 export default function TriggerCard(props: {
     sensorTriggerData: SensorTriggerResponseInterface,
     handleShowDeleteModal: (triggerID: number) => void,
+    setTriggerToUpdate: (triggerID: number) => void
+    setShowUpdateModal: (set: boolean) => void,
+    showUpdateModal: boolean,
+    id: number
 }) {
-    const { sensorTriggerData, handleShowDeleteModal } = props;
+    const { sensorTriggerData, handleShowDeleteModal, showUpdateModal, setShowUpdateModal, setTriggerToUpdate, id } = props;
 
     return (
         <>
-            <BaseCard loading={false} setCardLoading={() => false} setVariableToUpdate={() => false}>
+            <BaseCard loading={false} setCardLoading={() => setShowUpdateModal(true)} setVariableToUpdate={() => setTriggerToUpdate(id)} id={id}>
                 {
                     sensorTriggerData.baseReadingTypeThatTriggers
                         ? <span>Sensor that triggers: {sensorTriggerData.baseReadingTypeThatTriggers.sensor.sensorName}</span>

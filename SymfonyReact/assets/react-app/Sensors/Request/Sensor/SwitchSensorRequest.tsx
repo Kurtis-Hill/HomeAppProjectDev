@@ -16,7 +16,7 @@ export interface SwitchSensorRequestInterface {
 }
 
 
-export async function switchSensorRequest(sensorData: SwitchSensorRequestInterface): AxiosPromise {
+export async function switchSensorRequest(sensorData: SwitchSensorRequestInterface): Promise<AxiosPromise> {
     return axios.post(
         `${baseApiURL}device/switch-sensor`,
         sensorData,

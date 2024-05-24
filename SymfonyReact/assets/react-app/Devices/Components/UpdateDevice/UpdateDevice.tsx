@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 
 import RoomResponseInterface from '../../../User/Response/Room/RoomResponseInterface';
-import { UpdateDeviceFormInputsInterface } from './UpdateDeviceFormInputsInterface';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 import { getAllUserGroupsRequest } from '../../../User/Request/Group/GetAllUserGroupsRequest'
 import { getAllRoomRequest } from '../../../User/Request/Room/GetAllRoomRequest'
@@ -18,6 +17,13 @@ import { Label } from '../../../Common/Components/Elements/Label';
 import GroupResponseInterface from '../../../User/Response/Group/GroupResponseInterface';
 import { DeleteDevice } from '../DeleteDevice/DeleteDevice';
 import { DeviceResponseInterface } from '../../Response/DeviceResponseInterface';
+
+interface UpdateDeviceFormInputsInterface {
+    deviceName?: string;
+    password?: string;
+    deviceGroup?: number;
+    deviceRoom?: number;
+}
 
 export function UpdateDevice(props: {
     setDeviceData: (data: DeviceResponseInterface) => void;
@@ -351,4 +357,3 @@ export function UpdateDevice(props: {
         </>
     )
 }
-

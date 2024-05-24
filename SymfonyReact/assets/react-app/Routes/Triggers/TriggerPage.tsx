@@ -10,6 +10,7 @@ import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner'
 import { deleteTriggerRequest } from '../../Sensors/Request/Trigger/DeleteTriggerRequest';
 import { BaseCard } from '../../UserInterface/Cards/Components/BaseCard';
 import AddNewTrigger from '../../Sensors/Components/Trigger/AddNewTrigger';
+import UpdateTrigger from "../../Sensors/Components/Trigger/UpdateTrigger";
 
 export default function TriggerPage() {
     const [triggerData, setTriggerData] = useState<SensorTriggerResponseInterface[]>([]);
@@ -21,6 +22,10 @@ export default function TriggerPage() {
     const [addNewModal, setAddNewModal] = useState<boolean>(false);
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+
+    const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
+
+    const [updateTriggerID, setUpdateTriggerID] = useState<number|null>(null);
 
     const [selectedTriggerID, setSelectedTriggerID] = useState<number|null>(null);
 
@@ -44,6 +49,7 @@ export default function TriggerPage() {
             setShowDeleteModal(true);
         }
     }
+
 
     const deleteTrigger = async (e: Event) => {
         const response = await deleteTriggerRequest(selectedTriggerID);
@@ -77,6 +83,10 @@ export default function TriggerPage() {
                                                                 <TriggerCard 
                                                                     sensorTriggerData={sensorTriggerData} 
                                                                     handleShowDeleteModal={handleShowDeleteModal}
+                                                                    setTriggerToUpdate={setUpdateTriggerID}
+                                                                    setShowUpdateModal={setShowUpdateModal}
+                                                                    showUpdateModal={showUpdateModal}
+                                                                    id={sensorTriggerData.sensorTriggerID}
                                                                 />
                                                             </div>
                                                         </React.Fragment>
@@ -112,6 +122,7 @@ export default function TriggerPage() {
                             }
                             {
                                 showDeleteModal === true
+                                
                                     ?
                                         <BaseModal
                                             title={`Delete Trigger`}
@@ -135,6 +146,24 @@ export default function TriggerPage() {
                                                 />
                                             </>                                                   
                                         </BaseModal>
+                                    :
+                                        null
+                            }
+                            {
+                                showUpdateModal === true
+                                    ?
+                                        <>
+                                            <BaseModal
+                                                title={`Update Trigger`}
+                                                modalShow={showUpdateModal}
+                                                setShowModal={setShowUpdateModal}
+                                            >
+                                                <UpdateTrigger
+                                                    setShowUpdateModal={setShowUpdateModal}
+                                                    triggerID={updateTriggerID}
+                                                />
+                                            </BaseModal>
+                                        </>
                                     :
                                         null
                             }

@@ -34,6 +34,8 @@ class SensorVoter extends Voter
 
     public const CAN_UPDATE_TRIGGER = 'can-update-trigger';
 
+    public const CAN_GET_SENSOR_TRIGGERS = 'can-get-sensor-triggers';
+
     /**
      * @param string $attribute
      * @param mixed $subject
@@ -51,6 +53,7 @@ class SensorVoter extends Voter
             self::CAN_CREATE_TRIGGER,
             self::CAN_DELETE_TRIGGER,
             self::CAN_UPDATE_TRIGGER,
+            self::CAN_GET_SENSOR_TRIGGERS,
         ])) {
             return false;
         }
@@ -81,8 +84,14 @@ class SensorVoter extends Voter
             self::CAN_CREATE_TRIGGER => $this->canCreateTriggerForSensor($user, $subject),
             self::CAN_DELETE_TRIGGER => $this->canDeleteTriggerForSensor($user, $subject),
             self::CAN_UPDATE_TRIGGER => $this->canUpdateTriggerForSensor($user, $subject),
+            self::CAN_GET_SENSOR_TRIGGERS => $this->canGetSensorTriggers($user, $subject),
             default => false
         };
+    }
+
+    private function canGetSensorTriggers(UserInterface $user, SensorTrigger $sensorTrigger): bool
+    {
+        return $this->canDeleteTriggerForSensor($user, $sensorTrigger);
     }
 
     public function canUpdateTriggerForSensor(UserInterface $user, SensorTrigger $sensorTrigger): bool
