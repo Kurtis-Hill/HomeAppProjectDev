@@ -159,7 +159,7 @@ class DeleteTriggerControllerTest extends WebTestCase
 
     public function test_admin_user_can_delete_trigger_not_apart_of(): void
     {
-        $adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
+        $adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
 
         /** @var SensorTrigger[] $sensorTriggerResult */
         $sensorTriggerResult = $this->sensorTriggerRepository->findAll();

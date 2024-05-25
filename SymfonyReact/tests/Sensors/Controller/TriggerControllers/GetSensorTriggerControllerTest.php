@@ -130,13 +130,13 @@ class GetSensorTriggerControllerTest extends WebTestCase
             self::assertArrayHasKey('createdBy', $triggerResponseData);
             self::assertArrayHasKey('endTime', $triggerResponseData);
             self::assertArrayHasKey('startTime', $triggerResponseData);
-            self::assertArrayHasKey('monday', $triggerResponseData);
-            self::assertArrayHasKey('tuesday', $triggerResponseData);
-            self::assertArrayHasKey('wednesday', $triggerResponseData);
-            self::assertArrayHasKey('thursday', $triggerResponseData);
-            self::assertArrayHasKey('friday', $triggerResponseData);
-            self::assertArrayHasKey('saturday', $triggerResponseData);
-            self::assertArrayHasKey('sunday', $triggerResponseData);
+            self::assertArrayHasKey('monday', $triggerResponseData['days']);
+            self::assertArrayHasKey('tuesday', $triggerResponseData['days']);
+            self::assertArrayHasKey('wednesday', $triggerResponseData['days']);
+            self::assertArrayHasKey('thursday', $triggerResponseData['days']);
+            self::assertArrayHasKey('friday', $triggerResponseData['days']);
+            self::assertArrayHasKey('saturday', $triggerResponseData['days']);
+            self::assertArrayHasKey('sunday', $triggerResponseData['days']);
             self::assertArrayHasKey('updatedAt', $triggerResponseData);
 
             if (!empty($triggerResponseData['baseReadingTypeThatIsTriggered']) && !empty($triggerResponseData['baseReadingTypeThatTriggers'])) {
@@ -188,13 +188,13 @@ class GetSensorTriggerControllerTest extends WebTestCase
             self::assertArrayHasKey('createdBy', $triggerResponseData);
             self::assertArrayHasKey('endTime', $triggerResponseData);
             self::assertArrayHasKey('startTime', $triggerResponseData);
-            self::assertArrayHasKey('monday', $triggerResponseData);
-            self::assertArrayHasKey('tuesday', $triggerResponseData);
-            self::assertArrayHasKey('wednesday', $triggerResponseData);
-            self::assertArrayHasKey('thursday', $triggerResponseData);
-            self::assertArrayHasKey('friday', $triggerResponseData);
-            self::assertArrayHasKey('saturday', $triggerResponseData);
-            self::assertArrayHasKey('sunday', $triggerResponseData);
+            self::assertArrayHasKey('monday', $triggerResponseData['days']);
+            self::assertArrayHasKey('tuesday', $triggerResponseData['days']);
+            self::assertArrayHasKey('wednesday', $triggerResponseData['days']);
+            self::assertArrayHasKey('thursday', $triggerResponseData['days']);
+            self::assertArrayHasKey('friday', $triggerResponseData['days']);
+            self::assertArrayHasKey('saturday', $triggerResponseData['days']);
+            self::assertArrayHasKey('sunday', $triggerResponseData['days']);
             self::assertArrayHasKey('updatedAt', $triggerResponseData);
         }
     }
@@ -283,13 +283,13 @@ class GetSensorTriggerControllerTest extends WebTestCase
         self::assertEquals($sensorTrigger->getCreatedBy()->getEmail(), $payload['createdBy']['email']);
         self::assertEquals($sensorTrigger->getEndTime(), $payload['endTime']);
         self::assertEquals($sensorTrigger->getStartTime(), $payload['startTime']);
-        self::assertEquals($sensorTrigger->getMonday(), $payload['monday']);
-        self::assertEquals($sensorTrigger->getTuesday(), $payload['tuesday']);
-        self::assertEquals($sensorTrigger->getWednesday(), $payload['wednesday']);
-        self::assertEquals($sensorTrigger->getThursday(), $payload['thursday']);
-        self::assertEquals($sensorTrigger->getFriday(), $payload['friday']);
-        self::assertEquals($sensorTrigger->getSaturday(), $payload['saturday']);
-        self::assertEquals($sensorTrigger->getSunday(), $payload['sunday']);
+        self::assertEquals($sensorTrigger->getMonday(), $payload['days']['monday']);
+        self::assertEquals($sensorTrigger->getTuesday(), $payload['days']['tuesday']);
+        self::assertEquals($sensorTrigger->getWednesday(), $payload['days']['wednesday']);
+        self::assertEquals($sensorTrigger->getThursday(), $payload['days']['thursday']);
+        self::assertEquals($sensorTrigger->getFriday(), $payload['days']['friday']);
+        self::assertEquals($sensorTrigger->getSaturday(), $payload['days']['saturday']);
+        self::assertEquals($sensorTrigger->getSunday(), $payload['days']['sunday']);
         self::assertEquals($sensorTrigger->getUpdatedAt()->format('d-m-Y H:i:s'), $payload['updatedAt']);
     }
 }

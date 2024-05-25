@@ -3,6 +3,7 @@
 namespace App\Sensors\Builders\Response\TriggerResponseBuilder;
 
 use App\Common\Builders\Operator\OperatorResponseDTOBuilder;
+use App\Common\DTO\Response\DaysResponseDTO;
 use App\Sensors\Builders\Response\SensorReadingTypeResponseBuilders\Standard\SensorReadingTypeDTOResponseBuilder;
 use App\Sensors\DTO\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
 use App\Sensors\DTO\Response\Trigger\SensorTriggerResponseDTO;
@@ -43,13 +44,15 @@ readonly class SensorTriggerResponseDTOBuilder
             $sensorTrigger->getEndTime(),
             $sensorTrigger->getCreatedAt()->format('d-m-Y H:i:s'),
             $sensorTrigger->getUpdatedAt()->format('d-m-Y H:i:s'),
-            $sensorTrigger->getMonday(),
-            $sensorTrigger->getTuesday(),
-            $sensorTrigger->getWednesday(),
-            $sensorTrigger->getThursday(),
-            $sensorTrigger->getFriday(),
-            $sensorTrigger->getSaturday(),
-            $sensorTrigger->getSunday(),
+            new DaysResponseDTO(
+                $sensorTrigger->getMonday(),
+                $sensorTrigger->getTuesday(),
+                $sensorTrigger->getWednesday(),
+                $sensorTrigger->getThursday(),
+                $sensorTrigger->getFriday(),
+                $sensorTrigger->getSaturday(),
+                $sensorTrigger->getSunday(),
+            ),
             $sensorTrigger->getOverride(),
             $baseReadingTypeThatTriggersDTO,
             $baseReadingTypeThatIsTriggeredDTO,

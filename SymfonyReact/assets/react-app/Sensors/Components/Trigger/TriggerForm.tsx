@@ -15,7 +15,7 @@ import { AddNewTriggerType, addNewTriggerForm } from '../../Request/Trigger/AddN
 import { DaysEnum } from '../../../Common/DaysEnum';
 import { SensorDaysType as SensorTriggerDaysType } from '../../Types/SensorTriggerDaysType';
 
-export type AddNewTriggerFormType = {
+export type TriggerFormType = {
     operator: number;
     triggerType: number;
     baseReadingTypeThatTriggers: number;
@@ -26,12 +26,18 @@ export type AddNewTriggerFormType = {
     endTime: number|null;
 };
 
-export default function AddNewTrigger(props: {closeForm: (value: boolean) => void, resetData: () => void}) {
-    const { closeForm, resetData } = props;
+//FINISH handleTriggerRequest implementation for both update and create
+export default function TriggerForm(props: {
+    closeForm: (value: boolean) => void, 
+    resetData: () => void, 
+    presets: TriggerFormType|null
+    handleTriggerRequest: (e: Event) => void,
+}) {
+    const { closeForm, resetData, presets, handleTriggerRequest } = props;
 
     const [addNewTriggerFormInputs, setAddNewTriggerFormInputs] = useState<GetSensorTriggerFormInterface|null>(null);
 
-    const [newTriggerRequest, setNewTriggerRequest] = useState<AddNewTriggerFormType>({
+    const [newTriggerRequest, setNewTriggerRequest] = useState<TriggerFormType>({
         sensorThatTriggers: 0,
         sensorToBeTriggered: 0,
         triggerType: 0,
@@ -51,20 +57,43 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
     });
 
     useEffect(() => {
-        handleGetAdNewTriggerFormRequest();   
+        handleGetAddNewTriggerFormRequest();   
     }, []);
 
-    const handleGetAdNewTriggerFormRequest = async () => {
+    const handleGetAddNewTriggerFormRequest = async () => {
         if (addNewTriggerFormInputs === null) {
             const addNewTriggerResponse = await getNewTriggerForm();
             if (addNewTriggerResponse.status === 200) {
                 console.log('response', addNewTriggerResponse)
                 setAddNewTriggerFormInputs(addNewTriggerResponse.data.payload);
-                setNewTriggerRequest((values: AddNewTriggerFormType) => ({
-                    ...values, 
-                    triggerType: addNewTriggerResponse.data.payload.triggerTypes[0].triggerTypeID,
-                    operator: addNewTriggerResponse.data.payload.operators[0].operatorID,
-                }));
+                if (presets !== null) {
+                    console.log('presets!', presets)
+                    setNewTriggerRequest((values: TriggerFormType) => ({
+                        ...values,
+                        sensorThatTriggers: presets.baseReadingTypeThatTriggers,
+                        sensorToBeTriggered: presets.baseReadingTypeThatIsTriggered,
+                        triggerType: presets.triggerType,
+                        valueThatTriggers: presets.valueThatTriggers,
+                        operator: presets.operator,
+                        startTime: presets.startTime,
+                        endTime: presets.endTime,
+                        days: {
+                            monday: presets.days.monday,
+                            tuesday: presets.days.tuesday,
+                            wednesday: presets.days.wednesday,
+                            thursday: presets.days.thursday,
+                            friday: presets.days.friday,
+                            saturday: presets.days.saturday,
+                            sunday: presets.days.sunday,
+                        }
+                    })); 
+                } else {
+                    setNewTriggerRequest((values: TriggerFormType) => ({
+                        ...values, 
+                        triggerType: addNewTriggerResponse.data.payload.triggerTypes[0].triggerTypeID,
+                        operator: addNewTriggerResponse.data.payload.operators[0].operatorID,
+                    }));
+                }
             }
         }
     }
@@ -153,16 +182,16 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
     if (addNewTriggerFormInputs === null) {
         return (
             <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row hidden-scroll" />
-        )
+        );
     }
 
     return (
         <>
             <form>
                 <Label text="Trigger Type" htmlFor="triggerType" />    
-                <br />
+                <br />        
                 <span>Select what kind of trigger you want to create</span>
-                <select className="form-control" name="triggerType" id="triggerType" onChange={handleAddNewTriggerInput}>
+                <select defaultValue={newTriggerRequest.triggerType !== 0 ? newTriggerRequest.triggerType : ''} className="form-control" name="triggerType" id="triggerType" onChange={handleAddNewTriggerInput}>
                     {
                         addNewTriggerFormInputs?.triggerTypes.map((triggerType: TriggerTypeResponseInterface, index: number) => {
                             return (
@@ -175,7 +204,7 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
                 <Label text='Sensor that triggers' htmlFor='sensorThatTriggers' />
                 <br />
                 <span>Select a sensor that triggers the notification/relay switch event</span>
-                <select className="form-control" name='sensorThatTriggers' id='sensorThatTriggers' onChange={handleAddNewTriggerInput}>
+                <select defaultValue={newTriggerRequest !== null ? newTriggerRequest.sensorThatTriggers : ''} className="form-control" name='sensorThatTriggers' id='sensorThatTriggers' onChange={handleAddNewTriggerInput}>
                     <option value="0">No Sensor That Triggers</option>
                     {
                         addNewTriggerFormInputs?.sensors.map((sensor: SensorResponseInterface) => {
@@ -207,7 +236,7 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
                 <Label text='Sensor to be triggered' htmlFor='sensorToBeTriggered' />
                 <br />
                 <span>Select a sensor that will be triggered typically a Relay</span>
-                <select className="form-control" name='sensorToBeTriggered' id='sensorToBeTriggered' onChange={handleAddNewTriggerInput}>
+                <select defaultValue={newTriggerRequest !== null ? newTriggerRequest.sensorToBeTriggered : ''} className="form-control" name='sensorToBeTriggered' id='sensorToBeTriggered' onChange={handleAddNewTriggerInput}>
                     <option value="0">No Sensor To Be Triggered</option>
                     {
                         addNewTriggerFormInputs?.relays.map((relay: RelayResponseInterface, index) => {
@@ -221,12 +250,12 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
                 <Label text='Value that triggers' htmlFor='valueThatTriggers' />
                 <br />
                 <span>Enter the value that triggers the notification/relay switch event this can be 'true/false' for relays or a number for temperature/humidity</span>
-                <Input required={true} type='text' name='valueThatTriggers' onChangeFunction={handleAddNewTriggerInput} />
+                <Input value={newTriggerRequest !== null ? newTriggerRequest.valueThatTriggers : ''} required={true} type='text' name='valueThatTriggers' onChangeFunction={handleAddNewTriggerInput} />
                 <br />
                 <Label text='Choose an operator' htmlFor='operator' />
                 <br />
                 <span>Select the operator that will be used to compare the value that triggers against the reading it receives</span>
-                <select className="form-control" name='operator' id='operator' onChange={handleAddNewTriggerInput}>
+                <select defaultValue={newTriggerRequest !== null ? newTriggerRequest.operator : ''} className="form-control" name='operator' id='operator' onChange={handleAddNewTriggerInput}>
                     {
                         addNewTriggerFormInputs?.operators.map((operator: OperatorResponseInterface, index) => {
                             return (
@@ -270,7 +299,7 @@ export default function AddNewTrigger(props: {closeForm: (value: boolean) => voi
                 <Label text='Sunday' htmlFor='sunday' />
                 <br />
 
-                <SubmitButton onClickFunction={(e) => handleSendNewTriggerRequest(e)} type="submit" text='Add Trigger' name='add-trigger' action='submit' classes='add-new-submit-button' />
+                <SubmitButton onClickFunction={(e) => handleTriggerRequest(e)} type="submit" text='Add Trigger' name='add-trigger' action='submit' classes='add-new-submit-button' />
                 <CloseButton close={() => closeForm(false)} classes={"modal-cancel-button"} />
             </form>        
         </>

@@ -560,7 +560,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
         self::assertEquals($override, $payload['override']);
 
         foreach ($days as $day) {
-            self::assertEquals($day, $payload[$day]);
+            self::assertEquals($day, $payload['days'][$day]);
         }
     }
 
