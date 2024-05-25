@@ -26,14 +26,13 @@ export type TriggerFormType = {
     endTime: number|null;
 };
 
-//FINISH handleTriggerRequest implementation for both update and create
 export default function TriggerForm(props: {
     closeForm: (value: boolean) => void, 
-    resetData: () => void, 
     presets: TriggerFormType|null
-    handleTriggerRequest: (e: Event) => void,
+    handleTriggerRequest: (e: Event, triggerRequest: AddNewTriggerType) => void,
+    operation: string
 }) {
-    const { closeForm, resetData, presets, handleTriggerRequest } = props;
+    const { closeForm, operation, presets, handleTriggerRequest } = props;
 
     const [addNewTriggerFormInputs, setAddNewTriggerFormInputs] = useState<GetSensorTriggerFormInterface|null>(null);
 
@@ -133,7 +132,7 @@ export default function TriggerForm(props: {
 
         console.log('days', days)
 
-        const addNewTriggerRequest: AddNewTriggerType = {
+        const triggerRequestData: AddNewTriggerType = {
             operator: newTriggerRequest.operator,
             triggerType: newTriggerRequest.triggerType,
             baseReadingTypeThatTriggers: newTriggerRequest.sensorThatTriggers !== 0 ? newTriggerRequest.sensorThatTriggers : null,
@@ -143,14 +142,9 @@ export default function TriggerForm(props: {
             startTime: newTriggerRequest.startTime,
             endTime: newTriggerRequest.endTime,
         }
-        console.log('add new trigger request', addNewTriggerRequest)
+        console.log('add new trigger request', triggerRequestData)
 
-        const response = await addNewTriggerForm(addNewTriggerRequest);
-
-        if (response.status === 200) {
-            closeForm(true);
-            resetData();
-        }
+        handleTriggerRequest(e, triggerRequestData);
     }
 
     const handleAddNewTriggerInput = (event: Event) => {
@@ -268,7 +262,7 @@ export default function TriggerForm(props: {
                 <Label text='Start time' htmlFor='startTime' />
                 <br />
                 <span>Select the time the trigger will start if nothing is selected the trigger will occur everytime the value triggers</span>
-                <Input type='time' name='startTime' onChangeFunction={handleAddNewTriggerInput} />
+                <Input value={newTriggerRequest.startTime !== null ? newTriggerRequest.length === 4 ? newTriggerRequest.startTime.match(/.{2,2}/g).join(':') : newTriggerRequest.startTime.match(/.{1,2}/g).splice(0, 0, `0${newTriggerRequest.startTime[0]}`).join(':') : null } type='time' name='startTime' onChangeFunction={handleAddNewTriggerInput} />
                 <br />
                 <Label text='End time' htmlFor='endTime' />
                 <br />
@@ -299,7 +293,7 @@ export default function TriggerForm(props: {
                 <Label text='Sunday' htmlFor='sunday' />
                 <br />
 
-                <SubmitButton onClickFunction={(e) => handleTriggerRequest(e)} type="submit" text='Add Trigger' name='add-trigger' action='submit' classes='add-new-submit-button' />
+                <SubmitButton onClickFunction={(e) => handleSendNewTriggerRequest(e)} type="submit" text={`${operation} Trigger`} name='add-trigger' action='submit' classes='add-new-submit-button' />
                 <CloseButton close={() => closeForm(false)} classes={"modal-cancel-button"} />
             </form>        
         </>

@@ -11,7 +11,7 @@ import { deleteTriggerRequest } from '../../Sensors/Request/Trigger/DeleteTrigge
 import { BaseCard } from '../../UserInterface/Cards/Components/BaseCard';
 import TriggerForm from '../../Sensors/Components/Trigger/TriggerForm';
 import UpdateTrigger from "../../Sensors/Components/Trigger/UpdateTrigger";
-import { addNewTriggerForm } from '../../Sensors/Request/Trigger/AddNewTriggerRequest';
+import { AddNewTriggerType, addNewTriggerForm } from '../../Sensors/Request/Trigger/AddNewTriggerRequest';
 
 export default function TriggerPage() {
     const [triggerData, setTriggerData] = useState<SensorTriggerResponseInterface[]>([]);
@@ -59,58 +59,12 @@ export default function TriggerPage() {
         }
     } 
 
-    const handleSendNewTriggerRequest = async (e: Event) => {
-        e.preventDefault();
-        console.log('send new trigger request');
-
-        if (newTriggerRequest.sensorThatTriggers === 0 && newTriggerRequest.sensorToBeTriggered === 0) {
-            alert('You must select a sensor that triggers or a sensor to be triggered');
-            return;
-        }
-
-        //run through the days and remove any that are false
-        let days = [];
-        if (newTriggerRequest.days.monday === true) {
-            days.push(DaysEnum.Monday);
-        }
-        if (newTriggerRequest.days.tuesday === true) {
-            days.push(DaysEnum.Tuesday);
-        }
-        if (newTriggerRequest.days.wednesday === true) {
-            days.push(DaysEnum.Wednesday);
-        }
-        if (newTriggerRequest.days.thursday === true) {
-            days.push(DaysEnum.Thursday);
-        }
-        if (newTriggerRequest.days.friday === true) {
-            days.push(DaysEnum.Friday);
-        }
-        if (newTriggerRequest.days.saturday === true) {
-            days.push(DaysEnum.Saturday);
-        }
-        if (newTriggerRequest.days.sunday === true) {
-            days.push(DaysEnum.Sunday);
-        }
-
-        console.log('days', days)
-
-        const addNewTriggerRequest: AddNewTriggerType = {
-            operator: newTriggerRequest.operator,
-            triggerType: newTriggerRequest.triggerType,
-            baseReadingTypeThatTriggers: newTriggerRequest.sensorThatTriggers !== 0 ? newTriggerRequest.sensorThatTriggers : null,
-            baseReadingTypeThatIsTriggered: newTriggerRequest.sensorToBeTriggered !== 0 ? newTriggerRequest.sensorToBeTriggered : null,
-            days: days,
-            valueThatTriggers: newTriggerRequest.valueThatTriggers,
-            startTime: newTriggerRequest.startTime,
-            endTime: newTriggerRequest.endTime,
-        }
-        console.log('add new trigger request', addNewTriggerRequest)
-
-        const response = await addNewTriggerForm(addNewTriggerRequest);
+    const handleSendNewTriggerRequest = async (e: Event, triggerRequest: AddNewTriggerType) => {
+        const response = await addNewTriggerForm(triggerRequest);
 
         if (response.status === 200) {
-            closeForm(true);
-            resetData();
+            setAddNewModal(false);
+            fetchAllTriggerData();
         }
     }
 
@@ -169,9 +123,9 @@ export default function TriggerPage() {
                                         >
                                             <TriggerForm
                                                 closeForm={setAddNewModal}
-                                                resetData={fetchAllTriggerData}
                                                 presets={null}
                                                 handleTriggerRequest={handleSendNewTriggerRequest}
+                                                operation='Add'
                                             />
                                         </BaseModal>
                                     </>

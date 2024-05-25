@@ -4,6 +4,8 @@ import { SensorTriggerResponseInterface } from '../../Response/Sensor/Trigger/Se
 import { getSensorTriggerTypesRequest } from '../../Request/Trigger/GetTriggerRequest'
 import TriggerForm, { TriggerFormType } from './TriggerForm';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
+import { AddNewTriggerType } from '../../Request/Trigger/AddNewTriggerRequest';
+import { updateTriggerData } from '../../Request/Trigger/UpdateTriggerRequest'
 
 export default function UpdateTrigger(props: {
     setShowUpdateModal: (show: boolean) => void
@@ -36,8 +38,15 @@ export default function UpdateTrigger(props: {
             
             setLoading(false);
         }
-        
+    }
 
+    const handleSendTriggerUpdateRequest = async (e: Event, triggerRequestData: AddNewTriggerType) => {
+        const response = await updateTriggerData(triggerID, triggerRequestData);
+        
+        if (response.status === 200) {
+            resetData();
+            setShowUpdateModal(false);
+        }
     }
 
     useEffect(() => {
@@ -55,7 +64,8 @@ export default function UpdateTrigger(props: {
             <TriggerForm
                 closeForm={setShowUpdateModal}
                 presets={triggerUpdateData}
-                resetData={resetData}
+                operation='Update'
+                handleTriggerRequest={handleSendTriggerUpdateRequest}
             />
             {/* <SubmitButton
                 text={'Update Trigger'}
