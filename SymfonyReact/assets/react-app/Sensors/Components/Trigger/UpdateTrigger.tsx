@@ -66,15 +66,6 @@ export default function UpdateTrigger(props: {
                 operation='Update'
                 handleTriggerRequest={handleSendTriggerUpdateRequest}
             />
-            {/* <SubmitButton
-                text={'Update Trigger'}
-                classes={"modal-submit-button"}
-                onClickFunction={() => console.log('update trigger')}
-            />
-            <CloseButton
-                close={setShowUpdateModal}
-                classes={"modal-cancel-button"}
-            /> */}
         </>
     )
 }

@@ -7,7 +7,7 @@ export async function handlePingRequest(): Promise<PingInterface> {
     const token = getToken();
     return await axios.get(
         `${apiURL}ping`,
-        {headers: {"Authorization": `Bearer ${token}`}}
+        {"headers": {"Authorization": `Bearer ${token}`}}
     );
 }
 
