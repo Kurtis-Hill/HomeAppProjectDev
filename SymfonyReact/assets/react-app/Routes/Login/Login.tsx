@@ -5,13 +5,11 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import { registerAccountUrl, indexUrl } from "../../Common/URLs/CommonURLs";
-import { getRefreshToken, getToken } from "../../Authentication/Tokens/GetAPITokens";
+import { getRefreshToken, getToken } from "../../Authentication/Tokens/APITokenHandler";
 
 import Input from "../../Common/Components/Inputs/Input";
 import ColouredPage from "../../Common/Components/Pages/ColouredPage";
 import DotCircleSpinner from "../../Common/Components/Spinners/DotCircleSpinner";
-
-import { LoginUserInputsInterface } from "../../Authentication/Form/LoginUserInputsInterface";
 
 import { handleLogin, handleTokenRefresh } from "../../Authentication/Request/LoginRequest";
 import { handlePingRequest, PingInterface } from "../../Common/Request/Ping";
@@ -19,7 +17,12 @@ import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
 import { TokenRefreshResponseInterface } from '../../Authentication/Response/TokenRefreshResponseInterface';
 import { setUserSession } from '../../Authentication/Session/UserSession';
 
-export default function Login(): void {
+export type LoginUserInputsInterface = {
+    username: string|null;
+    password: string|null;
+}
+
+export default function Login() {
     const [userInputs, setUserInputs] = useState<LoginUserInputsInterface>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);

@@ -4,7 +4,7 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 import { apiURL, indexUrl } from '../../URLs/CommonURLs';
-import { getRefreshToken, removeTokens } from '../../../Authentication/Tokens/GetAPITokens';
+import { getRefreshToken, removeTokens } from '../../../Authentication/Tokens/APITokenHandler';
 import { ErrorResponseInterface } from '../../Response/ErrorResponseInterface';
 import { loginUrl } from '../../URLs/CommonURLs';
 import { handleTokenRefresh } from '../../../Authentication/Request/LoginRequest';
@@ -57,12 +57,10 @@ export function ResponseInterceptor(props: {
                             if (refreshTokenResponse.status === 200) {
                                 const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
                                 refreshUserTokens(refreshTokenResponseData);
-                                console.log('refreshed tokens');
                                 refreshNavBar(true);
                             }
                         } catch (err) {
                             const error = err as Error|AxiosError;
-                            console.log('catch error', error)
                             alert('Your session has expired please log in again');
                         }
                     } else {

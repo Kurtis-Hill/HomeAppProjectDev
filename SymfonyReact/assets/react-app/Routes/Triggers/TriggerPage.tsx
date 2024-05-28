@@ -9,7 +9,9 @@ import TriggerCard from '../../Sensors/Components/Trigger/TriggerCard';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
 import { deleteTriggerRequest } from '../../Sensors/Request/Trigger/DeleteTriggerRequest';
 import { BaseCard } from '../../UserInterface/Cards/Components/BaseCard';
-import AddNewTrigger from '../../Sensors/Components/Trigger/AddNewTrigger';
+import TriggerForm from '../../Sensors/Components/Trigger/TriggerForm';
+import UpdateTrigger from "../../Sensors/Components/Trigger/UpdateTrigger";
+import { AddNewTriggerType, addNewTriggerForm } from '../../Sensors/Request/Trigger/AddNewTriggerRequest';
 
 export default function TriggerPage() {
     const [triggerData, setTriggerData] = useState<SensorTriggerResponseInterface[]>([]);
@@ -22,12 +24,15 @@ export default function TriggerPage() {
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
+    const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
+
+    const [updateTriggerID, setUpdateTriggerID] = useState<number|null>(null);
+
     const [selectedTriggerID, setSelectedTriggerID] = useState<number|null>(null);
 
     const fetchAllTriggerData = async () => {
         setLoadingTriggerData(true);
         const response = await getAllSensorTriggerTypesRequest();
-        console.log(response.data.payload);
         if (response.status === 200 && Array.isArray(response.data.payload)) {
             setTriggerData(response.data.payload);
             setLoadingTriggerData(false);
@@ -45,12 +50,22 @@ export default function TriggerPage() {
         }
     }
 
+
     const deleteTrigger = async (e: Event) => {
         const response = await deleteTriggerRequest(selectedTriggerID);
         if (response.status === 200) {
-            fetchAllTriggerData();
+            await fetchAllTriggerData();
         }
     } 
+
+    const handleSendNewTriggerRequest = async (e: Event, triggerRequest: AddNewTriggerType) => {
+        const response = await addNewTriggerForm(triggerRequest);
+
+        if (response.status === 200) {
+            setAddNewModal(false);
+            fetchAllTriggerData();
+        }
+    }
 
     useEffect(() => {
         fetchAllTriggerData();
@@ -77,6 +92,10 @@ export default function TriggerPage() {
                                                                 <TriggerCard 
                                                                     sensorTriggerData={sensorTriggerData} 
                                                                     handleShowDeleteModal={handleShowDeleteModal}
+                                                                    setTriggerToUpdate={setUpdateTriggerID}
+                                                                    setShowUpdateModal={setShowUpdateModal}
+                                                                    showUpdateModal={showUpdateModal}
+                                                                    id={sensorTriggerData.sensorTriggerID}
                                                                 />
                                                             </div>
                                                         </React.Fragment>
@@ -101,9 +120,11 @@ export default function TriggerPage() {
                                             setShowModal={setAddNewModal}
                                             heightClasses="standard-modal-height"
                                         >
-                                            <AddNewTrigger
+                                            <TriggerForm
                                                 closeForm={setAddNewModal}
-                                                resetData={fetchAllTriggerData}
+                                                presets={null}
+                                                handleTriggerRequest={handleSendNewTriggerRequest}
+                                                operation='Add'
                                             />
                                         </BaseModal>
                                     </>
@@ -112,6 +133,7 @@ export default function TriggerPage() {
                             }
                             {
                                 showDeleteModal === true
+                                
                                     ?
                                         <BaseModal
                                             title={`Delete Trigger`}
@@ -127,14 +149,34 @@ export default function TriggerPage() {
                                                     name='delete-device'
                                                     action='submit'
                                                     classes='add-new-submit-button'
-                                                    onClickFunction={deleteTrigger}
+                                                    onClickFunction={() => deleteTrigger}
                                                 />
                                                 <CloseButton 
-                                                    close={setShowDeleteModal} 
+                                                    close={setShowDeleteModal}
                                                     classes={"modal-cancel-button"} 
                                                 />
                                             </>                                                   
                                         </BaseModal>
+                                    :
+                                        null
+                            }
+                            {
+                                showUpdateModal === true
+                                    ?
+                                        <>
+                                            <BaseModal
+                                                title={`Update Trigger`}
+                                                modalShow={showUpdateModal}
+                                                setShowModal={setShowUpdateModal}
+                                                heightClasses="standard-modal-height"
+                                            >
+                                                <UpdateTrigger
+                                                    setShowUpdateModal={setShowUpdateModal}
+                                                    triggerID={updateTriggerID}
+                                                    resetData={fetchAllTriggerData}
+                                                />
+                                            </BaseModal>
+                                        </>
                                     :
                                         null
                             }

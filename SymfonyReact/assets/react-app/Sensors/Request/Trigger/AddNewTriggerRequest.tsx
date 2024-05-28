@@ -1,7 +1,6 @@
-import axios, { AxiosPromise } from 'axios';
-import { apiURL } from '../../../Common/URLs/CommonURLs';
-import { SensorDaysType as SensorTriggerDaysType } from '../../Types/SensorTriggerDaysType';
-import { DaysEnum } from '../../../Common/DaysEnum';
+import axios, {AxiosPromise} from 'axios';
+import {apiURL} from '../../../Common/URLs/CommonURLs';
+import {DaysEnum} from '../../../Common/DaysEnum';
 
 export type AddNewTriggerType = {
     operator: number;
@@ -15,10 +14,8 @@ export type AddNewTriggerType = {
 };
 
 export async function addNewTriggerForm(triggerData: AddNewTriggerType): Promise<AxiosPromise> {
-    const addNewTriggerRequest = await axios.post(
+    return await axios.post(
         `${apiURL}sensor-trigger/form/add`,
         triggerData,
     );
-
-    return addNewTriggerRequest;
 }

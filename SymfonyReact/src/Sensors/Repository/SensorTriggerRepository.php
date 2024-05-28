@@ -65,8 +65,8 @@ class SensorTriggerRepository extends ServiceEntityRepository
         ?string $day = null,
         ?string $time = null,
     ): array {
-        $currentTime = TriggerDateTimeConvertor::prepareTimesForComparison($time);
-        $currentDay = TriggerDateTimeConvertor::prepareDaysForComparison($day);
+        $currentTime = TriggerDateTimeConvertor::prepareTimes($time);
+        $currentDay = TriggerDateTimeConvertor::prepareDays($day);
 
         $qb = $this->createQueryBuilder('st');
         $expr = $qb->expr();
@@ -113,8 +113,8 @@ class SensorTriggerRepository extends ServiceEntityRepository
         ?string $day = null,
         ?string $time = null,
     ): array {
-        $currentTime = TriggerDateTimeConvertor::prepareTimesForComparison($time);
-        $currentDay = TriggerDateTimeConvertor::prepareDaysForComparison($day);
+        $currentTime = TriggerDateTimeConvertor::prepareTimes($time);
+        $currentDay = TriggerDateTimeConvertor::prepareDays($day);
 
         $qb = $this->createQueryBuilder('st');
         $expr = $qb->expr();

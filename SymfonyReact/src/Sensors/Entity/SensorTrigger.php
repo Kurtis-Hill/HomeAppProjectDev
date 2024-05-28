@@ -363,7 +363,7 @@ class SensorTrigger
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context): void
     {
-        if ($this->getEndTime() < $this->getStartTime()) {
+        if (($this->getEndTime() !== null && $this->getStartTime() !== null) && $this->getEndTime() < $this->getStartTime()) {
             $context
                 ->buildViolation('Start time cannot be greater than end time')
                 ->addViolation();

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from "../../../Authentication/Tokens/GetAPITokens";
+import { getToken } from "../../../Authentication/Tokens/APITokenHandler";
 
 export function RequestInterceptor(): void {
     axios.interceptors.request.use(

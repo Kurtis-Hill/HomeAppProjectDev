@@ -17,7 +17,7 @@ class RequestSensorCurrentReadingUpdateArgumentBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sut = new \App\Sensors\Builders\Request\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder();
+        $this->sut = new RequestSensorCurrentReadingUpdateArgumentBuilder();
         parent::setUp();
     }
     public function test_building_dto_correctly(): void

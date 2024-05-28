@@ -20,13 +20,15 @@ export interface SensorTriggerResponseInterface {
     endTime: string|null,
     createdAt: string,
     updatedAt: string,
-    monday: boolean,
-    tuesday: boolean,
-    wednesday: boolean,
-    thursday: boolean,
-    friday: boolean,
-    saturday: boolean,
-    sunday: boolean,
+    days: {
+        monday: boolean,
+        tuesday: boolean,
+        wednesday: boolean,
+        thursday: boolean,
+        friday: boolean,
+        saturday: boolean,
+        sunday: boolean,
+    }
     baseReadingTypeThatTriggers?: MotionResponseInterface|RelayResponseInterface|TemperatureResponseInterface|HumidityResponseInterface|LatitudeResponseInterface|AnalogResponseInterface,
     baseReadingTypeThatIsTriggered?: RelayResponseInterface,
 }

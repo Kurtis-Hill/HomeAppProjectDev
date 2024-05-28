@@ -93,7 +93,7 @@ readonly class CreateNewTriggerDTOBuilder
         $sunday = false;
 
         foreach ($days as $day) {
-            match (TriggerDateTimeConvertor::prepareDaysForComparison($day)) {
+            match (TriggerDateTimeConvertor::prepareDays($day)) {
                 "monday" => $monday = true,
                 "tuesday" => $tuesday = true,
                 "wednesday" => $wednesday = true,

@@ -5,6 +5,8 @@ namespace App\Tests\Traits;
 use App\Authentication\Controller\SecurityController;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
 use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\User\Entity\User;
+use Doctrine\ORM\EntityManager;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +31,6 @@ trait TestLoginTrait
         );
 
         $requestResponse = $client->getResponse();
-
         try {
             $responseData = json_decode(
                 $requestResponse->getContent(),
@@ -72,5 +73,15 @@ trait TestLoginTrait
         }
 
         return $responseData['token'];
+    }
+
+    public function findRegularUserOne(EntityManager $entityManager): User
+    {
+        return $entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
+    }
+
+    public function findRegularUserTwo(EntityManager $entityManager): User
+    {
+        return $entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
     }
 }

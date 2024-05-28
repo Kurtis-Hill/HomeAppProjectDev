@@ -8,34 +8,25 @@ import { RestartDeviceCommand } from '../../../Devices/Components/Command/Restar
 export function CommandsDisplay(props: { sensor: SensorResponseInterface }) {
     const { sensor } = props;
     
-        return (
-            <>   
-                <PingDeviceCommand 
-                    deviceID={sensor.device.deviceID}
-                />    
-                <br />
-                <RestartDeviceCommand
-                    deviceID={sensor.device.deviceID}
-                />
-                <br />
-                {
-                    sensor.sensorType.sensorTypeName === SensorTypesEnum.GenericRelay
-                        ?
-                            <RelayUpdateRequestCommand
-                                sensor={sensor}
-                            />      
-                        :
-                            null
-                }
-            </>
-        )
-    
-    
     return (
         <>
-            <div>
-                <h5 className="title">Nothing to display</h5>
-            </div>
+            <PingDeviceCommand
+                deviceID={sensor.device.deviceID}
+            />
+            <br />
+            <RestartDeviceCommand
+                deviceID={sensor.device.deviceID}
+            />
+            <br />
+            {
+                sensor.sensorType.sensorTypeName === SensorTypesEnum.GenericRelay
+                    ?
+                        <RelayUpdateRequestCommand
+                            sensor={sensor}
+                        />
+                    :
+                        null
+            }
         </>
-    );
+    )
 }

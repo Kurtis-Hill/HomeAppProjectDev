@@ -1,13 +1,9 @@
-import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios';
+import axios, {AxiosPromise} from 'axios';
 
-import { apiURL } from "../../../Common/URLs/CommonURLs";
-
-import { RequestTypeEnum } from "../../../Common/API/RequestTypeEnum";
+import {apiURL} from "../../../Common/URLs/CommonURLs";
 
 export async function getAllSensorTriggerTypesRequest(): Promise<AxiosPromise> {
-    const getSensorTriggerTypesRequest = await axios.get(
-        `${apiURL}sensor-trigger/get/all`,
+    return await axios.get(
+        `${apiURL}sensor-trigger/all`,
     );
-
-    return getSensorTriggerTypesRequest;
 }

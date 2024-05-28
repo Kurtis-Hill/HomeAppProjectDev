@@ -97,8 +97,6 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
             ...sensorUpdateFormInputs,
             [name]: value,
         });
-
-        console.log('sensorUpdateFormInputs', name, value)
     }
 
 
@@ -126,7 +124,6 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
         const updatedSensorResponse = await updateSensorRequest(sensor.sensorID, dataToSend);
 
         if (updatedSensorResponse.status === 200 || updatedSensorResponse.status === 202) {
-            console.log('updated sensor', dataToSend);
             const updatedSensor: SensorResponseInterface = updatedSensorResponse.data.payload;
 
             setSensorUpdateFormInputs({

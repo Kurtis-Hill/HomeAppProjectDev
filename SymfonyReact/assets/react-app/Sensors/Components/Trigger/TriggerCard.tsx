@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 
 import { SensorTriggerResponseInterface } from '../../Response/Sensor/Trigger/SensorTriggerResponseInterface';
 import { BaseCard } from '../../../UserInterface/Cards/Components/BaseCard';
@@ -7,12 +8,16 @@ import DeleteButton from '../../../Common/Components/Buttons/DeleteButton';
 export default function TriggerCard(props: {
     sensorTriggerData: SensorTriggerResponseInterface,
     handleShowDeleteModal: (triggerID: number) => void,
+    setTriggerToUpdate: (triggerID: number) => void
+    setShowUpdateModal: (set: boolean) => void,
+    showUpdateModal: boolean,
+    id: number
 }) {
-    const { sensorTriggerData, handleShowDeleteModal } = props;
+    const { sensorTriggerData, handleShowDeleteModal, showUpdateModal, setShowUpdateModal, setTriggerToUpdate, id } = props;
 
     return (
         <>
-            <BaseCard loading={false} setCardLoading={() => false} setVariableToUpdate={() => false}>
+            <BaseCard loading={false} setCardLoading={() => setShowUpdateModal(true)} setVariableToUpdate={() => setTriggerToUpdate(id)} id={id}>
                 {
                     sensorTriggerData.baseReadingTypeThatTriggers
                         ? <span>Sensor that triggers: {sensorTriggerData.baseReadingTypeThatTriggers.sensor.sensorName}</span>
@@ -25,6 +30,8 @@ export default function TriggerCard(props: {
                         : null
                 }
                 <br />
+                <span>Trigger Type: {sensorTriggerData.triggerType.triggerTypeName}</span>
+                <br />
                 <span>Value that triggers: {sensorTriggerData.valueThatTriggers}</span>
                 <br />
                 <span>Operator: {sensorTriggerData.operator.operatorSymbol}</span>
@@ -33,19 +40,19 @@ export default function TriggerCard(props: {
                 <br />
                 <span>End time {sensorTriggerData.endTime}</span>
                 <br />
-                <span>Monday: {sensorTriggerData.monday === true ? 'true' : 'false'}</span>
+                <span>Monday: {sensorTriggerData.days.monday === true ? 'true' : 'false'}</span>
                 <br />
-                <span>Tuesday: {sensorTriggerData.tuesday === true ? 'true' : 'false'}</span>
+                <span>Tuesday: {sensorTriggerData.days.tuesday === true ? 'true' : 'false'}</span>
                 <br />
-                <span>Wednesday: {sensorTriggerData.wednesday === true ? 'true' : 'false'}</span>
+                <span>Wednesday: {sensorTriggerData.days.wednesday === true ? 'true' : 'false'}</span>
                 <br />
-                <span>Thursday: {sensorTriggerData.thursday === true ? 'true' : 'false'}</span>
+                <span>Thursday: {sensorTriggerData.days.thursday === true ? 'true' : 'false'}</span>
                 <br />
-                <span>Friday: {sensorTriggerData.friday === true ? 'true' : 'false'}</span>
+                <span>Friday: {sensorTriggerData.days.friday === true ? 'true' : 'false'}</span>
                 <br />
-                <span>Saturday: {sensorTriggerData.saturday === true ? 'true' : 'false'}</span>
+                <span>Saturday: {sensorTriggerData.days.saturday === true ? 'true' : 'false'}</span>
                 <br />
-                <span>Sunday: {sensorTriggerData.sunday === true ? 'true' : 'false'}</span>
+                <span>Sunday: {sensorTriggerData.days.sunday === true ? 'true' : 'false'}</span>
                 <br />
                 <br />
                 <DeleteButton clickFunction={() => handleShowDeleteModal(sensorTriggerData.sensorTriggerID)}></DeleteButton>
