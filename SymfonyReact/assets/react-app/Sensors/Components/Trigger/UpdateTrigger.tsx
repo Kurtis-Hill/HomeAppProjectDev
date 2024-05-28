@@ -23,7 +23,6 @@ export default function UpdateTrigger(props: {
 
         if (sensorTriggerResponseData.status === 200) {
             const sensorTriggerData: SensorTriggerResponseInterface = sensorTriggerResponseData.data.payload;
-            console.log('new', sensorTriggerData);
 
             setTriggerUpdateData({
                 operator: sensorTriggerData.operator.operatorID,

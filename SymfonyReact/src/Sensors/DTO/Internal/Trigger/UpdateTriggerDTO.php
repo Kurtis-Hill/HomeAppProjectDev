@@ -15,8 +15,8 @@ readonly class UpdateTriggerDTO
         private ?BaseSensorReadingType $baseReadingTypeThatIsTriggered = null,
         private ?array $days = null,
         private bool|float|int|null $valueThatTriggers = null,
-        private ?string $startTime = null,
-        private ?string $endTime = null,
+        private int|null $startTime = null,
+        private int|null $endTime = null,
         private ?bool $override = null
     ) {
     }
@@ -55,12 +55,12 @@ readonly class UpdateTriggerDTO
     }
 
 
-    public function getStartTime(): ?int
+    public function getStartTime(): int|string|null
     {
         return $this->startTime;
     }
 
-    public function getEndTime(): ?int
+    public function getEndTime(): int|string|null
     {
         return $this->endTime;
     }

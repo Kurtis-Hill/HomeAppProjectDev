@@ -64,9 +64,6 @@ export function AddNewDevice(props: {
         if (registeredDeviceIPs.status === 200) {
             if (Array.isArray(registeredDeviceIPs.data.payload)) {
                 const registeredDeviceIPsPayload = registeredDeviceIPs.data.payload as IPLogResponseInterface[];
-                console.log('ow damn not array', registeredDeviceIPsPayload)
-                console.log('TYPE', typeof registeredDeviceIPsPayload)
-                console.log('COUNT', registeredDeviceIPsPayload.length)
                 setDeviceIPs(registeredDeviceIPsPayload);
             }
         }

@@ -20,12 +20,10 @@ export function MainPageTop() {
     const [refreshNavbar, setRefreshNavbar] = useState<boolean>(true);
     
     const setRefreshNavDataFlag = (newValue: boolean) => {
-        // console.log('setRefreshNavDataFlag', newValue);
         setRefreshNavbar(newValue);
     }
 
     useEffect(() => {
-        // console.log('main page top fired');
     }, [refreshNavbar]);
     
     return (

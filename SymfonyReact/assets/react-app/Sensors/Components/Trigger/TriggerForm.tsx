@@ -34,9 +34,9 @@ export default function TriggerForm(props: {
 }) {
     const { closeForm, operation, presets, handleTriggerRequest } = props;
 
-    const [addNewTriggerFormInputs, setAddNewTriggerFormInputs] = useState<GetSensorTriggerFormInterface|null>(null);
+    const [triggerFormInputs, setTriggerFormInputs] = useState<GetSensorTriggerFormInterface|null>(null);
 
-    const [newTriggerRequest, setNewTriggerRequest] = useState<TriggerFormType>({
+    const [triggerRequest, setTriggerRequest] = useState<TriggerFormType>({
         sensorThatTriggers: 0,
         sensorToBeTriggered: 0,
         triggerType: 0,
@@ -60,14 +60,12 @@ export default function TriggerForm(props: {
     }, []);
 
     const handleGetAddNewTriggerFormRequest = async () => {
-        if (addNewTriggerFormInputs === null) {
+        if (triggerFormInputs === null) {
             const addNewTriggerResponse = await getNewTriggerForm();
             if (addNewTriggerResponse.status === 200) {
-                console.log('response', addNewTriggerResponse)
-                setAddNewTriggerFormInputs(addNewTriggerResponse.data.payload);
+                setTriggerFormInputs(addNewTriggerResponse.data.payload);
                 if (presets !== null) {
-                    console.log('presets!', presets)
-                    setNewTriggerRequest((values: TriggerFormType) => ({
+                    setTriggerRequest((values: TriggerFormType) => ({
                         ...values,
                         sensorThatTriggers: presets.baseReadingTypeThatTriggers,
                         sensorToBeTriggered: presets.baseReadingTypeThatIsTriggered,
@@ -87,7 +85,7 @@ export default function TriggerForm(props: {
                         }
                     })); 
                 } else {
-                    setNewTriggerRequest((values: TriggerFormType) => ({
+                    setTriggerRequest((values: TriggerFormType) => ({
                         ...values, 
                         triggerType: addNewTriggerResponse.data.payload.triggerTypes[0].triggerTypeID,
                         operator: addNewTriggerResponse.data.payload.operators[0].operatorID,
@@ -99,51 +97,45 @@ export default function TriggerForm(props: {
 
     const handleSendNewTriggerRequest = async (e: Event) => {
         e.preventDefault();
-        console.log('send new trigger request');
-
-        if (newTriggerRequest.sensorThatTriggers === 0 && newTriggerRequest.sensorToBeTriggered === 0) {
+        if (triggerRequest.sensorThatTriggers === 0 && triggerRequest.sensorToBeTriggered === 0) {
             alert('You must select a sensor that triggers or a sensor to be triggered');
             return;
         }
 
         //run through the days and remove any that are false
         let days = [];
-        if (newTriggerRequest.days.monday === true) {
+        if (triggerRequest.days.monday === true) {
             days.push(DaysEnum.Monday);
         }
-        if (newTriggerRequest.days.tuesday === true) {
+        if (triggerRequest.days.tuesday === true) {
             days.push(DaysEnum.Tuesday);
         }
-        if (newTriggerRequest.days.wednesday === true) {
+        if (triggerRequest.days.wednesday === true) {
             days.push(DaysEnum.Wednesday);
         }
-        if (newTriggerRequest.days.thursday === true) {
+        if (triggerRequest.days.thursday === true) {
             days.push(DaysEnum.Thursday);
         }
-        if (newTriggerRequest.days.friday === true) {
+        if (triggerRequest.days.friday === true) {
             days.push(DaysEnum.Friday);
         }
-        if (newTriggerRequest.days.saturday === true) {
+        if (triggerRequest.days.saturday === true) {
             days.push(DaysEnum.Saturday);
         }
-        if (newTriggerRequest.days.sunday === true) {
+        if (triggerRequest.days.sunday === true) {
             days.push(DaysEnum.Sunday);
         }
 
-        console.log('days', days)
-
         const triggerRequestData: AddNewTriggerType = {
-            operator: newTriggerRequest.operator,
-            triggerType: newTriggerRequest.triggerType,
-            baseReadingTypeThatTriggers: newTriggerRequest.sensorThatTriggers !== 0 ? newTriggerRequest.sensorThatTriggers : null,
-            baseReadingTypeThatIsTriggered: newTriggerRequest.sensorToBeTriggered !== 0 ? newTriggerRequest.sensorToBeTriggered : null,
+            operator: triggerRequest.operator,
+            triggerType: triggerRequest.triggerType,
+            baseReadingTypeThatTriggers: triggerRequest.sensorThatTriggers !== 0 ? triggerRequest.sensorThatTriggers : null,
+            baseReadingTypeThatIsTriggered: triggerRequest.sensorToBeTriggered !== 0 ? triggerRequest.sensorToBeTriggered : null,
             days: days,
-            valueThatTriggers: newTriggerRequest.valueThatTriggers,
-            startTime: newTriggerRequest.startTime,
-            endTime: newTriggerRequest.endTime,
+            valueThatTriggers: triggerRequest.valueThatTriggers,
+            startTime: triggerRequest.startTime,
+            endTime: triggerRequest.endTime,
         }
-        console.log('add new trigger request', triggerRequestData)
-
         handleTriggerRequest(e, triggerRequestData);
     }
 
@@ -152,28 +144,26 @@ export default function TriggerForm(props: {
         const value = (event.target as HTMLInputElement).value;
 
         if (Object.values(DaysEnum).includes(name as DaysEnum)) {
-            setNewTriggerRequest((values: AddNewTriggerType) => ({...values, days: {...values.days, [name]: !values.days[name]}}));
+            setTriggerRequest((values: AddNewTriggerType) => ({...values, days: {...values.days, [name]: !values.days[name]}}));
         }
         if (name === 'valueThatTriggers') {
             if (value === 'true') {
-                setNewTriggerRequest((values: AddNewTriggerType) => ({...values, valueThatTriggers: true}));
+                setTriggerRequest((values: AddNewTriggerType) => ({...values, valueThatTriggers: true}));
             } else if (value === 'false') {
-                setNewTriggerRequest((values: AddNewTriggerType) => ({...values, valueThatTriggers: false}));
+                setTriggerRequest((values: AddNewTriggerType) => ({...values, valueThatTriggers: false}));
             } else {
-                setNewTriggerRequest((values: AddNewTriggerType) => ({...values, valueThatTriggers: parseFloat(value)}));
+                setTriggerRequest((values: AddNewTriggerType) => ({...values, valueThatTriggers: parseFloat(value)}));
             }
         }
         if (name === 'sensorThatTriggers' || name === 'sensorToBeTriggered' || name === 'triggerType' || name === 'operator') {
-            setNewTriggerRequest((values: AddNewTriggerType) => ({...values, [name]: parseInt(value)}));
+            setTriggerRequest((values: AddNewTriggerType) => ({...values, [name]: parseInt(value)}));
         }
         if (name === 'startTime' || name === 'endTime') {
-            setNewTriggerRequest((values: AddNewTriggerType) => ({...values, [name]: value}));
+            setTriggerRequest((values: AddNewTriggerType) => ({...values, [name]: value}));
         }
-
-        console.log('new trigger request', newTriggerRequest)
     }
 
-    if (addNewTriggerFormInputs === null) {
+    if (triggerFormInputs === null) {
         return (
             <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row hidden-scroll" />
         );
@@ -185,9 +175,9 @@ export default function TriggerForm(props: {
                 <Label text="Trigger Type" htmlFor="triggerType" />    
                 <br />        
                 <span>Select what kind of trigger you want to create</span>
-                <select defaultValue={newTriggerRequest.triggerType !== 0 ? newTriggerRequest.triggerType : ''} className="form-control" name="triggerType" id="triggerType" onChange={handleAddNewTriggerInput}>
+                <select defaultValue={triggerRequest.triggerType !== 0 ? triggerRequest.triggerType : ''} className="form-control" name="triggerType" id="triggerType" onChange={handleAddNewTriggerInput}>
                     {
-                        addNewTriggerFormInputs?.triggerTypes.map((triggerType: TriggerTypeResponseInterface, index: number) => {
+                        triggerFormInputs?.triggerTypes.map((triggerType: TriggerTypeResponseInterface, index: number) => {
                             return (
                                 <option key={index} value={triggerType.triggerTypeID}>{triggerType.triggerTypeName}</option>
                             )
@@ -198,10 +188,10 @@ export default function TriggerForm(props: {
                 <Label text='Sensor that triggers' htmlFor='sensorThatTriggers' />
                 <br />
                 <span>Select a sensor that triggers the notification/relay switch event</span>
-                <select defaultValue={newTriggerRequest !== null ? newTriggerRequest.sensorThatTriggers : ''} className="form-control" name='sensorThatTriggers' id='sensorThatTriggers' onChange={handleAddNewTriggerInput}>
+                <select defaultValue={triggerRequest !== null ? triggerRequest.sensorThatTriggers : ''} className="form-control" name='sensorThatTriggers' id='sensorThatTriggers' onChange={handleAddNewTriggerInput}>
                     <option value="0">No Sensor That Triggers</option>
                     {
-                        addNewTriggerFormInputs?.sensors.map((sensor: SensorResponseInterface) => {
+                        triggerFormInputs?.sensors.map((sensor: SensorResponseInterface) => {
                             let htmlElements: HTMLElement[] = [];
                             if (sensor.sensorReadingTypes.temperature) {
                                 htmlElements.push(<option key={sensor.sensorReadingTypes.temperature.baseReadingTypeID} value={sensor.sensorReadingTypes.temperature.baseReadingTypeID}>{sensor.sensorReadingTypes.temperature.sensor.sensorName} temperature</option>);
@@ -230,10 +220,10 @@ export default function TriggerForm(props: {
                 <Label text='Sensor to be triggered' htmlFor='sensorToBeTriggered' />
                 <br />
                 <span>Select a sensor that will be triggered typically a Relay</span>
-                <select defaultValue={newTriggerRequest !== null ? newTriggerRequest.sensorToBeTriggered : ''} className="form-control" name='sensorToBeTriggered' id='sensorToBeTriggered' onChange={handleAddNewTriggerInput}>
+                <select defaultValue={triggerRequest !== null ? triggerRequest.sensorToBeTriggered : ''} className="form-control" name='sensorToBeTriggered' id='sensorToBeTriggered' onChange={handleAddNewTriggerInput}>
                     <option value="0">No Sensor To Be Triggered</option>
                     {
-                        addNewTriggerFormInputs?.relays.map((relay: RelayResponseInterface, index) => {
+                        triggerFormInputs?.relays.map((relay: RelayResponseInterface, index) => {
                             return (
                                 <option key={index} value={relay.baseReadingTypeID}>{relay.sensor?.sensorName} relay</option>
                             )
@@ -244,14 +234,14 @@ export default function TriggerForm(props: {
                 <Label text='Value that triggers' htmlFor='valueThatTriggers' />
                 <br />
                 <span>Enter the value that triggers the notification/relay switch event this can be 'true/false' for relays or a number for temperature/humidity</span>
-                <Input value={newTriggerRequest !== null ? newTriggerRequest.valueThatTriggers : ''} required={true} type='text' name='valueThatTriggers' onChangeFunction={handleAddNewTriggerInput} />
+                <Input value={triggerRequest !== null ? triggerRequest.valueThatTriggers : ''} required={true} type='text' name='valueThatTriggers' onChangeFunction={handleAddNewTriggerInput} />
                 <br />
                 <Label text='Choose an operator' htmlFor='operator' />
                 <br />
                 <span>Select the operator that will be used to compare the value that triggers against the reading it receives</span>
-                <select defaultValue={newTriggerRequest !== null ? newTriggerRequest.operator : ''} className="form-control" name='operator' id='operator' onChange={handleAddNewTriggerInput}>
+                <select defaultValue={triggerRequest !== null ? triggerRequest.operator : ''} className="form-control" name='operator' id='operator' onChange={handleAddNewTriggerInput}>
                     {
-                        addNewTriggerFormInputs?.operators.map((operator: OperatorResponseInterface, index) => {
+                        triggerFormInputs?.operators.map((operator: OperatorResponseInterface, index) => {
                             return (
                                 <option key={index} value={operator.operatorID}>{operator.operatorSymbol}</option>
                             )
@@ -262,34 +252,34 @@ export default function TriggerForm(props: {
                 <Label text='Start time' htmlFor='startTime' />
                 <br />
                 <span>Select the time the trigger will start if nothing is selected the trigger will occur everytime the value triggers</span>
-                <Input value={newTriggerRequest.startTime !== null ? newTriggerRequest.length === 4 ? newTriggerRequest.startTime.match(/.{2,2}/g).join(':') : newTriggerRequest.startTime.match(/.{1,2}/g).splice(0, 0, `0${newTriggerRequest.startTime[0]}`).join(':') : null } type='time' name='startTime' onChangeFunction={handleAddNewTriggerInput} />
+                <Input value={triggerRequest.startTime !== null ? triggerRequest.startTime.length === 4 ? triggerRequest.startTime.match(/.{2,2}/g).join(':') : triggerRequest.startTime : '' } type='time' name='startTime' onChangeFunction={handleAddNewTriggerInput} />
                 <br />
                 <Label text='End time' htmlFor='endTime' />
                 <br />
                 <span>Select the time the trigger will end if nothing is selected the trigger will occur everytime the value triggers</span>
-                <Input type='time' name='endTime' onChangeFunction={handleAddNewTriggerInput} />
+                <Input value={triggerRequest.endTime !== null ? triggerRequest.endTime.length === 4 ? triggerRequest.endTime.match(/.{2,2}/g).join(':') : triggerRequest.endTime : ''} type='time' name='endTime' onChangeFunction={handleAddNewTriggerInput} />
                 <br />
                 <span>Select the days you wish the trigger to be active on</span>
                 <br />
-                <input checked={newTriggerRequest.days.monday} type='checkbox' name='monday' id='monday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
+                <input checked={triggerRequest.days.monday} type='checkbox' name='monday' id='monday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
                 <Label text='Monday' htmlFor='monday' />
                 <br />
-                <input checked={newTriggerRequest.days.tuesday} type='checkbox' name='tuesday' id='tuesday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
+                <input checked={triggerRequest.days.tuesday} type='checkbox' name='tuesday' id='tuesday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
                 <Label text='Tuesday' htmlFor='tuesday' />
                 <br />
-                <input checked={newTriggerRequest.days.wednesday} type='checkbox' name='wednesday' id='wednesday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
+                <input checked={triggerRequest.days.wednesday} type='checkbox' name='wednesday' id='wednesday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
                 <Label text='Wednesday' htmlFor='wednesday' />
                 <br />
-                <input checked={newTriggerRequest.days.thursday} type='checkbox' name='thursday' id='thursday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
+                <input checked={triggerRequest.days.thursday} type='checkbox' name='thursday' id='thursday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
                 <Label text='Thursday' htmlFor='thursday' />
                 <br />
-                <input checked={newTriggerRequest.days.friday} type='checkbox' name='friday' id='friday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
+                <input checked={triggerRequest.days.friday} type='checkbox' name='friday' id='friday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
                 <Label text='Friday' htmlFor='friday' />
                 <br />
-                <input checked={newTriggerRequest.days.saturday} type='checkbox' name='saturday' id='saturday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
+                <input checked={triggerRequest.days.saturday} type='checkbox' name='saturday' id='saturday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
                 <Label text='Saturday' htmlFor='saturday' />
                 <br />
-                <input checked={newTriggerRequest.days.sunday} type='checkbox' name='sunday' id='sunday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
+                <input checked={triggerRequest.days.sunday} type='checkbox' name='sunday' id='sunday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
                 <Label text='Sunday' htmlFor='sunday' />
                 <br />
 

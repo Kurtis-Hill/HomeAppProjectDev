@@ -54,7 +54,7 @@ class UpdateTriggerHandler
         }
         if (!empty($updateTriggerDTO->getDays())) {
             foreach ($updateTriggerDTO->getDays() as $day) {
-                match (TriggerDateTimeConvertor::prepareDaysForComparison($day)) {
+                match (TriggerDateTimeConvertor::prepareDays($day)) {
                     "monday" => $monday = true,
                     "tuesday" => $tuesday = true,
                     "wednesday" => $wednesday = true,

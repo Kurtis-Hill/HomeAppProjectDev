@@ -40,8 +40,8 @@ readonly class SensorTriggerResponseDTOBuilder
             TriggerTypeResponseBuilder::buildTriggerTypeResponseDTO($sensorTrigger->getTriggerType()),
             $sensorTrigger->getValueThatTriggers(),
             UserResponseBuilder::buildUserResponseDTO($user),
-            $sensorTrigger->getStartTime(),
-            $sensorTrigger->getEndTime(),
+            strlen((string)$sensorTrigger->getStartTime()) === 3 ? sprintf('0%d',$sensorTrigger->getStartTime()) : $sensorTrigger->getStartTime(),
+            strlen((string)$sensorTrigger->getEndTime()) === 3 ? sprintf('0%d',$sensorTrigger->getEndTime()) : $sensorTrigger->getEndTime(),
             $sensorTrigger->getCreatedAt()->format('d-m-Y H:i:s'),
             $sensorTrigger->getUpdatedAt()->format('d-m-Y H:i:s'),
             new DaysResponseDTO(

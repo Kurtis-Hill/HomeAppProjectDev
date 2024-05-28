@@ -57,12 +57,10 @@ export function ResponseInterceptor(props: {
                             if (refreshTokenResponse.status === 200) {
                                 const refreshTokenResponseData: TokenRefreshResponseInterface = refreshTokenResponse.data;
                                 refreshUserTokens(refreshTokenResponseData);
-                                console.log('refreshed tokens');
                                 refreshNavBar(true);
                             }
                         } catch (err) {
                             const error = err as Error|AxiosError;
-                            console.log('catch error', error)
                             alert('Your session has expired please log in again');
                         }
                     } else {

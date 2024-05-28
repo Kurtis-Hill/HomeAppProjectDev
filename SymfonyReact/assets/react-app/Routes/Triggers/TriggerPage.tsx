@@ -33,7 +33,6 @@ export default function TriggerPage() {
     const fetchAllTriggerData = async () => {
         setLoadingTriggerData(true);
         const response = await getAllSensorTriggerTypesRequest();
-        console.log(response.data.payload);
         if (response.status === 200 && Array.isArray(response.data.payload)) {
             setTriggerData(response.data.payload);
             setLoadingTriggerData(false);

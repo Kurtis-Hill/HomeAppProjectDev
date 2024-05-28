@@ -21,7 +21,6 @@ export function BaseCard(props: {
     const { setVariableToUpdate, setCardLoading } = props;
 
     const handleGeneralCardClick = () => {
-        console.log('clicked');
         setCardLoading(true);
         setVariableToUpdate(id);
     }
