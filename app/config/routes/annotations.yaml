@@ -1,0 +1,23 @@
+sensors:
+    resource: ../../src/Sensors/Controller
+    type: attribute
+
+devices:
+    resource: ../../src/Devices/Controller
+    type: attribute
+
+user:
+    resource: ../../src/User/Controller
+    type: attribute
+
+user-interface:
+    resource: ../../src/UserInterface/Controller
+    type: attribute
+
+authentication:
+    resource: ../../src/Authentication/Controller
+    type: attribute
+
+kernel:
+    resource: ../../src/Kernel.php
+    type: attribute

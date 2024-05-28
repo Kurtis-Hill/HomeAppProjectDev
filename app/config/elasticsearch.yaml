@@ -1,0 +1,56 @@
+services:
+    _defaults:
+        autowire: true
+
+    Elastica\Client:
+        arguments:
+            $config:
+              servers:
+              - { host: '%env(ELASTIC_SEARCH_HOST)%', port: '%env(ELASTIC_SEARCH_PORT)%', username: '%env(ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%', password: '%env(ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%', transport: '%env(ELASTIC_TRANSPORT)%', curl: {64: '%env(ELASTIC_SEARCH_SSL_VERIFICATION)%'} }
+              - { host: '%env(ELASTIC_SEARCH_HOST_FAILOVER)%', port: '%env(ELASTIC_SEARCH_PORT_FAILOVER)%', username: '%env(ELASTIC_SEARCH_HTTP_AUTH_USERNAME_FAILOVER)%', password: '%env(ELASTIC_SEARCH_HTTP_AUTH_PASSWORD_FAILOVER)%', transport: '%env(ELASTIC_TRANSPORT_FAILOVER)%', curl: {64: '%env(ELASTIC_SEARCH_SSL_VERIFICATION_FAILOVER)%'} }
+            $logger: '@monolog.logger'
+
+    elastica.constrecord_latitude_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_CONSTRECORD_LATITUDE)%'
+
+    elastica.constrecord_temperature_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_CONSTRECORD_TEMPERATURE)%'
+
+    elastica.constrecord_humidity_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_CONSTRECORD_HUMIDITY)%'
+
+    elastica.constrecord_analog_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_CONSTRECORD_ANALOG)%'
+
+    elastica.outofbounds_analog_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_OUTOFBOUNDS_ANALOG)%'
+
+    elastica.outofbounds_latitude_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_OUTOFBOUNDS_LATITUDE)%'
+
+    elastica.outofbounds_temperature_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_OUTOFBOUNDS_TEMPERATURE)%'
+
+    elastica.outofbounds_humidity_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_OUTOFBOUNDS_HUMIDITY)%'
+
+    elastica.log_index:
+        class: Elastica\Index
+        arguments:
+            $name: '%env(ELASTIC_INDEX_LOG)%'

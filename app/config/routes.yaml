@@ -1,0 +1,11 @@
+api_login_check:
+    path: /HomeApp/api/user/login_check
+
+sensor_api_login_check:
+  path: /HomeApp/api/device/login_check
+
+api_device_refresh_token:
+  path: /HomeApp/api/device/token/refresh
+
+api_user_refresh_token:
+  path: /HomeApp/api/user/token/refresh

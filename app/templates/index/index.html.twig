@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+ {% block stylesheets %}
+     {{ encore_entry_link_tags('bootstrap') }}
+     {{ encore_entry_link_tags('font-awesome') }}
+     {{ encore_entry_link_tags('font-awesome-brands') }}
+     {{ encore_entry_link_tags('Appcss') }}
+     {{ encore_entry_link_tags('sb-admin2') }}
+ {% endblock %}
+
+{% block body %}
+    <body>
+        <div id="root"></div>
+    </body>
+{% endblock %}
+
+{% block javascript %}
+    {{ encore_entry_script_tags('react-app') }}
+{% endblock %}

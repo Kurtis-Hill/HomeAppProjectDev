@@ -1,0 +1,45 @@
+parameters:
+
+services:
+  _defaults:
+    bind:
+      string $projectDir: '%kernel.project_dir%'
+    autowire: true
+    autoconfigure: true
+
+  ################### Core ############################
+  App\User\:
+    resource: './*'
+    exclude: './{Entity}'
+
+  App\User\Controller\:
+    resource: './Controller'
+    tags: [ 'controller.service_arguments' ]
+
+  ######################## Producers ######################################################
+
+  ######################## Consumers ######################################################
+
+  ######################## UserExceptions Services ######################################################
+  App\User\Services\RoomServices\AddNewRoomServiceInterface:
+    alias: 'App\User\Services\RoomServices\AddNewRoomHandler'
+
+  App\User\Services\GroupServices\GroupCheck\GroupCheckServiceInterface:
+    alias: 'App\User\Services\GroupServices\GroupCheck\GroupCheckService'
+
+  ######################## Factories ###########################################################################
+
+  ######################## Repositories ########################################################################
+  App\User\Repository\ORM\RoomRepositoryInterface:
+    alias: 'App\User\Repository\ORM\RoomRepository'
+
+  App\User\Repository\ORM\GroupRepositoryInterface:
+    alias: 'App\User\Repository\ORM\GroupRepository'
+
+  App\User\Repository\ORM\UserRepositoryInterface:
+    alias: 'App\User\Repository\ORM\UserRepository'
+
+  ######################## Services ########################################################################
+  App\User\Services\User\UserCreationHandler:
+    arguments:
+        $profilePictureDir: '%env(USER_PROFILE_DIRECTORY)%'

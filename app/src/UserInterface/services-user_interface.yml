@@ -1,0 +1,51 @@
+parameters:
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  ################### Core ############################
+  App\UserInterface\:
+    resource: './*'
+    exclude: './{Entity}'
+
+  App\UserInterface\Controller\:
+    resource: './Controller'
+    tags: [ 'controller.service_arguments' ]
+
+
+  ######################## Producers ######################################################
+
+  ######################## Consumers ######################################################
+
+  ######################## UserInterface Services ######################################################
+  App\UserInterface\Services\Cards\CardCreation\CardCreationHandlerInterface:
+    alias: App\UserInterface\Services\Cards\CardCreation\CardCreationHandler
+
+  App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationHandlerInterface:
+    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewFormCreationHandler
+
+  App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateInterface:
+    alias: App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateFacade
+
+  App\UserInterface\Services\NavBar\NavBarDataProviderInterface:
+    alias : App\UserInterface\Services\NavBar\NavBarDataProvider
+  ######################## New Sensor Creation Services ########################################################
+
+  ######################## Factories ###########################################################################
+
+  ######################## Repositories ########################################################################
+  App\UserInterface\Repository\ORM\CardRepositories\CardViewRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository
+
+  App\UserInterface\Repository\ORM\CardRepositories\CardColourRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository
+
+  App\UserInterface\Repository\ORM\CardRepositories\CardStateRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository
+
+  App\UserInterface\Repository\ORM\IconsRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\IconsRepository
+
+  ######################## End Of Sensors ######################################################################################
