@@ -2,7 +2,7 @@
 
 namespace App\User\Builders\User;
 
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use App\User\Entity\User;
 use App\User\Voters\UserVoter;
@@ -30,7 +30,7 @@ readonly class UserResponseBuilder
             $user->getFirstName(),
             $user->getLastName(),
             $user->getEmail(),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($user->getGroup()),
+            GroupResponseDTOBuilder::buildGroupNameResponseDTO($user->getGroup()),
             $user->getCreatedAt(),
             $user->getProfilePic(),
             $user->getRoles(),

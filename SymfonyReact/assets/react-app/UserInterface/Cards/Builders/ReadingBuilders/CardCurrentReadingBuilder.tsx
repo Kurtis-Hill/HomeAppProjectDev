@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CardSensorDataResponseInterface } from '../../Response/CurrentReadingCardData/CardDataResponseInterface';
-import { CardCurrentSensorReadings } from '../../Components/DisplayCards/CardCurrentSensorReadings';
+import { StandardCardCurrentSensorReadings } from '../../Components/DisplayCards/StandardCardCurrentSensorReadings';
 import { CurrentReadingDataDisplayInterface } from '../../Components/Readings/SensorDataOutput/CurrentReadingDataDisplayInterface';
 import { CardReadingFactoryInterface } from '../../Factories/CardReadingFactory';
 
@@ -9,8 +9,9 @@ export default function CardCurrentReadingBuilder(
 ): React.ReactElement {
     const cardData: CardSensorDataResponseInterface = props.cardData;
 
+    
     return (
-        <CardCurrentSensorReadings
+        <StandardCardCurrentSensorReadings
             cardViewID={cardData.cardViewID}
             sensorType={cardData.sensorType}
             sensorName={cardData.sensorName}

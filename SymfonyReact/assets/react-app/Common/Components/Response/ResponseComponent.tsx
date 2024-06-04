@@ -4,10 +4,12 @@ import { ResponseInterceptor } from '../../Request/Axios/ResponseInterceptor';
 import { AnnouncementFlashModalBuilder } from '../../Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import { useState, useEffect } from 'react';
 
-export function ResponseComponent() {
+export function ResponseComponent(props: {refreshNavBar: (newValue: boolean) => void}) {
     const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
 
     const [announcementCount, setAnnouncementCount] = useState<number>(0);
+
+    const refreshNavBar = props.refreshNavBar;
 
     useEffect(() => {
         console.log('response componenet fired');
@@ -37,7 +39,7 @@ export function ResponseComponent() {
                     );
                 })
             }
-            <ResponseInterceptor showAnnouncementFlash={showAnnouncementFlash} />
+            <ResponseInterceptor showAnnouncementFlash={showAnnouncementFlash} refreshNavBar={refreshNavBar} />
         </>
     );
 }

@@ -7,7 +7,7 @@ use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\Entity\User;
 use App\User\Services\GroupServices\UserGroupsFinder;
 use Psr\Log\LoggerInterface;
@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-groups/')]
@@ -55,13 +55,13 @@ class GetGroupsController extends AbstractController
 
         $groupNameDTOs = [];
         foreach ($userGroupsFinder->getUsersGroups($user) as $groupName) {
-            $groupNameDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
+            $groupNameDTOs[] = GroupResponseDTOBuilder::buildGroupNameResponseDTO(
                 $groupName
             );
         }
 
         try {
-            $normalizedGroupNames = $this->normalizeResponse($groupNameDTOs, [$requestDTO->getResponseType()]);
+            $normalizedGroupNames = $this->normalize($groupNameDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse(['something went wrong preparing the data']);
         }

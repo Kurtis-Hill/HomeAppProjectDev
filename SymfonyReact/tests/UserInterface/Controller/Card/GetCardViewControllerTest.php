@@ -6,15 +6,18 @@ use App\Common\API\APIErrorMessages;
 use App\Devices\Entity\Devices;
 use App\Devices\Repository\ORM\DeviceRepository;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\SensorControllers\UpdateSensorBoundaryReadingsController;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
 use App\Sensors\Entity\ReadingTypes\ReadingTypes;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
 use App\Tests\Traits\TestLoginTrait;
 use App\User\Entity\Group;
@@ -93,13 +96,21 @@ class GetCardViewControllerTest extends WebTestCase
         $cardViewRepository = $this->entityManager->getRepository(CardView::class);
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
+        $temperature = false;
+        $humidity = false;
+        $latitude = false;
+        $motion = false;
+        $relay = false;
+        $analog = false;
+
+//        dd($responseData['payload']);
         foreach ($responseData['payload'] as $payload) {
             /** @var CardView $cardViewObject */
             $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
             self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
-            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']);
             self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
             self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
             self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
@@ -109,7 +120,165 @@ class GetCardViewControllerTest extends WebTestCase
                 ->buildSensorReadingTypes();
 
             /** @var Sensor[] $cardSensorReadingTypeObjects */
-            $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+            $cardSensorReadingTypeObjects = $sensorRepository->findSensorTypeAndReadingTypeObjectsForSensor(
+                $cardViewObject->getSensor()->getDevice()->getDeviceID(),
+                $cardViewObject->getSensor()->getSensorName(),
+                null,
+                $readingTypeQueryDTOs,
+            );
+//dd($payload);
+            self::assertNotEmpty($cardSensorReadingTypeObjects);
+            $sensorDataArrayCount = 0;
+//            dd($cardSensorReadingTypeObjects, $cardViewObject);
+            foreach ($cardSensorReadingTypeObjects as $key => $cardSensorReadingTypeObject) {
+//                dd($key);
+                if ($cardSensorReadingTypeObject instanceof StandardReadingSensorInterface) {
+                    if ($cardSensorReadingTypeObject instanceof Temperature) {
+                        $temperature = true;
+                        self::assertEquals(
+                            Temperature::READING_TYPE,
+                            $payload['sensorData'][$key]['readingType']
+                        );
+                    }
+                    if ($cardSensorReadingTypeObject instanceof Humidity) {
+                        $humidity = true;
+//                        dd($payload['sensorData']);
+//                        dd($sensorDataArrayCount);
+                        self::assertEquals(
+                            Humidity::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+//                        dd($cardSensorReadingTypeObjects);
+                    if ($cardSensorReadingTypeObject instanceof Analog) {
+                        $analog = true;
+                        self::assertEquals(
+                            Analog::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+                    if ($cardSensorReadingTypeObject instanceof Latitude) {
+                        $latitude = true;
+                        self::assertEquals(
+                            Latitude::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
+                        $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getCurrentReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['currentReading']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getHighReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['highReading']
+                    );
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getLowReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['lowReading']
+                    );
+                    if (isset($payload['sensorData'][$sensorDataArrayCount]['readingSymbol'])) {
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject::getReadingSymbol(),
+                            $payload['sensorData'][$sensorDataArrayCount]['readingSymbol']
+                        );
+                    }
+                }
+                if ($cardSensorReadingTypeObject instanceof BoolReadingSensorInterface) {
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
+                        $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
+                    );
+
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getCurrentReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['currentReading']
+                    );
+
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getExpectedReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['expectedReading']
+                    );
+
+                    self::assertEquals(
+                        $cardSensorReadingTypeObject->getRequestedReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['requestedReading']
+                    );
+
+                    if ($cardSensorReadingTypeObject instanceof Motion) {
+                        $motion = true;
+                        self::assertEquals(
+                            Motion::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+
+                    if ($cardSensorReadingTypeObject instanceof Relay) {
+                        $relay = true;
+                        self::assertEquals(
+                            Relay::READING_TYPE,
+                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
+                        );
+                    }
+                }
+                ++$sensorDataArrayCount;
+            }
+        }
+
+        self::assertTrue($temperature);
+        self::assertTrue($humidity);
+        self::assertTrue($latitude);
+        self::assertTrue($analog);
+        self::assertTrue($motion);
+        self::assertTrue($relay);
+    }
+
+    public function test_regular_user_getting_all_card_data(): void
+    {
+        $userToken = $this->setUserToken(
+            $this->client,
+            $this->regularUserOne->getEmail(),
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+
+        $this->client->request(
+            Request::METHOD_GET,
+            sprintf(self::CARD_VIEW_URL, 'index'),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+        );
+
+        $requestResponse = $this->client->getResponse();
+        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertIsArray($responseData['payload']);
+        self::assertGreaterThan(1, count($responseData['payload']));
+
+        $cardViewRepository = $this->entityManager->getRepository(CardView::class);
+        $sensorRepository = $this->entityManager->getRepository(Sensor::class);
+
+        foreach ($responseData['payload'] as $payload) {
+            /** @var CardView $cardViewObject */
+            $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
+
+            self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
+            self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
+            self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
+
+            $readingTypeQueryDTOs = $this->sensorTypeQueryFactory
+                ->getSensorTypeQueryDTOBuilder($payload['sensorType'])
+                ->buildSensorReadingTypes();
+
+            /** @var Sensor[] $cardSensorReadingTypeObjects */
+            $cardSensorReadingTypeObjects = $sensorRepository->findSensorTypeAndReadingTypeObjectsForSensor(
                 $cardViewObject->getSensor()->getDevice()->getDeviceID(),
                 $cardViewObject->getSensor()->getSensorName(),
                 null,
@@ -167,85 +336,16 @@ class GetCardViewControllerTest extends WebTestCase
                         );
                     }
                 }
-                ++$sensorDataArrayCount;
-            }
-        }
-    }
-
-    public function test_regular_user_getting_all_card_data(): void
-    {
-        $userToken = $this->setUserToken(
-            $this->client,
-            $this->regularUserOne->getEmail(),
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::CARD_VIEW_URL, 'index'),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
-        );
-
-        $requestResponse = $this->client->getResponse();
-        $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        self::assertEquals(UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL, $responseData['title']);
-        self::assertIsArray($responseData['payload']);
-        self::assertGreaterThan(1, count($responseData['payload']));
-
-        $cardViewRepository = $this->entityManager->getRepository(CardView::class);
-        $sensorRepository = $this->entityManager->getRepository(Sensor::class);
-
-        foreach ($responseData['payload'] as $payload) {
-            /** @var CardView $cardViewObject */
-            $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
-
-            self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
-            self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
-            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
-            self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
-            self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
-            self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
-
-            $readingTypeQueryDTOs = $this->sensorTypeQueryFactory
-                ->getSensorTypeQueryDTOBuilder($payload['sensorType'])
-                ->buildSensorReadingTypes();
-
-            /** @var Sensor[] $cardSensorReadingTypeObjects */
-            $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
-                $cardViewObject->getSensor()->getDevice()->getDeviceID(),
-                $cardViewObject->getSensor()->getSensorName(),
-                null,
-                $readingTypeQueryDTOs,
-            );
-
-            self::assertNotEmpty($cardSensorReadingTypeObjects);
-            $sensorDataArrayCount = 0;
-            foreach ($cardSensorReadingTypeObjects as $cardSensorReadingTypeObject) {
-                if ($cardSensorReadingTypeObject instanceof StandardReadingSensorInterface) {
-                    if ($cardSensorReadingTypeObject instanceof Temperature) {
+                if ($cardSensorReadingTypeObject instanceof BoolReadingSensorInterface) {
+                    if ($cardSensorReadingTypeObject instanceof Motion) {
                         self::assertEquals(
-                            Temperature::READING_TYPE,
+                            Motion::READING_TYPE,
                             $payload['sensorData'][$sensorDataArrayCount]['readingType']
                         );
                     }
-                    if ($cardSensorReadingTypeObject instanceof Humidity) {
+                    if ($cardSensorReadingTypeObject instanceof Relay) {
                         self::assertEquals(
-                            Humidity::READING_TYPE,
-                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
-                        );
-                    }
-                    if ($cardSensorReadingTypeObject instanceof Analog) {
-                        self::assertEquals(
-                            Analog::READING_TYPE,
-                            $payload['sensorData'][$sensorDataArrayCount]['readingType']
-                        );
-                    }
-                    if ($cardSensorReadingTypeObject instanceof Latitude) {
-                        self::assertEquals(
-                            Latitude::READING_TYPE,
+                            Relay::READING_TYPE,
                             $payload['sensorData'][$sensorDataArrayCount]['readingType']
                         );
                     }
@@ -258,19 +358,13 @@ class GetCardViewControllerTest extends WebTestCase
                         $payload['sensorData'][$sensorDataArrayCount]['currentReading']
                     );
                     self::assertEquals(
-                        $cardSensorReadingTypeObject->getHighReading(),
-                        $payload['sensorData'][$sensorDataArrayCount]['highReading']
+                        $cardSensorReadingTypeObject->getExpectedReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['expectedReading']
                     );
                     self::assertEquals(
-                        $cardSensorReadingTypeObject->getLowReading(),
-                        $payload['sensorData'][$sensorDataArrayCount]['lowReading']
+                        $cardSensorReadingTypeObject->getRequestedReading(),
+                        $payload['sensorData'][$sensorDataArrayCount]['requestedReading']
                     );
-                    if (isset($payload['sensorData'][$sensorDataArrayCount]['readingSymbol'])) {
-                        self::assertEquals(
-                            $cardSensorReadingTypeObject::getReadingSymbol(),
-                            $payload['sensorData'][$sensorDataArrayCount]['readingSymbol']
-                        );
-                    }
                 }
                 ++$sensorDataArrayCount;
             }
@@ -341,7 +435,7 @@ class GetCardViewControllerTest extends WebTestCase
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
             self::assertEquals($cardViewObject->getSensor()->getSensorName(), $payload['sensorName']);
-            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
+            self::assertEquals($cardViewObject->getSensor()->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']);
             self::assertEquals($cardViewObject->getSensor()->getDevice()->getRoomObject()->getRoom(), $payload['sensorRoom']);
             self::assertEquals($cardViewObject->getCardIconID()->getIconName(), $payload['cardIcon']);
             self::assertEquals($cardViewObject->getCardColourID()->getColour(), $payload['cardColour']);
@@ -361,7 +455,7 @@ class GetCardViewControllerTest extends WebTestCase
                 ++$arrayPlace;
             }
 
-            $cardSensorReadingTypeObjects = $sensorRepository->getSensorTypeAndReadingTypeObjectsForSensor(
+            $cardSensorReadingTypeObjects = $sensorRepository->findSensorTypeAndReadingTypeObjectsForSensor(
                 $cardViewObject->getSensor()->getDevice()->getDeviceID(),
                 $cardViewObject->getSensor()->getSensorName(),
                 null,
@@ -398,8 +492,30 @@ class GetCardViewControllerTest extends WebTestCase
                             );
                         }
                     }
-                } else {
-                    self::fail('Reading type not supported');
+                    ++$sensorDataArrayCount;
+                    continue;
+                }
+                if ($cardSensorReadingTypeObject instanceof BoolReadingSensorInterface) {
+                    if ($cardSensorReadingTypeObject::getReadingTypeName() === $payload['sensorData'][$sensorDataArrayCount]['readingType']) {
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
+                            $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
+                        );
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject->getCurrentReading(),
+                            $payload['sensorData'][$sensorDataArrayCount]['currentReading']
+                        );
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject->getExpectedReading(),
+                            $payload['sensorData'][$sensorDataArrayCount]['expectedReading']
+                        );
+                        self::assertEquals(
+                            $cardSensorReadingTypeObject->getRequestedReading(),
+                            $payload['sensorData'][$sensorDataArrayCount]['requestedReading']
+                        );
+                    }
+                    ++$sensorDataArrayCount;
+                    continue;
                 }
 
                 ++$sensorDataArrayCount;
@@ -429,6 +545,16 @@ class GetCardViewControllerTest extends WebTestCase
                 Analog::READING_TYPE,
             ]
         ];
+        yield [
+            [
+                Motion::READING_TYPE,
+            ]
+        ];
+        yield [
+            [
+                Relay::READING_TYPE,
+            ]
+        ];
 
         yield [
             [
@@ -440,8 +566,159 @@ class GetCardViewControllerTest extends WebTestCase
         yield [
             [
                 Temperature::READING_TYPE,
+                Latitude::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Analog::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Motion::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Relay::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Latitude::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Analog::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Motion::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Relay::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Latitude::READING_TYPE,
+                Analog::READING_TYPE,
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
                 Humidity::READING_TYPE,
                 Latitude::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Humidity::READING_TYPE,
+                Analog::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Humidity::READING_TYPE,
+                Motion::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Humidity::READING_TYPE,
+                Relay::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Latitude::READING_TYPE,
+                Analog::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Latitude::READING_TYPE,
+                Motion::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Latitude::READING_TYPE,
+                Relay::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Analog::READING_TYPE,
+                Motion::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Analog::READING_TYPE,
+                Relay::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Latitude::READING_TYPE,
+                Analog::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Latitude::READING_TYPE,
+                Motion::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Humidity::READING_TYPE,
+                Latitude::READING_TYPE,
+                Relay::READING_TYPE
             ]
         ];
 
@@ -469,6 +746,15 @@ class GetCardViewControllerTest extends WebTestCase
 
         yield [
             [
+                Latitude::READING_TYPE,
+                Analog::READING_TYPE
+            ]
+        ];
+
+        yield [
+            [
+                Temperature::READING_TYPE,
+                Humidity::READING_TYPE,
                 Latitude::READING_TYPE,
                 Analog::READING_TYPE
             ]
@@ -499,7 +785,7 @@ class GetCardViewControllerTest extends WebTestCase
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::CARD_VIEW_URL, 'index'),
-            ['sensor-types' => SensorType::ALL_SENSOR_TYPES],
+            ['sensor-types' => AbstractSensorType::ALL_SENSOR_TYPES],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
         );

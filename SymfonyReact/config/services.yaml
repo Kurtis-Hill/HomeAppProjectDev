@@ -1,12 +1,12 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 imports:
+    - { resource: elasticsearch.yaml }
     - { resource: ../src/Devices/services-devices.yaml }
     - { resource: ../src/Sensors/services-esp-sensors.yaml }
     - { resource: ../src/User/services-user.yml }
     - { resource: ../src/UserInterface/services-user_interface.yml }
     - { resource: ../src/Authentication/services-authentication.yaml }
     - { resource: ../src/ORM/services-orm.yaml }
-    - { resource: elasticsearch.yaml }
 
 parameters:
 services:
@@ -15,7 +15,15 @@ services:
         autoconfigure: true
         bind:
           string $projectDir: '%kernel.project_dir%'
-    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
+
+    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
+      arguments:
+        $endpoint:  '%env(ELASTIC_SEARCH_HOST)%:%env(ELASTIC_SEARCH_PORT)%'
+        $index: '%env(ELASTIC_INDEX_LOG)%'
+        $client: "@elastica.client"
+        $level: !php/const Monolog\Logger::ERROR
+        $bubble: true
+        $elasticsearchVersion: 8.4.3
 
   ################### Core ############################
     App\Common\:
@@ -37,13 +45,21 @@ services:
         $infoIndex: '@elastica.log_index'
         $debugIndex: '@elastica.log_index'
         $logIndex: '@elastica.log_index'
+#      tags:
+#        - { name: monolog.logger, channel: elastic }
 
-      tags:
-        - { name: monolog.logger, channel: elastic }
+##    monolog.elastic:
+#      alias: 'App\Common\Logs\ElasticLogger'
+#      public: true
 
-    monolog.elastic:
-      alias: 'App\Common\Logs\ElasticLogger'
-      public: true
+#    Psr\Log\LoggerInterface: '@monolog.elastic'
+#    monolog.elastica.client:
+#        class: Elastica\Client:
+#        arguments:
+#            $config:
+#              servers:
+#              - { host: '%env(ELASTIC_SEARCH_HOST)%', port: '%env(ELASTIC_SEARCH_PORT)%', username: '%env(ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%', password: '%env(ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%', transport: '%env(ELASTIC_TRANSPORT)%', curl: {64: '%env(ELASTIC_SEARCH_SSL_VERIFICATION)%'} }
+#              - { host: '%env(ELASTIC_SEARCH_HOST_FAILOVER)%', port: '%env(ELASTIC_SEARCH_PORT_FAILOVER)%', username: '%env(ELASTIC_SEARCH_HTTP_AUTH_USERNAME_FAILOVER)%', password: '%env(ELASTIC_SEARCH_HTTP_AUTH_PASSWORD_FAILOVER)%', transport: '%env(ELASTIC_TRANSPORT_FAILOVER)%', curl: {64: '%env(ELASTIC_SEARCH_SSL_VERIFICATION_FAILOVER)%'} }
 
     App\Common\Command\ElasticLogIndexCommand:
       arguments:
@@ -51,14 +67,25 @@ services:
           {
             index: '@elastica.log_index',
             mapping: {
+              host: 'keyword',
               message: 'text',
-              level: 'bucket',
+              type: 'bucket',
+              channel: 'keyword',
+              level: 'text',
+              monolog_level: 'number',
               context: 'array',
             }
           }
         ]
       tags:
         - { name: 'console.command' }
+
+    app.listener.redirect_404_to_homepage:
+      class: App\UserInterface\EventListener\RedirectHomePage
+      arguments:
+        - "@router"
+      tags:
+        - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
 #    Psr\Log\LoggerInterface:
 #      alias: 'App\Common\Logs\ElasticLogger'

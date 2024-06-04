@@ -12,7 +12,7 @@ use App\User\Entity\Group;
 use App\User\Entity\User;
 use App\User\Repository\ORM\GroupRepositoryInterface;
 use App\UserInterface\Controller\Card\AddCardController;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
@@ -76,7 +76,7 @@ class AddCardControllerTest extends WebTestCase
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->cardViewRepository = $this->entityManager->getRepository(CardView::class);
         $this->iconsRepository = $this->entityManager->getRepository(Icons::class);
-        $this->cardColourRepository = $this->entityManager->getRepository(CardColour::class);
+        $this->cardColourRepository = $this->entityManager->getRepository(Colour::class);
         $this->cardStateRepository = $this->entityManager->getRepository(CardState::class);
     }
 
@@ -289,7 +289,7 @@ class AddCardControllerTest extends WebTestCase
         $icons = $this->iconsRepository->findAll();
         $icon = $icons[0];
 
-        /** @var CardColour[] $colours */
+        /** @var Colour[] $colours */
         $colours = $this->cardColourRepository->findAll();
         $colour = $colours[0];
 
@@ -372,7 +372,7 @@ class AddCardControllerTest extends WebTestCase
         if ($cardColour === true) {
             $colour = $this->cardColourRepository->findAll()[0];
         }
-        /** @var CardColour|null $cardColour */
+        /** @var Colour|null $cardColour */
         $colour = $colour ?? null;
 
         if ($cardState === true) {

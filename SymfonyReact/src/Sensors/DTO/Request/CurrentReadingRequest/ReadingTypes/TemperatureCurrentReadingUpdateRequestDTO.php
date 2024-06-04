@@ -2,13 +2,15 @@
 
 namespace App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\BMP280TemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DallasTemperatureConstraint;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\DHTTemperatureConstraint;
+use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\SHTTemperatureConstraint;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]
@@ -23,6 +25,9 @@ class TemperatureCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUp
         ),
         BMP280TemperatureConstraint(
             groups:[Bmp::NAME]
+        ),
+        SHTTemperatureConstraint(
+            groups: [Sht::NAME]
         ),
     ]
     protected mixed $readingTypeCurrentReading;

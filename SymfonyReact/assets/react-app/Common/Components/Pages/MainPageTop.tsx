@@ -20,18 +20,16 @@ export function MainPageTop() {
     const [refreshNavbar, setRefreshNavbar] = useState<boolean>(true);
     
     const setRefreshNavDataFlag = (newValue: boolean) => {
-        // console.log('setRefreshNavDataFlag', newValue);
         setRefreshNavbar(newValue);
     }
 
     useEffect(() => {
-        // console.log('main page top fired');
     }, [refreshNavbar]);
     
     return (
         <React.Fragment>
             <RequestInterceptor />
-            <ResponseComponent />
+            <ResponseComponent refreshNavBar={setRefreshNavbar} />
             <div id="page-top">
                 <div id="wrapper">
                     <UserDataContextProvider children={undefined}>

@@ -9,6 +9,7 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
+use App\Sensors\Exceptions\UserNotAllowedException;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\Builders\User\UserUpdateDTOBuilder;
 use App\User\DTO\Request\UserDTOs\UpdateUserRequestDTO;
@@ -26,7 +27,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -102,9 +103,11 @@ class UpdateUserController extends AbstractController
             $validationErrors = $updateUserHandler->handleUserUpdate($userUpdateDTO);
         } catch (IncorrectUserPasswordException|NotAllowedToChangeUserRoleException|CannotUpdateUsersGroupException|NotAllowedToUpdatePasswordException|GroupNotFoundException $e) {
             return $this->sendBadRequestJsonResponse([$e->getMessage()]);
+        } catch (UserNotAllowedException $e) {
+            return $this->sendForbiddenAccessJsonResponse([$e->getMessage()]);
         }
         if (!empty($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($validationErrors,);
+            return $this->sendBadRequestJsonResponse($validationErrors, );
         }
 
         try {
@@ -121,7 +124,7 @@ class UpdateUserController extends AbstractController
         $userResponseDTO = UserResponseBuilder::buildUserResponseDTO($userToUpdate);
 
         try {
-            $normalizedUser = $this->normalizeResponse($userResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedUser = $this->normalize($userResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Updated User']);
         }

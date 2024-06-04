@@ -5,13 +5,11 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import { registerAccountUrl, indexUrl } from "../../Common/URLs/CommonURLs";
-import { getRefreshToken, getToken } from "../../Authentication/Tokens/GetAPITokens";
+import { getRefreshToken, getToken } from "../../Authentication/Tokens/APITokenHandler";
 
 import Input from "../../Common/Components/Inputs/Input";
 import ColouredPage from "../../Common/Components/Pages/ColouredPage";
 import DotCircleSpinner from "../../Common/Components/Spinners/DotCircleSpinner";
-
-import { LoginFormUserInputsInterface } from "../../Authentication/Form/LoginFormUserInputsInterface";
 
 import { handleLogin, handleTokenRefresh } from "../../Authentication/Request/LoginRequest";
 import { handlePingRequest, PingInterface } from "../../Common/Request/Ping";
@@ -19,8 +17,13 @@ import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
 import { TokenRefreshResponseInterface } from '../../Authentication/Response/TokenRefreshResponseInterface';
 import { setUserSession } from '../../Authentication/Session/UserSession';
 
-export default function Login(): void {
-    const [userInputs, setUserInputs] = useState<LoginFormUserInputsInterface>({});
+export type LoginUserInputsInterface = {
+    username: string|null;
+    password: string|null;
+}
+
+export default function Login() {
+    const [userInputs, setUserInputs] = useState<LoginUserInputsInterface>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);
     const [pingResult, setPingResult] = useState<boolean>(true);
@@ -31,12 +34,12 @@ export default function Login(): void {
 
     useEffect(() => {
         checkCurrentToken();
-    })
+    }, [])
 
     const handleInput = (event: { target: { name: string; value: string; }; }) => {
         const name: string = event.target.name;
         const value: string = event.target.value;
-        setUserInputs((values: LoginFormUserInputsInterface) => ({...values, [name]: value}))
+        setUserInputs((values: LoginUserInputsInterface) => ({...values, [name]: value}))
     }
 
     const validateUserInput = (): boolean => {

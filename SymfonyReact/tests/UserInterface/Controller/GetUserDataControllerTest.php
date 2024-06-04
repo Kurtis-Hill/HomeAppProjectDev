@@ -20,7 +20,7 @@ class GetUserDataControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_USER_DATA_URL = '/HomeApp/api/user/user-data/get';
+    private const GET_USER_DATA_URL = '/HomeApp/api/user-data/get';
 
     private ?string $userToken = null;
 
@@ -54,6 +54,7 @@ class GetUserDataControllerTest extends WebTestCase
         $userToken = $this->setUserToken(
             $this->client,
             $email,
+
             $password
         );
         $this->client->request(

@@ -9,12 +9,13 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
-use App\Sensors\DTO\Request\SensorUpdateDTO\SensorUpdateRequestDTO;
+use App\Sensors\Builders\Request\SensorUpdateBuilders\SensorUpdateDTOBuilder;
+use App\Sensors\Builders\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\DTO\Request\SensorUpdateDTO\UpdateSensorDetailsRequestDTO;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\DeviceNotFoundException;
 use App\Sensors\Exceptions\DuplicateSensorException;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Sensors\SensorServices\NewSensor\SensorSavingHandler;
 use App\Sensors\SensorServices\UpdateSensor\UpdateSensorInterface;
 use App\Sensors\Voters\SensorVoter;
 use Doctrine\ORM\Exception\ORMException;
@@ -22,7 +23,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -51,20 +52,20 @@ class UpdateSensorController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         UpdateSensorInterface $updateSensorService,
-        SensorRepositoryInterface $sensorRepository,
+        SensorSavingHandler $sensorSavingHandler,
+        SensorUpdateDTOBuilder $sensorUpdateDTOBuilder,
     ): JsonResponse {
-        $updateSensorRequestDTO = new SensorUpdateRequestDTO();
+        $updateSensorRequestDTO = new UpdateSensorDetailsRequestDTO();
         try {
             $this->deserializeRequest(
                 $request->getContent(),
-                SensorUpdateRequestDTO::class,
+                UpdateSensorDetailsRequestDTO::class,
                 'json',
                 [AbstractNormalizer::OBJECT_TO_POPULATE => $updateSensorRequestDTO]
             );
         } catch (NotEncodableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
         }
-
         $requestValidationErrors = $validator->validate($updateSensorRequestDTO);
 
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
@@ -79,10 +80,11 @@ class UpdateSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
-        $sensorUpdateDTO = $updateSensorService->buildSensorUpdateDTO(
+        $sensorUpdateDTO = $sensorUpdateDTOBuilder->buildSensorUpdateDTOFromRequestDTO(
             $updateSensorRequestDTO,
             $sensor
         );
+
         try {
             $this->denyAccessUnlessGranted(SensorVoter::UPDATE_SENSOR, $sensorUpdateDTO);
         } catch (AccessDeniedException) {
@@ -100,7 +102,7 @@ class UpdateSensorController extends AbstractController
         }
 
         try {
-            $sensorRepository->flush();
+            $sensorSavingHandler->saveSensor($sensor);
         } catch (ORMException) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Device')]);
         }
@@ -115,7 +117,7 @@ class UpdateSensorController extends AbstractController
 
         $sensorResponseDTO = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
         try {
-            $normalizedResponse = $this->normalizeResponse($sensorResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($sensorResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['Sensor Updated']);
         }

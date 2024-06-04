@@ -9,12 +9,6 @@ use App\User\Entity\User;
 
 interface UpdateDeviceHandlerInterface
 {
-    public function buildUpdateDeviceDTO(
-        DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
-        User $createdByUser,
-        Devices $deviceToUpdate,
-    ): UpdateDeviceDTO;
-
     public function updateDevice(UpdateDeviceDTO $deviceUpdateRequestDTO): array;
 
     public function saveDevice(Devices $device): bool;

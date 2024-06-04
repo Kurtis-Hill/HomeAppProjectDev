@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Context } from 'react';
-import {  useOutletContext  } from "react-router-dom";
 import { CardRowContainer } from '../../UserInterface/Cards/Components/CardRowContainer';
 
 export function CardLandingPage() {

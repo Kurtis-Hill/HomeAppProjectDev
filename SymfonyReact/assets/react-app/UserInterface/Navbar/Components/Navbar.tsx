@@ -5,7 +5,7 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import { checkAdmin } from "../../../Authentication/Session/UserSession";
 
 import { handleNavBarRequest } from "../Request/NavBarRequest";
-import { NavBarResponseInterface } from "../Response/NavBarResponseInterface";
+import { IndividualNavBarElement, NavBarResponseInterface } from "../Response/NavBarResponseInterface";
 
 import NavbarViewOptionListElements  from "./NavbarViewOptionListElements";
 
@@ -61,6 +61,19 @@ export default function NavBar(props: {
         try {
             const navbarResponse: AxiosResponse = await handleNavBarRequest();
             const navbarResponseData: NavBarResponseInterface = navbarResponse.data;
+
+            const triggersNavElement: IndividualNavBarElement = {
+                header: 'Triggers',
+                icon: 'bolt',
+                itemName: 'Triggers',
+                listItemLinks: [
+                    {
+                        displayName: 'View Triggers',
+                        link: '/HomeApp/WebApp/sensors/triggers'
+                    },
+                ]
+            }
+            navbarResponseData.payload.push(triggersNavElement);
 
             setNavbarResponseData(navbarResponseData);
             setLoadingNavbarListItems(false);

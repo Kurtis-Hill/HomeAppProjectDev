@@ -7,7 +7,7 @@ use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Entity\Devices;
-use App\Sensors\Builders\SensorFilterDTOBuilders\SensorFilterDTOBuilder;
+use App\Sensors\Builders\Internal\SensorFilterDTOBuilders\SensorFilterDTOBuilder;
 use App\Sensors\DTO\Internal\Sensor\SensorFilterDTO;
 use App\Sensors\SensorServices\SensorFilter\SensorFilter;
 use App\User\Entity\Room;
@@ -28,7 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -89,7 +89,7 @@ class GetCardViewController extends AbstractController
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {
-            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()->getUserIdentifier()]);
+            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()?->getUserIdentifier()]);
 
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Card filters')]);
         }
@@ -142,11 +142,9 @@ class GetCardViewController extends AbstractController
         try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter);
         } catch (WrongUserTypeException) {
-
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        } catch (ORMException) {
+        } catch (ORMException $e) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()?->getUserIdentifier()]);
-
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Card')]);
         }
 
@@ -219,13 +217,13 @@ class GetCardViewController extends AbstractController
         try {
             $cardDTOs = $this->cardViewDTOCreationHandler->handleCurrentReadingSensorCardsCreation($cardData);
         } catch (SensorTypeBuilderFailureException|CardTypeNotRecognisedException $exception) {
-            $this->logger->error($exception->getMessage(), ['user' => $this->getUser()->getUserIdentifier()]);
+            $this->logger->error($exception->getMessage(), ['user' => $this->getUser()?->getUserIdentifier()]);
 
             return $this->sendBadRequestJsonResponse([$exception->getMessage()]);
         }
 
         try {
-            $responseData = $this->normalizeResponse($cardDTOs);
+            $responseData = $this->normalize($cardDTOs);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }

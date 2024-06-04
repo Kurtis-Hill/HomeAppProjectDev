@@ -18,7 +18,6 @@ trait QueryJoinBuilderTrait
     {
         $alias = [];
         foreach ($joinConditionDTOs as $joinConditionDTO) {
-            /** @var  $sensorNameJoinConditionString */
             $sensorNameJoinConditionString = $this->createJoinConditionString(
                 $joinConditionDTO->getJoinConditionId(),
                 $joinConditionDTO->getJoiningConditionId(),

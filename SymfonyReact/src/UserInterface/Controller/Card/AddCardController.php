@@ -18,7 +18,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -29,16 +29,6 @@ class AddCardController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
-
-    private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
 
     #[Route('add', name: 'add-card-form-v2', methods: [Request::METHOD_POST])]
     public function addCardForUser(Request $request, ValidatorInterface $validator, SensorRepositoryInterface $sensorRepository, CardCreationHandlerInterface $cardCreationHandler): JsonResponse
@@ -60,14 +50,6 @@ class AddCardController extends AbstractController
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
-
-//        try {
-//            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-//                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-//            );
-//        } catch (ValidatorProcessorException $e) {
-//            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-//        }
 
         $user = $this->getUser();
         if (!$user instanceof User) {

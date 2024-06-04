@@ -18,4 +18,5 @@ export interface AddNewDeviceInputInterface {
     'devicePasswordCheck': string
     'deviceRoom': number
     'deviceGroup': number
+    'deviceIPAddress'?: string
 }

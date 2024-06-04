@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import BaseModal from '../../../../Common/Components/Modals/BaseModal';
 import { TabSelector } from '../../../../Common/Components/TabSelector';
 import { UpdateCard } from '../Form/UpdateCard';
@@ -7,9 +7,11 @@ import { ReadingTypeDisplayTable } from '../../../../Sensors/Components/ReadingT
 import { getSensorsRequest, GetSensorsRequestType } from '../../../../Sensors/Request/Sensor/GetSensorsRequest';
 import SensorResponseInterface from '../../../../Sensors/Response/Sensor/SensorResponseInterface';
 import { RequestTypeEnum } from '../../../../Common/API/RequestTypeEnum';
+import { CommandsDisplay } from '../../../../Sensors/Components/Display/CommandsDisplay';
 
 const cardViewUpdate: string = 'Card View Update';
 const boundaryUpdate: string = 'Boundary Update';
+const commands: string = 'Commands';
 
 export function CardDisplayModal(props: {
     cardViewID: number|null;     
@@ -17,12 +19,13 @@ export function CardDisplayModal(props: {
     setLoadingCardModalView: (loadingCardModalView: boolean) => void;
 }) {
     const { cardViewID, loadingCardModalView, setLoadingCardModalView } = props;
-    const [tabSelection, setTabSelection] = useState<string>('Card View Update');
+    const [tabSelection, setTabSelection] = useState<string>(cardViewUpdate);
     const [sensorResponse, setSensorResponse] = useState<SensorResponseInterface|null>(null);
 
     const tabOptions = [
         cardViewUpdate,
         boundaryUpdate,
+        commands,
     ];
 
     const sensorRequestParameters = {
@@ -35,21 +38,19 @@ export function CardDisplayModal(props: {
     }
 
     const tabSelectionWrapper = async (tabSelection: string) => {
-        if (tabSelection === 'Boundary Update') {
-            setTabSelection(tabSelection);
+        setTabSelection(tabSelection);
+        if (tabSelection === boundaryUpdate || tabSelection === commands) {
             const sensorResponse = await handleGetSensorRequest(sensorRequestParameters);
             if (sensorResponse) {
-                setSensorResponse(sensorResponse[0]);
+                setSensorResponse(sensorResponse);
             }
-        } else {
-            setTabSelection(tabSelection);
         }
     }
 
     const handleGetSensorRequest = async (getSensorParameters: GetSensorsRequestType): Promise<SensorResponseInterface> => {
         const getSensorsResponse = await getSensorsRequest(getSensorParameters);
         if (getSensorsResponse.status === 200) {
-            return getSensorsResponse.data.payload;
+            return getSensorsResponse.data.payload[0];
         }
     }
 
@@ -87,6 +88,16 @@ export function CardDisplayModal(props: {
                                 null
 
                     }    
+
+                    {
+                        tabSelection === tabOptions[2] && sensorResponse !== null
+                            ?
+                                <CommandsDisplay
+                                    sensor={sensorResponse}
+                                />
+                            :
+                                null
+                    }
                 </div>
             </BaseModal>
         </>

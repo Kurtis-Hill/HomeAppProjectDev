@@ -4,13 +4,27 @@ declare(strict_types=1);
 
 namespace App\ORM\Migrations;
 
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\Sensor;
+use App\Sensors\Entity\SensorTypes\Bmp;
+use App\Sensors\Entity\SensorTypes\Dallas;
+use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
+use App\Sensors\Entity\SensorTypes\Soil;
+use App\User\Entity\Group;
+use App\UserInterface\Entity\Card\CardState;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20220303160823 extends AbstractMigration
 {
     public function getDescription(): string
@@ -26,20 +40,23 @@ final class Version20220303160823 extends AbstractMigration
         );
 
         $this->addSql('
-            CREATE TABLE user (
+            CREATE TABLE users (
                 userID INT AUTO_INCREMENT NOT NULL, 
                 firstName VARCHAR(20) NOT NULL, 
                 lastName VARCHAR(20) NOT NULL, 
-                email VARCHAR(180) NOT NULL, 
+                email VARCHAR(180) NOT NULL,
+                groupID INT NOT NULL,
                 roles JSON NOT NULL, 
                 profilePic VARCHAR(100) CHARACTER SET utf8mb3 DEFAULT \'\'\'/assets/pictures/guest.jpg\'\'\', 
                 password LONGTEXT CHARACTER SET utf8mb3 NOT NULL, 
                 salt LONGTEXT CHARACTER SET utf8mb3 DEFAULT NULL, 
-                groupID INT DEFAULT NULL, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX GroupName (groupID), 
+                UNIQUE INDEX email (email),
+                INDEX groupID (groupID),
                 INDEX profilePic (profilePic), 
-                UNIQUE INDEX email (email), 
+                INDEX `password` (password),
+                INDEX roles (roles),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(userID)
             ) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
@@ -49,229 +66,96 @@ final class Version20220303160823 extends AbstractMigration
                 groupID INT AUTO_INCREMENT NOT NULL,
                 groupName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                UNIQUE INDEX groupName (groupName), 
+                UNIQUE INDEX groupName (groupName),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(groupID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
         $this->addSql('
-            CREATE TABLE groupmapping (
+            CREATE TABLE groupmappings (
                 groupMappingID INT AUTO_INCREMENT NOT NULL, 
                 userID INT NOT NULL, 
                 groupID INT NOT NULL, 
-                INDEX groupID (groupID), 
-                INDEX userID (userID), 
                 UNIQUE INDEX IDX_1C993DEE5FD86D04 (userID, groupID), 
                 PRIMARY KEY(groupMappingID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
-        $this->addSql('
-            CREATE TABLE analog (
-                analogID INT AUTO_INCREMENT NOT NULL, 
-                sensorID INT NOT NULL, 
-                analogReading DOUBLE PRECISION DEFAULT NULL, 
-                highAnalog DOUBLE PRECISION DEFAULT 1000, 
-                lowAnalog DOUBLE PRECISION DEFAULT 1000, 
-                constRecord TINYINT(1) DEFAULT \'0\', 
-                updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                UNIQUE INDEX analog_ibfk_3 (sensorID), 
-                PRIMARY KEY(analogID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE humidity (
-                humidID INT AUTO_INCREMENT NOT NULL, 
-                sensorID INT NOT NULL, 
-                humidReading DOUBLE PRECISION NOT NULL, 
-                highHumid DOUBLE PRECISION DEFAULT \'70\' NOT NULL, 
-                lowHumid DOUBLE PRECISION DEFAULT \'15\' NOT NULL, 
-                constRecord TINYINT(1) DEFAULT \'0\' NOT NULL, 
-                updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                UNIQUE INDEX humid_ibfk_1 (sensorID), 
-                PRIMARY KEY(humidID)
+        $this->addSql("
+            CREATE TABLE `basereadingtype` (
+                `baseReadingTypeID` INT AUTO_INCREMENT NOT NULL,
+                `sensorID` INT NOT NULL,         
+                `constRecord` TINYINT(1) NOT NULL,
+                `updatedAt` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                `createdAt` DATETIME NOT NULL DEFAULT current_timestamp(),      
+                INDEX sensorID (sensorID),
+                INDEX constRecord (constRecord),
+                INDEX updatedAt (updatedAt),
+                INDEX createdAt (createdAt),
+                PRIMARY KEY (`baseReadingTypeID`)
             )
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
+        ");
 
-        $this->addSql('
-            CREATE TABLE latitude (
-                latitudeID INT AUTO_INCREMENT NOT NULL, 
-                sensorID INT NOT NULL, 
-                latitude DOUBLE PRECISION NOT NULL, 
-                highLatitude DOUBLE PRECISION DEFAULT \'90\' NOT NULL, 
-                lowLatitude DOUBLE PRECISION DEFAULT \'-90\' NOT NULL, 
-                constRecord TINYINT(1) DEFAULT \'0\' NOT NULL, 
-                updatedAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                UNIQUE INDEX lat_ibfk_1 (sensorID), 
-                PRIMARY KEY(latitudeID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' '
+        $this->addSql("
+            CREATE TABLE `standardreadingtype`
+            (
+                `readingTypeID` INT AUTO_INCREMENT NOT NULL, 
+                `baseReadingTypeID` INT NOT NULL,
+                `currentReading` DOUBLE PRECISION NOT NULL,
+                `highReading` DOUBLE PRECISION NOT NULL,
+                `lowReading` DOUBLE PRECISION NOT NULL,
+                `standardReadingType` VARCHAR(50) NOT NULL,        
+                INDEX currentReading (currentReading),
+                INDEX highReading (highReading),
+                INDEX lowReading (lowReading),
+                INDEX standardreadingtypeIndex (standardReadingType),
+                PRIMARY KEY (`readingTypeID`)
+            )             
+        ");
+
+        $this->addSql(
+            'CREATE TABLE boolreadingtype (
+                `readingTypeID` INT AUTO_INCREMENT NOT NULL,
+                `baseReadingTypeID` INT NOT NULL,
+                `currentReading` TINYINT(1) NOT NULL,
+                `requestedReading` TINYINT(1) NOT NULL,
+                `expectedReading` TINYINT(1) NULL DEFAULT NULL,
+                `boolReadingType` VARCHAR(25) NOT NULL,
+                INDEX currentReading (currentReading),
+                INDEX boolReadingType (boolReadingType),
+                PRIMARY KEY(readingTypeID)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB'
         );
-
-        $this->addSql('
-            CREATE TABLE temperature (
-                tempID INT AUTO_INCREMENT NOT NULL, 
-                sensorID INT DEFAULT NULL, 
-                tempReading DOUBLE PRECISION NOT NULL, 
-                highTemp DOUBLE PRECISION DEFAULT \'26\' NOT NULL, 
-                lowTemp DOUBLE PRECISION DEFAULT \'12\' NOT NULL, 
-                constRecord TINYINT(1) DEFAULT \'0\' NOT NULL, 
-                updatedAt DATETIME DEFAULT current_timestamp() NOT NULL,
-                UNIQUE INDEX temp_ibfk_1 (sensorID), 
-                PRIMARY KEY(tempID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' '
-        );
-
-        $this->addSql('
-            CREATE TABLE constanalog (
+        $this->addSql(
+            '
+            CREATE TABLE readingtypeconst 
+            (
                 constRecordID INT AUTO_INCREMENT NOT NULL, 
-                analogID INT NOT NULL, 
+                baseReadingTypeID INT NOT NULL, 
                 sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME NOT NULL, 
-                INDEX sensorID (analogID), 
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL,
+                sensorReadingType VARCHAR(50) NOT NULL, 
+                INDEX sensorReading (sensorReading),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(constRecordID)
              ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' '
+        );
+
 
         $this->addSql('
-            CREATE TABLE consthumid (
-                constRecordID INT AUTO_INCREMENT NOT NULL, 
-                humidID INT NOT NULL, 
-                sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX sensorID (humidID), 
-                PRIMARY KEY(constRecordID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE constlatitude (
-                constRecordID INT AUTO_INCREMENT NOT NULL, 
-                latitudeID INT NOT NULL, 
-                sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX latitudeID (latitudeID), PRIMARY KEY(constRecordID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE consttemp (
-                constRecordID INT AUTO_INCREMENT NOT NULL, 
-                tempID INT NOT NULL, 
-                sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX consttemp_ibfk_1 (tempID), 
-                PRIMARY KEY(constRecordID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE outofrangeanalog (
+            CREATE TABLE readingtypeoutofrange (
                 outofrangeID INT AUTO_INCREMENT NOT NULL, 
-                analogID INT NOT NULL, 
+                baseReadingTypeID INT NOT NULL, 
                 sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX sensorID (analogID), 
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL,
+                sensorReadingType VARCHAR(50) NOT NULL, 
+                INDEX sensorReading (sensorReading),
+                INDEX createdAt (createdAt),
                 PRIMARY KEY(outofrangeID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE outofrangehumid (
-                outofrangeID INT AUTO_INCREMENT NOT NULL, 
-                humidID INT NOT NULL, 
-                sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX sensorID (humidID), 
-                PRIMARY KEY(outofrangeID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE outofrangelatitude (
-                outofrangeID INT AUTO_INCREMENT NOT NULL, 
-                latitudeID INT NOT NULL, 
-                sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX outofrangelatitude_ibfk_1 (latitudeID), 
-                PRIMARY KEY(outofrangeID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE outofrangetemp (
-                outofrangeID INT AUTO_INCREMENT NOT NULL, 
-                tempID INT NOT NULL, 
-                sensorReading DOUBLE PRECISION NOT NULL, 
-                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
-                INDEX outofrangetemp_ibfk_1 (tempID), 
-                PRIMARY KEY(outofrangeID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE bmp (
-                bmpID INT AUTO_INCREMENT NOT NULL, 
-                tempID INT NOT NULL, 
-                humidID INT NOT NULL, 
-                latitudeID INT NOT NULL, 
-                sensorID INT DEFAULT NULL, 
-                UNIQUE INDEX sensorID (sensorID), 
-                UNIQUE INDEX tempID (tempID), 
-                UNIQUE INDEX humidID (humidID), 
-                UNIQUE INDEX latitudeID (latitudeID), 
-                PRIMARY KEY(bmpID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE dallas (
-                dallasID INT AUTO_INCREMENT NOT NULL, 
-                tempID INT NOT NULL, 
-                sensorID INT NOT NULL, 
-                UNIQUE INDEX tempID (tempID), 
-                UNIQUE INDEX sensorID (sensorID), 
-                PRIMARY KEY(dallasID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE dht (
-                dhtID INT AUTO_INCREMENT NOT NULL, 
-                tempID INT NOT NULL, 
-                humidID INT NOT NULL, 
-                sensorID INT NOT NULL, 
-                UNIQUE INDEX sensorID (sensorID), 
-                UNIQUE INDEX tempID (tempID), 
-                UNIQUE INDEX humidID (humidID), 
-                PRIMARY KEY(dhtID)
-            ) 
-            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
-        ');
-
-        $this->addSql('
-            CREATE TABLE soil (
-                soilID INT AUTO_INCREMENT NOT NULL, 
-                analogID INT NOT NULL, 
-                sensorID INT NOT NULL, 
-                UNIQUE INDEX analogID (analogID), 
-                UNIQUE INDEX sensorID (sensorID), 
-                PRIMARY KEY(soilID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
@@ -285,12 +169,7 @@ final class Version20220303160823 extends AbstractMigration
                 colourID INT DEFAULT NULL, 
                 stateID INT DEFAULT 1 NOT NULL, 
                 UNIQUE INDEX user_cardview (userID, sensorID),
-                INDEX FK_E36636B53casrdState (stateID), 
                 INDEX UserID (userID), 
-                INDEX FK_E36636B5840D9A7A (iconID), 
-                INDEX cardview_show (cardViewID), 
-                INDEX FK_E36636B5A356FF88 (colourID), 
-                INDEX FK_E36636B53BE475E6 (sensorID), 
                 PRIMARY KEY(cardViewID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
@@ -307,10 +186,12 @@ final class Version20220303160823 extends AbstractMigration
                 ipAddress VARCHAR(13) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
                 externalIpAddress VARCHAR(13) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
                 roles JSON NOT NULL COLLATE `utf8mb4_general_ci`, 
-                INDEX createdBy (createdBy), 
-                INDEX groupID (groupID), 
+                INDEX createdBy (createdBy),
+                INDEX groupID (groupID),
                 INDEX roomID (roomID),
-                UNIQUE INDEX device_room_un (deviceName, roomID), 
+                INDEX deviceName (deviceName),
+                UNIQUE INDEX device_room_un (deviceName, roomID),
+                UNIQUE INDEX deviceIP (ipAddress, externalIpAddress),  
                 PRIMARY KEY(deviceID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
@@ -375,11 +256,15 @@ final class Version20220303160823 extends AbstractMigration
                 createdBy INT NOT NULL, 
                 sensorName VARCHAR(50) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`, 
                 deviceID INT NOT NULL, 
-                sensorTypeID INT NOT NULL, 
-                INDEX sensornames_ibfk_1 (deviceID), 
-                INDEX sensornames_ibfk_2 (createdBy), 
-                INDEX sensortype (sensorTypeID), 
+                sensorTypeID INT NOT NULL,
+                pinNumber TINYINT NOT NULL,
+                takeReadingIntervalMilli MEDIUMINT DEFAULT '. Sensor::DEFAULT_READING_INTERVAL . ' NOT NULL,
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL,
                 UNIQUE INDEX sensor_device (sensorName, deviceID),
+                INDEX sensorName (sensorName),
+                INDEX createdBy (createdBy),
+                INDEX deviceID (deviceID),
+                INDEX sensorTypeID (sensorTypeID),
                 PRIMARY KEY(sensorID)
             ) 
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\'
@@ -406,24 +291,42 @@ final class Version20220303160823 extends AbstractMigration
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
+        // create table to log ip addresses
+        $this->addSql('
+            CREATE TABLE iplog (
+                iplogID INT AUTO_INCREMENT NOT NULL, 
+                ipAddress VARCHAR(13) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, 
+                createdAt DATETIME DEFAULT current_timestamp() NOT NULL, 
+                UNIQUE INDEX ipAddress (ipAddress), 
+                PRIMARY KEY(iplogID)
+            ) 
+            DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\'
+        ');
+
         $this->addSql("
             INSERT INTO `readingtypes` 
                 (`readingTypeID`, `readingType`) 
             VALUES
-                (1, 'temperature'),
-                (2, 'humidity'),
-                (3, 'analog'),
-                (4, 'latitude');
+                (1, '". Temperature::READING_TYPE ."'),
+                (2, '" . Humidity::READING_TYPE . "'),
+                (3, '". Analog::READING_TYPE . "'),
+                (4, '". Latitude::READING_TYPE . "'),
+                (5, '". Relay::READING_TYPE ."'),
+                (6, '" . Motion::READING_TYPE . "');
         ");
 
         $this->addSql("
             INSERT INTO `sensortype` 
                 (`sensorTypeID`, `sensorType`, `description`)   
             VALUES
-                (1, 'Dht', 'Temperature and Humidity Sensor'),
-                (2, 'Dallas', 'Water Proof Temperature Sensor'),
-                (3, 'Soil', 'Soil Moisture Sensor'),
-                (4, 'Bmp', 'Weather Station Sensor');
+                (1, '". Dht::NAME ."', 'Temperature and Humidity Sensor'),
+                (2, '" . Dallas::NAME . "', 'Water Proof Temperature Sensor'),
+                (3, '". Soil::NAME . "', 'Soil Moisture Sensor'),
+                (4, '" . Bmp::NAME . "', 'Weather Station Sensor'),
+                (5, '" . GenericRelay::NAME . "', 'Generic relay'),
+                (6, '" . GenericMotion::NAME . "', 'Generic motion sensor'),
+                (7, '" . LDR::NAME . "', 'Light resistor sensor'),
+                (8, '" . Sht::NAME . "', 'High Accuracy Temperature and Humidity Sensor');
         ");
 
         $this->addSql("
@@ -444,25 +347,25 @@ final class Version20220303160823 extends AbstractMigration
             INSERT INTO `state` 
                 (`stateID`, `state`) 
             VALUES
-                (3, 'DEVICE_ONLY'),
-                (2, 'OFF'),
-                (1, 'ON'),
-                (4, 'ROOM_ONLY');
+                (3, '" . CardState::DEVICE_ONLY . "'),
+                (2, '" . CardState::OFF . "'),
+                (1, '" . CardState::ON . "'),
+                (4, '" . CardState::ROOM_ONLY . "');
         ");
 
         $this->addSql("
-            INSERT INTO `user` 
-                (`userID`, `firstName`, `lastName`, `email`, `roles`, `profilePic`, `password`, `salt`, `groupID`, `createdAt`) 
+            INSERT INTO `users` 
+                (`userID`, `firstName`, `lastName`, `email`, `roles`, `groupID`, `profilePic`, `password`, `salt`, `createdAt`) 
             VALUES
-                (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, 2, '2021-07-15 17:19:32');
+                (1, 'admin', 'admin', 'admin', '[\"ROLE_ADMIN\"]', 1, 'guest.jpg', '\$argon2id\$v=19\$m=65536,t=4,p=1\$7zx+pasSn547DYfLgO9MuQ\$ACTjDqrmJDgB9KfoZUOpESDZn/071R/Bmfju9o+R1Zw', NULL, '2021-07-15 17:19:32');
         ");
 
         $this->addSql("
             INSERT INTO groups
                 (`groupID`, `groupName`) 
             VALUES
-                (1, 'home-app-group'),
-                (2, 'admin-group');
+                (1, '" . Group::HOME_APP_GROUP_NAME . "'),
+                (2, '" . Group::ADMIN_GROUP_NAME ."');
         ");
 
         $this->addSql("
@@ -495,125 +398,78 @@ final class Version20220303160823 extends AbstractMigration
                 (24, 'raspberry-pi', 'pi logo'),
                 (25, 'xbox', 'xbox logo'),
                 (26, 'skull-crossbones', 'skull and bones'),
-                (27, 'smoking', 'smoking');
+                (27, 'smoking', 'smoking'),
+                (28, 'couch', 'couch/sofa'),
+                (29, 'sun', 'the sun'),
+                (30, 'frog', 'frog from the side'),
+                (31, 'water', 'water 3 lines'),
+                (32, 'temperature-low', 'thermometer on low'),
+                (33, 'temperature-high', 'thermometer on high'),
+                (34, 'house-user', 'house with user icon'),
+                (35, 'shower', 'shower head'),
+                (36, 'fan', 'fan blades'),
+                (37, 'lightbulb', 'light bulb');
         ");
 
         // Alter tables
         $this->addSql("
-            ALTER TABLE `user`
+            ALTER TABLE `users`
               ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`);
         ");
 
         $this->addSql("
-            ALTER TABLE `groupmapping`
+            ALTER TABLE `groupmappings`
               ADD CONSTRAINT `groupmapping_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `groupmapping_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+              ADD CONSTRAINT `groupmapping_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `sensors`
               ADD CONSTRAINT `FK_82F2A8F46B4A071A` FOREIGN KEY (`sensorTypeID`) REFERENCES `sensortype` (`sensorTypeID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `sensornames_ibfk_1` FOREIGN KEY (`deviceID`) REFERENCES `devices` (`deviceID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `sensornames_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+              ADD CONSTRAINT `sensornames_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `devices`
               ADD CONSTRAINT `devicenames_ibfk_1` FOREIGN KEY (`groupID`) REFERENCES `groups` (`groupID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `devicenames_ibfk_2` FOREIGN KEY (`roomID`) REFERENCES `room` (`roomID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `devicenames_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+              ADD CONSTRAINT `devicenames_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
             ALTER TABLE `cardview`
               ADD CONSTRAINT `FK_E36636B53BE475E6` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `FK_E36636B53casrdState` FOREIGN KEY (`stateID`) REFERENCES `state` (`stateID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `FK_E36636B55FD86D04` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
+              ADD CONSTRAINT `FK_E36636B55FD86D04` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `FK_E36636B5840D9A7A` FOREIGN KEY (`iconID`) REFERENCES `icons` (`iconID`) ON DELETE CASCADE ON UPDATE CASCADE,
               ADD CONSTRAINT `FK_E36636B5A356FF88` FOREIGN KEY (`colourID`) REFERENCES `colours` (`colourID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
-            ALTER TABLE `temperature`
-                ADD CONSTRAINT `FK_B5385CA3BE475E6` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
+            ALTER TABLE `readingtypeoutofrange`
+                ADD CONSTRAINT `outofrangeanalog_ibfk_1` FOREIGN KEY (baseReadingTypeID) REFERENCES `basereadingtype` (`baseReadingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
-            ALTER TABLE `analog`
-                ADD CONSTRAINT `FK_A78C95C13BE475E6` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;   
+            ALTER TABLE `readingtypeconst`
+                ADD CONSTRAINT `constanalog_ibfk_1` FOREIGN KEY (baseReadingTypeID) REFERENCES `basereadingtype` (`baseReadingTypeID`) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
         $this->addSql("
-            ALTER TABLE `humidity`
-                ADD CONSTRAINT `FK_8D6EB6E33BE475E6` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
+            ALTER TABLE `basereadingtype`
+                ADD CONSTRAINT FK_STANDARD_READING_TYPE_SENSOR FOREIGN KEY (sensorID) REFERENCES sensors (sensorID) ON DELETE CASCADE ON UPDATE CASCADE;
         ");
 
-        $this->addSql("
-            ALTER TABLE `latitude`
-              ADD CONSTRAINT `latitude_ibfk_4` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
+        $this->addSql('
+            ALTER TABLE `standardreadingtype`
+            ADD CONSTRAINT FK_STANDARD_READING_TYPE FOREIGN KEY (baseReadingTypeID) REFERENCES basereadingtype (baseReadingTypeID) ON DELETE CASCADE ON UPDATE CASCADE        
+        ');
 
-        $this->addSql("
-            ALTER TABLE `bmp`
-              ADD CONSTRAINT `bmp_ibfk_1` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `bmp_ibfk_2` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `bmp_ibfk_3` FOREIGN KEY (`humidID`) REFERENCES `humidity` (`humidID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `bmp_ibfk_4` FOREIGN KEY (`latitudeID`) REFERENCES `latitude` (`latitudeID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `soil`
-              ADD CONSTRAINT `soil_ibfk_1` FOREIGN KEY (`analogID`) REFERENCES `analog` (`analogID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `soil_ibfk_2` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `dallas`
-              ADD CONSTRAINT `dallas_ibfk_2` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `dallas_ibfk_3` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `dht`
-              ADD CONSTRAINT `dhtsensor_ibfk_1` FOREIGN KEY (`sensorID`) REFERENCES `sensors` (`sensorID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `dhtsensor_ibfk_2` FOREIGN KEY (`humidID`) REFERENCES `humidity` (`humidID`) ON DELETE CASCADE ON UPDATE CASCADE,
-              ADD CONSTRAINT `dhtsensor_ibfk_3` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `constanalog`
-                ADD CONSTRAINT `constanalog_ibfk_1` FOREIGN KEY (analogID) REFERENCES `analog` (`analogID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `consthumid`
-                ADD CONSTRAINT `consthumid_ibfk_1` FOREIGN KEY (`humidID`) REFERENCES `humidity` (`humidID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `consttemp`
-              ADD CONSTRAINT `consttemp_ibfk_1` FOREIGN KEY (tempID) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `outofrangeanalog`
-                ADD CONSTRAINT `outofrangeanalog_ibfk_1` FOREIGN KEY (analogID) REFERENCES `analog` (`analogID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `outofrangehumid`
-                ADD CONSTRAINT `outofrangehumid_ibfk_1` FOREIGN KEY (humidID) REFERENCES `humidity` (`humidID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `outofrangetemp`
-                ADD CONSTRAINT `outofrangetemp_ibfk_1` FOREIGN KEY (`tempID`) REFERENCES `temperature` (`tempID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
-
-        $this->addSql("
-            ALTER TABLE `outofrangelatitude`
-                ADD CONSTRAINT `outofrangelatitude_ibfk_1` FOREIGN KEY (`latitudeID`) REFERENCES `latitude` (`latitudeID`) ON DELETE CASCADE ON UPDATE CASCADE;
-        ");
+        $this->addSql('
+            ALTER TABLE `boolreadingtype`
+            ADD CONSTRAINT FK_BOOL_READING_TYPE FOREIGN KEY (baseReadingTypeID) REFERENCES basereadingtype (baseReadingTypeID) ON DELETE CASCADE ON UPDATE CASCADE
+        ');
     }
 
     public function down(Schema $schema): void
@@ -679,13 +535,24 @@ final class Version20220303160823 extends AbstractMigration
 
         $this->addSql('DROP TABLE IF EXISTS readingtypes');
 
-        $this->addSql('DROP TABLE IF EXISTS groups');
+        $this->addSql('DROP TABLE IF EXISTS `groups`');
 
-        $this->addSql('DROP TABLE IF EXISTS groupmapping');
+        $this->addSql('DROP TABLE IF EXISTS groupmappings');
 
-        $this->addSql('DROP TABLE IF EXISTS user');
+        $this->addSql('DROP TABLE IF EXISTS users');
+
+        $this->addSql('DROP TABLE IF EXISTS iplog');
+
+        $this->addSql('DROP TABLE IF EXISTS basereadingtype');
+
+        $this->addSql('DROP TABLE IF EXISTS boolreadingtype');
+
+        $this->addSql('DROP TABLE IF EXISTS standardreadingtype');
+
+        $this->addSql('DROP TABLE IF EXISTS readingtypeconst');
+
+        $this->addSql('DROP TABLE IF EXISTS readingtypeoutofrange');
 
         $this->addSql("SET FOREIGN_KEY_CHECKS = 1;");
     }
-
 }

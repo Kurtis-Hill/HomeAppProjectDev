@@ -15,13 +15,6 @@ use JetBrains\PhpStorm\ArrayShape;
 interface NewSensorCreationInterface
 {
     /**
-     * @throws DeviceNotFoundException
-     * @throws SensorTypeNotFoundException
-     * @throws SensorRequestException
-     */
-    public function buildNewSensorDTO(AddNewSensorRequestDTO $newSensorRequestDTO, User $user): NewSensorDTO;
-
-    /**
      * @throws UserNotAllowedException
      */
     #[ArrayShape(['validationErrors'])]

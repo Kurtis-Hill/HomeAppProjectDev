@@ -22,6 +22,7 @@ import { LandingPage } from '../Routes/LandingPage/LandingPage';
 import { DevicePage } from '../Devices/Page/DevicePage';
 import { UserSettingsPage } from '../User/Pages/UserSettingsPage';
 import { Logout } from '../Routes/Logout/Logout';
+import TriggerPage from '../Routes/Triggers/TriggerPage';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -34,7 +35,7 @@ root.render(
                     <Route path="cards/index" element={<CardLandingPage />} />
                     <Route path="devices/:deviceID" element={<DevicePage />} />
                     <Route path="user-settings" element={<UserSettingsPage />} />
-                    {/*<Route path="cards/device/{id}" element={<CardLandingPage />} />*/}
+                    <Route path="sensors/triggers" element={<TriggerPage />} />
                 </Route>
         </Routes>
     </BrowserRouter>

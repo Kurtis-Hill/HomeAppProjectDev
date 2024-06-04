@@ -2,7 +2,7 @@
 
 namespace App\UserInterface\Builders\UserData;
 
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\UserInterface\DTO\Response\UserData\UserDataResponseDTO;
 
@@ -19,7 +19,7 @@ class UserDataDTOBuilder
         }
 
         foreach ($userGroups as $userGroup) {
-            $userGroupDTOs[] = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO(
+            $userGroupDTOs[] = GroupResponseDTOBuilder::buildGroupNameResponseDTO(
                 $userGroup
             );
         }

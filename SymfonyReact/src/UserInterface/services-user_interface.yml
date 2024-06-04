@@ -24,7 +24,7 @@ services:
     alias: App\UserInterface\Services\Cards\CardCreation\CardCreationHandler
 
   App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationHandlerInterface:
-    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewFormPreparationFacade
+    alias: App\UserInterface\Services\Cards\CardPreparation\CardViewFormCreationHandler
 
   App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateInterface:
     alias: App\UserInterface\Services\Cards\CardViewUpdate\CardViewUpdateFacade

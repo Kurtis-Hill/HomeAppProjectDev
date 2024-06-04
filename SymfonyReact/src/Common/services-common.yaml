@@ -5,6 +5,8 @@ services:
 
     App\Common\:
       resource: './*'
-#      exclude: './{Entity}'
+      exclude: './{Entity}'
 
 ####################### Loggers ######################################################:
+    App\Common\Services\DeviceRequestHandlerInterface:
+      alias: 'App\Common\Services\DeviceRequestHandler'

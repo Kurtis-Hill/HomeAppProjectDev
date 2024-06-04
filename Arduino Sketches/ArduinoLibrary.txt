@@ -1,0 +1,4 @@
+Current Arduino Library and version 
+
+DHT sensor library by adafruit 1.4.4
+ArduinoJson 6.18.3

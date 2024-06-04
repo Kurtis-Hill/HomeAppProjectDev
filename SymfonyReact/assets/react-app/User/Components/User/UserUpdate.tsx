@@ -33,7 +33,7 @@ export function UserUpdate(props: { userID: number }) {
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
-        group: userData.group,
+        group: userData.groups,
         profilePicture: userData.profilePicture,
         roles: userData.roles,
         newPassword: '',
@@ -55,8 +55,6 @@ export function UserUpdate(props: { userID: number }) {
         const userResponseData: UserResponseInterface = getSingleUserResponse.data.payload;
         setUserData(userResponseData);
         originalUserData.current = userResponseData;
-
-        console.log('userResponseData: ', userResponseData)
     }
     
     const toggleFormInput = (event: Event) => {
@@ -89,13 +87,11 @@ export function UserUpdate(props: { userID: number }) {
             ...userUpdateFormInputs,
             [name]: value,
         });
-            // console.log('userUpdateFormInputs: ', userUpdateFormInputs);
 
     }
 
     const sendUserUpdateRequest = async (event: Event) => {
         event.preventDefault();
-        console.log('userUpdateFormInputs: ', userUpdateFormInputs);
         const name = (event.target as HTMLElement|HTMLInputElement).dataset.name === undefined || (event.target as HTMLElement|HTMLInputElement).dataset.name == ''
         ? (event.target as HTMLInputElement).name
         : (event.target as HTMLElement|HTMLInputElement).dataset.name
@@ -126,8 +122,6 @@ export function UserUpdate(props: { userID: number }) {
                 break;
             default: throw new Error('Invalid name for user update request');
         }
-
-        console.log('requestDataToSend: ', requestDataToSend);
 
         const userUpdateResponse = await UserUpdateRequest(requestDataToSend, userID);
         

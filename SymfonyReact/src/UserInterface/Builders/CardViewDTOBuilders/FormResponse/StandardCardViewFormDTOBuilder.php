@@ -19,11 +19,11 @@ class StandardCardViewFormDTOBuilder extends AbstractSensorTypeViewDTOBuilder im
         CardView $cardViewObject,
         CardUserSelectionEncapsulationDTO $usersCardSelectionOptions
     ): CardViewSensorFormInterface {
-        $cardBuilder = $this->sensorTypeDTOBuilderFactory->getSensorDataDTOBuilderService($sensorTypeObject->getSensorTypeName());
-        $formattedSensorTypeObjects = $cardBuilder->formatSensorTypeObjectsByReadingType($sensorTypeObject);
+        $cardBuilder = $this->sensorTypeDTOBuilderFactory->getSensorDataDTOBuilderService($sensorTypeObject->getReadingTypeName());
+        $formattedSensorTypeObjects = $cardBuilder->formatSensorTypeObjectsByReadingType($sensorTypeObject, $cardViewObject->getSensor());
 
         return new StandardCardViewSensorFormResponseDTO(
-            $sensorTypeObject->getSensor()->getSensorID(),
+            $cardViewObject->getSensor()->getSensorID(),
             IconDTOBuilder::buildIconResponseDTO($cardViewObject->getCardIconID()),
             ColourDTOBuilder::buildColourResponseDTO($cardViewObject->getCardColourID()),
             CardStateDTOBuilder::buildCardStateResponseDTO($cardViewObject->getCardStateID()),

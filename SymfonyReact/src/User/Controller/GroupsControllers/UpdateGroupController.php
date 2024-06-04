@@ -9,7 +9,7 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\Builders\GroupName\UpdateGroupDTOBuilder;
 use App\User\DTO\Request\GroupDTOs\UpdateGroupRequestDTO;
 use App\User\Entity\Group;
@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -95,9 +95,9 @@ class UpdateGroupController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse();
         }
 
-        $groupResponseDTO = GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($groupID);
+        $groupResponseDTO = GroupResponseDTOBuilder::buildGroupNameResponseDTO($groupID);
         try {
-            $normalizedGroupResponseDTO = $this->normalizeResponse($groupResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedGroupResponseDTO = $this->normalize($groupResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE . ' Group Saved']);
         }

@@ -3,12 +3,12 @@
 namespace App\UserInterface\Builders\ColoursDTOBuilders;
 
 use App\UserInterface\DTO\Response\Colours\ColourResponseDTO;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 
 class ColourDTOBuilder
 {
     public static function buildColourResponseDTO(
-        CardColour $cardColour
+        Colour $cardColour
     ): ColourResponseDTO {
         return new ColourResponseDTO(
             $cardColour->getColourID(),

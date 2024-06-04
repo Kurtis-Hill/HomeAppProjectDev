@@ -9,7 +9,7 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\Entity\Sensor;
 use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Voters\SensorVoter;
@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
@@ -61,7 +61,7 @@ class GetSingleSensorsController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($sensorReadingTypeResponseDTOs, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($sensorReadingTypeResponseDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

@@ -4,19 +4,21 @@ namespace App\Sensors\DTO\Internal\Sensor;
 
 use App\Devices\Entity\Devices;
 use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
+use App\User\Entity\User;
 use JetBrains\PhpStorm\Immutable;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Immutable]
 readonly class NewSensorDTO
 {
     public function __construct(
         private ?string $sensorName,
-        private SensorType $sensorType,
+        private AbstractSensorType $sensorType,
         private Devices $device,
-        private UserInterface $user,
+        private User $user,
         private Sensor $sensor,
+        private int $pinNumber,
+        private int $readingInterval,
     ) {
     }
 
@@ -25,7 +27,7 @@ readonly class NewSensorDTO
         return $this->sensorName;
     }
 
-    public function getSensorType(): SensorType
+    public function getSensorType(): AbstractSensorType
     {
         return $this->sensorType;
     }
@@ -35,7 +37,7 @@ readonly class NewSensorDTO
         return $this->device;
     }
 
-    public function getUser(): UserInterface
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -43,5 +45,15 @@ readonly class NewSensorDTO
     public function getSensor(): Sensor
     {
         return $this->sensor;
+    }
+
+    public function getPinNumber(): int
+    {
+        return $this->pinNumber;
+    }
+
+    public function getReadingInterval(): int
+    {
+        return $this->readingInterval;
     }
 }

@@ -4,12 +4,12 @@ import { useState } from 'react';
 import SensorDataContext from '../../../../Sensors/Contexts/SensorDataContext';
 import { CardFilterBarInterface } from './CardFilterBarInterface';
 
-import SmallWhiteBoxDisplay from '../../../../../OldApp/js/components/DisplayBoxes/SmallWhiteBoxDisplay';
 import CardFilterButton from '../Buttons/CardFilterButton';
 import { SensorDataContextDataInterface } from '../../../../Sensors/DataProviders/SensorDataProvider';
 import { SensorTypeResponseInterface } from '../../../../Sensors/Response/SensorType/SensorTypeResponseInterface';
 import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
 import ReadingTypeResponseInterface from '../../../../Sensors/Response/ReadingTypes/ReadingTypeResponseInterface';
+import SmallWhiteBoxDisplay from '../../../../Common/Components/Elements/SmallWhiteBoxDisplay';
 
 export default function CardFilterBar(props: {
     filterParams: CardFilterBarInterface|[]; 

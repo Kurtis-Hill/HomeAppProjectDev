@@ -11,7 +11,7 @@
 namespace App\UserInterface\Forms\CardViewForms;
 
 use App\Common\API\APIErrorMessages;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
@@ -27,7 +27,7 @@ class CardViewForm extends AbstractType
     {
         $builder
             ->add('colourID', EntityType::class, [
-                'class' => CardColour::class,
+                'class' => Colour::class,
                 'constraints' => [
                     new NotBlank(['message' => sprintf(APIErrorMessages::SHOULD_NOT_BE_BLANK, 'card colour')]),
                 ],

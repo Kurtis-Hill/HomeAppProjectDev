@@ -2,11 +2,12 @@
 
 namespace App\Sensors\Repository\ReadingType;
 
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\Sensors\Entity\ReadingTypes\BaseReadingTypeInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -37,9 +38,16 @@ interface ReadingTypeRepositoryInterface
     /**
      * @throws NonUniqueResultException
      */
-    public function getOneBySensorNameID(int $sensorNameID);
+    public function findOneBySensorNameID(int $sensorNameID): ?AllSensorReadingTypeInterface;
 
-//    public function findOneByNamr
+    public function findOneBySensorName(string $sensorName): ?AllSensorReadingTypeInterface;
 
-//    public function findAllBySensorName(string $name);
+    public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void;
+
+    /**
+     * @param int $sensorID
+     *
+     * @return BaseReadingTypeInterface[]
+     */
+    public function findBySensorID(int $sensorID): array;
 }

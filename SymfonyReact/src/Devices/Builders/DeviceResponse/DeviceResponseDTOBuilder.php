@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\Builders\DeviceResponse;
 
@@ -8,11 +9,15 @@ use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\DTO\Response\DeviceResponseDTO;
 use App\Devices\Entity\Devices;
 use App\Devices\Voters\DeviceVoter;
-use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Builders\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Entity\Sensor;
+use App\Sensors\Exceptions\ReadingTypeNotExpectedException;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\User\Builders\GroupName\GroupNameResponseDTOBuilder;
+use App\User\Builders\GroupName\GroupResponseDTOBuilder;
 use App\User\Builders\RoomDTOBuilder\RoomResponseDTOBuilder;
 use App\User\Builders\User\UserResponseBuilder;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
+use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class DeviceResponseDTOBuilder
@@ -21,18 +26,26 @@ class DeviceResponseDTOBuilder
 
     private SensorResponseDTOBuilder $sensorResponseDTOBuilder;
 
+    private DeviceDTOBuilder $deviceDTOBuilder;
+
     private Security $security;
 
     public function __construct(
         SensorRepositoryInterface $sensorRepository,
         SensorResponseDTOBuilder $getSensorReadingTypeHandler,
+        DeviceDTOBuilder $deviceDTOBuilder,
         Security $security,
     ) {
         $this->sensorRepository = $sensorRepository;
         $this->sensorResponseDTOBuilder = $getSensorReadingTypeHandler;
+        $this->deviceDTOBuilder = $deviceDTOBuilder;
         $this->security = $security;
     }
 
+    /**
+     * @throws GroupNotFoundException
+     * @throws RoomNotFoundException
+     */
     public function buildDeviceResponseDTOWithDevicePermissions(
         Devices $device,
         array $sensorReadingTypeDTOs = [],
@@ -40,23 +53,28 @@ class DeviceResponseDTOBuilder
         return self::buildDeviceResponseDTO(
             $device,
             $sensorReadingTypeDTOs,
-            $this->security->isGranted(DeviceVoter::UPDATE_DEVICE,
-                DeviceDTOBuilder::buildUpdateDeviceInternalDTO(
-                    new DeviceUpdateRequestDTO(),
+            $this->security->isGranted(
+                DeviceVoter::UPDATE_DEVICE,
+                $this->deviceDTOBuilder->buildUpdateDeviceInternalDTO(
+                    (new DeviceUpdateRequestDTO()),
                     $device,
-                    $device->getRoomObject(),
-                    $device->getGroupObject(),
                 )
             ),
             $this->security->isGranted(DeviceVoter::DELETE_DEVICE, $device),
         );
     }
 
+    /**
+     * @throws GroupNotFoundException
+     * @throws RoomNotFoundException
+     * @throws ReadingTypeNotExpectedException
+     */
     public function buildFullDeviceResponseDTO(Devices $device, bool $includeSensors = false): DeviceResponseDTO
     {
         if ($includeSensors === true) {
             $deviceSensors = $this->sensorRepository->findSensorObjectsByDeviceID($device->getDeviceID());
             if (!empty($deviceSensors)) {
+                /** @var Sensor $sensor */
                 foreach ($deviceSensors as $sensor) {
                     $sensorResponseDTOs[] = $this->sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [RequestTypeEnum::FULL->value]);
                 }
@@ -79,7 +97,7 @@ class DeviceResponseDTOBuilder
             $device->getDeviceID(),
             $device->getDeviceName(),
             $device->getDeviceSecret(),
-            GroupNameResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupObject()),
+            GroupResponseDTOBuilder::buildGroupNameResponseDTO($device->getGroupObject()),
             RoomResponseDTOBuilder::buildRoomResponseDTO($device->getRoomObject()),
             $device->getIpAddress(),
             $device->getExternalIpAddress(),

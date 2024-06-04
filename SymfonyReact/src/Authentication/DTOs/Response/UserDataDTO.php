@@ -2,7 +2,7 @@
 
 namespace App\Authentication\DTOs\Response;
 
-class UserDataDTO
+readonly class UserDataDTO
 {
     private int $userID;
 

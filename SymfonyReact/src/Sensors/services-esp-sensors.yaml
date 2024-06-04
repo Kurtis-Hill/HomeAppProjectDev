@@ -19,15 +19,32 @@ services:
       calls:
           - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
 
+  App\Sensors\Controller\SensorControllers\SwitchSensorController:
+      calls:
+          - setESPSendCurrentReadingProducer: [ '@send_current_sensor_reading_producer' ]
+
+  App\Sensors\SensorServices\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor:
+      arguments:
+          $sendCurrentReadingAMQPProducer: '@send_current_sensor_reading_producer'
+
+  App\Sensors\Events\Subscribers\SensorUpdateEventSubscriber:
+    calls:
+      - setSensorDataUpdateProducer: [ '@upload_sensor_data_to_device_producer' ]
 ####################### Producers ######################################################
   App\Sensors\AMQP\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
+  App\Sensors\AMQP\Producers\UploadSensorDataToDeviceProducer: '@old_sound_rabbit_mq.upload_sensor_data_to_device_producer'
+  App\Sensors\AMQP\Producers\UploadSwitchSensorProducer: '@old_sound_rabbit_mq.send_current_sensor_reading_producer'
 
   ######################## Consumers ######################################################
-  App\Sensors\AMQP\Consumers\UploadCurrentReadingSensorDataConsumer:
+  App\Sensors\AMQP\Consumers\ProcessCurrentReadingSensorDataRequestConsumer:
+  App\Sensors\AMQP\Consumers\SensorSendUpdateDataRequestConsumer:
 
 ######################## Update Sensor Reading Services ######################################################
   App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
-    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandler'
+    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandlerVersionTwo'
+
+  App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandlerInterface:
+    alias: 'App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler'
 
   out.of.bounds.factory.elastic:
     alias: 'App\Sensors\Factories\OufOfBounds\OutOfBoundsElasticFactory'
@@ -57,7 +74,6 @@ services:
   App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface:
     alias: 'App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler'
 
-
   App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'
 
@@ -66,6 +82,9 @@ services:
 
   App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface:
     alias: 'App\Sensors\SensorServices\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandler'
+
+  App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerCheckerInterface:
+    alias: 'App\Sensors\SensorServices\TriggerChecker\SensorReadingTriggerChecker'
 
 ######################## New Sensor Creation Services ########################################################
   App\Sensors\SensorServices\NewSensor\NewSensorCreationInterface:
@@ -128,6 +147,13 @@ services:
   App\Sensors\Repository\ConstRecord\Elastic\ConstRecordAnalogRepository:
     arguments:
       $index: '@elastica.constrecord_analog_index'
+
+  App\Sensors\SensorServices\SensorTriggerProcessor\ReadingTriggerHandlerInterface:
+    alias: 'App\Sensors\SensorServices\SensorTriggerProcessor\ReadingTriggerHandler'
+
+  App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface:
+    alias: 'App\Sensors\SensorServices\Trigger\TriggerCreationHandler\TriggerCreationHandler'
+
 ######################## End Of Sensors ######################################################################################
 ######################## Commands ######################################################################################
   App\Sensors\Command\Elasticsearch\IndicesCreation\ElasticCreateConstRecordIndicesCommand:

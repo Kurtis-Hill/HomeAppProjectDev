@@ -4,13 +4,14 @@ namespace App\Sensors\Repository\OutOfBounds\Elastic;
 
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeTemp;
 use App\Sensors\Repository\OutOfBounds\OutOfBoundsRepositoryInterface;
+use Elastica\Exception\NotImplementedException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class OutOfBoundsTempRepository extends AbstractOutOfBoundsRepository implements OutOfBoundsRepositoryInterface
 {
     public function flush(): void
     {
-        // TODO: Implement flush() method.
+        $this->index->refresh();
     }
 
     public function find(): ?OutOfRangeTemp

@@ -1,0 +1,18 @@
+Devices
+Node MCU
+(Reserve for soil)
+SCL-SDA
+5-4
+====================================================
+PondDevice
+LEDS
+DEVICE_ON->GPIO->16->D0
+WIFI Not connected->GPIO->0->D1
+
+Dallas->GPIO->2->D4
+
+Relays
+D5 14
+D6 12
+D7 13
+====================================================

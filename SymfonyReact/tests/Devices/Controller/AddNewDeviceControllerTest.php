@@ -3,6 +3,7 @@
 namespace App\Tests\Devices\Controller;
 
 use App\Authentication\Repository\ORM\GroupMappingRepository;
+use App\Common\Entity\IPLog;
 use App\Devices\Repository\ORM\DeviceRepositoryInterface;
 use App\ORM\DataFixtures\Core\RoomFixtures;
 use App\ORM\DataFixtures\Core\UserDataFixtures;
@@ -70,7 +71,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->groupName = $this->entityManager->getRepository(Group::class)->findOneByName(UserDataFixtures::ADMIN_GROUP_ONE);
-        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName( RoomFixtures::LIVING_ROOM);
+        $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName(RoomFixtures::LIVING_ROOM);
         $this->userToken = $this->setUserToken($this->client);
     }
 
@@ -138,11 +139,13 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     public function test_add_new_device_regular_user_sensitive_response(): void
     {
+        $deviceIPAddress = '192.168.1.114';
         $formData = [
             'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->regularUserTwo->getGroup()->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
+            'deviceIPAddress' => $deviceIPAddress
         ];
 
         $jsonData = json_encode($formData);
@@ -171,13 +174,50 @@ class AddNewDeviceControllerTest extends WebTestCase
         $payload = $responseData['payload'];
 
         self::assertNotNull($payload['deviceID']);
-        self::assertNull($payload['ipAddress']);
         self::assertNull($payload['externalIpAddress']);
         self::assertEquals(self::UNIQUE_NEW_DEVICE_NAME, $payload['deviceName']);
         self::assertEquals(Devices::ROLE, $payload['roles'][0]);
         self::assertEquals(self::NEW_DEVICE_PASSWORD, $payload['secret']);
         self::assertTrue($payload['canEdit']);
         self::assertTrue($payload['canDelete']);
+        self::assertEquals($deviceIPAddress, $payload['ipAddress']);
+    }
+
+    public function test_adding_device_with_ip_removes_ip_from_log_table(): void
+    {
+        $ipLogRepository = $this->entityManager->getRepository(IPLog::class);
+        /** @var IPLog[] $allIPLogs */
+        $allIPLogs = $ipLogRepository->findAll();
+
+        $ipLog = $allIPLogs[0];
+        $formData = [
+            'deviceName' => self::UNIQUE_NEW_DEVICE_NAME,
+            'devicePassword' => self::NEW_DEVICE_PASSWORD,
+            'deviceGroup' => $this->regularUserTwo->getGroup()->getGroupID(),
+            'deviceRoom' => $this->room->getRoomID(),
+            'deviceIPAddress' => $ipLog->getIpAddress(),
+        ];
+
+        $jsonData = json_encode($formData);
+
+        $userToken = $this->setUserToken(
+            $this->client,
+            $this->regularUserTwo->getEmail(),
+            UserDataFixtures::REGULAR_PASSWORD
+        );
+
+        $this->client->request(
+            Request::METHOD_POST,
+            self::ADD_NEW_DEVICE_PATH,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
+            $jsonData
+        );
+        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
+
+        $ipRemovedCheck = $ipLogRepository->findOneBy(['ipAddress' => $ipLog->getIpAddress()]);
+        self::assertNull($ipRemovedCheck);
     }
 
     public function test_add_duplicate_device_name_same_room(): void
@@ -369,16 +409,31 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         yield [
             'formData' => [
+                'deviceName' => 'randon_name',
+                'devicePassword' => 'random_password',
+                'deviceGroup' => 1,
+                'deviceRoom' => 1,
+                'deviceIPAddress' => [],
+            ],
+            'errorMessage' => [
+                'Device IP value is array and not a valid string|null',
+            ],
+        ];
+
+        yield [
+            'formData' => [
                 'deviceName' => ['dfg'],
                 'devicePassword' => ['dfg'],
                 'deviceGroup' => ['dfg'],
                 'deviceRoom' => ['dfg'],
+                'deviceIPAddress' => ['dfg'],
             ],
             'errorMessage' => [
                 'Device name value is array and not a valid string',
                 'Device password value is array and not a valid string',
                 'Device group value is array and not a valid integer',
                 'Device room value is array and not a valid integer',
+                'Device IP value is array and not a valid string|null',
             ],
         ];
     }

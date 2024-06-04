@@ -11,7 +11,6 @@ class ConstRecordHumidityRepository extends AbstractConstRecordRepository implem
 {
     public function flush(): void
     {
-        // TODO: Implement flush() method.
     }
 
     public function find(): ?ConstHumid

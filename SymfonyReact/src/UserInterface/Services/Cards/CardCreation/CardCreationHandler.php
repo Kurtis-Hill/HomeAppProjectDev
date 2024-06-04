@@ -3,11 +3,11 @@
 namespace App\UserInterface\Services\Cards\CardCreation;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\CardViewObjectBuilder\CardViewObjectBuilder;
 use App\Sensors\Entity\Sensor;
 use App\User\Entity\User;
+use App\UserInterface\Builders\CardViewObjectBuilder\CardViewObjectBuilder;
 use App\UserInterface\DTO\Internal\NewCard\NewCardOptionsDTO;
-use App\UserInterface\Entity\Card\CardColour;
+use App\UserInterface\Entity\Card\Colour;
 use App\UserInterface\Entity\Card\CardState;
 use App\UserInterface\Entity\Card\CardView;
 use App\UserInterface\Entity\Icons;
@@ -65,18 +65,18 @@ class CardCreationHandler implements CardCreationHandlerInterface
     {
         try {
             if ($cardOptionsDTO !== null && $cardOptionsDTO->getIconID() !== null) {
-                $icon = $this->iconsRepository->find($cardOptionsDTO?->getIconID());
+                $icon = $this->iconsRepository->find($cardOptionsDTO->getIconID());
             }
 
             $icon = $icon ?? $this->generateRandomIconObject();
 
-            if ($cardOptionsDTO !== null && $cardOptionsDTO?->getColourID() !== null) {
-                $colour = $this->cardColourRepository->find($cardOptionsDTO?->getColourID());
+            if ($cardOptionsDTO !== null && $cardOptionsDTO->getColourID() !== null) {
+                $colour = $this->cardColourRepository->find($cardOptionsDTO->getColourID());
             }
             $colour = $colour ?? $this->generateRandomColourObject();
 
-            if ($cardOptionsDTO !== null && $cardOptionsDTO?->getStateID() !== null) {
-                $onCardState = $this->cardStateRepository->find($cardOptionsDTO?->getStateID());
+            if ($cardOptionsDTO !== null && $cardOptionsDTO->getStateID() !== null) {
+                $onCardState = $this->cardStateRepository->find($cardOptionsDTO->getStateID());
             }
             $onCardState = $onCardState ?? $this->generateOnStateCardObject();
 
@@ -133,13 +133,13 @@ class CardCreationHandler implements CardCreationHandlerInterface
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    private function generateRandomColourObject(): CardColour
+    private function generateRandomColourObject(): Colour
     {
         $maxColourNumber = $this->cardColourRepository->countAllColours();
         $firstColourId = $this->cardColourRepository->getFirstColourID()->getColourID();
         $randomColour = $this->cardColourRepository->findOneBy(['colourID' => random_int($firstColourId, $maxColourNumber + $firstColourId -1)]);
 
-        if (!$randomColour instanceof CardColour) {
+        if (!$randomColour instanceof Colour) {
             throw new CardColourException(CardColourException::FAILED_SETTING_RANDOM_COLOUR);
         }
 
@@ -175,6 +175,8 @@ class CardCreationHandler implements CardCreationHandlerInterface
 
     /**
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws UniqueConstraintViolationException
      */
     private function saveNewCard(CardView $cardView): void
     {

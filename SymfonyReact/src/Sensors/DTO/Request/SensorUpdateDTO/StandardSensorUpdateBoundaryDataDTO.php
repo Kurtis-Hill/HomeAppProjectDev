@@ -2,6 +2,7 @@
 
 namespace App\Sensors\DTO\Request\SensorUpdateDTO;
 
+use App\Sensors\Entity\ReadingTypes\ReadingTypes;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,6 +14,7 @@ class StandardSensorUpdateBoundaryDataDTO implements SensorUpdateBoundaryDataDTO
         Assert\NotNull(
             message: "readingType cannot be null"
         ),
+        Assert\Choice(choices: ReadingTypes::ALL_READING_TYPES, message: 'Choose a valid reading type.'),
     ]
     private mixed $readingType;
 
@@ -35,7 +37,7 @@ class StandardSensorUpdateBoundaryDataDTO implements SensorUpdateBoundaryDataDTO
         mixed $readingType,
         mixed $highReading,
         mixed $lowReading,
-        mixed $constRecord
+        mixed $constRecord,
     ) {
         $this->readingType = $readingType;
         $this->highReading = $highReading;

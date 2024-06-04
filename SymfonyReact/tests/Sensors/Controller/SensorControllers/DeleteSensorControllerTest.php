@@ -88,17 +88,6 @@ class DeleteSensorControllerTest extends WebTestCase
 
         $deletedSensor = $this->sensorRepository->findOneBy(['sensorID' => $sensor->getSensorID()]);
         self::assertNull($deletedSensor);
-//        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//        $payload = $responseData['payload'];
-//        $title = $responseData['title'];
-//
-//        self::assertEquals($sensor->getSensorID(), $payload['sensorID']);
-//        self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
-//        self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
-//        self::assertEquals($sensor->getDevice()->getDeviceName(), $payload['deviceName']);
-//        self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']);
-
-//        self::assertEquals(DeleteSensorController::DELETE_SENSOR_SUCCESS_MESSAGE, $title);
     }
 
     public function test_regular_user_can_delete_sensors_part_of_same_device_group_name(): void
@@ -129,19 +118,6 @@ class DeleteSensorControllerTest extends WebTestCase
 
         $deletedSensor = $this->sensorRepository->findOneBy(['sensorID' => $sensor->getSensorID()]);
         self::assertNull($deletedSensor);
-
-//        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-//        $payload = $responseData['payload'];
-//        $title = $responseData['title'];
-//
-//        self::assertEquals($sensor->getSensorID(), $payload['sensorID']);
-//        self::assertEquals($sensor->getSensorName(), $payload['sensorName']);
-//        self::assertEquals($sensor->getSensorTypeObject()->getSensorType(), $payload['sensorType']);
-//        self::assertEquals($sensor->getDevice()->getDeviceName(), $payload['deviceName']);
-//        self::assertEquals($sensor->getCreatedBy()->getEmail(), $payload['createdBy']);
-//
-//        self::assertEquals(DeleteSensorController::DELETE_SENSOR_SUCCESS_MESSAGE, $title);
-
     }
 
     public function test_admin_delete_sensor_full_response(): void
@@ -203,7 +179,7 @@ class DeleteSensorControllerTest extends WebTestCase
         $deletedDeviceSensorTypeResponse = $payload['sensorType'];
 
         self::assertEquals($deletedDeviceSensorType->getSensorTypeID(), $deletedDeviceSensorTypeResponse['sensorTypeID']);
-        self::assertEquals($deletedDeviceSensorType->getSensorType(), $deletedDeviceSensorTypeResponse['sensorTypeName']);
+        self::assertEquals($deletedDeviceSensorType::getReadingTypeName(), $deletedDeviceSensorTypeResponse['sensorTypeName']);
         self::assertEquals($deletedDeviceSensorType->getDescription(), $deletedDeviceSensorTypeResponse['sensorTypeDescription']);
 
         self::assertArrayHasKey('sensorReadingTypes', $payload);

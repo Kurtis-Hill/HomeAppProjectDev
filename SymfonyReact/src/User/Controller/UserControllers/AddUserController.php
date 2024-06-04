@@ -11,17 +11,20 @@ use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\User\Builders\User\UserResponseBuilder;
 use App\User\DTO\Request\UserDTOs\NewUserRequestDTO;
+use App\User\Exceptions\GroupExceptions\GroupMappingValidationException;
+use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\GroupExceptions\GroupValidationException;
 use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
 use App\User\Services\User\UserCreationHandler;
 use App\User\Voters\UserVoter;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -94,9 +97,11 @@ class AddUserController extends AbstractController
             );
         } catch (UserCreationValidationErrorsException|GroupValidationException $e) {
             return $this->sendBadRequestJsonResponse($e->getValidationErrors());
+        } catch (GroupMappingValidationException|GroupNotFoundException|OptimisticLockException|UniqueConstraintViolationException|ORMException $e) {
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN]);
         }
 
-        try{
+        try {
             $userCreationHandler->saveUser($newUser);
             $this->logger->info('New user created', ['user' => $newUser, 'createdBy' => $this->getUser()?->getUserIdentifier()]);
         } catch (ORMException|OptimisticLockException) {
@@ -105,7 +110,7 @@ class AddUserController extends AbstractController
 
         $userResponseDTO = UserResponseBuilder::buildUserResponseDTO($newUser);
         try {
-            $normalizedUserResponseDTO = $this->normalizeResponse($userResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedUserResponseDTO = $this->normalize($userResponseDTO, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], ['User created']);
         }

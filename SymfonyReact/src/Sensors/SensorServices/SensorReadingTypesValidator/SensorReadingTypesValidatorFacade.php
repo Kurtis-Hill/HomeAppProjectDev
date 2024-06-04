@@ -3,14 +3,18 @@
 namespace App\Sensors\SensorServices\SensorReadingTypesValidator;
 
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\HumiditySensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeSensorTypeInterface;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureSensorTypeInterface;
+use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
 use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use JetBrains\PhpStorm\ArrayShape;
@@ -37,10 +41,10 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
     public function validateSensorReadingTypeObjectsBySensorTypeObject(
         SensorTypeInterface $sensorTypeObject
     ): array {
-        $sensorType = $sensorTypeObject->getSensorTypeName();
+        $sensorType = $sensorTypeObject->getReadingTypeName();
 
         $errors = [];
-        if ($sensorTypeObject instanceof TemperatureSensorTypeInterface) {
+        if ($sensorTypeObject instanceof TemperatureReadingTypeInterface) {
             $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
                 $sensorTypeObject->getTemperature(),
                 $sensorType
@@ -51,7 +55,7 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
             }
         }
 
-        if ($sensorTypeObject instanceof HumiditySensorTypeInterface) {
+        if ($sensorTypeObject instanceof HumidityReadingTypeInterface) {
             $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
                 $sensorTypeObject->getHumidObject(),
                 $sensorType
@@ -61,7 +65,7 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
                 $errors = array_merge($errors, $validationErrors);
             }
         }
-        if ($sensorTypeObject instanceof LatitudeSensorTypeInterface) {
+        if ($sensorTypeObject instanceof LatitudeReadingTypeInterface) {
             $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
                 $sensorTypeObject->getLatitudeObject(),
                 $sensorType
@@ -71,9 +75,29 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
                 $errors = array_merge($errors, $validationErrors);
             }
         }
-        if ($sensorTypeObject instanceof AnalogSensorTypeInterface) {
+        if ($sensorTypeObject instanceof AnalogReadingTypeInterface) {
             $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
                 $sensorTypeObject->getAnalogObject(),
+                $sensorType
+            );
+
+            if (!empty($validationErrors)) {
+                $errors = array_merge($errors, $validationErrors);
+            }
+        }
+        if ($sensorTypeObject instanceof RelayReadingTypeInterface) {
+            $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
+                $sensorTypeObject->getRelay(),
+                $sensorType
+            );
+
+            if (!empty($validationErrors)) {
+                $errors = array_merge($errors, $validationErrors);
+            }
+        }
+        if ($sensorTypeObject instanceof MotionSensorReadingTypeInterface) {
+            $validationErrors = $this->performSensorReadingTypeObjectValidatorAndSave(
+                $sensorTypeObject->getMotion(),
                 $sensorType
             );
 
@@ -131,15 +155,15 @@ class SensorReadingTypesValidatorFacade implements SensorReadingTypesValidatorIn
         AllSensorReadingTypeInterface $sensorReadingType,
         ?string $sensorTypeName = null
     ): array {
-        if ($sensorReadingType instanceof Humidity || $sensorReadingType instanceof Latitude) {
-            $validationErrors = $this->validator->validate(
-                $sensorReadingType,
-            );
-        } else {
+        if ($sensorReadingType instanceof Temperature || $sensorReadingType instanceof Analog) {
             $validationErrors = $this->validator->validate(
                 $sensorReadingType,
                 null,
                 $sensorTypeName
+            );
+        } else {
+            $validationErrors = $this->validator->validate(
+                $sensorReadingType,
             );
         }
 

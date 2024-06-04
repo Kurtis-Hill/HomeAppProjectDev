@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Devices\DTO\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class DeviceUpdateRequestDTO implements DeviceRequestDTOInterface
+class DeviceUpdateRequestDTO
 {
     #[
         Assert\Type(

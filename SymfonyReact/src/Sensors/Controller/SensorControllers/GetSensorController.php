@@ -9,8 +9,8 @@ use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\PaginationCalculator;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
-use App\Sensors\Builders\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
-use App\Sensors\Builders\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\Sensors\Builders\Request\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
+use App\Sensors\Builders\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Sensors\DTO\Request\GetSensorRequestDTO\GetSensorRequestDTO;
 use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
 use App\Sensors\SensorServices\SensorUserFilter;
@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -94,11 +94,9 @@ class GetSensorController extends AbstractController
         if (!$user instanceof User) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
-
         $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO);
 
         $allowedSensors = $sensorUserFilter->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO);
-
         foreach ($allowedSensors as $sensor) {
             $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);
         }
@@ -112,7 +110,7 @@ class GetSensorController extends AbstractController
         }
 
         try {
-            $normalizedResponse = $this->normalizeResponse($sensorDTOs, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($sensorDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

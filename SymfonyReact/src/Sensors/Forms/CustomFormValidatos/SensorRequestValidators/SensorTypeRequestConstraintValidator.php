@@ -2,7 +2,7 @@
 
 namespace App\Sensors\Forms\CustomFormValidatos\SensorRequestValidators;
 
-use App\Sensors\Entity\SensorType;
+use App\Sensors\Entity\AbstractSensorType;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -20,7 +20,7 @@ class SensorTypeRequestConstraintValidator extends ConstraintValidator
         }
 
         $missingSensorTypes = array_diff(
-            SensorType::ALL_SENSOR_TYPES,
+            AbstractSensorType::ALL_SENSOR_TYPES,
             $value
         );
 

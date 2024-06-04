@@ -2,7 +2,7 @@
 
 namespace App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes;
 
-use App\Sensors\Entity\ReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Forms\CustomFormValidatos\SensorDataValidators\LatitudeConstraint;
 use JetBrains\PhpStorm\Immutable;

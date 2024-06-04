@@ -2,37 +2,37 @@
 
 namespace App\Sensors\Factories\SensorTypeCreationFactory;
 
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\BmpNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\DallasNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\DhtNewReadingTypeBuilder;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\NewSensorReadingTypeBuilderInterface;
-use App\Sensors\Builders\SensorReadingTypeCreationBuilders\SoilNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Bool\GenericMotionNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Bool\GenericRelayNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\NewSensorReadingTypeBuilderInterface;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\BmpNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\DallasNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\DhtNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\LDRNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\ShtNewReadingTypeBuilder;
+use App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorReadingTypeCreationBuilders\Standard\SoilNewReadingTypeBuilder;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\Exceptions\SensorTypeException;
 
-class SensorTypeCreationFactory
+readonly class SensorTypeCreationFactory
 {
-    private BmpNewReadingTypeBuilder $bmpSensorReadingTypeBuilder;
-
-    private SoilNewReadingTypeBuilder $soilSensorReadingTypeBuilder;
-
-    private DhtNewReadingTypeBuilder $dhtSensorReadingTypeBuilder;
-
-    private DallasNewReadingTypeBuilder $dallasSensorReadingTypeBuilder;
-
     public function __construct(
-        BmpNewReadingTypeBuilder $bmpSensorReadingTypeBuilder,
-        SoilNewReadingTypeBuilder $soilSensorReadingTypeBuilder,
-        DallasNewReadingTypeBuilder $dallasSensorReadingTypeBuilder,
-        DhtNewReadingTypeBuilder $dhtSensorReadingTypeBuilder,
+        private BmpNewReadingTypeBuilder $bmpSensorReadingTypeBuilder,
+        private SoilNewReadingTypeBuilder $soilSensorReadingTypeBuilder,
+        private DallasNewReadingTypeBuilder $dallasSensorReadingTypeBuilder,
+        private DhtNewReadingTypeBuilder $dhtSensorReadingTypeBuilder,
+        private GenericMotionNewReadingTypeBuilder $genericMotionSensorReadingTypeBuilder,
+        private GenericRelayNewReadingTypeBuilder $genericRelaySensorReadingTypeBuilder,
+        private LDRNewReadingTypeBuilder $ldrSensorReadingTypeBuilder,
+        private ShtNewReadingTypeBuilder $shtSensorReadingTypeBuilder
     ) {
-        $this->bmpSensorReadingTypeBuilder = $bmpSensorReadingTypeBuilder;
-        $this->soilSensorReadingTypeBuilder = $soilSensorReadingTypeBuilder;
-        $this->dhtSensorReadingTypeBuilder = $dhtSensorReadingTypeBuilder;
-        $this->dallasSensorReadingTypeBuilder = $dallasSensorReadingTypeBuilder;
     }
 
     /**
@@ -45,6 +45,10 @@ class SensorTypeCreationFactory
             Soil::NAME => $this->soilSensorReadingTypeBuilder,
             Dallas::NAME => $this->dallasSensorReadingTypeBuilder,
             Dht::NAME => $this->dhtSensorReadingTypeBuilder,
+            GenericRelay::NAME => $this->genericRelaySensorReadingTypeBuilder,
+            GenericMotion::NAME => $this->genericMotionSensorReadingTypeBuilder,
+            LDR::NAME => $this->ldrSensorReadingTypeBuilder,
+            Sht::NAME => $this->shtSensorReadingTypeBuilder,
             default => throw new SensorTypeException(
                 sprintf(
                     SensorTypeException::SENSOR_TYPE_NOT_RECOGNISED,

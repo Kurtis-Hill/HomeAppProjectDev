@@ -34,7 +34,7 @@ interface CardViewRepositoryInterface
     /**
      * @throws ORMException
      */
-    public function getAllCardSensorDataForUser(
+    public function findAllCardSensorDataForUser(
         User $user,
         string $cardViewTwo,
         CardDataQueryEncapsulationFilterDTO $cardDataPostFilterDTO,

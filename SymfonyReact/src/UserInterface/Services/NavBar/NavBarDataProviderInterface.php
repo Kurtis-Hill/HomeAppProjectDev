@@ -10,7 +10,4 @@ interface NavBarDataProviderInterface
 {
     #[ArrayShape([NavBarListLinkDTO::class])]
     public function getNavBarData(User $user): array;
-
-    #[ArrayShape(['errors'])]
-    public function getNavbarRequestErrors(): array;
 }

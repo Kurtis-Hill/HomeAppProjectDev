@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
@@ -26,13 +26,10 @@ class GetSingleUserController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    private LoggerInterface $logger;
-
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    public function __construct(RequestQueryParameterHandler $requestQueryParameterHandler)
     {
-        $this->logger = $elasticLogger;
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
@@ -55,7 +52,7 @@ class GetSingleUserController extends AbstractController
 
         $userResponse = $userResponseBuilder->buildFullUserResponseDTO($user);
         try {
-            $normalizedDTO = $this->normalizeResponse($userResponse, [$requestDTO->getResponseType()]);
+            $normalizedDTO = $this->normalize($userResponse, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE], 'Get User');
         }

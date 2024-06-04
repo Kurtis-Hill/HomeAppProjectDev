@@ -9,6 +9,6 @@ class SoilReadingTypeChecker extends AbstractSensorTypeReadingTypeChecker implem
 {
     public function checkReadingTypeIsValid(string $readingType): bool
     {
-        return $this->standardCheckReadingTypeIsValid($readingType, Soil::getAllowedReadingTypes());
+        return $this->checkAllReadingTypeIsValid($readingType, Soil::getAllowedReadingTypes());
     }
 }

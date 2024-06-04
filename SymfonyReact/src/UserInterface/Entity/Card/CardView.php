@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ORM\Index(columns: ["userID"], name: "UserID"),
     ORM\Index(columns: ["iconID"], name: "FK_E36636B5840D9A7A"),
     ORM\Index(columns: ["cardViewID"], name: "cardview_show"),
-    ORM\UniqueConstraint(name: "user_cardview", columns: ["userID", "sensor"]),
+    ORM\UniqueConstraint(name: "user_cardview", columns: ["userID", "sensorID"]),
 ]
 class CardView
 {
@@ -60,11 +60,11 @@ class CardView
     private ?Icons $cardIconID;
 
     #[
-        ORM\ManyToOne(targetEntity: CardColour::class),
+        ORM\ManyToOne(targetEntity: Colour::class),
         ORM\JoinColumn(name: "colourID", referencedColumnName: "colourID"),
     ]
     #[Assert\NotNull(message: "Card Colour colour cannot be null")]
-    private CardColour $cardColourID;
+    private Colour $cardColourID;
 
     public function getCardViewID(): int
     {
@@ -118,12 +118,12 @@ class CardView
         $this->cardIconID = $cardIconID;
     }
 
-    public function getCardColourID(): CardColour
+    public function getCardColourID(): Colour
     {
         return $this->cardColourID;
     }
 
-    public function setCardColourID(?CardColour $cardColourID): void
+    public function setCardColourID(?Colour $cardColourID): void
     {
         $this->cardColourID = $cardColourID;
     }

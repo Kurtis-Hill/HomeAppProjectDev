@@ -4,10 +4,8 @@ namespace App\Sensors\DTO\Response\SensorResponse;
 
 use App\Common\Services\RequestTypeEnum;
 use App\Devices\DTO\Response\DeviceResponseDTO;
-use App\Sensors\DTO\Response\SensorReadingTypeResponse\SensorReadingTypeResponseDTOInterface;
 use App\User\DTO\Response\UserDTOs\UserResponseDTO;
 use App\UserInterface\DTO\Response\CardView\CardViewResponseDTO;
-use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -20,7 +18,8 @@ readonly class SensorResponseDTO
         private string $sensorName,
         private DeviceResponseDTO $device,
         private SensorTypeResponseDTO $sensorType,
-        #[ArrayShape([SensorReadingTypeResponseDTOInterface::class])]
+        private int $pinNumber,
+        private int $readingInterval,
         private array $sensorReadingTypes = [],
         private ?bool $canEdit = null,
         private ?bool $canDelete = null,
@@ -92,6 +91,17 @@ readonly class SensorResponseDTO
         RequestTypeEnum::SENSITIVE_FULL->value,
         RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
+    public function getReadingInterval(): int
+    {
+        return $this->readingInterval;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
     public function getCanEdit(): ?bool
     {
         return $this->canEdit;
@@ -117,5 +127,16 @@ readonly class SensorResponseDTO
     public function getCardView(): ?CardViewResponseDTO
     {
         return $this->cardView;
+    }
+
+    #[Groups([
+    RequestTypeEnum::FULL->value,
+    RequestTypeEnum::ONLY->value,
+    RequestTypeEnum::SENSITIVE_FULL->value,
+    RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getPinNumber(): ?int
+    {
+        return $this->pinNumber;
     }
 }

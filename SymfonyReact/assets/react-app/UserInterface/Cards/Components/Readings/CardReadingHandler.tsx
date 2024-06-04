@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios';
 import { AxiosError } from 'axios';
 import { CurrentReadingDataDisplayInterface } from './SensorDataOutput/CurrentReadingDataDisplayInterface';
 
-import { CardCurrentSensorDataInterface } from './SensorDataOutput/CurrentReadingDataDisplayInterface';
+import { StandardCardCurrentSensorDataInterface } from './SensorDataOutput/CurrentReadingDataDisplayInterface';
 import { CardFilterBarInterface } from '../Filterbars/CardFilterBarInterface';
 import { CardSensorDataResponseInterface } from '../../Response/CurrentReadingCardData/CardDataResponseInterface';
 
@@ -34,8 +34,8 @@ const cardReducer = (previousCards: CardSensorDataResponseInterface[]|undefined,
         }
         for (let j = 0; j < cardForDisplay.sensorData.length; j++) {
             if (cardForDisplay !== undefined && cardForDisplay.cardViewID === previousCard.cardViewID) {
-                const sensorReadingData: CardCurrentSensorDataInterface|undefined = cardForDisplay.sensorData[j];
-                const previousSensorReadingData: CardCurrentSensorDataInterface|undefined = previousCard.sensorData[j];
+                const sensorReadingData: StandardCardCurrentSensorDataInterface|undefined = cardForDisplay.sensorData[j];
+                const previousSensorReadingData: StandardCardCurrentSensorDataInterface|undefined = previousCard.sensorData[j];
                 if ((previousSensorReadingData !== undefined && sensorReadingData !== undefined) && sensorReadingData.readingType === previousSensorReadingData.readingType) {
                     if (sensorReadingData.currentReading !== undefined && previousSensorReadingData.currentReading !== undefined) {
                         if (sensorReadingData.currentReading < previousSensorReadingData.currentReading) {
@@ -110,7 +110,9 @@ export function CardReadingHandler(props: {
 
     if (loadingCards === true) {
         return (
-            <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row" />
+            <div className="" style={{ height: "100%", overflow: "hidden", width: "100%", }}>
+                <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row hidden-scroll" />
+            </div>
         );
     }
     return (   

@@ -1,16 +1,15 @@
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosResponse} from 'axios';
 
-import { apiURL } from "../../Common/URLs/CommonURLs";
-import { setUserSession, refreshUserTokens } from '../Session/UserSession';
+import {apiURL} from "../../Common/URLs/CommonURLs";
+import {setUserSession} from '../Session/UserSession';
 
-import { LoginResponseInterface } from "../Response/LoginResponseInterface";
-import { TokenRefreshResponseInterface } from "../Response/TokenRefreshResponseInterface";
+import {LoginResponseInterface} from "../Response/LoginResponseInterface";
 
-import { LoginFormUserInputsInterface } from "../Form/LoginFormUserInputsInterface"
+import {LoginUserInputsInterface} from "../../Routes/Login/Login"
 
-import { getRefreshToken } from '../Tokens/GetAPITokens'; 
+import {getRefreshToken} from '../Tokens/APITokenHandler';
 
-export async function handleLogin(userInputs: LoginFormUserInputsInterface): Promise<AxiosResponse> {
+export async function handleLogin(userInputs: LoginUserInputsInterface): Promise<AxiosResponse> {
     const loginCheckResponse: AxiosResponse = await axios.post(
         `${apiURL}login_check`,
         userInputs
@@ -27,14 +26,12 @@ export async function handleLogin(userInputs: LoginFormUserInputsInterface): Pro
 
 export async function handleTokenRefresh(): Promise<AxiosResponse> {
     const refreshToken: string = getRefreshToken();
-    try {
-        const refreshTokenResponse: AxiosResponse = await axios.post(
+    // try {
+    return await axios.post(
             `${apiURL}token/refresh`,
-            { refreshToken : refreshToken }
-        )
-
-        return refreshTokenResponse;
-    } catch (err) {
-        const error = err as Error | AxiosError;
-    }
+            {refreshToken: refreshToken}
+        );
+    // } catch (err) {
+    //     const error = err as Error | AxiosError;
+    // }
 }

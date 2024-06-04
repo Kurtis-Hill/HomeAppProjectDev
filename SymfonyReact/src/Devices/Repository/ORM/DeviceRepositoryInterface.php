@@ -12,8 +12,6 @@ use Doctrine\ORM\ORMInvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<Devices>
- *
  * @method Devices|null find($id, $lockMode = null, $lockVersion = null)
  * @method Devices|null findOneBy(array $criteria, array $orderBy = null)
  * @method Devices[]    findAll()
@@ -58,4 +56,7 @@ interface DeviceRepositoryInterface
      * @throws ORMException
      */
     public function remove(Devices $device): void;
+
+    #[ArrayShape([1,2,3])]
+    public function findAllDevicePinsInUse(int $deviceID): array;
 }

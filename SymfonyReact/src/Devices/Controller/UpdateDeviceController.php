@@ -5,12 +5,12 @@ namespace App\Devices\Controller;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\CommonURL;
 use App\Common\API\Traits\HomeAppAPITrait;
-use App\Common\Builders\Request\RequestDTOBuilder;
 use App\Common\Exceptions\ValidatorProcessorException;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
 use App\Common\Validation\Traits\ValidatorProcessorTrait;
 use App\Devices\Builders\DeviceResponse\DeviceResponseDTOBuilder;
+use App\Devices\Builders\DeviceUpdate\DeviceDTOBuilder;
 use App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface;
 use App\Devices\DTO\Request\DeviceUpdateRequestDTO;
 use App\Devices\Entity\Devices;
@@ -18,13 +18,11 @@ use App\Devices\Voters\DeviceVoter;
 use App\User\Entity\User;
 use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
 use App\User\Exceptions\RoomsExceptions\RoomNotFoundException;
-use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -60,6 +58,7 @@ class UpdateDeviceController extends AbstractController
         ValidatorInterface $validator,
         UpdateDeviceHandlerInterface $updateDeviceHandler,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        DeviceDTOBuilder $deviceDTOBuilder,
     ): JsonResponse {
         $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
 
@@ -96,13 +95,10 @@ class UpdateDeviceController extends AbstractController
         }
 
         try {
-            $updateDeviceDTO = $updateDeviceHandler->buildUpdateDeviceDTO(
+            $updateDeviceDTO = $deviceDTOBuilder->buildUpdateDeviceInternalDTO(
                 $deviceUpdateRequestDTO,
-                $user,
                 $deviceToUpdate,
             );
-        } catch (NonUniqueResultException | ORMException) {
-            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Room or group name')]);
         } catch (GroupNotFoundException|RoomNotFoundException $e) {
             return $this->sendNotFoundResponse([$e->getMessage()]);
         }
@@ -118,14 +114,15 @@ class UpdateDeviceController extends AbstractController
             return $this->sendBadRequestJsonResponse($deviceUpdateValidationErrors, APIErrorMessages::VALIDATION_ERRORS);
         }
 
-        $savedDevice = $updateDeviceHandler->saveDevice($deviceToUpdate);
+        $sendUpdateRequestToDevice = ($updateDeviceDTO->getDeviceUpdateRequestDTO()->getDeviceName() || $updateDeviceDTO->getDeviceUpdateRequestDTO()->getPassword());
+        $savedDevice = $updateDeviceHandler->saveDevice($deviceToUpdate, $sendUpdateRequestToDevice);
         if ($savedDevice !== true) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, 'Saving device')]);
         }
 
         $deviceUpdateSuccessResponseDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($deviceToUpdate);
         try {
-            $normalizedResponse = $this->normalizeResponse($deviceUpdateSuccessResponseDTO, [$requestDTO->getResponseType()]);
+            $normalizedResponse = $this->normalize($deviceUpdateSuccessResponseDTO, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }

@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'group-mapping/')]
@@ -23,13 +23,10 @@ class GetGroupNameMappingsController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    private LoggerInterface $logger;
-
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    public function __construct(RequestQueryParameterHandler $requestQueryParameterHandler)
     {
-        $this->logger = $elasticLogger;
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
@@ -60,7 +57,7 @@ class GetGroupNameMappingsController extends AbstractController
         }
 
         try {
-            $normalizedGroupNameMappingResponseDTOs = $this->normalizeResponse($groupNameMappingResponseDTOs, [$requestDTO->getResponseType()]);
+            $normalizedGroupNameMappingResponseDTOs = $this->normalize($groupNameMappingResponseDTOs, [$requestDTO->getResponseType()]);
         } catch (NotEncodableValueException) {
             return $this->sendMultiStatusJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }

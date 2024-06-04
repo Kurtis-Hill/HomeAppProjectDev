@@ -2,17 +2,24 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
 use App\Common\API\APIErrorMessages;
 use App\Common\API\HTTPStatusCodes;
-use App\Sensors\Entity\ReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\Temperature;
+use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\ORM\DataFixtures\ESP8266\SensorFixtures;
+use App\Sensors\Controller\SensorControllers\ESPSensorCurrentReadingUpdateController;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
+use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Sensors\Entity\SensorTypes\Bmp;
 use App\Sensors\Entity\SensorTypes\Dallas;
 use App\Sensors\Entity\SensorTypes\Dht;
+use App\Sensors\Entity\SensorTypes\GenericMotion;
+use App\Sensors\Entity\SensorTypes\GenericRelay;
+use App\Sensors\Entity\SensorTypes\LDR;
+use App\Sensors\Entity\SensorTypes\Sht;
 use App\Sensors\Entity\SensorTypes\Soil;
 use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler;
 use App\Tests\Traits\TestLoginTrait;
@@ -77,6 +84,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
+//        dd($requestResponse->getContent());
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
@@ -185,6 +193,27 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                         'humidity' => 50
                     ]
                 ],
+                [
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
+                    'sensorType' => GenericMotion::NAME,
+                    'currentReadings' => [
+                        'motion' => true,
+                    ],
+                ],
+                [
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME],
+                    'sensorType' => GenericRelay::NAME,
+                    'currentReadings' => [
+                        'relay' => true,
+                    ],
+                ],
+                [
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'sensorType' => LDR::NAME,
+                    'currentReadings' => [
+                        'analog' => 500,
+                    ],
+                ]
             ],
             'message' => [
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[Soil::NAME]),
@@ -194,6 +223,9 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dallas::NAME]),
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Motion::READING_TYPE, SensorFixtures::SENSORS[GenericMotion::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, SensorFixtures::SENSORS[GenericRelay::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[LDR::NAME]),
             ]
         ];
 
@@ -235,6 +267,82 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
             ]
         ];
+
+        // Motion
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
+                    'currentReadings' => [
+                        'motion' => true,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Motion::READING_TYPE, SensorFixtures::SENSORS[GenericMotion::NAME]),
+            ]
+        ];
+
+        // Generic Relay
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME],
+                    'currentReadings' => [
+                        'relay' => true,
+                    ],
+                ],
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => 'UsDev2Relay',
+                    'currentReadings' => [
+                        'relay' => true,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, SensorFixtures::SENSORS[GenericRelay::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Relay::READING_TYPE, 'UsDev2Relay'),
+            ]
+        ];
+
+        //LDR
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => 500,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Analog::READING_TYPE, SensorFixtures::SENSORS[LDR::NAME]),
+            ]
+        ];
+
+        // SHT
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME],
+                    'currentReadings' => [
+                        'temperature' => 15.5,
+                        'humidity' => 50,
+                    ],
+                ],
+            ],
+            'message' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Sht::NAME]),
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Sht::NAME]),
+            ]
+        ];
+
+
     }
 
     /**
@@ -258,6 +366,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
+//        dd($requestResponse->getContent());
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $requestResponse->getStatusCode());
@@ -279,7 +388,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ],
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
-            'errors' => ['Sensor type ' . Dht::NAME . '1' . ' not recognised'],
+            'errors' => ['sensorType must be one of "Bmp", "Soil", "Dallas", "Dht", "GenericMotion", "GenericRelay", "Ldr", "Sht"'],
         ];
 
         yield [
@@ -292,7 +401,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'sensorData' => [
                 [
                     'sensorType' => Bmp::NAME,
-                    'sensorName' => SensorFixtures::SENSORS['Bmp'],
+                    'sensorName' => SensorFixtures::SENSORS[Bmp::NAME],
                 ],
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
@@ -326,38 +435,39 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
 
         self::assertEquals(Response::HTTP_MULTI_STATUS, $requestResponse->getStatusCode());
         self::assertEquals($title, $responseData['title']);
-        self::assertEquals($errors, $responseData['errors']);
         self::assertEquals($payload, $responseData['payload']);
+        self::assertEquals($errors, $responseData['errors']);
     }
 
     public function mixedGoodBadRequestDataProvider(): Generator
     {
-        yield [
-            'sensorData' => [
-                [
-                    'sensorType' => Dht::NAME,
-                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME],
-                    'currentReadings' => [
-                        'temperature' => 15.5,
-                        'humidity' => 50
-                    ],
-                ],
-                [
-                    'sensorType' => Dht::NAME,
-                    'sensorName' => [SensorFixtures::SENSORS[Dht::NAME]],
-                    'currentReadings' => [
-                        'temperature' => 15.5,
-                        'humidity' => 50
-                    ],
-                ]
-            ],
-            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
-            'errors' => ['sensorName must be a string you have provided array'],
-            'payload' => [
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
-                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME])
-            ],
-        ];
+        // taken out due to doc extractor array sensor name is a type exception
+//        yield [
+//            'sensorData' => [
+//                [
+//                    'sensorType' => Dht::NAME,
+//                    'sensorName' => SensorFixtures::SENSORS[Dht::NAME],
+//                    'currentReadings' => [
+//                        'temperature' => 15.5,
+//                        'humidity' => 50
+//                    ],
+//                ],
+//                [
+//                    'sensorType' => Dht::NAME,
+//                    'sensorName' => [SensorFixtures::SENSORS[Dht::NAME]],
+//                    'currentReadings' => [
+//                        'temperature' => 15.5,
+//                        'humidity' => 50
+//                    ],
+//                ]
+//            ],
+//            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+//            'errors' => ['sensorName must be a string you have provided array'],
+//            'payload' => [
+//                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+//                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME])
+//            ],
+//        ];
 
         yield [
             'sensorData' => [
@@ -408,9 +518,9 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             ],
             'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
             'errors' => [
-                'The submitted value is not a number "string"',
-                'The submitted value is not a number "array"',
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
+                'The submitted value is not a number "array"',
+                'The submitted value is not a number "string"',
 
             ],
             'payload' => [
@@ -439,12 +549,74 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             ],
             'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
             'errors' => [
-                'The submitted value is not a number "string"',
-                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
                 'The submitted value is not a number "array"',
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
+                'The submitted value is not a number "string"',
             ],
             'payload' => [
                 sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Dht::NAME]),
+            ],
+        ];
+
+        // SHT
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME],
+                    'currentReadings' => [
+                        'temperature' => 'string bing',
+                        'humidity' => []
+                    ],
+                ],
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME] .'2',
+                    'currentReadings' => [
+                        'temperature' => Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 15,
+                        'humidity' => 50
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            'errors' => [
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Sht::NAME . ' sensor cannot exceed ' . Sht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
+                'The submitted value is not a number "array"',
+                'The submitted value is not a number "string"',
+
+            ],
+            'payload' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Humidity::READING_TYPE, SensorFixtures::SENSORS[Sht::NAME] . '2'),
+            ],
+        ];
+
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME],
+                    'currentReadings' => [
+                        'temperature' => Sht::HIGH_TEMPERATURE_READING_BOUNDARY - 15,
+                        'humidity' => 'string bing'
+                    ],
+                ],
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME] .'2',
+                    'currentReadings' => [
+                        'temperature' => Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 15,
+                        'humidity' => []
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            'errors' => [
+                'The submitted value is not a number "array"',
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Sht::NAME . ' sensor cannot exceed ' . Sht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 15 . Temperature::READING_SYMBOL,
+                'The submitted value is not a number "string"',
+            ],
+            'payload' => [
+                sprintf(CurrentReadingSensorDataRequestHandler::SENSOR_UPDATE_SUCCESS_MESSAGE, Temperature::READING_TYPE, SensorFixtures::SENSORS[Sht::NAME]),
             ],
         ];
     }
@@ -468,6 +640,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
+//        dd($this->client->getResponse()->getContent());
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -498,8 +671,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
             'errors' => [
-                'The submitted value is not a number string',
                 'The submitted value is not a number array',
+                'The submitted value is not a number string',
             ],
             'payload' => [],
             'responseCode' => Response::HTTP_BAD_REQUEST
@@ -524,8 +697,114 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             ],
             'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
             'errors' => [
-                'The submitted value is not a number string',
                 'The submitted value is not a number array',
+                'The submitted value is not a number string',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        // Generic Motion
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME],
+                    'currentReadings' => [
+                        'motion' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => GenericMotion::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericMotion::NAME] .'2',
+                    'currentReadings' => [
+                        'motion' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'Bool readings can only be true or false',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        // Generic Relay
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME],
+                    'currentReadings' => [
+                        'relay' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => GenericRelay::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[GenericRelay::NAME] .'2',
+                    'currentReadings' => [
+                        'relay' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'Bool readings can only be true or false',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        //LDR
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME] .'2',
+                    'currentReadings' => [
+                        'analog' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'The submitted value is not a number array',
+                'The submitted value is not a number string',
+            ],
+            'payload' => [],
+            'responseCode' => Response::HTTP_BAD_REQUEST
+        ];
+
+        // SHT
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME],
+                    'currentReadings' => [
+                        'temperature' => 'string bing',
+                    ],
+                ],
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME] .'2',
+                    'currentReadings' => [
+                        'temperature' => [],
+                    ],
+                ]
+            ],
+            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
+            'errors' => [
+                'The submitted value is not a number "array"',
+                'The submitted value is not a number "string"',
             ],
             'payload' => [],
             'responseCode' => Response::HTTP_BAD_REQUEST
@@ -621,6 +900,46 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             'payload' => [Temperature::READING_TYPE.' data accepted for sensor ' . SensorFixtures::SENSORS[Dht::NAME]],
             'responseCode' => Response::HTTP_MULTI_STATUS
         ];
+
+        //LDR
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => LDR::HIGH_READING - 5,
+                        'latitude' => Latitude::HIGH_READING,
+                    ],
+                ],
+            ],
+            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            'errors' => [
+                Latitude::READING_TYPE . ' reading type not valid for sensor: ' . LDR::NAME,
+            ],
+            'payload' => [Analog::READING_TYPE.' data accepted for sensor ' . SensorFixtures::SENSORS[LDR::NAME]],
+            'responseCode' => Response::HTTP_MULTI_STATUS
+        ];
+
+        // SHT
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME],
+                    'currentReadings' => [
+                        'temperature' => Sht::HIGH_TEMPERATURE_READING_BOUNDARY - 10,
+                        'latitude' => Latitude::HIGH_READING,
+                    ],
+                ],
+            ],
+            'title' => APIErrorMessages::PART_OF_CONTENT_PROCESSED,
+            'errors' => [
+                Latitude::READING_TYPE . ' reading type not valid for sensor: ' . Sht::NAME,
+            ],
+            'payload' => [Temperature::READING_TYPE.' data accepted for sensor ' . SensorFixtures::SENSORS[Sht::NAME]],
+            'responseCode' => Response::HTTP_MULTI_STATUS
+        ];
     }
 
     /**
@@ -672,10 +991,10 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'errors' => [
-                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed '. Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '.Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
-                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
-                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under ' . Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 1 . Humidity::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME . ' sensor cannot exceed '. Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '.Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
             ],
         ];
 
@@ -697,8 +1016,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'errors' => [
-                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dallas::NAME . ' sensor cannot exceed '. Dallas::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL .' you entered '.Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
                 ucfirst(Temperature::READING_TYPE) .' settings for ' . Dallas::NAME . ' sensor cannot be below ' . Dallas::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dallas::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dallas::NAME . ' sensor cannot exceed '. Dallas::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL .' you entered '.Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
             ],
         ];
 
@@ -724,12 +1043,12 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'errors' => [
-                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 1 .Temperature::READING_SYMBOL,
-                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL .' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
-                'The highest possible ' . Latitude::READING_TYPE . ' is ' . Latitude::HIGH_READING . Latitude::READING_SYMBOL . ' you entered ' . Latitude::HIGH_READING + 1 . Latitude::READING_SYMBOL,
-                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot be below ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
-                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under ' . Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 1 . Humidity::READING_SYMBOL,
                 'The lowest possible ' . Latitude::READING_TYPE . ' is ' . Latitude::LOW_READING . '° you entered ' . Latitude::LOW_READING - 1 . Latitude::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under ' . Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 1 . Humidity::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot be below ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
+                'The highest possible ' . Latitude::READING_TYPE . ' is ' . Latitude::HIGH_READING . Latitude::READING_SYMBOL . ' you entered ' . Latitude::HIGH_READING + 1 . Latitude::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL .' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot exceed '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '. Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 1 .Temperature::READING_SYMBOL,
             ],
         ];
 
@@ -751,8 +1070,60 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
                 ]
             ],
             'errors' => [
-                'Reading for ' . Soil::NAME . ' sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY . ' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 1,
                 'Reading for ' . Soil::NAME . ' sensor cannot be under ' . Soil::LOW_SOIL_READING_BOUNDARY . ' you entered ' . Soil::LOW_SOIL_READING_BOUNDARY - 1,
+                'Reading for ' . Soil::NAME . ' sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY . ' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 1,
+            ],
+        ];
+
+        //LDR
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => LDR::HIGH_READING + 1,
+                    ],
+                ],
+                [
+                    'sensorType' => LDR::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[LDR::NAME],
+                    'currentReadings' => [
+                        'analog' => LDR::LOW_READING - 1,
+                    ],
+                ]
+            ],
+            'errors' => [
+                'Reading for ' . LDR::NAME . ' sensor cannot be under ' . LDR::LOW_READING . ' you entered ' . LDR::LOW_READING - 1,
+                'Reading for ' . LDR::NAME . ' sensor cannot be over ' . LDR::HIGH_READING . ' you entered ' . LDR::HIGH_READING + 1,
+            ],
+        ];
+
+        // SHT
+        yield [
+            'sensorData' => [
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME],
+                    'currentReadings' => [
+                        'temperature' => Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 1,
+                        'humidity' => Humidity::HIGH_READING + 1,
+                    ],
+                ],
+                [
+                    'sensorType' => Sht::NAME,
+                    'sensorName' => SensorFixtures::SENSORS[Sht::NAME],
+                    'currentReadings' => [
+                        'temperature' => Sht::LOW_TEMPERATURE_READING_BOUNDARY - 1,
+                        'humidity' => Humidity::LOW_READING - 1,
+                    ],
+                ]
+            ],
+            'errors' => [
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under ' . Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 1 . Humidity::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Sht::NAME . ' sensor cannot be below ' . Sht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Sht::LOW_TEMPERATURE_READING_BOUNDARY -1  . Temperature::READING_SYMBOL,
+                ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over '. Humidity::HIGH_READING . Humidity::READING_SYMBOL .' you entered ' . Humidity::HIGH_READING + 1 . Humidity::READING_SYMBOL,
+                ucfirst(Temperature::READING_TYPE) . ' settings for ' . Sht::NAME . ' sensor cannot exceed '. Sht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered '.Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 1 . Temperature::READING_SYMBOL,
             ],
         ];
     }

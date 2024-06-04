@@ -38,19 +38,22 @@ SymfonyReact/.phpunit.result.cache
 SymfonyReact/phpunit.xml
 
 ##< SSL >###
-SSL/ca-key.pem
-SSL/client-cert.pem
-SSL/client-key.pem
-SSL/server-cert.pem
-SSL/server-key.pem
-SSL/server.pfx
-SSL/ca-cert.pem
-
+SSL/custom/client-cert.pem
+SSL/custom/client-key.pem
+SSL/custom/server-cert.pem
+SSL/custom/server-key.pem
+SSL/custom/server.pfx
+SSL/custom/ca-cert.pem
+SSL/custom/ca-key.pem
+SSL/signed/client-cert.pem
+SSL/signed/client-key.pem
+SSL/signed/ca-cert.pem
 ##< Docker >###
 HomeAppDocker/.env
 HomeAppDocker/mariadb/db_data/*
 HomeAppDocker/webservers/auth/auth.json
-HomeAppDocker/docker-compose.override.yml
+HomeAppDocker/docker-compose.override.*
+HomeAppDocker/docker-compose.yml.*
 .run/Docker Image.run.xml
 .run/DockerComposeHomeApp.run.xml
 

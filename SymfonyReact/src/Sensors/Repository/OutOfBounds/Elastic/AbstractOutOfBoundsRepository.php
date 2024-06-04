@@ -2,7 +2,6 @@
 
 namespace App\Sensors\Repository\OutOfBounds\Elastic;
 
-use App\Sensors\Builders\ReadingTypeCreationBuilders\SensorOutOfBoundsCreationBuilders\Elastic\OutOfBoundsPersistenceDTOBuilder;
 use App\Sensors\DTO\Request\OutOfBounds\Elastic\OutOfBoundsElasticPersistenceDTO;
 use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
 use Elastica\Document;
@@ -28,7 +27,7 @@ abstract class AbstractOutOfBoundsRepository
 
     public function persist(OutOfBoundsEntityInterface $outOfBoundsEntity): void
     {
-        $outOfBoundsUpdateDTO = OutOfBoundsPersistenceDTOBuilder::buildOutOfBoundsPersistenceDTO($outOfBoundsEntity);
+        $outOfBoundsUpdateDTO = \App\Sensors\Builders\Internal\ReadingType\ReadingTypeCreationBuilders\SensorOutOfBoundsCreationBuilders\Elastic\OutOfBoundsPersistenceDTOBuilder::buildOutOfBoundsPersistenceDTO($outOfBoundsEntity);
 
         $serializedUpdateDTO = $this->serializeOutOfBoundsEntity($outOfBoundsUpdateDTO);
         $this->index->addDocument(

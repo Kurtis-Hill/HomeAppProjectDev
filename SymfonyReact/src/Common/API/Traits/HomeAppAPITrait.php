@@ -4,16 +4,20 @@
 namespace App\Common\API\Traits;
 
 use App\Common\API\HTTPStatusCodes;
-use App\Devices\Controller\GetDeviceController;
 use Doctrine\Common\Annotations\AnnotationReader;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -22,8 +26,6 @@ trait HomeAppAPITrait
     public const NO_RESPONSE_MESSAGE = 'No Response Message';
 
     public const REQUEST_SUCCESSFUL = 'Request Successful';
-
-    public const REQUEST_ACCEPTED = 'Request Accepted';
 
     public const REQUEST_ACCEPTED_SUCCESS_CREATED = 'Request Accepted Successfully Created';
 
@@ -37,10 +39,13 @@ trait HomeAppAPITrait
 
     public const BAD_REQUEST_NO_DATA_RETURNED = 'Bad Request No Data Returned';
 
-    public const SOME_ISSUES_WITH_REQUEST = 'Some issues were found with your request';
-
     // 20x Successfull
-    public function sendSuccessfulJsonResponse(array $data = [], $title = self::REQUEST_SUCCESSFUL): JsonResponse
+    /**
+      * @param array $data
+      * @param string $title
+      * @return JsonResponse
+     */
+    public function sendSuccessfulJsonResponse(array $data = [], string $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
         if (!empty($data)) {
             return $this->returnJsonResponse(
@@ -61,6 +66,11 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param array $data
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendSuccessfullyAddedToBeProcessedJsonResponse(array $data = [], string $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
         if (!empty($data)) {
@@ -113,6 +123,11 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param array $data
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendCreatedResourceJsonResponse(
         array $data = [],
         string $title = self::REQUEST_ACCEPTED_SUCCESS_CREATED
@@ -136,6 +151,11 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param mixed[] $errors
+     * @param mixed[] $data
+     * @return JsonResponse
+     */
     public function sendPartialContentJsonResponse(array $errors = [], array $data = []): JsonResponse
     {
         if (!empty($data)) {
@@ -159,6 +179,12 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param mixed[] $errors
+     * @param mixed[] $data
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendMultiStatusJsonResponse(array $errors = [], array $data = [], string $title = 'Part of the request was accepted'): JsonResponse
     {
         return $this->returnJsonResponse(
@@ -190,6 +216,11 @@ trait HomeAppAPITrait
     }
 
     // 40x Client Error Response
+    /**
+     * @param array $errors
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendBadRequestJsonResponse(array $errors = [], string $title = self::BAD_REQUEST_NO_DATA_RETURNED): JsonResponse
     {
         if (!empty($errors)) {
@@ -211,6 +242,10 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param array $errors
+     * @return JsonResponse
+     */
     public function sendNotFoundResponse(array $errors = []): JsonResponse
     {
         if (!empty($errors)) {
@@ -233,6 +268,12 @@ trait HomeAppAPITrait
     }
 
     // 50x Server Error Response
+
+    /**
+     * @param array $data
+     * @param string $title
+     * @return JsonResponse
+     */
     public function sendInternalServerErrorJsonResponse(array $data = [], string $title = self::SERVER_ERROR_TRY_AGAIN): JsonResponse
     {
         if (!empty($data)) {
@@ -254,6 +295,10 @@ trait HomeAppAPITrait
         );
     }
 
+    /**
+     * @param array $errors
+     * @return JsonResponse
+     */
     public function sendForbiddenAccessJsonResponse(array $errors = []): JsonResponse
     {
         if (!empty($errors)) {
@@ -280,7 +325,11 @@ trait HomeAppAPITrait
         return new Response($data, $statusCode);
     }
 
-
+    /**
+     * @param array $data
+     * @param int $statusCode
+     * @return JsonResponse
+     */
     private function returnJsonResponse(array $data, int $statusCode): JsonResponse
     {
         return new JsonResponse($data, $statusCode);
@@ -288,16 +337,18 @@ trait HomeAppAPITrait
     /**
      * @throws ExceptionInterface
      */
-    public function normalizeResponse(mixed $data, array $groups = []): mixed
+    public function normalize(mixed $data, array $groups = []): mixed
     {
+        $context[AbstractNormalizer::CIRCULAR_REFERENCE_LIMIT] = 10;
+
         if (!empty($groups)) {
             $annotationClassMetadataFactory = new ClassMetadataFactory(
-                new AnnotationLoader(
+                new AttributeLoader(
                     new AnnotationReader()
                 )
             );
 
-            $context = ['groups' => $groups];
+            $context['groups'] = $groups;
         }
 
         $normalizer = [new ObjectNormalizer($annotationClassMetadataFactory ?? null)];
@@ -306,19 +357,46 @@ trait HomeAppAPITrait
         return $normalizer->normalize($data, null, $context ?? []);
     }
 
+    /**
+     * @param string|mixed[] $data
+     * @param string|null $class
+     * @param string|null $format
+     * @param array $extraContexts
+     * @param bool $docExtractor
+     * @return mixed
+     */
     public function deserializeRequest(
         string|array $data,
         ?string $class = null,
         ?string $format = null,
-        array $extraContexts = []
+        array $extraContexts = [],
+        bool $docExtractor = false,
     ): mixed {
-        $encoders = [new XmlEncoder(), new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
+        $encoders = match ($format) {
+            'xml' => [new XmlEncoder()],
+            'json' => [new JsonEncoder()],
+            default => [new XmlEncoder(), new JsonEncoder()],
+        };
+
+        if ($docExtractor === true) {
+            $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);
+            $normalizers = [
+                new ArrayDenormalizer(),
+                new ObjectNormalizer(
+                    null,
+                    new CamelCaseToSnakeCaseNameConverter(),
+                    null,
+                    $extractor
+                )
+            ];
+        } else {
+            $normalizers = [new ObjectNormalizer()];
+        }
 
         return (new Serializer(
             $normalizers,
-            $encoders)
-        )->deserialize(
+            $encoders
+        ))->deserialize(
             $data,
             $class,
             $format,

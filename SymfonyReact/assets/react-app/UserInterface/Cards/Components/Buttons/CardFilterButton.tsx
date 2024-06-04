@@ -7,7 +7,7 @@ export default function CardFilterButton(props: { toggleShowFilters: () => void;
     return (
         <>
             <button className="card-filter-button" onClick={toggleShowFilters}>
-                <i className="fas fa-1x text-gray-300 fa-filter"></i>
+                <i className="fas fa-1x text-gray-300 fa-filter filter-button"></i>
             </button>
         </>
     );
