@@ -990,10 +990,6 @@ void handleSettingsUpdate(){
   if (!doc["sensorData"].isNull()) {
     Serial.println("Sensor data found in json attempting to save data");
     sensorDataChanged = true;
-//    Serial.println("here we are3!!!!!!!!!!!!!!!!!!!!!");
-//    Serial.println(doc.as<JsonObject>());
-//    Serial.println(doc["sensorData"]);
-//    Serial.println(doc);
     if (!saveSensorDataToSpiff(doc["sensorData"].as<JsonVariant>())) {
       Serial.println("failed to save sensor data spiffs");
       sensorDataSuccess = false;
@@ -1091,25 +1087,36 @@ bool saveDeviceUserSettings(JsonObject doc) {
 
 // Wrapper for saving sensor data for each sensor in different SPIFFS
 bool saveSensorDataToSpiff(JsonVariant doc) {
-  if (!saveDallasSensorData(doc["dallas"])) {   
-    Serial.println("failed to set Dallas Spiff");
-  }
-  
-  if (!saveDhtSensorData(doc["dht"])) {
-    Serial.println("No Dht data");
-  }
-  
-  if (!saveRelaySensorData(doc["relay"])) {
-    Serial.println("No relay data");
+  if (!doc["dallas"].isNull()) {
+    if (!saveDallasSensorData(doc["dallas"])) {   
+      Serial.println("failed to set Dallas Spiff");
+    }  
   }
 
-  if (!saveLdrSensorData(doc["ldr"])) {
-    Serial.println("No LDR data");
+  if (!doc["dht"].isNull()) {
+    if (!saveDhtSensorData(doc["dht"])) {
+      Serial.println("No Dht data");
+    }  
   }
 
-  if (!saveShtSensorData(doc["sht"])) {
-    Serial.println("No SHT data");
+  if (!doc["relay"].isNull()) {
+    if (!saveRelaySensorData(doc["relay"])) {
+      Serial.println("No relay data");
+    }  
   }
+
+  if (!doc["ldr"].isNull()) {
+    if (!saveLdrSensorData(doc["ldr"])) {
+      Serial.println("No LDR data");
+    }  
+  }
+
+  if (!doc["sht"].isNull()) {
+    if (!saveShtSensorData(doc["sht"])) {
+      Serial.println("No SHT data");
+    }    
+  }
+  
   return true;
 }
 
@@ -1289,9 +1296,6 @@ bool saveDhtSensorData(JsonVariant dhtData) {
 }
 
 bool saveDallasSensorData(JsonVariant dallasData) {
- Serial.println("me too11111");
- Serial.println(dallasData[0]["sensorName"].as<String>());
-
  for (int i = 0; i <= MAX_DALLAS_SENSORS; ++i) {
    if (dallasData[i]["sensorName"].isNull()) {
      if (i == 0) {
@@ -1429,7 +1433,8 @@ String buildHomeAppUrl(String endpoint) {
   url += "/";
   url += endpoint;
 
-  Serial.printf("url built: %s \n", url);
+  Serial.print("url built: ");
+  Serial.println(url);
   
   return url;
 }
@@ -1958,10 +1963,9 @@ String buildShtUpdateRequest(bool force = false) {
     if ((shtData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
       shtData.tempReading[i] = sht31[i]->readTemperature();
       shtData.humidReading[i] = sht31[i]->readHumidity();
-      Serial.println("Sht Temp readings is: ");
-      Serial.print(shtData.tempReading[i]);
-      Serial.println("Sht Temp readings is: ");
-      Serial.print(shtData.humidReading[i]);
+      Serial.printf("Sht Temperature readings is: %d \n", shtData.tempReading[i]);
+      Serial.printf("Sht Humidity readings is: %d \n", shtData.humidReading[i]);
+      
       if (!isnan(shtData.tempReading[i])) {
         Serial.print("sensor name:");
         Serial.println(shtData.sensorName[i]);
@@ -2311,7 +2315,7 @@ void checkSensorSPIFFSExist() {
   if (SPIFFS.exists("/ldr.json")) {
     ldrData.settingsJsonExists = true;
   }
-  if (SPIFFS.exists("sht.json")) {
+  if (SPIFFS.exists("/sht.json")) {
     shtData.settingsJsonExists = true;
   }
 }
