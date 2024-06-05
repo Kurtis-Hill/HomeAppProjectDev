@@ -24,6 +24,7 @@ export type TriggerFormType = {
     valueThatTriggers: number|boolean;
     startTime: number|null;
     endTime: number|null;
+    override: boolean;
 };
 
 export default function TriggerForm(props: {
@@ -52,7 +53,8 @@ export default function TriggerForm(props: {
             friday: true,
             saturday: true,
             sunday: true
-        }
+        },
+        override: false,
     });
 
     useEffect(() => {
@@ -82,7 +84,8 @@ export default function TriggerForm(props: {
                             friday: presets.days.friday,
                             saturday: presets.days.saturday,
                             sunday: presets.days.sunday,
-                        }
+                        },
+                        override: presets.override,
                     })); 
                 } else {
                     setTriggerRequest((values: TriggerFormType) => ({
@@ -282,7 +285,8 @@ export default function TriggerForm(props: {
                 <input checked={triggerRequest.days.sunday} type='checkbox' name='sunday' id='sunday' onChange={(e: Event) => handleAddNewTriggerInput(e)} />
                 <Label text='Sunday' htmlFor='sunday' />
                 <br />
-
+                <input type={"radio"} checked={triggerRequest.override} name="override" id="override" onChange={(e: Event) => handleAddNewTriggerInput(e)} />
+                <br />
                 <SubmitButton onClickFunction={(e) => handleSendNewTriggerRequest(e)} type="submit" text={`${operation} Trigger`} name='add-trigger' action='submit' classes='add-new-submit-button' />
                 <CloseButton close={() => closeForm(false)} classes={"modal-cancel-button"} />
             </form>        

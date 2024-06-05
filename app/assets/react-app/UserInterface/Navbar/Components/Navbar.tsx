@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
-import { checkAdmin } from "../../../Authentication/Session/UserSession";
+import { checkAdmin } from "../../../Authentication/Session/UserSessionHelper";
 
 import { handleNavBarRequest } from "../Request/NavBarRequest";
 import { IndividualNavBarElement, NavBarResponseInterface } from "../Response/NavBarResponseInterface";

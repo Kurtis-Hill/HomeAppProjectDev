@@ -5,9 +5,9 @@ import { IndividualNavBarElement, NavBarResponseInterface } from "../Response/Na
 import NavbarListItem from './NavbarListItem'
 import { BuildNavbarItem } from '../Builders/NavbarItemBuilder';
 import BaseModal from '../../../Common/Components/Modals/BaseModal';
-import { AddNewDevice } from '../../../Devices/Components/NewDevices/AddNewDevice';
+import { AddNewDeviceForm } from '../../../Devices/Components/NewDevices/AddNewDeviceForm';
 import { AddNewRoom } from '../../../User/Components/Room/AddNewRoom';
-import { checkAdmin } from '../../../Authentication/Session/UserSession';
+import { checkAdmin } from '../../../Authentication/Session/UserSessionHelper';
 import { AddNewGroup } from '../../../User/Components/Group/AddNewGroup';
 
 export default function NavbarViewOptionListElements(props: {
@@ -89,7 +89,7 @@ export default function NavbarViewOptionListElements(props: {
                 setShowModal={setAddNewDeviceModalFlag}
                 heightClasses="standard-modal-height"
             >
-                <AddNewDevice
+                <AddNewDeviceForm
                     setAddNewDeviceModal={setAddNewDeviceModal}
                     setRefreshNavDataFlag={props.setRefreshNavDataFlag}
                 />

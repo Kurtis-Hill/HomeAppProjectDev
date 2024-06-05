@@ -5,26 +5,26 @@ import SensorDataContext from '../../Contexts/SensorDataContext';
 import { SensorDataContextDataInterface } from '../../DataProviders/SensorDataProvider';
 import { SensorTypeResponseInterface } from '../../Response/SensorType/SensorTypeResponseInterface';
 import { Label } from '../../../Common/Components/Elements/Label';
-import { addNewSensorRequest } from '../../Request/Sensor/AddNewSensorRequest'
+import {addNewSensorRequest, NewSensorInterface} from '../../Request/Sensor/AddNewSensorRequest'
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 
-export type NewSensorType = {
+export type NewSensor = {
     sensorName: string,
     deviceID: number,
     sensorTypeID: number,
 }
 
-export function AddNewSensor(props: {deviceID: number, refreshData?: () => void; setShowModal?: (showModal: boolean) => void;}) {
+export function AddNewSensorForm(props: {deviceID: number, refreshData?: () => void; setShowModal?: (showModal: boolean) => void;}) {
     const { deviceID, setShowModal, refreshData } = props;
 
     const [errors, setErrors] = useState<string[]>([]);
 
-    const [newSensorFormInputs, setNewSensorFormInputs] = useState<NewSensorType>({
+    const [newSensorFormInputs, setNewSensorFormInputs] = useState<NewSensor>({
         sensorName: '',
         pinNumber: 0,
-        deviceID,
+        deviceID: 0,
         sensorTypeID: 0,
         readingInterval: 500,
     });
@@ -43,7 +43,7 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
             value = valueInput;
         }
         
-        setNewSensorFormInputs((values: NewSensorType) => ({...values, [name]: value}))
+        setNewSensorFormInputs((values: NewSensor) => ({...values, [name]: value}))
     }
 
     const validateInputs = (): boolean => {
@@ -71,8 +71,9 @@ export function AddNewSensor(props: {deviceID: number, refreshData?: () => void;
         const validationPassed: boolean = validateInputs();
         if (validationPassed === true) {
             setResponseLoading(true);
-            try {                
-                const newSensorsResponse = await addNewSensorRequest(newSensorFormInputs);
+            try {
+                const dataToSend: NewSensorInterface =  newSensorFormInputs as NewSensorInterface;
+                const newSensorsResponse = await addNewSensorRequest(dataToSend);
                 if (newSensorsResponse.status === 201 || newSensorsResponse.status === 200) {
                     setResponseLoading(false);
                     if (refreshData !== undefined) {

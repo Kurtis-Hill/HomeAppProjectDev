@@ -1,9 +1,9 @@
 import * as React from 'react';
 import SensorResponseInterface from '../Response/Sensor/SensorResponseInterface';
 import { UpdateSingleSensorCard } from '../Components/SensorUpdate/UpdateSingleSensorCard';
-import { AddNewSensorButton } from '../Components/AddSensor/AddNewSensorButton';
+import { AddNewSensorModal } from '../Components/AddSensor/AddNewSensorModal';
 
-export function ViewSensorsPage(props: {
+export function SensorsView(props: {
     sensorData: SensorResponseInterface[],
     deviceID: number,
     refreshData?: () => void,
@@ -14,7 +14,7 @@ export function ViewSensorsPage(props: {
         return (
             <>
                 <h1>No Sensors to Display</h1>
-                <AddNewSensorButton deviceID={deviceID} refreshData={refreshData}/>
+                <AddNewSensorModal deviceID={deviceID} refreshData={refreshData}/>
             </>
         )
     }
@@ -30,7 +30,7 @@ export function ViewSensorsPage(props: {
                     );
                 })
             }
-            <AddNewSensorButton deviceID={deviceID} refreshData={refreshData}/>
+            <AddNewSensorModal deviceID={deviceID} refreshData={refreshData}/>
         </>
     )
 }

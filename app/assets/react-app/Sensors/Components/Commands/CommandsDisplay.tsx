@@ -2,19 +2,19 @@ import * as React from 'react';
 import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterface';
 import { SensorTypesEnum } from '../../../Enum/SensorTypesEnum';
 import { RelayUpdateRequestCommand } from '../Commands/RelayUpdateRequestCommand';
-import { PingDeviceCommand } from '../../../Devices/Components/Command/PingDeviceCommand';
-import { RestartDeviceCommand } from '../../../Devices/Components/Command/RestartDeviceCommand';
+import { PingDevice } from '../../../Devices/Components/Buttons/PingDevice';
+import { RestartDeviceButton } from '../../../Devices/Components/Buttons/RestartDeviceButton';
 
 export function CommandsDisplay(props: { sensor: SensorResponseInterface }) {
     const { sensor } = props;
     
     return (
         <>
-            <PingDeviceCommand
+            <PingDevice
                 deviceID={sensor.device.deviceID}
             />
             <br />
-            <RestartDeviceCommand
+            <RestartDeviceButton
                 deviceID={sensor.device.deviceID}
             />
             <br />

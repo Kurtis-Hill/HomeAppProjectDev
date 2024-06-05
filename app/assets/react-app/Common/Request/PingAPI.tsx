@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import {apiURL} from "../URLs/CommonURLs";
-import {getToken} from "../../Authentication/Tokens/APITokenHandler";
+import {getToken} from "../../Authentication/Session/UserSessionHelper";
 
 export async function handlePingRequest(): Promise<PingInterface> {
     const token = getToken();

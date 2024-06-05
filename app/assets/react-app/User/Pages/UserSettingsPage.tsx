@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link, useParams } from "react-router-dom";
-import { getUserSessionValue } from '../../Authentication/Session/UserSession';
 import { UserUpdate } from '../Components/User/UserUpdate';
+import {getUserSessionValue} from "../../Authentication/Session/UserSessionHelper";
 
 export function UserSettingsPage() {
     const params = useParams();

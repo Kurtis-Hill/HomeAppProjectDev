@@ -26,7 +26,6 @@ export function UpdateSingleSensorCard(props: {sensor: SensorResponseInterface, 
         });
     }
 
-
     return (
         <>
             <div className="container" style={{ paddingBottom: "5%" }}>

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
-import AddNewDeviceUserInputsInterface from './AddNewDeviceUserInputsInterface';
-
 import { UserDataContextInterface } from "../../../User/DataProviders/UserDataContextProvider";
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 
@@ -21,7 +19,15 @@ import { UserDataResponseInterface } from '../../../UserInterface/Navbar/Respons
 import { registeredDeviceIPsRequest } from '../../Request/RegisteredDeviceIPsRequest';
 import { IPLogResponseInterface } from '../../../Common/Response/IPLogResponseInterface';
 
-export function AddNewDevice(props: {
+type AddNewDeviceUserInputsInterface = {
+    deviceName: string;
+    devicePassword: string;
+    devicePasswordConfirm: string;
+    deviceGroup: number;
+    deviceRoom: number;
+    deviceIPAddress: string|null;
+}
+export function AddNewDeviceForm(props: {
     setAddNewDeviceModal: ((show: boolean) => void);
     setRefreshNavDataFlag: (newValue: boolean) => void;
 }) {

@@ -10,6 +10,8 @@ export const soil = 'Soil';
 
 export const bmp = 'Bmp';
 
+export const sht = 'Sht';
+
 export const temperature = 'temperature';
 
 export const standardReadingTypes = [
@@ -17,6 +19,7 @@ export const standardReadingTypes = [
     dallas,
     soil,
     bmp,
+    sht,
 ];
 
 export const standardReading = 'standardReading';

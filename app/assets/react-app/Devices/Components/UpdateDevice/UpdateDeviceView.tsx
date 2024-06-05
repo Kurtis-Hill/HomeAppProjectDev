@@ -15,17 +15,17 @@ import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBui
 import { AnnouncementFlashModal } from '../../../Common/Components/Modals/AnnouncementFlashModal';
 import { Label } from '../../../Common/Components/Elements/Label';
 import GroupResponseInterface from '../../../User/Response/Group/GroupResponseInterface';
-import { DeleteDevice } from '../DeleteDevice/DeleteDevice';
+import { DeleteDeviceModal } from '../DeleteDevice/DeleteDeviceModal';
 import { DeviceResponseInterface } from '../../Response/DeviceResponseInterface';
 
-interface UpdateDeviceFormInputsInterface {
+type UpdateDeviceFormInputsInterface = {
     deviceName?: string;
     password?: string;
     deviceGroup?: number;
     deviceRoom?: number;
 }
 
-export function UpdateDevice(props: {
+export function UpdateDeviceView(props: {
     setDeviceData: (data: DeviceResponseInterface) => void;
     setRefreshNavbar?: (newValue: boolean) => void;
     deviceData: DeviceResponseInterface;
@@ -345,7 +345,7 @@ export function UpdateDevice(props: {
                 {
                     deviceData.canDelete === true
                         ?
-                            <DeleteDevice
+                            <DeleteDeviceModal
                                 deviceID={deviceData.deviceID}
                                 deviceName={deviceData.deviceName}
                             />

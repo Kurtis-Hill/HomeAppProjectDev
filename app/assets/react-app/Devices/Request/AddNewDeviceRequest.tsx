@@ -1,16 +1,14 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, {AxiosResponse} from 'axios';
 
-import { apiURL } from "../../Common/URLs/CommonURLs";
-import { SensitiveFull } from '../../Common/API/APIResponseType';
+import {apiURL} from "../../Common/URLs/CommonURLs";
+import {ResponseTypeEnum} from "../../Common/Response/APIResponseType";
 
 export async function addNewDeviceRequest(addNewDeviceInputs: AddNewDeviceInputInterface): Promise<AxiosResponse> {
-    const addNewDeviceResponse: AxiosResponse = await axios.post(
-        `${apiURL}user-devices/add?responseType=${SensitiveFull}`,
+    return await axios.post(
+        `${apiURL}user-devices/add?responseType=${ResponseTypeEnum.SensitiveFull}`,
         addNewDeviceInputs,
     );
-
-    return addNewDeviceResponse;
-}   
+}
 
 export interface AddNewDeviceInputInterface {
     'deviceName': string

@@ -1,4 +1,4 @@
 export interface ErrorResponseInterface {
     title?: string;
-    errors?: Array<string>;
+    errors?: string[];
 }

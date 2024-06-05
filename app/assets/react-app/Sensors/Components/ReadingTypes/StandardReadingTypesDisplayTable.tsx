@@ -66,7 +66,7 @@ export function StandardReadingTypesDisplayTable(props: {
         const value = (event.target as HTMLInputElement).value;
 
         if (nameParam === 'constRecord') {
-            const booleanValue: ConstRecordType = parseInt(value) === 1 ? true : false;
+            const booleanValue: ConstRecordType = parseInt(value) === 1;
             setSensorReadingTypesUpdateFormInputs({
                 ...sensorReadingTypesUpdateFormInputs,
                 [arrayIndex]: {

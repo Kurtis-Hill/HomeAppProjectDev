@@ -10,7 +10,7 @@ import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner'
 import { deleteTriggerRequest } from '../../Sensors/Request/Trigger/DeleteTriggerRequest';
 import { BaseCard } from '../../UserInterface/Cards/Components/BaseCard';
 import TriggerForm from '../../Sensors/Components/Trigger/TriggerForm';
-import UpdateTrigger from "../../Sensors/Components/Trigger/UpdateTrigger";
+import UpdateTriggerView from "../../Sensors/Components/Trigger/UpdateTriggerView";
 import { AddNewTriggerType, addNewTriggerForm } from '../../Sensors/Request/Trigger/AddNewTriggerRequest';
 
 export default function TriggerPage() {
@@ -170,7 +170,7 @@ export default function TriggerPage() {
                                                 setShowModal={setShowUpdateModal}
                                                 heightClasses="standard-modal-height"
                                             >
-                                                <UpdateTrigger
+                                                <UpdateTriggerView
                                                     setShowUpdateModal={setShowUpdateModal}
                                                     triggerID={updateTriggerID}
                                                     resetData={fetchAllTriggerData}

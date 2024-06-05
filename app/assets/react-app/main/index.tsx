@@ -12,17 +12,17 @@ import UserDataContextProvider from "../User/Contexts/UserDataContext";
 // import '@fortawesome/fontawesome-free/js/regular'
 // import '@fortawesome/fontawesome-free/js/brands'
 
-import Login from "../Routes/Login/Login";
+import Login from "../Routes/Login/LoginView";
 
 import { CardLandingPage } from "../Routes/LandingPage/CardLandingPage";
 
 
 import { MainPageTop } from "../Common/Components/Pages/MainPageTop";
 import { LandingPage } from '../Routes/LandingPage/LandingPage';
-import { DevicePage } from '../Devices/Page/DevicePage';
 import { UserSettingsPage } from '../User/Pages/UserSettingsPage';
 import { Logout } from '../Routes/Logout/Logout';
 import TriggerPage from '../Routes/Triggers/TriggerPage';
+import { DeviceView } from "../Devices/Components/DeviceView";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -33,7 +33,7 @@ root.render(
                 <Route path="/HomeApp/WebApp/" element={<MainPageTop  />}>
                     <Route path="index" element={<LandingPage />} />
                     <Route path="cards/index" element={<CardLandingPage />} />
-                    <Route path="devices/:deviceID" element={<DevicePage />} />
+                    <Route path="devices/:deviceID" element={<DeviceView />} />
                     <Route path="user-settings" element={<UserSettingsPage />} />
                     <Route path="sensors/triggers" element={<TriggerPage />} />
                 </Route>

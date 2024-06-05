@@ -1,5 +1,6 @@
 ###> symfony/framework-bundle ###
 app/.env
+app/bin/.phpunit
 app/.env.test.nonelocal
 app/.env.local
 app/.env.nonelocal
@@ -8,7 +9,6 @@ app/public/bundles/
 app/var/
 app/vendor/
 app/.php-version
-app/bin/*
 app/tests/test-files/*
 app/config/jwt/private.pem
 app/config/jwt/public.pem

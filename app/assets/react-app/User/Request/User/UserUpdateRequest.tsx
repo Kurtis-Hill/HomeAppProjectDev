@@ -1,7 +1,7 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, {AxiosResponse} from 'axios';
 
-import { apiURL } from "../../../Common/URLs/CommonURLs";
-import { ResponseTypeEnum, ResponseTypeFull } from '../../../Common/API/APIResponseType';
+import {apiURL} from "../../../Common/URLs/CommonURLs";
+import {ResponseTypeEnum} from '../../../Common/API/APIResponseType';
 
 export type UserUpdateRequestType = {
     firstName?: string,
@@ -15,11 +15,9 @@ export type UserUpdateRequestType = {
 }
 
 export default async function UserUpdateRequest(userData: UserUpdateRequestType, userID: number, responseType?: string): Promise<AxiosResponse> {
-    const userUpdatePatchRequestResponse: AxiosResponse = await axios.patch(
+    return await axios.patch(
         `${apiURL}${userID}/update`,
         userData,
-        { params: { responseType: responseType ?? ResponseTypeFull } }
+        {params: {responseType: responseType ?? ResponseTypeEnum.ResponseTypeFull}}
     );
-
-    return userUpdatePatchRequestResponse;
 }

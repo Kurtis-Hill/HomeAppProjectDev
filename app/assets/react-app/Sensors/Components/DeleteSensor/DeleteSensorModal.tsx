@@ -7,7 +7,7 @@ import CloseButton from '../../../Common/Components/Buttons/CloseButton';
 import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import { deleteSensorRequest } from '../../Request/Sensor/DeleteSensorRequest';
 
-export function DeleteSensor(props: {
+export function DeleteSensorModal(props: {
     sensorID: number,
     sensorName: string,
     refreshData: () => void,

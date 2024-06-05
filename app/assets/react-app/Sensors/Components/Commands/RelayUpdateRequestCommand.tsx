@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useState } from 'react';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
-import { SensorTypesEnum } from '../../../Enum/SensorTypesEnum';
 import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterface';
 import { switchSensorRequest } from '../../Request/Sensor/SwitchSensorRequest';
+import {SensorTypesEnum} from "../../Enum/SensorTypesEnum";
 
 export function RelayUpdateRequestCommand(props: { sensor: SensorResponseInterface }) {
     const { sensor } = props;

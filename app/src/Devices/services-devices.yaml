@@ -32,11 +32,11 @@ services:
   App\Devices\DeviceServices\NewDevice\NewDeviceHandlerInterface:
     alias: 'App\Devices\DeviceServices\NewDevice\NewESP8266DeviceHandler'
 
-  App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandlerInterface:
-    alias: 'App\Devices\DeviceServices\UpdateDevice\UpdateDeviceHandler'
+  App\Devices\DeviceServices\UpdateDeviceView\UpdateDeviceHandlerInterface:
+    alias: 'App\Devices\DeviceServices\UpdateDeviceView\UpdateDeviceHandler'
 
-  App\Devices\DeviceServices\DeleteDevice\DeleteDeviceServiceInterface:
-    alias: 'App\Devices\DeviceServices\DeleteDevice\DeleteDeviceService'
+  App\Devices\DeviceServices\DeleteDeviceModal\DeleteDeviceServiceInterface:
+    alias: 'App\Devices\DeviceServices\DeleteDeviceModal\DeleteDeviceService'
 
   App\Devices\Repository\ORM\DeviceRepositoryInterface:
     alias: 'App\Devices\Repository\ORM\DeviceRepository'

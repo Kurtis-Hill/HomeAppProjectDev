@@ -1,13 +1,16 @@
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosResponse} from 'axios';
 
-import { apiURL } from "../../../Common/URLs/CommonURLs";
-import { NewSensorType } from '../../Components/AddSensor/AddNewSensor';
+import {apiURL} from "../../../Common/URLs/CommonURLs";
 
-export async function addNewSensorRequest(newSensorData: NewSensorType): Promise<AxiosResponse> {
-    const addNewSensorResponse: AxiosResponse = await axios.post(
+export async function addNewSensorRequest(newSensorData: NewSensorInterface): Promise<AxiosResponse> {
+    return await axios.post(
         `${apiURL}sensor/add`,
         newSensorData,
     );
+}
 
-    return addNewSensorResponse;
+export interface NewSensorInterface {
+    sensorName: string,
+    deviceID: number,
+    sensorTypeID: number,
 }

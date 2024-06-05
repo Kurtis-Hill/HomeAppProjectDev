@@ -11,7 +11,7 @@ import DeleteButton from '../../../Common/Components/Buttons/DeleteButton';
 import { indexUrl } from '../../../Common/URLs/CommonURLs';
 import { useMainIndicators } from '../../../Common/Components/Pages/MainPageTop';
 
-export function DeleteDevice(props: {
+export function DeleteDeviceModal(props: {
     deviceName: string,
     deviceID: number,
 }) {

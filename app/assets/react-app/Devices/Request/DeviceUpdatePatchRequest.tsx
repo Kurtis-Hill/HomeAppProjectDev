@@ -1,15 +1,17 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, {AxiosResponse} from 'axios';
 
-import { apiURL } from "../../Common/URLs/CommonURLs";
+import {apiURL} from "../../Common/URLs/CommonURLs";
 
-export async function deviceUpdatePatchRequest(deviceID: number, deviceUpdatePatchInputs: DeviceUpdatePatchInputInterface, responseType?: string): Promise<AxiosResponse> {
-    const deviceUpdatePatchResponse: AxiosResponse = await axios.patch(
+export async function deviceUpdatePatchRequest(
+    deviceID: number,
+    deviceUpdatePatchInputs: DeviceUpdatePatchInputInterface,
+    responseType?: string
+): Promise<AxiosResponse> {
+    return await axios.patch(
         `${apiURL}user-devices/${deviceID}/update`,
         deviceUpdatePatchInputs,
-        { params: { responseType: responseType } }
+        {params: {responseType: responseType}}
     );
-
-    return deviceUpdatePatchResponse;
 }
 
 export interface DeviceUpdatePatchInputInterface {

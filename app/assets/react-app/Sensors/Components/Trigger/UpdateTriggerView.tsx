@@ -7,7 +7,7 @@ import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinn
 import { AddNewTriggerType } from '../../Request/Trigger/AddNewTriggerRequest';
 import { updateTriggerData } from '../../Request/Trigger/UpdateTriggerRequest'
 
-export default function UpdateTrigger(props: {
+export default function UpdateTriggerView(props: {
     setShowUpdateModal: (show: boolean) => void
     triggerID: number,
     resetData: () => void,
@@ -33,6 +33,7 @@ export default function UpdateTrigger(props: {
                 valueThatTriggers: sensorTriggerData.valueThatTriggers,
                 startTime: sensorTriggerData.startTime,
                 endTime: sensorTriggerData.endTime,
+                override: sensorTriggerData.override,
             })
             
             setLoading(false);

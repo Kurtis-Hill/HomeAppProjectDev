@@ -31,4 +31,5 @@ export interface SensorTriggerResponseInterface {
     }
     baseReadingTypeThatTriggers?: MotionResponseInterface|RelayResponseInterface|TemperatureResponseInterface|HumidityResponseInterface|LatitudeResponseInterface|AnalogResponseInterface,
     baseReadingTypeThatIsTriggered?: RelayResponseInterface,
+    override: boolean,
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
 import { AcceptButton } from '../../../Common/Components/Buttons/AcceptButton';
 import { DeclineButton } from '../../../Common/Components/Buttons/DeclineButton';
-import { checkAdmin } from '../../../Authentication/Session/UserSession';
+import { checkAdmin } from '../../../Authentication/Session/UserSessionHelper';
 
 export default function UpdateUserPassword(props: {
     toggleUserInput: (event: Event) => void, 

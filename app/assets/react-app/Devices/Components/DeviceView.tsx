@@ -4,16 +4,16 @@ import { useParams } from "react-router-dom";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { getDeviceRequest } from '../Request/GetDeviceRequest';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
-import { UpdateDevice } from '../Components/UpdateDevice/UpdateDevice';
+import { UpdateDeviceView } from './UpdateDevice/UpdateDeviceView';
 import { AxiosError } from 'axios';
 import { indexUrl } from '../../Common/URLs/CommonURLs';
 import { useMainIndicators } from '../../Common/Components/Pages/MainPageTop';
-import { ResponseTypeFull } from '../../Common/API/APIResponseType';
 import { DeviceResponseInterface } from '../Response/DeviceResponseInterface';
 import { TabSelector } from '../../Common/Components/TabSelector';
-import { ViewSensorsPage } from '../../Sensors/Page/ViewSensorsPage';
+import { SensorsView } from '../../Sensors/Page/SensorsView';
+import {ResponseTypeEnum} from "../../Common/Response/APIResponseType";
 
-export function DevicePage() {
+export function DeviceView() {
     const tabOptions = ['Device', 'Sensors', 'Commands'];
 
     const { setRefreshNavbar } = useMainIndicators();
@@ -33,7 +33,7 @@ export function DevicePage() {
 
     const getDeviceData = async () => {
         try {
-            const getDeviceResponse = await getDeviceRequest(deviceID, ResponseTypeFull);
+            const getDeviceResponse = await getDeviceRequest(deviceID, ResponseTypeEnum.ResponseTypeFull);
             const deviceData: DeviceResponseInterface = getDeviceResponse.data.payload;
             setDeviceData(deviceData);
         } catch (error) {
@@ -65,7 +65,7 @@ export function DevicePage() {
                 {
                     currentTab === tabOptions[0]
                         ? 
-                            <UpdateDevice
+                            <UpdateDeviceView
                                 setDeviceData={setDeviceData}
                                 setRefreshNavbar={setRefreshNavbar}
                                 deviceData={deviceData}
@@ -76,7 +76,7 @@ export function DevicePage() {
                 {
                     currentTab === tabOptions[1]
                         ?
-                            <ViewSensorsPage deviceID={deviceID} sensorData={deviceData.sensorData} refreshData={getDeviceData} />
+                            <SensorsView deviceID={deviceID} sensorData={deviceData.sensorData} refreshData={getDeviceData} />
                         :
                             null
                 }

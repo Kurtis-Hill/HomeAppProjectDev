@@ -8,7 +8,7 @@ import { GeneralTableRow } from '../../Common/Components/Table/General/GeneralTa
 import SensorResponseInterface from '../Response/Sensor/SensorResponseInterface';
 import { FormInlineInput } from '../../Common/Components/Inputs/FormInlineUpdate';
 import { SensorPatchRequestInputInterface } from '../Response/Sensor/SensorPatchRequestInputInterface';
-import { DeleteSensor } from './DeleteSensor/DeleteSensor';
+import { DeleteSensorModal } from './DeleteSensor/DeleteSensorModal';
 import { updateSensorRequest } from '../Request/Sensor/UpdateSensorRequest';
 import { AnnouncementFlashModal } from '../../Common/Components/Modals/AnnouncementFlashModal';
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
@@ -18,7 +18,6 @@ import { UpdateCard } from '../../UserInterface/Cards/Components/Form/UpdateCard
 import BaseModal from '../../Common/Components/Modals/BaseModal';
 import CloseButton from '../../Common/Components/Buttons/CloseButton';
 import { addNewCardRequest, AddNewCardType } from '../../UserInterface/Cards/Request/Card/AddNewCardRequest';
-import {SensorTypesEnum} from "../../Enum/SensorTypesEnum";
 
 const defaultFormActiveState = {
     sensorName: false,
@@ -281,7 +280,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                         canDelete === true
                             ?
                                 <GeneralTableRow>
-                                    <DeleteSensor
+                                    <DeleteSensorModal
                                         sensorID={sensor.sensorID}
                                         sensorName={sensor.sensorName}
                                         refreshData={refreshData}

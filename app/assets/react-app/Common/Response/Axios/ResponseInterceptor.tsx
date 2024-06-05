@@ -4,11 +4,10 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 import { apiURL, indexUrl } from '../../URLs/CommonURLs';
-import { getRefreshToken, removeTokens } from '../../../Authentication/Tokens/APITokenHandler';
 import { ErrorResponseInterface } from '../../Response/ErrorResponseInterface';
 import { loginUrl } from '../../URLs/CommonURLs';
 import { handleTokenRefresh } from '../../../Authentication/Request/LoginRequest';
-import { refreshUserTokens } from '../../../Authentication/Session/UserSession';
+import {getRefreshToken, refreshUserTokens, removeTokens} from '../../../Authentication/Session/UserSessionHelper';
 import { TokenRefreshResponseInterface } from '../../../Authentication/Response/TokenRefreshResponseInterface';
 
 export function ResponseInterceptor(props: {

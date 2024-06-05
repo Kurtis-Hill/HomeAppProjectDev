@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { pingDeviceRequest } from '../../Request/PindDeviceRequest';
 import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import { AnnouncementFlashModal } from '../../../Common/Components/Modals/AnnouncementFlashModal';
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
+import {pingDeviceRequest} from "../../Request/PingDeviceRequest";
 
-export function PingDeviceCommand(props: { deviceID: number }) {
+export function PingDevice(props: { deviceID: number }) {
     const { deviceID } = props;
     
     const [pingDeviceLoading, setPingDeviceLoading] = useState<boolean>(false);

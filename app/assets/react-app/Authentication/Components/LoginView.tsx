@@ -5,24 +5,23 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import { registerAccountUrl, indexUrl } from "../../Common/URLs/CommonURLs";
-import { getRefreshToken, getToken } from "../../Authentication/Tokens/APITokenHandler";
 
 import Input from "../../Common/Components/Inputs/Input";
 import ColouredPage from "../../Common/Components/Pages/ColouredPage";
 import DotCircleSpinner from "../../Common/Components/Spinners/DotCircleSpinner";
 
 import { handleLogin, handleTokenRefresh } from "../../Authentication/Request/LoginRequest";
-import { handlePingRequest, PingInterface } from "../../Common/Request/Ping";
+import { handlePingRequest, PingInterface } from "../../Common/Request/PingAPI";
 import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
 import { TokenRefreshResponseInterface } from '../../Authentication/Response/TokenRefreshResponseInterface';
-import { setUserSession } from '../../Authentication/Session/UserSession';
+import {getRefreshToken, getToken, setUserSession} from '../../Authentication/Session/UserSessionHelper';
 
 export type LoginUserInputsInterface = {
     username: string|null;
     password: string|null;
 }
 
-export default function Login() {
+export default function LoginView() {
     const [userInputs, setUserInputs] = useState<LoginUserInputsInterface>({});
     const [error, setError] = useState<Array<string>>([]);
     const [loading, setLoading] = useState(false);
@@ -112,7 +111,7 @@ export default function Login() {
             if (loginResponse.status === 200) {
                 navigate(`${indexUrl}`)
             } else {
-                setError(['Login failed. Please try again.']);
+                setError(['LoginView failed. Please try again.']);
                 setLoading(false);
             }
         } catch (err) {
@@ -164,7 +163,7 @@ export default function Login() {
                                                 ? <DotCircleSpinner spinnerSize={2} classes="center-spinner" />
                                                 : <SubmitButton
                                                      type='submit'
-                                                      text="Login" 
+                                                      text="LoginView"
                                                       onClickFunction={handleLoginRequest}
                                                       classes="btn-block"
                                                 /> 
