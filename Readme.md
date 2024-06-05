@@ -24,10 +24,10 @@ first we need to create; jwt public & private pem certificates, client & server 
     <li>client-cert.pem</li>
     <li>server-cert.pem</li>    
 </ul>
-you will notice that there is a cacert.pem in the SSL directory - leave it be this is used for downloading packages from github. Now drop the generated <i>public.pem</i> and <i>private.pem</i> jwt certs in the HomeAppProjectDev/SymfonyReact/config/private.pem. Remember if you set a passphrase for these files to update the <code>pass_phrase</code> in the <i>SymfonyReact/config/packages/lexik_jwt_authentication.yaml</i> file (default: HomeApp).
+you will notice that there is a cacert.pem in the SSL directory - leave it be this is used for downloading packages from github. Now drop the generated <i>public.pem</i> and <i>private.pem</i> jwt certs in the HomeAppProjectDev/app/config/private.pem. Remember if you set a passphrase for these files to update the <code>pass_phrase</code> in the <i>app/config/packages/lexik_jwt_authentication.yaml</i> file (default: HomeApp).
 
 <h3>Elasticsearch</h3>
-Elasticsearch is optional for the application at this point - by setting the environment variables to false first one being <b>ELASTIC_ENABLED</b> this can be found in the </i>.env</i> file in the HomeAppDocker folder and the other <b>HEAVY_WRITES_ELASTIC_ONLY</b> this can be found in <i>SymfonyReact/.env</i> and commenting out the Elasticsearch containers in the <i>HomeAppDocker/docker-compose.yml</i> file this will use the Mysql tables.
+Elasticsearch is optional for the application at this point - by setting the environment variables to false first one being <b>ELASTIC_ENABLED</b> this can be found in the </i>.env</i> file in the HomeAppDocker folder and the other <b>HEAVY_WRITES_ELASTIC_ONLY</b> this can be found in <i>app/.env</i> and commenting out the Elasticsearch containers in the <i>HomeAppDocker/docker-compose.yml</i> file this will use the Mysql tables.
 Although using Elasticsearch has slightly more overhead if you are planning on storing out of range temperatures and/or constantly recorded readings then I advice you enable Elasticsearch as its more efficient.
 
 First we need to copy the .env.example for the certificate container <code>cp HomeAppDocker/elasticsearch/certs/.env.example HomeAppDocker/elasticsearch/certs/.env</code> and then enter the same name youve chosen for the project as the compoer project name, you can leave the other value to its default or change it if you wish its the directory where the certificates will be mounted in the container.
@@ -37,7 +37,7 @@ elastic username is: <code>elastic</code> and the password is set in the .env fi
 <h2>Running the application</h2>
 First copy the auth.json.example file into the same directory <code>cp HomeAppDocker/webservers/auth.json.example HomeAppDocker/webservers/auth.json</code>.
 Then generate a git hub access token and replace GIT_TOKEN_HERE with your token remember to keep the " marks.
-After that run <code>cp SymfonyReact/.env.example SymfonyReact/.env</code> and proceed to alter the variables to suit your needs.
+After that run <code>cp app/.env.example app/.env</code> and proceed to alter the variables to suit your needs.
 
 Remember to set the APP_ENV variable in the HomeAppDocker/.env file to <b>prod|dev</b> depending on your intentions.
 Once your variables are set run
