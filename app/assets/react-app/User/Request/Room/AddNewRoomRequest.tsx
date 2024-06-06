@@ -1,19 +1,11 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { apiURL } from "../../../Common/URLs/CommonURLs";
-import AddNewRoomUserInputInterface from '../../Components/Room/AddNewRoomUserInputInterface';
+import { AddNewRoomUserInput } from '../../Components/Room/AddNewRoomForm';
 
-export async function addNewRoomRequest(addNewRoomInputs: AddNewRoomUserInputInterface): Promise<AxiosResponse> {
-    try {
-        const addNewRoomResponse: AxiosResponse = await axios.post(
-            `${apiURL}user-rooms/add`,
-            addNewRoomInputs
-        );
-
-        return addNewRoomResponse;
-    } catch (err) {
-        // const error = err as Error | AxiosError;
-
-        return err;
-    }
+export async function addNewRoomRequest(addNewRoomInputs: AddNewRoomUserInput): Promise<AxiosResponse> {
+    return await axios.post(
+        `${apiURL}user-rooms/add`,
+        addNewRoomInputs
+    );
 }

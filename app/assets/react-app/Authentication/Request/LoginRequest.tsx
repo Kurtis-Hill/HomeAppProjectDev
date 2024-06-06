@@ -23,7 +23,8 @@ export async function handleLogin(userInputs: LoginUserInputsInterface): Promise
 }
 
 export async function handleTokenRefresh(): Promise<AxiosResponse> {
-    const refreshToken: string = getRefreshToken();
+    const refreshToken = getRefreshToken();
+    
     return await axios.post(
             `${apiURL}token/refresh`,
             {refreshToken: refreshToken}

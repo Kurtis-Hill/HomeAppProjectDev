@@ -19,7 +19,7 @@ import { CardLandingPage } from "../Routes/LandingPage/CardLandingPage";
 
 import { MainPageTop } from "../Common/Components/Pages/MainPageTop";
 import { LandingPage } from '../Routes/LandingPage/LandingPage';
-import { UserSettingsPage } from '../User/Pages/UserSettingsPage';
+import { UserSettingsView } from '../User/Components/User/UserSettingsView';
 import { Logout } from '../Routes/Logout/Logout';
 import TriggerPage from '../Routes/Triggers/TriggerPage';
 import { DeviceView } from "../Devices/Components/DeviceView";
@@ -34,7 +34,7 @@ root.render(
                     <Route path="index" element={<LandingPage />} />
                     <Route path="cards/index" element={<CardLandingPage />} />
                     <Route path="devices/:deviceID" element={<DeviceView />} />
-                    <Route path="user-settings" element={<UserSettingsPage />} />
+                    <Route path="user-settings" element={<UserSettingsView />} />
                     <Route path="sensors/triggers" element={<TriggerPage />} />
                 </Route>
         </Routes>

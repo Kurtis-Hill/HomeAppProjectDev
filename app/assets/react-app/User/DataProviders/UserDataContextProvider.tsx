@@ -3,8 +3,8 @@ import { useState, useEffect, useRef, useMemo, useReducer } from 'react';
 import { userDataRequest } from '../Request/UserDataRequest';
 
 import GroupResponseInterface from '../Response/Group/GroupResponseInterface';
-import RoomNavbarResponseInterface from '../../UserInterface/Navbar/Response/RoomNavbarResponseInterface';
-import { UserDataResponseInterface } from '../../UserInterface/Navbar/Response/UserDataResponseInterface';
+import RoomNavbarResponseInterface from '../../UserInterface/Response/Navbar/RoomNavbarResponseInterface';
+import { UserDataResponseInterface } from '../../UserInterface/Response/Navbar/UserDataResponseInterface';
 
 import UserDataContext from "../Contexts/UserDataContext";
 

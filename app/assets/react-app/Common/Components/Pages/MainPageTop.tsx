@@ -4,7 +4,7 @@ import {
     Outlet, useOutletContext
 } from "react-router-dom";
 
-import Navbar from "../../../UserInterface/Navbar/Components/Navbar";
+import Navbar from "../../../UserInterface/Components/Navbar";
 
 import { SensorDataContextProvider } from "../../../Sensors/DataProviders/SensorDataProvider";
 

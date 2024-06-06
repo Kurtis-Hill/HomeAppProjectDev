@@ -1,6 +1,5 @@
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
 
-type TemperatureString = 'temperature';
 export default interface TemperatureResponseInterface {
     temperatureID: number,
     baseReadingTypeID: number,

@@ -3,9 +3,12 @@ import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { apiURL } from '../../../Common/URLs/CommonURLs';
 import { readingType } from '../../../Common/SensorLanguage';
-import { StandardSensorConstRecord, StandardSensorReadingValue } from '../../Types/StandardSensor/SensorReadingTypes';
+import { StandardSensorConstRecord, StandardSensorReadingValue } from '../../Types/StandardSensor/SensorReadingResponseTypes';
 
-export async function readingTypeBoundaryReadingUpdateRequest(sensorID: number, sensorBoundaryUpdates: StandardSensorBoundaryReadingUpdateInputInterface[]): Promise<AxiosResponse> {
+export async function readingTypeBoundaryReadingUpdateRequest(
+    sensorID: number,
+    sensorBoundaryUpdates: StandardSensorBoundaryReadingUpdateInputInterface[]
+): Promise<AxiosResponse> {
     const sensorReadingUpdateRequestResponse: AxiosResponse = await axios.put(
         `${apiURL}sensor/${sensorID}/boundary-update`,
         {'sensorData' : sensorBoundaryUpdates},

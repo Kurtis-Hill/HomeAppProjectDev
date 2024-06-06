@@ -13,9 +13,9 @@ import { Link } from 'react-router-dom';
 import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
 import GroupResponseInterface from '../../../User/Response/Group/GroupResponseInterface';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
-import RoomNavbarResponseInterface from '../../../UserInterface/Navbar/Response/RoomNavbarResponseInterface';
+import RoomNavbarResponseInterface from '../../../UserInterface/Response/Navbar/RoomNavbarResponseInterface';
 import { userDataRequest } from '../../../User/Request/UserDataRequest';
-import { UserDataResponseInterface } from '../../../UserInterface/Navbar/Response/UserDataResponseInterface';
+import { UserDataResponseInterface } from '../../../UserInterface/Response/Navbar/UserDataResponseInterface';
 import { registeredDeviceIPsRequest } from '../../Request/RegisteredDeviceIPsRequest';
 import { IPLogResponseInterface } from '../../../Common/Response/IPLogResponseInterface';
 

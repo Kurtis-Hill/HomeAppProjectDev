@@ -1,8 +1,6 @@
 import { OperatorResponseInterface } from "../../../../Common/Response/OperatorResponseInterface";
 import { TriggerTypeResponseInterface } from "./TriggerTypeResponseInterface";
 import UserResponseInterface from '../../../../User/Response/UserResponseInterface';
-import { SensorReadingTypeResponseInterface } from '../../ReadingTypes/SensorReadingTypeResponseInterfaces/SensorReadingTypeResponseInterface';
-import SensorResponseInterface from "../SensorResponseInterface";
 import MotionResponseInterface from "../../ReadingTypes/SensorReadingTypeResponseInterfaces/MotionResponseInterface";
 import RelayResponseInterface from "../../ReadingTypes/SensorReadingTypeResponseInterfaces/RelayResponseInterface";
 import TemperatureResponseInterface from "../../ReadingTypes/SensorReadingTypeResponseInterfaces/TemperatureResponseInterface";
