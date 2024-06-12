@@ -12,6 +12,7 @@ import { IconResponseInterface } from '../../Response/Icons/IconResponseInterfac
 import StateResponseInterface from '../../Response/State/StateResponseInterface';
 import { StandardCardFormResponseInterface } from '../../Response/Cards/CardForms/StandardCardFormResponseInterface';
 import { CardUpdateRequestInterface, updateCardRequest } from '../../Request/Cards/Card/CardUpdateRequest';
+import { getCardViewFormRequest } from '../../Request/Cards/Card/GetCardViewFormRequest';
 
 export function UpdateCard(props: {cardViewID: number}) {
     const { cardViewID } = props;

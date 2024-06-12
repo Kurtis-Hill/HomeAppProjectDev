@@ -1,4 +1,4 @@
-import { SensorTypesEnum } from "../../../Enum/SensorTypesEnum";
+import { SensorTypesEnum } from "../../Enum/SensorTypesEnum";
 
 export interface SensorTypeResponseInterface {
     sensorTypeID: number;
