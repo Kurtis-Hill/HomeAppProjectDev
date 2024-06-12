@@ -1,6 +1,5 @@
+import { ReadingTypesEnum } from "../../../Enum/ReadingTypesEnum";
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
-
-type AnalogString = 'analog';
 
 export default interface AnalogResponseInterface {
     analogID: number,
@@ -12,5 +11,5 @@ export default interface AnalogResponseInterface {
     constRecord: boolean,
     updatedAt: string,
     sensorType: string,
-    readingType: AnalogString,
+    readingType: ReadingTypesEnum.analog,
 }

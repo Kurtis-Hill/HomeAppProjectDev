@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CardRowContainer } from '../../UserInterface/Cards/Components/CardRowContainer';
+import { CardRowContainer } from '../../UserInterface/Components/CardRowContainer';
 
 export function CardLandingPage() {
     return (

@@ -11,7 +11,7 @@ import Input from '../../../Common/Components/Inputs/Input';
 import { OperatorResponseInterface } from '../../../Common/Response/OperatorResponseInterface';
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 import CloseButton from '../../../Common/Components/Buttons/CloseButton';
-import { AddNewTriggerType, addNewTriggerForm } from '../../Request/Trigger/AddNewTriggerRequest';
+import { AddNewTriggerType } from '../../Request/Trigger/AddNewTriggerRequest';
 import { DaysEnum } from '../../../Common/DaysEnum';
 import { SensorDaysType as SensorTriggerDaysType } from '../../Types/SensorTriggerDaysType';
 

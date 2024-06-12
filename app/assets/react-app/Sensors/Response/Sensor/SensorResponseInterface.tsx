@@ -3,9 +3,8 @@ import { DeviceResponseInterface } from '../../../Devices/Response/DeviceRespons
 import { SensorTypeResponseInterface } from '../SensorType/SensorTypeResponseInterface';
 import {
     IndividualSensorReadingTypeResponseInterface,
-    SensorReadingTypeResponseInterface
 } from '../ReadingTypes/SensorReadingTypeResponseInterfaces/SensorReadingTypeResponseInterface';
-import CardViewResponseInterface from '../../../UserInterface/Cards/Response/CardView/CardViewResponseInterface';
+import CardViewResponseInterface from '../../../UserInterface/Response/Cards/CardView/CardViewResponseInterface';
 
 export default interface SensorResponseInterface {
     sensorID: number,

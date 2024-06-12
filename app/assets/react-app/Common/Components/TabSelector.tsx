@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-
 export function TabSelector(props: {
     options: string[],
     currentTab: string,

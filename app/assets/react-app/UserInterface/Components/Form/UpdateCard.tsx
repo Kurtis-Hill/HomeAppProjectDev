@@ -1,19 +1,17 @@
 import * as React from 'react';
 
 import { useState, useEffect, useRef } from 'react';
-import { AnnouncementFlashModalBuilder } from '../../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
-import SubmitButton from '../../../../Common/Components/Buttons/SubmitButton';
-import { AnnouncementFlashModal } from '../../../../Common/Components/Modals/AnnouncementFlashModal';
-import { getCardViewFormRequest } from '../../../Request/Cards/Card/GetCardViewFormRequest';
-import { StandardCardFormResponseInterface } from '../../Response/CardForms/StandardCardFormResponseInterface';
-import DotCircleSpinner from '../../../../Common/Components/Spinners/DotCircleSpinner';
-import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
-import { IconResponseInterface } from '../../../Response/Icons/IconResponseInterface';
-import { Label } from '../../../../Common/Components/Elements/Label';
-import { ColourResponseInterface } from '../../../Response/Colour/ColourResponseInterface';
-import StateResponseInterface from '../../../Response/State/StateResponseInterface';
-import { updateCardRequest, CardUpdateRequestType } from '../../../Request/Cards/Card/CardUpdateRequest';
-import CardViewResponseInterface from '../../Response/CardView/CardViewResponseInterface';
+import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
+import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
+import { Label } from '../../../Common/Components/Elements/Label';
+import { AnnouncementFlashModal } from '../../../Common/Components/Modals/AnnouncementFlashModal';
+import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
+import { capitalizeFirstLetter } from '../../../Common/StringFormatter';
+import { ColourResponseInterface } from '../../Response/Colour/ColourResponseInterface';
+import { IconResponseInterface } from '../../Response/Icons/IconResponseInterface';
+import StateResponseInterface from '../../Response/State/StateResponseInterface';
+import { StandardCardFormResponseInterface } from '../../Response/Cards/CardForms/StandardCardFormResponseInterface';
+import { CardUpdateRequestInterface, updateCardRequest } from '../../Request/Cards/Card/CardUpdateRequest';
 
 export function UpdateCard(props: {cardViewID: number}) {
     const { cardViewID } = props;
@@ -109,7 +107,7 @@ export function UpdateCard(props: {cardViewID: number}) {
         e.preventDefault();
         setUpdateCardRequestLoading(true);
 
-        const cardUpdateRequest: CardUpdateRequestType = {
+        const cardUpdateRequest: CardUpdateRequestInterface = {
             cardColour: cardViewUserForm.currentCardColour.colourID,
             cardIcon: cardViewUserForm.currentCardIcon.iconID,
             cardViewState: cardViewUserForm.currentViewState.cardStateID,

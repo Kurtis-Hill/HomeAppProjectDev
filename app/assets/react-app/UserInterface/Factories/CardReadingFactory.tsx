@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { CardSensorDataResponseInterface } from '../Response/CurrentReadingCardData/CardDataResponseInterface';
 import { CurrentReadingDataDisplayFactory } from './CurrentReadingDataDisplayFactory';
+import { CardSensorDataResponseInterface } from '../Response/Cards/CurrentReadingCardData/CardDataResponseInterface';
 
 export default function CardReadingFactory(props:
     CardReadingFactoryInterface 

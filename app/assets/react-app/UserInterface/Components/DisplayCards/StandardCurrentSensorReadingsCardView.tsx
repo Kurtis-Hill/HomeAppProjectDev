@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { BaseCard } from '../BaseCard';
-import { StandardCurrentReadingSensorDataOutput } from '../Readings/SensorDataOutput/StandardCurrentReadingSensorDataOutput';
-import { SensorTypesEnum } from '../../../../Enum/SensorTypesEnum';
-import { CurrentReadingSensorDataOutputFactory } from '../../Factories/CurrentReadingSensorDataOutputFactory';
+import { CurrentReadingSensorDataOutputFactory, CurrentSensorDataTypeStandardCard } from '../../Factories/CurrentReadingSensorDataOutputFactory';
+import { SensorTypesEnum } from '../../../Sensors/Enum/SensorTypesEnum';
+import { BaseCard } from '../../../Common/Components/BaseCard';
 
-export function StandardCurrentSensorReadingsCard(props: {
+export function StandardCurrentSensorReadingsCardView(props: {
     cardViewID: number;
     sensorType: SensorTypesEnum;
     sensorName: string; 

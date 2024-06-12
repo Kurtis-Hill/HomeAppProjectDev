@@ -1,7 +1,7 @@
 export interface NavBarResponseInterface {
     title: string;
     payload: IndividualNavBarElement[];
-    errors?: Array<string>
+    errors?: string[]
 }
 
 export interface IndividualNavBarElement {

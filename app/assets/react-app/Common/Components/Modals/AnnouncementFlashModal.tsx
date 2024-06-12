@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import BaseModal from "./BaseModal";
 
 export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {

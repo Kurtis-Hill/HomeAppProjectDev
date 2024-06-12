@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { CardReadingHandler } from './Readings/CardReadingHandler';
-import { CardFilterBarInterface } from './Filterbars/CardFilterBarInterface'; 
-import { sensorType, readingType } from '../../../Common/SensorLanguage'
-import CardFilterBar from './Filterbars/CardFilterBar';
-import { CardDisplayModal } from './Modal/CardDisplayModal';
+import { CardReadingViewHandler,  } from './Readings/CardReadingViewHandler';
+import { sensorType, readingType } from '../../Sensors/SensorLanguage'
+
+import CardFilterBarView, { CardFilterBarType } from './Filterbars/CardFilterBarView';
+import { UpdateCardDisplayModal } from './Modal/UpdateCardDisplayModal';
 
 export function CardRowContainer(props: { 
     route?: string;
-    filterParams?: CardFilterBarInterface;
+    filterParams?: CardFilterBarType;
     horizontal?: boolean; 
     classes?: string; 
 }) {
@@ -17,7 +17,7 @@ export function CardRowContainer(props: {
     
     const [cardRefreshTimer, setCardRefreshTimer] = useState<number>(4000)
     
-    const [sensorFilterParams, setSensorFilterParams] = useState<CardFilterBarInterface>(filterParams ?? {readingTypes: [], sensorTypes: []});
+    const [sensorFilterParams, setSensorFilterParams] = useState<CardFilterBarType>(filterParams ?? {readingTypes: [], sensorTypes: []});
 
     const [selectedCardForQuickUpdate, setSelectedCardForQuickUpdate] = useState<number|null>(null);
 
@@ -61,7 +61,7 @@ export function CardRowContainer(props: {
 
     return (
         <>
-            <CardFilterBar 
+            <CardFilterBarView 
                 filterParams={sensorFilterParams} 
                 addFilterParams={addSensorFilterParamsForRequest} 
                 removeFilterParams={removeSensorFilterParamsForRequest}
@@ -72,7 +72,7 @@ export function CardRowContainer(props: {
             {
                 horizontal === true
                     ? <div className={classes ?? 'col-xl-12 col-md-12 mb-12'}>
-                        <CardReadingHandler 
+                        <CardReadingViewHandler 
                             route={route} 
                             filterParams={sensorFilterParams} 
                             cardRefreshTimer={cardRefreshTimer}
@@ -81,7 +81,7 @@ export function CardRowContainer(props: {
                             setLoadingCardModalView={setLoadingCardModalView}
                         />
                     </div>  
-                    :   <CardReadingHandler 
+                    :   <CardReadingViewHandler 
                             route={route} 
                             filterParams={sensorFilterParams} 
                             cardRefreshTimer={cardRefreshTimer}
@@ -93,7 +93,7 @@ export function CardRowContainer(props: {
             {
                 loadingCardModalView === true
                     ?
-                        <CardDisplayModal
+                        <UpdateCardDisplayModal
                             cardViewID={selectedCardForQuickUpdate}
                             loadingCardModalView={loadingCardModalView}
                             setLoadingCardModalView={setLoadingCardModalView}

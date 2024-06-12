@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
 
-import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
-import CardReadingFactory from '../Factories/CardReadingFactory';
 
 export function BaseCard(props: { 
     loading: boolean;
@@ -21,8 +18,12 @@ export function BaseCard(props: {
     const { setVariableToUpdate, setCardLoading } = props;
 
     const handleGeneralCardClick = () => {
-        setCardLoading(true);
-        setVariableToUpdate(id);
+        if (setCardLoading) {
+            setCardLoading(true);
+        }
+        if (setVariableToUpdate) {
+            setVariableToUpdate(id);
+        }
     }
 
     return (

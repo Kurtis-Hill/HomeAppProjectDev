@@ -1,5 +1,5 @@
-import { ReadingTypesEnum } from "../../../../Enum/ReadingTypesEnum";
-import { ConstRecordType } from "../../../Components/ReadingTypes/SensorReadingTypesOptionTypes";
+import { ReadingTypesEnum } from "../../../Enum/ReadingTypesEnum";
+import { ConstRecordType } from "../../../Types/SensorReadingTypesOptionTypes";
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
 
 export default interface MotionResponseInterface {
@@ -9,8 +9,8 @@ export default interface MotionResponseInterface {
     currentReading: boolean,
     expectedReading: boolean,
     requestedReading: boolean,
-    readingType: ReadingTypesEnum.relay,
+    readingType: ReadingTypesEnum.motion,
     sensor?: SensorResponseInterface,
-    sensorType: string,
+    sensorType: ReadingTypesEnum,
     updatedAt: string,
 }

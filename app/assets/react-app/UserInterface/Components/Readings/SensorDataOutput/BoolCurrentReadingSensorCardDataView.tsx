@@ -1,9 +1,8 @@
 import * as React from 'react';
-
 import { CurrentSensorDataTypeBoolCard } from '../../../Factories/CurrentReadingSensorDataOutputFactory';
 import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
 
-export function BoolCurrentReadingSensorDataOutput(props: { sensorData: CurrentSensorDataTypeBoolCard[]|undefined; }) {
+export function BoolCurrentReadingSensorCardDataView(props: { sensorData: CurrentSensorDataTypeBoolCard[]|undefined; }) {
     const { sensorData } = props;
 
     const sensorReadingAgainstExpectedReading = (expectedReading: boolean, currentReading: boolean) => {

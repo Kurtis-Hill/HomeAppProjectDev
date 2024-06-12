@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
-import BaseModal from '../../../../Common/Components/Modals/BaseModal';
-import { TabSelector } from '../../../../Common/Components/TabSelector';
-import { UpdateCard } from '../Form/UpdateCard';
-import { ReadingTypeDisplayTable } from '../../../../Sensors/Components/ReadingTypes/ReadingTypeDisplayTable';
-import { getSensorsRequest, GetSensorsRequestType } from '../../../../Sensors/Request/Sensor/GetSensorsRequest';
-import SensorResponseInterface from '../../../../Sensors/Response/Sensor/SensorResponseInterface';
-import { RequestTypeEnum } from '../../../../Common/API/RequestTypeEnum';
-import { CommandsDisplay } from '../../../../Sensors/Components/Display/CommandsDisplay';
+import SensorResponseInterface from "../../../Sensors/Response/Sensor/SensorResponseInterface";
+import {RequestTypeEnum} from "../../../Common/Request/RequestTypeEnum";
+import {getSensorsRequest, GetSensorsRequestType} from "../../../Sensors/Request/Sensor/GetSensorsRequest";
+import BaseModal from "../../../Common/Components/Modals/BaseModal";
+import {TabSelector} from "../../../Common/Components/TabSelector";
+import {UpdateCard} from "../Form/UpdateCard";
+import {ReadingTypeDisplayTable} from "../../../Sensors/Components/ReadingTypes/ReadingTypeDisplayTable";
+import {CommandsDisplay} from "../../../Sensors/Components/Commands/CommandsDisplay";
 
 const cardViewUpdate: string = 'Card View Update';
 const boundaryUpdate: string = 'Boundary Update';

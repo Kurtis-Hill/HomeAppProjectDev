@@ -4,8 +4,8 @@ import {apiURL} from "../../Common/URLs/CommonURLs";
 import {setUserSession, getRefreshToken} from '../Session/UserSessionHelper';
 
 import {LoginResponseInterface} from "../Response/LoginResponseInterface";
+import { LoginUserInputsInterface } from '../Components/LoginView';
 
-import {LoginUserInputsInterface} from "../../Routes/Login/LoginView"
 
 export async function handleLogin(userInputs: LoginUserInputsInterface): Promise<AxiosResponse> {
     const loginCheckResponse: AxiosResponse = await axios.post(

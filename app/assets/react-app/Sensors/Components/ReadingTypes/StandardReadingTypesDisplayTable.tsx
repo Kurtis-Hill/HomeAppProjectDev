@@ -12,8 +12,8 @@ import { GeneralTableBody } from '../../../Common/Components/Table/General/Gener
 import { capitalizeFirstLetter } from '../../../Common/StringFormatter';
 import { FormInlineInput } from '../../../Common/Components/Inputs/FormInlineUpdate';
 import { StandardSensorBoundaryReadingUpdateInputInterface, readingTypeBoundaryReadingUpdateRequest } from '../../Request/ReadingType/ReadingTypeBoundaryReadingUpdateRequest';
-import { ConstRecordType } from './SensorReadingTypesOptionTypes';
 import { FormSelectWAcceptDecline } from '../../../Common/Components/Selects/FormSelectWAcceptDecline';
+import { ConstRecordType } from '../../Types/SensorReadingTypesOptionTypes';
 
 const activeFormDefaultValues = {
     temperatureHighReading: false,

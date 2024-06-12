@@ -1,6 +1,4 @@
-import * as React from 'react';
-
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios from 'axios';
 
 import { apiURL } from "../../../Common/URLs/CommonURLs";
 

@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { useState } from 'react';
-
-import SensorDataContext from '../../../../Sensors/Contexts/SensorDataContext';
-import { CardFilterBarInterface } from './CardFilterBarInterface';
-
+import SensorDataContext from '../../../Sensors/Contexts/SensorDataContext';
+import { SensorDataContextDataInterface } from '../../../Sensors/DataProviders/SensorDataProvider';
+import SmallWhiteBoxDisplay from '../../../Common/Components/Elements/SmallWhiteBoxDisplay';
+import { capitalizeFirstLetter } from '../../../Common/StringFormatter';
+import ReadingTypeResponseInterface from '../../../Sensors/Response/ReadingTypes/ReadingTypeResponseInterface';
+import { SensorTypeResponseInterface } from '../../../Sensors/Response/SensorType/SensorTypeResponseInterface';
 import CardFilterButton from '../Buttons/CardFilterButton';
-import { SensorDataContextDataInterface } from '../../../../Sensors/DataProviders/SensorDataProvider';
-import { SensorTypeResponseInterface } from '../../../../Sensors/Response/SensorType/SensorTypeResponseInterface';
-import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
-import ReadingTypeResponseInterface from '../../../../Sensors/Response/ReadingTypes/ReadingTypeResponseInterface';
-import SmallWhiteBoxDisplay from '../../../../Common/Components/Elements/SmallWhiteBoxDisplay';
 
-export default function CardFilterBar(props: {
-    filterParams: CardFilterBarInterface|[]; 
+
+export type CardFilterBarType = {
+    sensorTypes?: string[];
+    readingTypes?: string[];
+}
+
+export default function CardFilterBarView(props: {
+    filterParams: CardFilterBarType|[]; 
     addFilterParams: (filterParams: {type: string, value: string}) => void,
     removeFilterParams: (filterParams: {type: string, value: string}) => void,
     setCardRefreshTimer: (timer: number) => void,

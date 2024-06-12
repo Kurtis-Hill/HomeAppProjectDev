@@ -3,7 +3,7 @@ import {
     IndividualSensorReadingTypeResponseInterface,
     SensorReadingTypeResponseInterface
 } from '../../Response/ReadingTypes/SensorReadingTypeResponseInterfaces/SensorReadingTypeResponseInterface';
-import { standardReading, sensorType } from '../../../Common/SensorLanguage';
+import { standardReading } from '../../../Sensors/SensorLanguage';
 import { StandardReadingTypesDisplayTable } from './StandardReadingTypesDisplayTable';
 
 export function ReadingTypeDisplayTable(props: {sensorReadingTypes: IndividualSensorReadingTypeResponseInterface, canEdit: boolean, refreshData?: () => void}) {

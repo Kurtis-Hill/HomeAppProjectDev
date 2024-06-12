@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 
 export default function CardFilterButton(props: { toggleShowFilters: () => void; }): React {
     const toggleShowFilters: () => void = props.toggleShowFilters;

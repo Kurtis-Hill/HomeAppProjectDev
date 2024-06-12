@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { AnnouncementFlashModal, AnnouncementFlashModalInterface } from "../Modals/AnnouncementFlashModal";
-import { ResponseInterceptor } from '../../Request/Axios/ResponseInterceptor';
 import { AnnouncementFlashModalBuilder } from '../../Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import { useState, useEffect } from 'react';
+import { ResponseInterceptor } from '../../Response/Axios/ResponseInterceptor';
 
 export function ResponseComponent(props: {refreshNavBar: (newValue: boolean) => void}) {
     const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);

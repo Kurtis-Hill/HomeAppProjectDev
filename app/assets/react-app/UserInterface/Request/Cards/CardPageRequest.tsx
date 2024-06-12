@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
 
 import { baseCardDataURL } from '../../../Common/URLs/CommonURLs';
-import { CardFilterBarInterface } from '../../Cards/Components/Filterbars/CardFilterBarInterface';
+import { CardFilterBarType } from '../../Components/Filterbars/CardFilterBarView';
 
-export async function handleSendingCardDataRequest(props: { route:string; filterParams?: CardFilterBarInterface }): Promise<AxiosResponse> {
+export async function handleSendingCardDataRequest(props: { route:string; filterParams?: CardFilterBarType }): Promise<AxiosResponse> {
     const route:string = props.route ?? 'index';
     const filterParams = props.filterParams;
     
@@ -15,7 +15,7 @@ export async function handleSendingCardDataRequest(props: { route:string; filter
     return await axios.get(`${baseCardDataURL}${route}`, { params: filterParamsObject });
 }
 
-function buildCardRequestFilters(filterParams: CardFilterBarInterface): URLSearchParams {
+function buildCardRequestFilters(filterParams: CardFilterBarType): URLSearchParams {
     const typeGetParamsObject = new URLSearchParams();
 
     if (filterParams.sensorTypes && filterParams.sensorTypes.length > 0) {

@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios';
+import axios, {AxiosPromise} from 'axios';
 
 import { baseApiURL } from "../../../Common/URLs/CommonURLs";
 

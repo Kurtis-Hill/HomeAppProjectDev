@@ -1,8 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { apiURL } from "../../../Common/URLs/CommonURLs";
-
-import { RequestTypeEnum } from "../../../Common/API/RequestTypeEnum";
+import { RequestTypeEnum } from '../../../Common/Request/RequestTypeEnum';
 
 export type GetSensorsRequestType = {
     limit: number,

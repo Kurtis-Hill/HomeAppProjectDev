@@ -8,10 +8,10 @@ import CloseButton from '../../Common/Components/Buttons/CloseButton';
 import TriggerCard from '../../Sensors/Components/Trigger/TriggerCard';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
 import { deleteTriggerRequest } from '../../Sensors/Request/Trigger/DeleteTriggerRequest';
-import { BaseCard } from '../../UserInterface/Cards/Components/BaseCard';
 import TriggerForm from '../../Sensors/Components/Trigger/TriggerForm';
 import UpdateTriggerView from "../../Sensors/Components/Trigger/UpdateTriggerView";
 import { AddNewTriggerType, addNewTriggerForm } from '../../Sensors/Request/Trigger/AddNewTriggerRequest';
+import { BaseCard } from '../../Common/Components/BaseCard';
 
 export default function TriggerPage() {
     const [triggerData, setTriggerData] = useState<SensorTriggerResponseInterface[]>([]);

@@ -13,11 +13,11 @@ import { updateSensorRequest } from '../Request/Sensor/UpdateSensorRequest';
 import { AnnouncementFlashModal } from '../../Common/Components/Modals/AnnouncementFlashModal';
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
-import CardViewResponseInterface from '../../UserInterface/Cards/Response/CardView/CardViewResponseInterface';
-import { UpdateCard } from '../../UserInterface/Cards/Components/Form/UpdateCard';
 import BaseModal from '../../Common/Components/Modals/BaseModal';
 import CloseButton from '../../Common/Components/Buttons/CloseButton';
-import { addNewCardRequest, AddNewCardType } from '../../UserInterface/Cards/Request/Card/AddNewCardRequest';
+import CardViewResponseInterface from '../../UserInterface/Response/Cards/CardView/CardViewResponseInterface';
+import { AddNewCardTypeInterface, addNewCardRequest } from '../../UserInterface/Request/Cards/Card/AddNewCardRequest';
+import { UpdateCard } from '../../UserInterface/Components/Form/UpdateCard';
 
 const defaultFormActiveState = {
     sensorName: false,
@@ -159,7 +159,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
     const handleCardViewModal = async (cardView: CardViewResponseInterface|null) => {
         if (cardView === null) {
             setCreateCardLoading(true);
-            const addNewCardData: AddNewCardType = {
+            const addNewCardData: AddNewCardTypeInterface = {
                 sensorID: sensor.sensorID,
             };
 

@@ -1,8 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
 import { apiURL } from '../../../Common/URLs/CommonURLs';
-import { readingType } from '../../../Common/SensorLanguage';
 import { StandardSensorConstRecord, StandardSensorReadingValue } from '../../Types/StandardSensor/SensorReadingResponseTypes';
 
 export async function readingTypeBoundaryReadingUpdateRequest(

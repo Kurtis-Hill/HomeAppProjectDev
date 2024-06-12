@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ListLinkItem } from '../Response/Navbar/NavBarResponseInterface';
+import NavbarListItem from '../Components/NavbarListItem';
 
-import NavbarListItem from '../Navbar/Components/NavbarListItem';
 
 export function BuildNavbarItem(props: {
     heading: string,

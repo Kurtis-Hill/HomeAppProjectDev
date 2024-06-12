@@ -1,9 +1,9 @@
 import * as React from 'react';
 import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterface';
-import { SensorTypesEnum } from '../../../Enum/SensorTypesEnum';
 import { RelayUpdateRequestCommand } from '../Commands/RelayUpdateRequestCommand';
 import { PingDevice } from '../../../Devices/Components/Buttons/PingDevice';
 import { RestartDeviceButton } from '../../../Devices/Components/Buttons/RestartDeviceButton';
+import { SensorTypesEnum } from '../../Enum/SensorTypesEnum';
 
 export function CommandsDisplay(props: { sensor: SensorResponseInterface }) {
     const { sensor } = props;
@@ -11,15 +11,15 @@ export function CommandsDisplay(props: { sensor: SensorResponseInterface }) {
     return (
         <>
             <PingDevice
-                deviceID={sensor.device.deviceID}
+                deviceID={sensor?.device?.deviceID ?? 0}
             />
             <br />
             <RestartDeviceButton
-                deviceID={sensor.device.deviceID}
+                deviceID={sensor?.device?.deviceID ?? 0}
             />
             <br />
             {
-                sensor.sensorType.sensorTypeName === SensorTypesEnum.GenericRelay
+                sensor?.sensorType?.sensorTypeName === SensorTypesEnum.GenericRelay
                     ?
                         <RelayUpdateRequestCommand
                             sensor={sensor}

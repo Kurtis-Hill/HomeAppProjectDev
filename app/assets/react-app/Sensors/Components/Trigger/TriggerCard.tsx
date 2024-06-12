@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 
 import { SensorTriggerResponseInterface } from '../../Response/Sensor/Trigger/SensorTriggerResponseInterface';
-import { BaseCard } from '../../../UserInterface/Cards/Components/BaseCard';
 import DeleteButton from '../../../Common/Components/Buttons/DeleteButton';
+import { BaseCard } from '../../../Common/Components/BaseCard';
 
 export default function TriggerCard(props: {
     sensorTriggerData: SensorTriggerResponseInterface,

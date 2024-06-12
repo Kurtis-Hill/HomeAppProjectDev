@@ -1,5 +1,5 @@
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
-import { ReadingTypesEnum } from '../../../../Enum/ReadingTypesEnum';
+import { ReadingTypesEnum } from '../../../Enum/ReadingTypesEnum';
 
 export default interface LatitudeResponseInterface {
     latitudeID: number,

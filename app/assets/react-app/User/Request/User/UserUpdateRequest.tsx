@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from 'axios';
 
 import {apiURL} from "../../../Common/URLs/CommonURLs";
-import {ResponseTypeEnum} from '../../../Common/API/APIResponseType';
+import { ResponseTypeEnum } from '../../../Common/Response/APIResponseEnum';
 
 export type UserUpdateRequestType = {
     firstName?: string,

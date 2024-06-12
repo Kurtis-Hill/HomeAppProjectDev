@@ -1,4 +1,4 @@
-import { SensorTypesEnum } from '../../../../Enum/SensorTypesEnum';
+import { SensorTypesEnum } from "../../../../Sensors/Enum/SensorTypesEnum";
 
 export interface CardSensorDataResponseInterface {
     cardType: string;

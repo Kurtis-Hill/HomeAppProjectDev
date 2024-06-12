@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, { AxiosResponse} from 'axios';
 
 import { apiURL } from "../../../Common/URLs/CommonURLs";
 import { AddNewRoomUserInput } from '../../Components/Room/AddNewRoomForm';

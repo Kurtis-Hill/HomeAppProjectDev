@@ -1,5 +1,5 @@
-import { ConstRecordType } from '../../../Components/ReadingTypes/SensorReadingTypesOptionTypes';
-import { ReadingTypesEnum } from '../../../../Enum/ReadingTypesEnum';
+import { ReadingTypesEnum } from '../../../Enum/ReadingTypesEnum';
+import { ConstRecordType } from '../../../Types/SensorReadingTypesOptionTypes';
 import SensorResponseInterface from '../../Sensor/SensorResponseInterface';
 
 export default interface RelayResponseInterface {

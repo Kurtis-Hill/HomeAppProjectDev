@@ -3,13 +3,12 @@ import { useState, useEffect, useReducer } from 'react';
 
 import { AxiosResponse } from 'axios';
 import { AxiosError } from 'axios';
-import { CurrentReadingDataDisplayInterface } from './SensorDataOutput/CurrentReadingDataDisplayInterface';
-
-import { CardSensorDataResponseInterface } from '../../Response/CurrentReadingCardData/CardDataResponseInterface';
-
-import { handleSendingCardDataRequest } from '../../../Request/Cards/CardPageRequest';
 import CardReadingFactory from '../../Factories/CardReadingFactory';
-import DotCircleSpinner from '../../../../Common/Components/Spinners/DotCircleSpinner';
+import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
+import { CardSensorDataResponseInterface } from '../../Response/Cards/CurrentReadingCardData/CardDataResponseInterface';
+import { CurrentSensorDataTypeStandardCard } from '../../Factories/CurrentReadingSensorDataOutputFactory';
+import { handleSendingCardDataRequest } from '../../Request/Cards/CardPageRequest';
+import {CardFilterBarType} from "../Filterbars/CardFilterBarView";
 
 const initialCardDisplay = [];
 
@@ -54,13 +53,7 @@ const cardReducer = (previousCards: CardSensorDataResponseInterface[]|undefined,
     return cardsForDisplayArray;
 }
 
-export type CardFilterBarType {
-    sensorTypes?: string[];
-    readingTypes?: string[];
-}
-
-
-export function CardReadingHandler(props: { 
+export function CardReadingViewHandler(props: { 
     route: string; 
     loadingCardModalView: boolean;
     setLoadingCardModalView: (loadingCardModalView: boolean) => void;

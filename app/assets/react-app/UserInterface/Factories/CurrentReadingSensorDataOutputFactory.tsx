@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { SensorTypesEnum } from '../../../../../Enum/SensorTypesEnum';
-import { StandardCurrentReadingSensorDataOutput } from '../Components/Readings/SensorDataOutput/StandardCurrentReadingSensorDataOutput';
-import { BoolCurrentReadingSensorDataOutput } from '../Components/Readings/SensorDataOutput/BoolCurrentReadingSensorDataOutput';
+import { StandardCurrentReadingSensorCardDataView } from '../Components/Readings/SensorDataOutput/StandardCurrentReadingSensorCardDataView';
+import { BoolCurrentReadingSensorCardDataView } from '../Components/Readings/SensorDataOutput/BoolCurrentReadingSensorCardDataView';
+import { SensorTypesEnum } from '../../Sensors/Enum/SensorTypesEnum';
 
 export interface CurrentSensorDataTypeStandardCard {
     currentReading: number;
@@ -36,20 +36,20 @@ export function CurrentReadingSensorDataOutputFactory(props: {
         case SensorTypesEnum.LDR:
         case SensorTypesEnum.Sht:
             return (
-                <StandardCurrentReadingSensorDataOutput
+                <StandardCurrentReadingSensorCardDataView
                     sensorData={sensorData as CurrentSensorDataTypeStandardCard[]}
                 />
             )
         case SensorTypesEnum.GenericMotion:
         case SensorTypesEnum.GenericRelay:
             return (
-                <BoolCurrentReadingSensorDataOutput
+                <BoolCurrentReadingSensorCardDataView
                     sensorData={sensorData as CurrentSensorDataTypeBoolCard[]}
                 />
             )
         default:
             return (
-                <StandardCurrentReadingSensorDataOutput
+                <StandardCurrentReadingSensorCardDataView
                     sensorData={sensorData as CurrentSensorDataTypeStandardCard[]}
                 />
             ) 

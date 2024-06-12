@@ -1,9 +1,7 @@
-import { useState, useRef } from 'react';
-
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
-import { apiURL, indexUrl } from '../../URLs/CommonURLs';
+import { apiURL } from '../../URLs/CommonURLs';
 import { ErrorResponseInterface } from '../../Response/ErrorResponseInterface';
 import { loginUrl } from '../../URLs/CommonURLs';
 import { handleTokenRefresh } from '../../../Authentication/Request/LoginRequest';
@@ -16,7 +14,7 @@ export function ResponseInterceptor(props: {
 }): void {
     const errorAnnouncementFlash = props.showAnnouncementFlash;
 
-    const navigate: NavigateFunction = useNavigate();
+    // const navigate: NavigateFunction = useNavigate();
 
     const refreshNavBar = props.refreshNavBar;
 

@@ -10,8 +10,8 @@ import { indexUrl } from '../../Common/URLs/CommonURLs';
 import { useMainIndicators } from '../../Common/Components/Pages/MainPageTop';
 import { DeviceResponseInterface } from '../Response/DeviceResponseInterface';
 import { TabSelector } from '../../Common/Components/TabSelector';
-import { SensorsView } from '../../Sensors/Page/SensorsView';
-import {ResponseTypeEnum} from "../../Common/Response/APIResponseType";
+import {ResponseTypeEnum} from "../../Common/Response/APIResponseEnum";
+import { SensorsView } from '../../Sensors/Components/SensorsView';
 
 export function DeviceView() {
     const tabOptions = ['Device', 'Sensors', 'Commands'];

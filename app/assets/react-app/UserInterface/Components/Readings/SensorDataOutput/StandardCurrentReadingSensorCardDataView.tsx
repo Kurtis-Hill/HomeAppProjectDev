@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { CurrentSensorDataTypeStandardCard } from '../../../Factories/CurrentReadingSensorDataOutputFactory';
+import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
 
-import { capitalizeFirstLetter } from '../../../../../Common/StringFormatter';
 
-export function StandardCurrentReadingSensorDataOutput(props: { sensorData: CurrentSensorDataTypeStandardCard[]|undefined; }) {
-    const sensorData: Array<CurrentSensorDataTypeStandardCard> = props.sensorData ?? undefined;
+export function StandardCurrentReadingSensorCardDataView(props: { sensorData: CurrentSensorDataTypeStandardCard[]; }) {
+    const sensorData: CurrentSensorDataTypeStandardCard[] = props.sensorData ?? undefined;
 
     const sensorReadingAgainstLowHighBoundary = (highReading: number, lowReading: number, currentReading: number) => {
         return (currentReading >= highReading) 

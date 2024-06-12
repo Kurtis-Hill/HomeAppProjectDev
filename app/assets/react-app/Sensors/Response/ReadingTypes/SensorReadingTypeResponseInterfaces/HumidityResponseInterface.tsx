@@ -1,6 +1,5 @@
 import SensorResponseInterface from "../../Sensor/SensorResponseInterface";
-
-type HumidityString = 'humidity';
+import { ReadingTypesEnum } from '../../../Enum/ReadingTypesEnum';
 
 export default interface HumidityResponseInterface {
     humidityID: number,
@@ -12,5 +11,5 @@ export default interface HumidityResponseInterface {
     constRecord: boolean,
     updatedAt: string,
     readingType: string,
-    sensorType: HumidityString,
+    sensorType: ReadingTypesEnum.humidity,
 }
