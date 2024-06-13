@@ -2,33 +2,30 @@
 
 namespace App\Tests\Sensors\AMQP\Consumers;
 
-use App\Devices\Entity\Devices;
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\Sensors\AMQP\Consumers\ProcessCurrentReadingRequestConsumer;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\LDR;
-use App\Sensors\Entity\SensorTypes\Sht;
-use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Repository\ReadingType\ORM\AnalogRepository;
-use App\Sensors\Repository\SensorReadingType\ORM\StandardReadingTypeRepository;
+use App\AMQP\Sensor\Consumers\ProcessCurrentReadingRequestConsumer;
+use App\DataFixtures\ESP8266\SensorFixtures;
+use App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\SensorTypes\LDR;
+use App\Entity\Sensor\SensorTypes\Sht;
+use App\Entity\Sensor\SensorTypes\Soil;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -112,7 +109,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
     // Soil
     public function test_soil_current_reading_message_consumers_correctly(): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SOIL_SENSOR_TO_UPDATE]);
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - random_int(1, 50));
         $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
@@ -125,7 +122,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var Analog $soilSensor */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $soilSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 //        dd($soilSensor);
@@ -138,7 +135,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
     public function test_soil_current_reading_message_consumers_wrong_current_reading_request_dto(): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::SOIL_SENSOR_TO_UPDATE]);
 
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - 50);
@@ -152,7 +149,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var Analog $soilSensor */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $soilSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
@@ -166,7 +163,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
     //LDR
     public function test_ldr_current_reading_message_consumers_correctly(): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::LDR_SENSOR_TO_UPDATE]);
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(LDR::HIGH_READING - random_int(1, 50));
         $updateCurrentReadingMessageDTO = new UpdateSensorCurrentReadingTransportMessageDTO(
@@ -179,7 +176,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var Analog $soilSensor */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $ldrSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
@@ -192,7 +189,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
     public function test_ldr_current_reading_message_consumers_wrong_current_reading_request_dto(): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::LDR_SENSOR_TO_UPDATE]);
 
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Soil::HIGH_SOIL_READING_BOUNDARY - 50);
@@ -206,7 +203,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var Analog $soilSensor */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $ldrSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
@@ -248,7 +245,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
     public function test_dht_current_reading_message_consumers_correctly_all_readings(): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::DHT_SENSOR_TO_UPDATE]);
 
         $humidCurrentReadingUpdateMessage = new HumidityCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 50);
@@ -268,7 +265,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
         $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
-        /** @var Temperature $temperature */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature $temperature */
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
         $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
@@ -285,7 +282,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
     public function test_dht_current_reading_message_consumers_wrong_current_reading_dto(): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::DHT_SENSOR_TO_UPDATE]);
 
         $analogCurrentReadingUpdateMessage = new AnalogCurrentReadingUpdateRequestDTO(Humidity::HIGH_READING - 23);
@@ -423,7 +420,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
     // Dallas
     public function test_dallas_current_reading_message_consumers_correctly_all_readings(): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => self::DALLAS_SENSOR_TO_UPDATE]);
 
         $tempCurrentReadingUpdateMessage = new TemperatureCurrentReadingUpdateRequestDTO(Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 10);
@@ -492,7 +489,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var Latitude $latitude */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude $latitude */
         $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
         $latitude = $latitudeRepository->findBySensorID($sensor->getSensorID())[0];
 

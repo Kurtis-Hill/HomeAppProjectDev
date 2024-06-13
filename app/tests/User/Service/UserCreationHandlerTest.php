@@ -2,15 +2,15 @@
 
 namespace App\Tests\User\Service;
 
-use App\Authentication\Entity\GroupMapping;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Exceptions\GroupExceptions\GroupValidationException;
-use App\User\Exceptions\UserExceptions\UserCreationValidationErrorsException;
-use App\User\Repository\ORM\GroupRepository;
-use App\User\Repository\ORM\UserRepository;
-use App\User\Services\User\UserCreationHandler;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Authentication\GroupMapping;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Exceptions\User\GroupExceptions\GroupValidationException;
+use App\Exceptions\User\UserExceptions\UserCreationValidationErrorsException;
+use App\Repository\User\ORM\GroupRepository;
+use App\Repository\User\ORM\UserRepository;
+use App\Services\User\User\UserCreationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -382,7 +382,7 @@ class UserCreationHandlerTest extends KernelTestCase
         $userSaved = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
 
         $groupRepository = $this->entityManager->getRepository(Group::class);
-        /** @var Group $homeAppGroup */
+        /** @var \App\Entity\User\Group $homeAppGroup */
         $homeAppGroup = $groupRepository->findOneBy(['groupName' => Group::HOME_APP_GROUP_NAME]);
 
         $groupNameMappingRepository = $this->entityManager->getRepository(GroupMapping::class);

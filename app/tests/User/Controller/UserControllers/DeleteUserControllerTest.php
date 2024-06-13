@@ -2,11 +2,11 @@
 
 namespace App\Tests\User\Controller\UserControllers;
 
-use App\Common\API\CommonURL;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\User\User;
+use App\Repository\User\ORM\UserRepository;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\User;
-use App\User\Repository\ORM\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

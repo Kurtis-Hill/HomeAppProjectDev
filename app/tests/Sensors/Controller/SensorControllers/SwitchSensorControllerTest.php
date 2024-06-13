@@ -2,18 +2,17 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Common\API\APIErrorMessages;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\DataFixtures\ESP8266\SensorFixtures;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -69,7 +68,7 @@ class SwitchSensorControllerTest extends WebTestCase
         array $currentReadings,
         string $readingType,
     ): void {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorName]);
 
         $requestData = [
@@ -122,7 +121,7 @@ class SwitchSensorControllerTest extends WebTestCase
         array $currentReadings,
         string $readingType,
     ): void {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorName]);
 
         $deviceToken = $this->setDeviceToken(

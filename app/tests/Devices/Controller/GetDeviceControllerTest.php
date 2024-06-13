@@ -2,22 +2,22 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Common\API\APIErrorMessages;
-use App\Common\API\CommonURL;
 use App\Common\Services\PaginationCalculator;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\Devices\Controller\GetDeviceController;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Repository\Sensors\ORM\SensorRepository;
+use App\Controller\Device\GetDeviceController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\Sensor;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Device\ORM\DeviceRepository;
+use App\Repository\Sensor\Sensors\ORM\SensorRepository;
+use App\Repository\User\ORM\GroupRepository;
+use App\Repository\User\ORM\UserRepository;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepository;
-use App\User\Repository\ORM\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -80,7 +80,7 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_device_admin_only_response(): void
     {
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findAll();
         $device = $devices[0];
 
@@ -108,7 +108,7 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_device_admin_full_response(): void
     {
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findAll();
 
         foreach ($devices as $deviceToTest) {
@@ -192,7 +192,7 @@ class GetDeviceControllerTest extends WebTestCase
 
         $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserOne);
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
@@ -248,7 +248,7 @@ class GetDeviceControllerTest extends WebTestCase
     {
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
@@ -322,7 +322,7 @@ class GetDeviceControllerTest extends WebTestCase
     {
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
@@ -358,7 +358,7 @@ class GetDeviceControllerTest extends WebTestCase
     {
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminUser);
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
@@ -411,7 +411,7 @@ class GetDeviceControllerTest extends WebTestCase
         $payload = $responseData['payload'];
         $title = $responseData['title'];
 
-        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(\App\Controller\Device\GetDeviceController::REQUEST_SUCCESSFUL, $title);
 
         $allDevices = $this->deviceRepository->findAll();
 

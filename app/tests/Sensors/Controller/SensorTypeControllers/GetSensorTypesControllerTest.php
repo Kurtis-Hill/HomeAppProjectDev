@@ -2,7 +2,7 @@
 
 namespace App\Tests\Sensors\Controller\SensorTypeControllers;
 
-use App\Sensors\Entity\AbstractSensorType;
+use App\Entity\Sensor\AbstractSensorType;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;

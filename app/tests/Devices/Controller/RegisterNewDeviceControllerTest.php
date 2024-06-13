@@ -2,8 +2,8 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Common\Entity\IPLog;
-use App\Common\Repository\IPLogRepository;
+use App\Entity\Common\IPLog;
+use App\Repository\Common\IPLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

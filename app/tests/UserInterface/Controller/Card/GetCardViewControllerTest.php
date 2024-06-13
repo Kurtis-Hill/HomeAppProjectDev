@@ -2,29 +2,29 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\Common\API\APIErrorMessages;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\ReadingTypes;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\AbstractSensorType;
-use App\Sensors\Factories\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
+use App\Controller\Sensor\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DTOs\UserInterface\Internal\CardDataQueryDTO\JoinQueryDTO;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\AbstractSensorType;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\ReadingTypes;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Entity\UserInterface\Card\CardView;
+use App\Factories\Sensor\SensorTypeQueryDTOFactory\SensorTypeQueryFactory;
+use App\Repository\Device\ORM\DeviceRepository;
+use App\Repository\User\ORM\GroupRepository;
+use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepository;
-use App\UserInterface\DTO\Internal\CardDataQueryDTO\JoinQueryDTO;
-use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -93,7 +93,7 @@ class GetCardViewControllerTest extends WebTestCase
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 
-        $cardViewRepository = $this->entityManager->getRepository(CardView::class);
+        $cardViewRepository = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\CardView::class);
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
         $temperature = false;
@@ -105,7 +105,7 @@ class GetCardViewControllerTest extends WebTestCase
 
 //        dd($responseData['payload']);
         foreach ($responseData['payload'] as $payload) {
-            /** @var CardView $cardViewObject */
+            /** @var \App\Entity\UserInterface\Card\CardView $cardViewObject */
             $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
@@ -259,11 +259,11 @@ class GetCardViewControllerTest extends WebTestCase
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 
-        $cardViewRepository = $this->entityManager->getRepository(CardView::class);
+        $cardViewRepository = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\CardView::class);
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
         foreach ($responseData['payload'] as $payload) {
-            /** @var CardView $cardViewObject */
+            /** @var \App\Entity\UserInterface\Card\CardView $cardViewObject */
             $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
@@ -430,7 +430,7 @@ class GetCardViewControllerTest extends WebTestCase
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
         foreach ($responseData['payload'] as $payload) {
-            /** @var CardView $cardViewObject */
+            /** @var \App\Entity\UserInterface\Card\CardView $cardViewObject */
             $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
@@ -447,7 +447,7 @@ class GetCardViewControllerTest extends WebTestCase
             $arrayPlace = 0;
             foreach ($readingTypes as $readingType) {
                 foreach ($readingTypeQueryDTOs as $readingTypeQueryDTO) {
-                    /** @var JoinQueryDTO $readingTypeQueryDTO */
+                    /** @var \App\DTOs\UserInterface\Internal\CardDataQueryDTO\JoinQueryDTO $readingTypeQueryDTO */
                     if ($readingTypeQueryDTO->getAlias() === ReadingTypes::SENSOR_READING_TYPE_DATA[$readingType]['alias']) {
                         unset($readingTypeQueryDTOs[$arrayPlace]);
                     }

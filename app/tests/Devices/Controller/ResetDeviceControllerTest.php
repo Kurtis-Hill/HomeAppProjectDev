@@ -2,12 +2,12 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Device\ORM\DeviceRepository;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -73,13 +73,13 @@ class ResetDeviceControllerTest extends WebTestCase
         $regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
 
         $regularUserToken = $this->setUserToken($this->client, $regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->entityManager->getRepository(Group::class)->findGroupsUserIsNotApartOf(
             $regularUserTwo,
             $regularUserTwo->getAssociatedGroupIDs()
         );
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsNotApartOf]);
         $device = $devices[array_rand($devices)];
 

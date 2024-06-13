@@ -2,25 +2,25 @@
 
 namespace App\Tests\Sensors\Controller\TriggerControllers;
 
-use App\Common\Entity\Operator;
-use App\Common\Entity\TriggerType;
-use App\Common\Repository\OperatorRepository;
-use App\Common\Repository\TriggerTypeRepository;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\TriggerControllers\UpdateSensorTriggerController;
-use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTrigger;
-use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\Repository\SensorTriggerRepository;
+use App\Controller\Sensor\TriggerControllers\UpdateSensorTriggerController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Common\Operator;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTrigger;
+use App\Entity\Sensor\TriggerType;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Common\OperatorRepository;
+use App\Repository\Device\ORM\DeviceRepository;
+use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\Sensor\SensorTriggerRepository;
+use App\Repository\Sensor\TriggerTypeRepository;
+use App\Repository\User\ORM\GroupRepository;
+use App\Repository\User\ORM\UserRepository;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepository;
-use App\User\Repository\ORM\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -129,7 +129,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
         $title = $responseData['title'] ?? null;
         $errors = $responseData['errors'] ?? null;
 
-        self::assertEquals(UpdateSensorTriggerController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(\App\Controller\Sensor\TriggerControllers\UpdateSensorTriggerController::BAD_REQUEST_NO_DATA_RETURNED, $title);
         self::assertEquals($errorMessage, $errors);
     }
 
@@ -342,7 +342,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
 
         $sensorTriggersUserIsApartOf = $this->sensorTriggerRepository->findBy(['baseReadingTypeThatTriggers' => $baseReadingTypesBySensor]);
 
-        /** @var SensorTrigger $itme */
+        /** @var \App\Entity\Sensor\SensorTrigger $itme */
         foreach ($sensorTriggersUserIsApartOf as $item) {
             $baseReadingTypeThatIsTriggeredGroupID = $item->getBaseReadingTypeToTriggers()->getSensor()->getDevice()->getGroupObject()->getGroupID();
             $baseReadingTypeThatTriggersGroupID = $item->getBaseReadingTypeThatTriggers()->getSensor()->getDevice()->getGroupObject()->getGroupID();
@@ -353,7 +353,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
         }
 
         $randomOperator = $this->operatorRepository->findAll();
-        /** @var Operator $randomOperator */
+        /** @var \App\Entity\Common\Operator $randomOperator */
         $randomOperator = $randomOperator[array_rand($randomOperator)];
         $randomTriggerType = $this->triggerTypeRepository->findAll();
         /** @var TriggerType $randomTriggerType */
@@ -391,7 +391,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
     public function test_admin_user_can_update_all_triggers(): void
     {
         $randomOperator = $this->operatorRepository->findAll();
-        /** @var Operator $randomOperator */
+        /** @var \App\Entity\Common\Operator $randomOperator */
         $randomOperator = $randomOperator[array_rand($randomOperator)];
         $randomTriggerType = $this->triggerTypeRepository->findAll();
         /** @var TriggerType $randomTriggerType */
@@ -431,7 +431,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
         $triggerDataToSend = json_encode($triggerUpdate);
         $allSensorTriggers = $this->sensorTriggerRepository->findAll();
 
-        /** @var SensorTrigger $trigger */
+        /** @var \App\Entity\Sensor\SensorTrigger $trigger */
         foreach ($allSensorTriggers as $trigger) {
             $this->client->request(
                 Request::METHOD_PUT,
@@ -470,16 +470,16 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
     public function test_success_response_contains_all_data(): void
     {
         $randomOperator = $this->operatorRepository->findAll();
-        /** @var Operator $randomOperator */
+        /** @var \App\Entity\Common\Operator $randomOperator */
         $randomOperator = $randomOperator[array_rand($randomOperator)];
         $randomTriggerType = $this->triggerTypeRepository->findAll();
-        /** @var TriggerType $randomTriggerType */
+        /** @var \App\Entity\Sensor\TriggerType $randomTriggerType */
         $randomTriggerType = $randomTriggerType[array_rand($randomTriggerType)];
         $baseReadingTypeThatTriggers = $this->baseSensorReadingTypeRepository->findAll();
         /** @var BaseSensorReadingType $baseReadingTypeThatTriggers */
         $baseReadingTypeThatTriggers = $baseReadingTypeThatTriggers[array_rand($this->baseSensorReadingTypeRepository->findAll())];
         $baseReadingTypeThatIsTriggered = $this->baseSensorReadingTypeRepository->findAll();
-        /** @var BaseSensorReadingType $baseReadingTypeThatIsTriggered */
+        /** @var \App\Entity\Sensor\ReadingTypes\BaseSensorReadingType $baseReadingTypeThatIsTriggered */
         $baseReadingTypeThatIsTriggered = $baseReadingTypeThatIsTriggered[array_rand($baseReadingTypeThatIsTriggered)];
 
         $days = [

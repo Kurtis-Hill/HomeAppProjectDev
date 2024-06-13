@@ -2,14 +2,13 @@
 
 namespace App\Tests\Sensors\SensorService\Trigger\TriggerActivationHandlers;
 
-use App\Common\Entity\TriggerType;
-use App\Sensors\Builders\Internal\AMPQMessages\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
-use App\Sensors\Builders\Internal\AMPQMessages\CurrentReadingDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
-use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\SensorTrigger;
-use App\Sensors\SensorServices\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor;
+use App\Builders\Sensor\Internal\AMPQMessages\CurrentReadingDTOBuilders\BoolCurrentReadingUpdateDTOBuilder;
+use App\Builders\Sensor\Internal\AMPQMessages\CurrentReadingDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
+use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\SensorTrigger;
+use App\Entity\Sensor\TriggerType;
 use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -39,7 +38,7 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
 
     public function test_relay_isnt_triggered_when_already_in_correct_state(): void
     {
-        /** @var Relay[] $allRelaySensors */
+        /** @var \App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay[] $allRelaySensors */
         $allRelaySensors = $this->entityManager->getRepository(Relay::class)->findAll();
         $relaySensor = $allRelaySensors[array_rand($allRelaySensors)];
         $relaySensor->setCurrentReading(true);
@@ -60,7 +59,7 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
         $mockCurrentReadingAMQPProducer->expects($this->never())->method('publish');
 
         $boolReadingBaseSensorRepository = $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class);
-        $sut = new TriggerRelayActivationProcessor(
+        $sut = new \App\Services\Sensor\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor(
             $mockUpdateSensorCurrentReadingDTOBuilder,
             $mockCurrentReadingAMQPProducer,
             $boolReadingBaseSensorRepository,
@@ -91,7 +90,7 @@ class TriggerRelayActivationProcessorTest extends KernelTestCase
         $mockCurrentReadingAMQPProducer->expects($this->once())->method('publish')->with(serialize($message));
 
         $boolReadingBaseSensorRepository = $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class);
-        $sut = new TriggerRelayActivationProcessor(
+        $sut = new \App\Services\Sensor\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor(
             $updateSensorCurrentReadingDTOBuilder,
             $mockCurrentReadingAMQPProducer,
             $boolReadingBaseSensorRepository,

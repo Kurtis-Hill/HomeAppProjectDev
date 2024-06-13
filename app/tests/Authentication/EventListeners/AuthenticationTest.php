@@ -2,17 +2,16 @@
 
 namespace App\Tests\Authentication\EventListeners;
 
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Devices\Entity\Devices;
-use App\User\Entity\User;
-use App\User\Repository\ORM\UserRepositoryInterface;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\User\User;
+use App\Repository\User\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticationTest extends WebTestCase
 {
@@ -86,7 +85,7 @@ class AuthenticationTest extends WebTestCase
      */
     public function test_can_get_device_token(string $username, string $password, string $ipAddress, string $externalIpAddress): void
     {
-        /** @var Devices $device */
+        /** @var \App\Entity\Device\Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $username]);
         $this->client->request(
             Request::METHOD_POST,

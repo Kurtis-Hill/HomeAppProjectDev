@@ -2,10 +2,10 @@
 
 namespace App\Tests\Traits;
 
-use App\Authentication\Controller\SecurityController;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\User\Entity\User;
+use App\Controller\Authentication\SecurityController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Entity\User\User;
 use Doctrine\ORM\EntityManager;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

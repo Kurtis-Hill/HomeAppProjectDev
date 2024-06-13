@@ -2,24 +2,23 @@
 
 namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\OutOfBounds;
 
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfBoundsEntityInterface;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeAnalog;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeHumid;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeLatitude;
-use App\Sensors\Entity\OutOfRangeRecordings\OutOfRangeTemp;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\Sht;
-use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\SensorServices\OutOfBounds\OutOfBoundsReadingTypeFacade;
+use App\DataFixtures\ESP8266\SensorFixtures;
+use App\Entity\Sensor\ConstantRecording\ConstantlyRecordEntityInterface;
+use App\Entity\Sensor\OutOfRangeRecordings\OutOfRangeAnalog;
+use App\Entity\Sensor\OutOfRangeRecordings\OutOfRangeHumid;
+use App\Entity\Sensor\OutOfRangeRecordings\OutOfRangeLatitude;
+use App\Entity\Sensor\OutOfRangeRecordings\OutOfRangeTemp;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\Sht;
+use App\Entity\Sensor\SensorTypes\Soil;
+use App\Services\Sensor\OutOfBounds\OutOfBoundsReadingTypeFacade;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -44,9 +43,9 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_high_readings_analog(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var Analog $analogSensor */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $analogSensor */
         $analogSensor = $this->entityManager->getRepository(Analog::class)->findBySensorID($sensor->getSensorID())[0];
 
         $highReading = $analogSensor->getHighReading();
@@ -59,7 +58,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         /** @var ConstantlyRecordEntityInterface[] $constRecordings */
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $analogSensor->getBaseReadingType()]);
 
-        /** @var OutOfBoundsEntityInterface $constRecordings */
+        /** @var \App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($analogSensor->getCurrentReading(), $constRecordings->getSensorReading());
@@ -70,9 +69,9 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_low_readings_analog(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var Analog $analogSensor */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $analogSensor */
         $analogSensor = $this->entityManager->getRepository(Analog::class)->findBySensorID($sensor->getSensorID())[0];
 
         $lowReading = $analogSensor->getLowReading();
@@ -85,7 +84,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         /** @var OutOfRangeAnalog[] $constRecordings */
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $analogSensor->getBaseReadingType()]);
 
-        /** @var OutOfBoundsEntityInterface $constRecordings */
+        /** @var \App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($analogSensor->getCurrentReading(), $constRecordings->getSensorReading());
@@ -104,7 +103,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_high_readings_temperature(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Temperature $tempObject */
         $tempObject = $this->entityManager->getRepository(Temperature::class)->findBySensorID($sensor->getSensorID())[0];
@@ -118,7 +117,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeTemp::class);
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $tempObject->getBaseReadingType()]);
 
-        /** @var OutOfBoundsEntityInterface $constRecordings */
+        /** @var \App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($tempObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -129,7 +128,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
      */
     public function test_out_of_bounds_saves_out_of_range_low_readings_temperature(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
         /** @var Temperature $temperature */
         $temperature = $this->entityManager->getRepository(Temperature::class)->findBySensorID($sensor->getSensorID())[0];
@@ -144,7 +143,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
 
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $temperature->getBaseReadingType()]);
 
-        /** @var OutOfBoundsEntityInterface $constRecordings */
+        /** @var \App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($temperature->getCurrentReading(), $constRecordings->getSensorReading());
@@ -179,7 +178,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
     public function test_out_of_bounds_saves_out_of_range_high_readings_humidity(string $sensorName, string $sensorClass): void
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var Humidity $humidObject */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity $humidObject */
         $humidObject = $this->entityManager->getRepository(Humidity::class)->findBySensorID($sensor->getSensorID())[0];
 
         $highReading = $humidObject->getHighReading();
@@ -191,7 +190,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeHumid::class);
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $humidObject->getBaseReadingType()]);
 
-        /** @var OutOfBoundsEntityInterface $constRecordings */
+        /** @var \App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($humidObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -215,7 +214,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeHumid::class);
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $humidObject->getBaseReadingType()]);
 
-        /** @var OutOfBoundsEntityInterface $constRecordings */
+        /** @var \App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($humidObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -257,7 +256,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeLatitude::class);
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $latitudeObject->getBaseReadingType()]);
 
-        /** @var OutOfBoundsEntityInterface $constRecordings */
+        /** @var \App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($latitudeObject->getCurrentReading(), $constRecordings->getSensorReading());
@@ -281,7 +280,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         $constRecord = $this->entityManager->getRepository(OutOfRangeLatitude::class);
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $latitudeObject->getBaseReadingType()]);
 
-        /** @var OutOfBoundsEntityInterface $constRecordings */
+        /** @var \App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface $constRecordings */
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
         self::assertEquals($latitudeObject->getCurrentReading(), $constRecordings->getSensorReading());

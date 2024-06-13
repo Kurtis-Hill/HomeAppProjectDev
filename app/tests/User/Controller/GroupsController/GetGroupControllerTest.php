@@ -2,10 +2,9 @@
 
 namespace App\Tests\User\Controller\GroupsController;
 
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\User\User;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

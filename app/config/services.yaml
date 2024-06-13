@@ -1,12 +1,6 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 imports:
     - { resource: elasticsearch.yaml }
-    - { resource: ../src/Devices/services-devices.yaml }
-    - { resource: ../src/Sensors/services-esp-sensors.yaml }
-    - { resource: ../src/User/services-user.yml }
-    - { resource: ../src/UserInterface/services-user_interface.yml }
-    - { resource: ../src/Authentication/services-authentication.yaml }
-    - { resource: ../src/ORM/services-orm.yaml }
 
 parameters:
 services:
@@ -26,14 +20,13 @@ services:
         $elasticsearchVersion: 8.4.3
 
   ################### Core ############################
-    App\Common\:
-      resource: '../src/Common/*'
+    App\:
+      resource: '../src/*'
       exclude:
-        - '../src/Common/{Common/API/Traits, Common/Query/Traits, Common/Validation/Traits}'
-        - '../src/{DependencyInjection, Kernel.php}'
+        - '../src/{Traits, DependencyInjection, Kernel.php}'
 
 
-    App\Common\Logs\ElasticLogger:
+    App\Services\Logs\ElasticLogger:
       arguments:
 #        $logger: '@logger'
         $emergencyIndex: '@elastica.log_index'
@@ -60,8 +53,17 @@ services:
 #              servers:
 #              - { host: '%env(ELASTIC_SEARCH_HOST)%', port: '%env(ELASTIC_SEARCH_PORT)%', username: '%env(ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%', password: '%env(ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%', transport: '%env(ELASTIC_TRANSPORT)%', curl: {64: '%env(ELASTIC_SEARCH_SSL_VERIFICATION)%'} }
 #              - { host: '%env(ELASTIC_SEARCH_HOST_FAILOVER)%', port: '%env(ELASTIC_SEARCH_PORT_FAILOVER)%', username: '%env(ELASTIC_SEARCH_HTTP_AUTH_USERNAME_FAILOVER)%', password: '%env(ELASTIC_SEARCH_HTTP_AUTH_PASSWORD_FAILOVER)%', transport: '%env(ELASTIC_TRANSPORT_FAILOVER)%', curl: {64: '%env(ELASTIC_SEARCH_SSL_VERIFICATION_FAILOVER)%'} }
+#    Psr\Log\LoggerInterface:
+#      alias: 'App\Common\Logs\ElasticLogger'
+#    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
+#      arguments:
+#        $index: 'log'
+#        $client: 'Elastica\Client'
+#        $level: !php/const Monolog\Logger::DEBUG
+#        $bubble: true
+#        $elasticsearchVersion: '8.4.3'
 
-    App\Common\Command\ElasticLogIndexCommand:
+    App\Command\ElasticLogIndexCommand:
       arguments:
         $indexMappings: [
           {
@@ -81,18 +83,55 @@ services:
         - { name: 'console.command' }
 
     app.listener.redirect_404_to_homepage:
-      class: App\UserInterface\EventListener\RedirectHomePage
+      class: App\EventListener\UserInterface\RedirectHomePage
       arguments:
         - "@router"
       tags:
         - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
-#    Psr\Log\LoggerInterface:
-#      alias: 'App\Common\Logs\ElasticLogger'
-#    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler: ~
-#      arguments:
-#        $index: 'log'
-#        $client: 'Elastica\Client'
-#        $level: !php/const Monolog\Logger::DEBUG
-#        $bubble: true
-#        $elasticsearchVersion: '8.4.3'
+    App\Events\EventListeners\Authentication\AuthenticationSuccessListener:
+        arguments: [ '@request_stack' ]
+        tags:
+             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
+
+    App\Events\EventListeners\Authentication\JWTAuthenticatedListener:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
+
+    App\Events\Subscribers\Device\DeviceUpdateEventSubscriber:
+      calls:
+        - setDeviceUpdateProducer: ['@old_sound_rabbit_mq.send_device_settings_update_producer']
+  ######################## Producers ######################################################
+
+  ######################## Consumers ######################################################
+
+  ######################## UserInterface Services ######################################################
+  App\Services\UserInterface\Cards\CardCreation\CardCreationHandlerInterface:
+    alias: App\Services\UserInterface\Cards\CardCreation\CardCreationHandler
+
+  App\Services\UserInterface\Cards\CardPreparation\CardViewFormPreparationHandlerInterface:
+    alias: App\Services\UserInterface\Cards\CardPreparation\CardViewFormCreationHandler
+
+  App\Services\UserInterface\Cards\CardViewUpdate\CardViewUpdateInterface:
+    alias: App\Services\UserInterface\Cards\CardViewUpdate\CardViewUpdateFacade
+
+  App\UserInterface\Services\NavBar\NavBarDataProviderInterface:
+    alias : App\Services\UserInterface\NavBar\NavBarDataProvider
+  ######################## New Sensor Creation Services ########################################################
+
+  ######################## Factories ###########################################################################
+
+  ######################## Repositories ########################################################################
+  App\Repository\UserInterface\ORM\CardRepositories\CardViewRepositoryInterface:
+    alias: App\Repository\UserInterface\ORM\CardRepositories\CardViewRepository
+
+  App\Repository\UserInterface\ORM\CardRepositories\CardColourRepositoryInterface:
+    alias: App\Repository\UserInterface\ORM\CardRepositories\CardColourRepository
+
+  App\Repository\UserInterface\ORM\CardRepositories\CardStateRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository
+
+  App\Repository\UserInterface\ORM\IconsRepositoryInterface:
+    alias: App\Repository\UserInterface\ORM\IconsRepository
+
+  ######################## End Of Sensors ######################################################################################

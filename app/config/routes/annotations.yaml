@@ -1,21 +1,21 @@
-sensors:
-    resource: ../../src/Sensors/Controller
-    type: attribute
+# sensors:
+#     resource: ../../src/Sensors/Controller
+#     type: attribute
+#
+# devices:
+#     resource: ../../src/Devices/Controller
+#     type: attribute
+#
+# user:
+#     resource: ../../src/User/Controller
+#     type: attribute
+#
+# user-interface:
+#     resource: ../../src/UserInterface/Controller
+#     type: attribute
 
-devices:
-    resource: ../../src/Devices/Controller
-    type: attribute
-
-user:
-    resource: ../../src/User/Controller
-    type: attribute
-
-user-interface:
-    resource: ../../src/UserInterface/Controller
-    type: attribute
-
-authentication:
-    resource: ../../src/Authentication/Controller
+app:
+    resource: ../../src/Controller
     type: attribute
 
 kernel:

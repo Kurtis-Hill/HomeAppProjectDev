@@ -2,17 +2,16 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Devices\Controller\DeleteDeviceController;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Devices\Entity\Devices;
+use App\Controller\Device\DeleteDeviceController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Device\ORM\DeviceRepositoryInterface;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Repository\User\ORM\UserRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepositoryInterface;
-use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,7 +69,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             $user->getAssociatedGroupIDs(),
         );
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->entityManager->getRepository(Devices::class)->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         if (empty($devices)) {
@@ -158,7 +157,7 @@ class DeleteDeviceControllerTest extends WebTestCase
     {
         $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
 
-        /** @var Devices[] $devicesResult */
+        /** @var \App\Entity\Device\Devices[] $devicesResult */
         $devicesResult = $this->deviceRepository->findBy(['createdBy' => $this->regularUserTwo]);
         self::assertNotEmpty($devicesResult);
 
@@ -196,7 +195,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 
     public function test_admin_user_can_delete_device_response_only_payload(): void
     {
-        /** @var Devices[] $devicesResult */
+        /** @var \App\Entity\Device\Devices[] $devicesResult */
         $devicesResult = $this->deviceRepository->findAll();
         self::assertNotEmpty($devicesResult);
 
@@ -229,7 +228,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         self::assertEquals($device->getExternalIpAddress(), $responseData['payload']['externalIpAddress']);
         self::assertTrue($responseData['payload']['canEdit']);
         self::assertTrue($responseData['payload']['canDelete']);
-        self::assertEquals(DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertEquals(\App\Controller\Device\DeleteDeviceController::REQUEST_SUCCESSFUL, $responseData['title']);
     }
 
     public function test_regular_user_can_delete_device_group_is_apart_of(): void
@@ -242,7 +241,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         if (empty($groupsUserIsApartOf)) {
             self::fail('No group found for testing');
         }
-        /** @var Devices[] $devicesResult */
+        /** @var \App\Entity\Device\Devices[] $devicesResult */
         $devicesResult = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         if (empty($devicesResult)) {
@@ -285,7 +284,7 @@ class DeleteDeviceControllerTest extends WebTestCase
             $user->getAssociatedGroupIDs(),
         );
 
-            /** @var Devices[] $devices */
+            /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         if (empty($devices)) {
@@ -310,7 +309,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         );
 
         self::assertNotEmpty($responseData['payload']);
-        /** @var Devices $deletedDevice */
+        /** @var \App\Entity\Device\Devices $deletedDevice */
         $deletedDevice = $this->deviceRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
         self::assertNull($deletedDevice);
     }
@@ -320,7 +319,7 @@ class DeleteDeviceControllerTest extends WebTestCase
         while (true) {
             $nonExistentDeviceID = random_int(1, 100000);
 
-            /** @var Devices $device */
+            /** @var \App\Entity\Device\Devices $device */
             $device = $this->deviceRepository->findOneBy(['deviceID' => $nonExistentDeviceID]);
             if (!$device instanceof Devices) {
                 break;

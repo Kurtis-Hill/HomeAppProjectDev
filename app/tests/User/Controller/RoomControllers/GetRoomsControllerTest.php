@@ -2,10 +2,10 @@
 
 namespace App\Tests\User\Controller\RoomControllers;
 
-use App\ORM\DataFixtures\Core\RoomFixtures;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\Core\RoomFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\User\User;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

@@ -2,24 +2,22 @@
 
 namespace App\Tests\Devices\AMQP\Consumers;
 
-use App\Common\Services\DeviceRequestHandler;
-use App\Devices\AMQP\Consumers\SensorSendUpdateReadingRequestConsumer;
-use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
-use App\Sensors\Entity\AbstractSensorType;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
-use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
-use App\Sensors\Repository\ReadingType\ORM\MotionRepository;
-use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
-use App\Sensors\Repository\Sensors\ORM\SensorRepository;
-use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\Repository\SensorType\ORM\GenericRelayRepository;
-use App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler;
+use App\AMQP\Device\Consumers\SensorSendUpdateReadingRequestConsumer;
+use App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
+use App\DTOs\Sensor\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Factories\Device\DeviceSensorRequestArgumentBuilderFactory;
+use App\Factories\Sensor\SensorReadingType\SensorReadingTypeRepositoryFactory;
+use App\Repository\Sensor\ReadingType\ORM\MotionRepository;
+use App\Repository\Sensor\ReadingType\ORM\RelayRepository;
+use App\Repository\Sensor\Sensors\ORM\SensorRepository;
+use App\Repository\Sensor\Sensors\ORM\SensorTypeRepository;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\Sensor\SensorType\ORM\GenericRelayRepository;
+use App\Services\Device\Request\DeviceRequestHandler;
+use App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -45,7 +43,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         self::bootKernel();
 
         $this->diContainer = static::getContainer();
-        $this->sut = $this->diContainer->get(SensorSendUpdateReadingRequestConsumer  ::class);
+        $this->sut = $this->diContainer->get(\App\AMQP\Device\Consumers\SensorSendUpdateReadingRequestConsumer  ::class);
         $this->relayRepository = $this->diContainer->get(RelayRepository::class);
 
         $this->entityManager = $this->diContainer->get('doctrine.orm.default_entity_manager');
@@ -66,7 +64,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         );
         /** @var SensorTypeRepository $sensorTypeRepository */
         $sensorTypeRepository = $this->diContainer->get(GenericRelayRepository::class);
-        /** @var GenericRelay $genericSensorType */
+        /** @var \App\Entity\Sensor\SensorTypes\GenericRelay $genericSensorType */
         $genericSensorType = $sensorTypeRepository->findAll()[0];
         /** @var SensorRepository $sensorRepository */
         $sensorRepository = $this->diContainer->get(SensorRepositoryInterface::class);
@@ -104,7 +102,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $logger->expects(self::never())->method('error');
         $logger->expects(self::once())->method('info');
 
-        $this->sut = new SensorSendUpdateReadingRequestConsumer(
+        $this->sut = new \App\AMQP\Device\Consumers\SensorSendUpdateReadingRequestConsumer(
             $logger,
             $sensorUpdateCurrentReadingRequestHandler,
         );
@@ -158,7 +156,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $logger->expects(self::once())->method('error');
         $logger->expects(self::never())->method('info');
 
-        $this->sut = new SensorSendUpdateReadingRequestConsumer(
+        $this->sut = new \App\AMQP\Device\Consumers\SensorSendUpdateReadingRequestConsumer(
             $logger,
             $sensorUpdateCurrentReadingRequestHandler,
         );
@@ -209,7 +207,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $logger->expects(self::once())->method('error');
         $logger->expects(self::never())->method('info');
 
-        $this->sut = new SensorSendUpdateReadingRequestConsumer(
+        $this->sut = new \App\AMQP\Device\Consumers\SensorSendUpdateReadingRequestConsumer(
             $logger,
             $sensorUpdateCurrentReadingRequestHandler,
         );

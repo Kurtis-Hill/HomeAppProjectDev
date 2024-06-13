@@ -2,15 +2,14 @@
 
 namespace App\Tests\User\Controller\GroupNameMappingControllers;
 
-use App\Authentication\Entity\GroupMapping;
-use App\Authentication\Repository\ORM\GroupMappingRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Authentication\GroupMapping;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Authentication\ORM\GroupMappingRepository;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Repository\User\ORM\UserRepositoryInterface;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\GroupMappingControllers\GetGroupNameMappingsController;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepositoryInterface;
-use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

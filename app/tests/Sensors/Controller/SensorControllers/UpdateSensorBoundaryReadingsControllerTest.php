@@ -2,40 +2,40 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Common\API\APIErrorMessages;
-use App\Devices\Entity\Devices;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\BoolSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\LDR;
-use App\Sensors\Entity\SensorTypes\Sht;
-use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Entity\SensorTypes\StandardSensorTypeInterface;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Controller\Sensor\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\BoolSensorTypeInterface;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\AnalogReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\HumidityReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\RelayReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\LDR;
+use App\Entity\Sensor\SensorTypes\Sht;
+use App\Entity\Sensor\SensorTypes\Soil;
+use App\Entity\Sensor\SensorTypes\StandardSensorTypeInterface;
+use App\Entity\User\User;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Generator;
@@ -402,7 +402,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         /** @var SensorTypeInterface $sensorReadingTypeObject */
         $sensorReadingTypeObject = $sensorTypeRepository->findAll()[0];
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorReadingTypeObject])[0];
         $sensorData = [
             'sensorData' => $sensorReadingsToUpdate,
@@ -1157,7 +1157,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
         }
 
-        /** @var Dht|Dallas|Soil|Bmp|GenericRelay|GenericMotion $sensorReadingTypeAfterUpdate */
+        /** @var \App\Entity\Sensor\SensorTypes\Dht|\App\Entity\Sensor\SensorTypes\Dallas|Soil|Bmp|GenericRelay|\App\Entity\Sensor\SensorTypes\GenericMotion $sensorReadingTypeAfterUpdate */
         $sensorReadingTypeAfterUpdate = $this->sensorRepository->find($sensor->getSensorID());
 
         if (new $sensorType instanceof BoolSensorTypeInterface) {
@@ -1474,7 +1474,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
     public function test_sending_malformed_request(): void
     {
-        /** @var Sensor $sensorObject */
+        /** @var \App\Entity\Sensor\Sensor $sensorObject */
         $sensorObject = $this->entityManager->getRepository(Sensor::class)->findAll()[0];
 
         $this->client->request(
@@ -1504,7 +1504,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     public function test_sending_empty_sensor_data(array $sensorDataToSend): void
     {
         $sensorTypeRepository = $this->entityManager->getRepository(Dht::class);
-        /** @var AllSensorReadingTypeInterface $sensorTypeObject */
+        /** @var \App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface $sensorTypeObject */
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
 
         $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject])[0];
@@ -1598,7 +1598,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     public function test_sending_request_not_recognized_sensor_type(): void
     {
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
-        /** @var Sensor $sensorTypeObject */
+        /** @var \App\Entity\Sensor\Sensor $sensorTypeObject */
         $sensorTypeObject = $sensorRepository->findAll()[0];
 
         $readingType = 'total-random-string';
@@ -1639,9 +1639,9 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     public function test_sending_request_for_sensor_regular_user_not_apart_of_group(): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
-        /** @var User $loggedInUser */
+        /** @var \App\Entity\User\User $loggedInUser */
         $loggedInUser = $userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
-        /** @var User $userNotInGroup */
+        /** @var \App\Entity\User\User $userNotInGroup */
         $userNotInGroup = $userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
         $deviceRepository = $this->entityManager->getRepository(Devices::class);
@@ -1653,7 +1653,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
 
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
-        /** @var Sensor $sensorObjectLoggedInUser */
+        /** @var \App\Entity\Sensor\Sensor $sensorObjectLoggedInUser */
         $sensorObjectLoggedInUser = $sensorRepository->findBy(['deviceID' => $deviceObject->getDeviceID()])[0];
 
         $sensorData = [

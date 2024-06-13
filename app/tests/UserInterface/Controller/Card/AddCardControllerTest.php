@@ -2,25 +2,25 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Controller\UserInterface\Card\AddCardController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\Sensor;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Entity\UserInterface\Card\CardState;
+use App\Entity\UserInterface\Card\CardView;
+use App\Entity\UserInterface\Card\Colour;
+use App\Entity\UserInterface\Icons;
+use App\Repository\Device\ORM\DeviceRepositoryInterface;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Repository\UserInterface\ORM\CardRepositories\CardColourRepository;
+use App\Repository\UserInterface\ORM\CardRepositories\CardStateRepository;
+use App\Repository\UserInterface\ORM\CardRepositories\CardViewRepository;
+use App\Repository\UserInterface\ORM\IconsRepositoryInterface;
+use App\Services\UserInterface\Cards\CardCreation\CardCreationHandler;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepositoryInterface;
-use App\UserInterface\Controller\Card\AddCardController;
-use App\UserInterface\Entity\Card\Colour;
-use App\UserInterface\Entity\Card\CardState;
-use App\UserInterface\Entity\Card\CardView;
-use App\UserInterface\Entity\Icons;
-use App\UserInterface\Repository\ORM\CardRepositories\CardColourRepository;
-use App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository;
-use App\UserInterface\Repository\ORM\CardRepositories\CardViewRepository;
-use App\UserInterface\Repository\ORM\IconsRepositoryInterface;
-use App\UserInterface\Services\Cards\CardCreation\CardCreationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -262,12 +262,12 @@ class AddCardControllerTest extends WebTestCase
         $title = $jsonResponse['title'];
         self::assertEquals(AddCardController::NOT_AUTHORIZED_TO_BE_HERE, $title);
 
-        self::assertEquals(AddCardController::NO_RESPONSE_MESSAGE, $jsonResponse['errors'][0]);
+        self::assertEquals(\App\Controller\UserInterface\Card\AddCardController::NO_RESPONSE_MESSAGE, $jsonResponse['errors'][0]);
     }
 
     public function test_sending_request_admin_user_sensor_group_not_apart_of(): void
     {
-        /** @var Group $groupsRegularUserIsNotApartOf */
+        /** @var \App\Entity\User\Group $groupsRegularUserIsNotApartOf */
         $groupsRegularUserIsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->adminUserTwo);
 
         /** @var Devices[] $devicesInGroupsUserNotApartOf */
@@ -345,7 +345,7 @@ class AddCardControllerTest extends WebTestCase
         bool $cardColour,
         bool $cardState,
     ): void {
-        /** @var Group $groupsRegularUserIsNotApartOf */
+        /** @var \App\Entity\User\Group $groupsRegularUserIsNotApartOf */
         $groupsRegularUserIsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->adminUserTwo);
 
         /** @var Devices[] $devicesInGroupsUserNotApartOf */
@@ -412,7 +412,7 @@ class AddCardControllerTest extends WebTestCase
 
         $payload = $jsonResponse['payload'];
 
-        self::assertEquals(AddCardController::NO_RESPONSE_MESSAGE, $payload);
+        self::assertEquals(\App\Controller\UserInterface\Card\AddCardController::NO_RESPONSE_MESSAGE, $payload);
 
         /** @var CardView $cardView */
         $cardView = $this->cardViewRepository->findOneBy(['sensor' => $sensor->getSensorID(), 'userID' => $this->adminUserTwo]);

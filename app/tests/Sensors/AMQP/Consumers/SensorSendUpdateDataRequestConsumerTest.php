@@ -2,17 +2,17 @@
 
 namespace App\Tests\Sensors\AMQP\Consumers;
 
-use App\Common\Services\DeviceRequestHandler;
-use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\Sensors\AMQP\Consumers\SensorSendUpdateDataRequestConsumer;
-use App\Sensors\Builders\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
-use App\Sensors\DTO\Internal\Event\SensorUpdateEventDTO;
-use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorServices\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
+use App\AMQP\Sensor\Consumers\SensorSendUpdateDataRequestConsumer;
+use App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder;
+use App\Builders\Sensor\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
+use App\DataFixtures\ESP8266\SensorFixtures;
+use App\DTOs\Sensor\Internal\Event\SensorUpdateEventDTO;
+use App\DTOs\Sensor\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
+use App\Entity\Sensor\Sensor;
+use App\Factories\Sensor\SensorType\SensorTypeRepositoryFactory;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Services\Device\Request\DeviceRequestHandler;
+use App\Services\Sensor\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -71,14 +71,14 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
-        $this->sut = new SensorSendUpdateDataRequestConsumer(
+        $this->sut = new \App\AMQP\Sensor\Consumers\SensorSendUpdateDataRequestConsumer(
             $updateDeviceSensorDataHandler,
             $mockLogger
         );
 
         $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME]);
 
-        /** @var \App\Sensors\Builders\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder */
+        /** @var \App\Builders\Sensor\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder */
         $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
 
         $sensorRequestDTOs = $singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);

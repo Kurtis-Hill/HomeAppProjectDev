@@ -2,27 +2,26 @@
 
 namespace App\Tests\Sensors\Controller\TriggerControllers;
 
-use App\Common\Entity\Operator;
-use App\Common\Entity\TriggerType;
-use App\Common\Repository\OperatorRepository;
-use App\Common\Repository\TriggerTypeRepository;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Sensors\Controller\TriggerControllers\AddSensorTriggerController;
-use App\Sensors\Entity\ReadingTypes\BaseSensorReadingType;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTrigger;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\Repository\SensorTriggerRepository;
+use App\Controller\Sensor\TriggerControllers\AddSensorTriggerController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Entity\Common\Operator;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTrigger;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\TriggerType;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Common\OperatorRepository;
+use App\Repository\Device\ORM\DeviceRepository;
+use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\Sensor\SensorTriggerRepository;
+use App\Repository\Sensor\TriggerTypeRepository;
+use App\Repository\User\ORM\GroupRepository;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use JsonException;
@@ -253,7 +252,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
 
     public function test_user_cannot_add_trigger_for_sensor_not_apart_of(): void
     {
-        /** @var User $regularUser */
+        /** @var \App\Entity\User\User $regularUser */
         $regularUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
         $groupsUserIsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($regularUser);
 
@@ -313,7 +312,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         self::assertArrayHasKey('errors', $responseData);
 
         $title = $responseData['title'];
-        self::assertEquals(AddSensorTriggerController::NOT_AUTHORIZED_TO_BE_HERE, $title);
+        self::assertEquals(\App\Controller\Sensor\TriggerControllers\AddSensorTriggerController::NOT_AUTHORIZED_TO_BE_HERE, $title);
     }
 
     public function test_user_cannot_add_trigger_from_sensor_not_apart_of(): void
@@ -378,7 +377,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         self::assertArrayHasKey('errors', $responseData);
 
         $title = $responseData['title'];
-        self::assertEquals(AddSensorTriggerController::NOT_AUTHORIZED_TO_BE_HERE, $title);
+        self::assertEquals(\App\Controller\Sensor\TriggerControllers\AddSensorTriggerController::NOT_AUTHORIZED_TO_BE_HERE, $title);
     }
 
     /**
@@ -388,7 +387,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         string $operatorSymbol,
         string $triggerTypeName,
     ): void {
-        /** @var User $adminUser */
+        /** @var \App\Entity\User\User $adminUser */
         $adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
         $groupsUserIsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($adminUser);
 
@@ -448,7 +447,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         self::assertArrayNotHasKey('errors', $responseData);
 
         $title = $responseData['title'];
-        self::assertEquals(AddSensorTriggerController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(\App\Controller\Sensor\TriggerControllers\AddSensorTriggerController::REQUEST_SUCCESSFUL, $title);
 
         $payload = $responseData['payload'];
         $sensorTriggerID = $payload['sensorTriggerID'];
@@ -524,7 +523,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         string $operatorSymbol,
         string $triggerTypeName,
     ): void {
-        /** @var User $regularUser */
+        /** @var \App\Entity\User\User $regularUser */
         $regularUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
         $groupsUserIsNotApartOf = $this->groupRepository->findGroupsUserIsApartOf($regularUser);
 
@@ -547,7 +546,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         $devicesApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
         $deviceApartOf = $devicesApartOf[0];
 
-        /** @var GenericRelay $relaySensorType */
+        /** @var \App\Entity\Sensor\SensorTypes\GenericRelay $relaySensorType */
         $relaySensorType = $this->entityManager->getRepository(GenericRelay::class)->findAll()[0];
         $sensorsApartOf = $this->sensorRepository->findBy(['deviceID' => $deviceApartOf, 'sensorTypeID' => $relaySensorType->getSensorTypeID()]);
         $sensorApartOf = $sensorsApartOf[0];

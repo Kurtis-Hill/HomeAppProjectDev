@@ -2,21 +2,21 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Common\API\APIErrorMessages;
-use App\Common\API\CommonURL;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\SensorControllers\DeleteSensorController;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Repository\Sensors\ORM\SensorRepository;
+use App\Controller\Sensor\SensorControllers\DeleteSensorController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\Sensor;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Device\ORM\DeviceRepository;
+use App\Repository\Sensor\Sensors\ORM\SensorRepository;
+use App\Repository\User\ORM\GroupRepository;
+use App\Repository\User\ORM\UserRepository;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepository;
-use App\User\Repository\ORM\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -99,7 +99,7 @@ class DeleteSensorControllerTest extends WebTestCase
 
         $devicesInGroupsUserIsPartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsPartOf]);
 
-        /** @var Sensor[] $sensors */
+        /** @var \App\Entity\Sensor\Sensor[] $sensors */
         $sensors = $this->sensorRepository->findBy([
             'deviceID' => $devicesInGroupsUserIsPartOf,
         ]);

@@ -2,22 +2,20 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Common\API\HTTPStatusCodes;
-use App\Devices\Controller\UpdateDeviceController;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Authentication\Controller\SecurityController;
-use App\Authentication\Entity\GroupMapping;
-use App\Common\API\APIErrorMessages;
-use App\Devices\Entity\Devices;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Controller\Authentication\SecurityController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\Sensor;
+use App\Entity\User\Group;
+use App\Entity\User\Room;
+use App\Entity\User\User;
+use App\Repository\Device\ORM\DeviceRepositoryInterface;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\User\ORM\GroupRepository;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\HTTPStatusCodes;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\Room;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -64,7 +62,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function test_sending_wrong_encoding_request(): void
     {
-        /** @var Devices $device */
+        /** @var \App\Entity\Device\Devices $device */
         $device = $this->deviceRepository->findBy(['groupID' => $this->adminUser->getGroup()])[0];
 
         $requestData = [
@@ -98,7 +96,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         mixed $deviceRoom,
         array $errorMessage,
     ): void {
-        /** @var Devices $device */
+        /** @var \App\Entity\Device\Devices $device */
         $device = $this->deviceRepository->findBy(['groupID' => $this->adminUser->getGroup()])[0];
 
         $requestData = [
@@ -222,7 +220,7 @@ class UpdateDeviceControllerTest extends WebTestCase
                 break;
             }
         }
-        /** @var Devices $device */
+        /** @var \App\Entity\Device\Devices $device */
         $device = $this->deviceRepository->findBy(['groupID' => $this->adminUser->getGroup()])[0];
 
         if ($device === null) {
@@ -254,7 +252,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
         self::assertEquals(['Room not found for id ' . $nonExistentRoomID], $responseData['errors']);
-        self::assertEquals(UpdateDeviceController::NOTHING_FOUND, $responseData['title']);
+        self::assertEquals(\App\Controller\Device\UpdateDeviceController::NOTHING_FOUND, $responseData['title']);
     }
 
     public function test_sending_none_existent_groupID(): void
@@ -263,7 +261,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         while (true) {
             $nonExistentGroupID = random_int(1, 100000);
 
-            /** @var Group $group */
+            /** @var \App\Entity\User\Group $group */
             $group = $groupRepository->findOneBy(['groupID' => $nonExistentGroupID]);
             if (!$group instanceof Room) {
                 break;
@@ -300,7 +298,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
         self::assertEquals(['Group not found for id ' . $nonExistentGroupID], $responseData['errors']);
-        self::assertEquals(UpdateDeviceController::NOTHING_FOUND, $responseData['title']);
+        self::assertEquals(\App\Controller\Device\UpdateDeviceController::NOTHING_FOUND, $responseData['title']);
     }
 
     public function test_regular_user_cannot_update_device_group_not_apart_of(): void
@@ -311,7 +309,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
         $groupNameRepository = $this->entityManager->getRepository(Group::class);
-        /** @var Group $groupsUserIsNotApartOf */
+        /** @var \App\Entity\User\Group $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),
@@ -500,7 +498,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             ['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]
         );
 
-        /** @var Devices $device */
+        /** @var \App\Entity\Device\Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(
             ['deviceName' => ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName']]
         );
@@ -556,7 +554,7 @@ class UpdateDeviceControllerTest extends WebTestCase
     {
         $groupNameMappingRepository = $this->entityManager->getRepository(Group::class);
 
-        /** @var GroupMapping[] $groupsUserIsApartOf */
+        /** @var \App\Entity\Authentication\GroupMapping[] $groupsUserIsApartOf */
         $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($this->adminUser);
 
         /** @var Devices[] $devices */
@@ -568,7 +566,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 
         $device = $devices[0];
 
-        /** @var Room[] $userRooms */
+        /** @var \App\Entity\User\Room[] $userRooms */
         $userRooms = $this->entityManager->getRepository(Room::class)->findAll();
         foreach ($userRooms as $userRoom) {
             if ($userRoom->getRoomID() !== $device->getRoomObject()->getRoomID()) {
@@ -649,7 +647,7 @@ class UpdateDeviceControllerTest extends WebTestCase
             UserDataFixtures::REGULAR_PASSWORD
         );
 
-        /** @var Room[] $userRooms */
+        /** @var \App\Entity\User\Room[] $userRooms */
         $userRooms = $this->entityManager->getRepository(Room::class)->findAll();
         foreach ($userRooms as $userRoom) {
             if ($userRoom->getRoomID() !== $device->getRoomObject()->getRoomID()) {
@@ -709,12 +707,12 @@ class UpdateDeviceControllerTest extends WebTestCase
 
     public function test_device_with_password_updated_can_login(): void
     {
-        /** @var User $user */
+        /** @var \App\Entity\User\User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(
             ['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]
         );
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findAll();
 
         if (empty($devices)) {
@@ -897,7 +895,7 @@ class UpdateDeviceControllerTest extends WebTestCase
         /** @var Group[] $groupsUserIsApartOf */
         $groupsUserIsApartOf = $groupNameMappingRepository->findGroupsUserIsApartOf($user);
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         $rooms = $this->entityManager->getRepository(Room::class)->findAll();

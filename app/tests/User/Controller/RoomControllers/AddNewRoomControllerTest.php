@@ -2,14 +2,12 @@
 
 namespace App\Tests\User\Controller\RoomControllers;
 
-use App\Common\API\CommonURL;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
-use App\Common\API\APIErrorMessages;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\User\Room;
+use App\Entity\User\User;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\Room;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -179,7 +177,7 @@ class AddNewRoomControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        /** @var Room $newRoom */
+        /** @var \App\Entity\User\Room $newRoom */
         $newRoom = $this->entityManager->getRepository(Room::class)->findOneBy(['room' => 'Testroom']);
 
         self::assertEquals($formRequestData['roomName'], $responseData['payload']['roomName']);

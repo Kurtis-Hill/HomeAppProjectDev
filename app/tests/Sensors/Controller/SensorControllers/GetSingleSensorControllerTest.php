@@ -2,39 +2,38 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Common\API\APIErrorMessages;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Sensors\Controller\SensorControllers\GetSingleSensorsController;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\AbstractSensorType;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\LDR;
-use App\Sensors\Entity\SensorTypes\Sht;
-use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\Repository\SensorType\ORM\GenericSensorTypeRepositoryInterface;
+use App\Controller\Sensor\SensorControllers\GetSingleSensorsController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\AbstractSensorType;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\SensorTypes\LDR;
+use App\Entity\Sensor\SensorTypes\Sht;
+use App\Entity\Sensor\SensorTypes\Soil;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Device\ORM\DeviceRepositoryInterface;
+use App\Repository\Sensor\Sensors\ORM\SensorTypeRepository;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\Sensor\SensorType\ORM\GenericSensorTypeRepositoryInterface;
+use App\Repository\User\ORM\GroupRepository;
+use App\Repository\User\ORM\UserRepositoryInterface;
+use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepository;
-use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -102,7 +101,7 @@ class GetSingleSensorControllerTest extends WebTestCase
      */
     public function test_using_wrong_http_method(string $httpVerb): void
     {
-        /** @var Sensor[] $sensors */
+        /** @var \App\Entity\Sensor\Sensor[] $sensors */
         $sensors = $this->sensorRepository->findAll();
         $sensor = $sensors[0];
 
@@ -132,7 +131,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
 
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy([
@@ -141,7 +140,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         $device = $devicesUserIsNotApartOf[0];
 
-        /** @var Sensor[] $sensorsNotOwnedByUser */
+        /** @var \App\Entity\Sensor\Sensor[] $sensorsNotOwnedByUser */
         $sensorsNotOwnedByUser = $this->sensorRepository->findBy([
             'deviceID' => $device->getDeviceID(),
         ]);
@@ -165,7 +164,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy([
@@ -174,7 +173,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         $device = $devicesUserIsNotApartOf[0];
 
-        /** @var Sensor[] $sensorsNotOwnedByUser */
+        /** @var \App\Entity\Sensor\Sensor[] $sensorsNotOwnedByUser */
         $sensorsNotOwnedByUser = $this->sensorRepository->findBy([
             'deviceID' => $device->getDeviceID(),
         ]);
@@ -291,22 +290,22 @@ class GetSingleSensorControllerTest extends WebTestCase
 
     public function test_admin_user_can_get_sensor_device_group_not_apart_of(): void
     {
-        /** @var User $adminUser */
+        /** @var \App\Entity\User\User $adminUser */
         $adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($adminUser);
 
         while (true) {
             $randomGroup = $groupsNotApartOf[array_rand($groupsNotApartOf)];
-            /** @var Devices $device */
+            /** @var \App\Entity\Device\Devices $device */
             $device = $this->deviceRepository->findOneBy(['groupID' => $randomGroup]);
             if ($device) {
                 break;
             }
         }
 
-        /** @var Sensor[] $deviceSensors */
+        /** @var \App\Entity\Sensor\Sensor[] $deviceSensors */
         $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device]);
         $deviceSensor = $deviceSensors[0];
 
@@ -327,22 +326,22 @@ class GetSingleSensorControllerTest extends WebTestCase
 
     public function test_regular_user_cannot_get_sensor_device_group_not_apart_of(): void
     {
-        /** @var User $regularUserTwo */
+        /** @var \App\Entity\User\User $regularUserTwo */
         $regularUserTwo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
 
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($regularUserTwo);
 
         while (true) {
             $randomGroup = $groupsNotApartOf[array_rand($groupsNotApartOf)];
-            /** @var Devices $device */
+            /** @var \App\Entity\Device\Devices $device */
             $device = $this->deviceRepository->findOneBy(['groupID' => $randomGroup]);
             if ($device) {
                 break;
             }
         }
 
-        /** @var Sensor[] $deviceSensors */
+        /** @var \App\Entity\Sensor\Sensor[] $deviceSensors */
         $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device]);
         $deviceSensor = $deviceSensors[0];
 
@@ -367,19 +366,19 @@ class GetSingleSensorControllerTest extends WebTestCase
         /** @var User $regularUserTwo */
         $regularUserTwo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
 
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($regularUserTwo);
 
         while (true) {
             $randomGroup = $groupsApartOf[array_rand($groupsApartOf)];
-            /** @var Devices $device */
+            /** @var \App\Entity\Device\Devices $device */
             $device = $this->deviceRepository->findOneBy(['groupID' => $randomGroup]);
             if ($device) {
                 break;
             }
         }
 
-        /** @var Sensor[] $deviceSensors */
+        /** @var \App\Entity\Sensor\Sensor[] $deviceSensors */
         $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device]);
         $deviceSensor = $deviceSensors[0];
 
@@ -406,19 +405,19 @@ class GetSingleSensorControllerTest extends WebTestCase
         /** @var User $adminUser */
         $adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
 
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($adminUser);
 
         while (true) {
             $randomGroup = $groupsApartOf[array_rand($groupsApartOf)];
-            /** @var Devices $device */
+            /** @var \App\Entity\Device\Devices $device */
             $device = $this->deviceRepository->findOneBy(['groupID' => $randomGroup]);
             if ($device) {
                 break;
             }
         }
 
-        /** @var Sensor[] $deviceSensors */
+        /** @var \App\Entity\Sensor\Sensor[] $deviceSensors */
         $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device]);
         $deviceSensor = $deviceSensors[0];
 
@@ -431,7 +430,7 @@ class GetSingleSensorControllerTest extends WebTestCase
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertEquals(GetSingleSensorsController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertEquals(\App\Controller\Sensor\SensorControllers\GetSingleSensorsController::REQUEST_SUCCESSFUL, $responseData['title']);
 
         $payload = $responseData['payload'];
         self::assertNotEmpty($payload);
@@ -448,7 +447,7 @@ class GetSingleSensorControllerTest extends WebTestCase
     ): void {
         /** @var AbstractSensorType $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($sensorType)->findAll()[0];
-        /** @var Sensor[] $sensors */
+        /** @var \App\Entity\Sensor\Sensor[] $sensors */
         $sensors = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject]);
 
         $sensor = $sensors[array_rand($sensors)];
@@ -584,7 +583,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
     public function test_response_admin_full(): void
     {
-        /** @var Sensor[] $sensors */
+        /** @var \App\Entity\Sensor\Sensor[] $sensors */
         $sensors = $this->sensorRepository->findAll();
 
         $sensorObject = $sensors[array_rand($sensors)];
@@ -612,7 +611,7 @@ class GetSingleSensorControllerTest extends WebTestCase
             || $sensorObject->getSensorTypeObject()::getReadingTypeName() === Bmp::NAME
         ) {
             $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-            /** @var Temperature $temperature */
+            /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature $temperature */
             $temperature = $temperatureRepository->find($sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
             self::assertEquals($temperature->getSensorID(), $sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
             self::assertEquals($temperature->getCurrentReading(), $sensorReadingTypes[Temperature::READING_TYPE]['currentReading']);
@@ -626,7 +625,7 @@ class GetSingleSensorControllerTest extends WebTestCase
             || $sensorObject->getSensorTypeObject()::getReadingTypeName() === Bmp::NAME
         ) {
             $humidityRepository = $this->entityManager->getRepository(Humidity::class);
-            /** @var Humidity $humidity */
+            /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity $humidity */
             $humidity = $humidityRepository->find($sensorData['sensorReadingTypes'][Humidity::READING_TYPE]['humidityID']);
             self::assertEquals($humidity->getSensorID(), $sensorData['sensorReadingTypes'][Humidity::READING_TYPE]['humidityID']);
             self::assertEquals($humidity->getCurrentReading(), $sensorData['sensorReadingTypes'][Humidity::READING_TYPE]['currentReading']);
@@ -638,7 +637,7 @@ class GetSingleSensorControllerTest extends WebTestCase
 
         if ($sensorObject->getSensorTypeObject()::getReadingTypeName() === Bmp::NAME) {
             $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
-            /** @var Latitude $latitude */
+            /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude $latitude */
             $latitude = $latitudeRepository->find($sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
             self::assertEquals($latitude->getSensorID(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
             self::assertEquals($latitude->getCurrentReading(), $sensorData['sensorReadingTypes'][Latitude::READING_TYPE]['currentReading']);

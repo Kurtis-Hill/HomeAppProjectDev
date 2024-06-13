@@ -2,20 +2,19 @@
 
 namespace App\Tests\Sensors\Builders\SensorRequestBuilders;
 
-use App\Sensors\Builders\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
-use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
-use App\Sensors\Entity\AbstractSensorType;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\LDR;
-use App\Sensors\Entity\SensorTypes\Sht;
-use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Repository\Sensors\ORM\SensorTypeRepository;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Builders\Sensor\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
+use App\DTOs\Sensor\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
+use App\Entity\Sensor\AbstractSensorType;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\SensorTypes\LDR;
+use App\Entity\Sensor\SensorTypes\Sht;
+use App\Entity\Sensor\SensorTypes\Soil;
+use App\Repository\Sensor\Sensors\ORM\SensorTypeRepository;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -63,7 +62,7 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
         /** @var AbstractSensorType $sensorTypeToUser */
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
-        /** @var Sensor[] $sensorsToUser */
+        /** @var \App\Entity\Sensor\Sensor[] $sensorsToUser */
         $sensorsToUser = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject]);
 
         $singleSensorUpdateRequestDTOs = [];
@@ -102,17 +101,17 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
             );
         }
         if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Bmp::NAME) {
-            $result = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
+            $result = \App\Builders\Sensor\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 bmp: $singleSensorUpdateRequestDTOs,
             );
         }
         if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === LDR::NAME) {
-            $result = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
+            $result = \App\Builders\Sensor\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 ldr: $singleSensorUpdateRequestDTOs,
             );
         }
         if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Sht::NAME) {
-            $result = \App\Sensors\Builders\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
+            $result = \App\Builders\Sensor\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 sht: $singleSensorUpdateRequestDTOs,
             );
         }

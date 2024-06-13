@@ -2,13 +2,12 @@
 
 namespace App\Tests\Sensors\SensorService\UpdateDeviceSensorData;
 
-use App\Common\Services\DeviceRequestHandler;
-use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
-use App\Sensors\DTO\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Exceptions\SensorNotFoundException;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorServices\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
+use App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder;
+use App\DTOs\Sensor\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
+use App\Exceptions\Sensor\SensorNotFoundException;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Services\Device\Request\DeviceRequestHandler;
+use App\Services\Sensor\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -82,7 +81,7 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
-        $sut = new UpdateDeviceSensorDataHandler(
+        $sut = new \App\Services\Sensor\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler(
             $deviceRequestHandler,
             $this->sensorRepository,
             $deviceSettingsRequestDTOBuilder,
@@ -122,7 +121,7 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
             $mockLogger,
         );
 
-        /** @var Sensor $relayRepository */
+        /** @var \App\Entity\Sensor\Sensor $relayRepository */
         $sensorToUpdate = $this->sensorRepository->findAll()[0];
 
         $sensorUpdate = new SingleSensorUpdateRequestDTO(
@@ -158,7 +157,7 @@ class UpdateDeviceSensorDataHandlerTest extends KernelTestCase
             $mockLogger,
         );
 
-        /** @var Sensor $relayRepository */
+        /** @var \App\Entity\Sensor\Sensor $relayRepository */
         $sensorToUpdate = $this->sensorRepository->findAll()[0];
 
         $sensorUpdate = new SingleSensorUpdateRequestDTO(

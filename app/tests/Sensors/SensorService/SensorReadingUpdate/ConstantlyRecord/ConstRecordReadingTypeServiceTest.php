@@ -2,30 +2,29 @@
 
 namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\ConstantlyRecord;
 
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\Sensors\Entity\ConstantRecording\ConstAnalog;
-use App\Sensors\Entity\ConstantRecording\ConstantlyRecordEntityInterface;
-use App\Sensors\Entity\ConstantRecording\ConstHumid;
-use App\Sensors\Entity\ConstantRecording\ConstLatitude;
-use App\Sensors\Entity\ConstantRecording\ConstTemp;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\Sht;
-use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\SensorServices\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler;
+use App\DataFixtures\ESP8266\SensorFixtures;
+use App\Entity\Sensor\ConstantRecording\ConstAnalog;
+use App\Entity\Sensor\ConstantRecording\ConstHumid;
+use App\Entity\Sensor\ConstantRecording\ConstLatitude;
+use App\Entity\Sensor\ConstantRecording\ConstTemp;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\Sht;
+use App\Entity\Sensor\SensorTypes\Soil;
+use App\Services\Sensor\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ConstRecordReadingTypeServiceTest extends KernelTestCase
 {
-    private ConstRecordReadingTypeFacadeHandler $sut;
+    private \App\Services\Sensor\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler $sut;
 
     private ?EntityManagerInterface $entityManager;
 
@@ -50,9 +49,9 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
      */
     public function test_const_record_saves_out_of_range_high_readings_analog(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var Analog $analogSensor */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $analogSensor */
         $analogSensor = $this->entityManager->getRepository(Analog::class)->findBySensorID($sensor->getSensorID())[0];
         $analogSensor->setConstRecord(true);
 
@@ -61,7 +60,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstAnalog::class);
-        /** @var ConstantlyRecordEntityInterface[] $constRecordings */
+        /** @var \App\Entity\Sensor\ConstantRecording\ConstantlyRecordEntityInterface[] $constRecordings */
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $analogSensor->getBaseReadingType()]);
         $constRecordings = array_pop($constRecordings);
         self::assertNotEmpty($constRecordings);
@@ -73,10 +72,10 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
      */
     public function test_const_record_doesnt_save_in_range_readings_analog(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
 
-        /** @var Analog $analogSensor */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $analogSensor */
         $analogSensor = $this->entityManager->getRepository(Analog::class)->findBySensorID($sensor->getSensorID())[0];
         $analogSensor->setConstRecord(false);
 
@@ -84,7 +83,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         $this->entityManager->flush();
 
         $constRecord = $this->entityManager->getRepository(ConstAnalog::class);
-        /** @var ConstantlyRecordEntityInterface[] $constRecordings */
+        /** @var \App\Entity\Sensor\ConstantRecording\ConstantlyRecordEntityInterface[] $constRecordings */
         $constRecordings = $constRecord->findBy(['baseSensorReadingType' => $analogSensor->getBaseReadingType()]);
 
         $constRecordings = array_pop($constRecordings);
@@ -105,7 +104,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
      */
     public function test_const_record_saves_out_of_range_high_readings_temp(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
 
         /** @var Temperature $tempObject */
@@ -131,7 +130,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
      */
     public function test_const_record_doesnt_save_in_range_readings_temp(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
 
         /** @var Temperature $tempObject */
@@ -176,10 +175,10 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
      */
     public function test_const_record_saves_out_of_range_high_readings_humid(string $sensorName, string $sensorClass): void
     {
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
 
-        /** @var Humidity $humid */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity $humid */
         $humid = $this->entityManager->getRepository(Humidity::class)->findBySensorID($sensor->getSensorID())[0];
         $humid->setConstRecord(true);
 
@@ -200,7 +199,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
     public function test_const_record_doesnt_save_in_range_readings_humid(string $sensorName, string $sensorClass): void
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var Humidity $humidObject */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity $humidObject */
         $humidObject = $this->entityManager->getRepository(Humidity::class)->findBySensorID($sensor->getSensorID())[0];
         $humidObject->setConstRecord(false);
 
@@ -260,7 +259,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
     public function test_const_record_doesnt_save_in_range_readings_latitude(string $sensorName, string $sensorClass): void
     {
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => SensorFixtures::PERMISSION_CHECK_SENSORS[$sensorName]['sensorName']]);
-        /** @var Latitude $latitudeObject */
+        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude $latitudeObject */
         $latitudeObject = $this->entityManager->getRepository(Latitude::class)->findBySensorID($sensor->getSensorID())[0];
         $latitudeObject->setConstRecord(false);
 

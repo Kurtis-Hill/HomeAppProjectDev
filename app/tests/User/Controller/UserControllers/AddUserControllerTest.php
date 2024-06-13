@@ -2,12 +2,11 @@
 
 namespace App\Tests\User\Controller\UserControllers;
 
-use App\Common\API\CommonURL;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\User\User;
+use App\Repository\User\ORM\UserRepository;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\UserControllers\AddUserController;
-use App\User\Entity\User;
-use App\User\Repository\ORM\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -101,7 +100,7 @@ class AddUserControllerTest extends WebTestCase
         self::assertEquals($errorMessages, $errors);
 
         $title = $response['title'];
-        self::assertEquals(AddUserController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(\App\Controller\User\UserControllers\AddUserController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
     public function wrongDataTypesDataProvider(): Generator
@@ -349,7 +348,7 @@ class AddUserControllerTest extends WebTestCase
         self::assertEquals($errorMessages, $errors);
 
         $title = $response['title'];
-        self::assertEquals(AddUserController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(\App\Controller\User\UserControllers\AddUserController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
     public function outOfRangeDataProvider(): Generator
@@ -512,7 +511,7 @@ class AddUserControllerTest extends WebTestCase
         self::assertArrayHasKey('group', $payload);
 
         $title = $response['title'];
-        self::assertEquals(AddUserController::REQUEST_ACCEPTED_SUCCESS_CREATED, $title);
+        self::assertEquals(\App\Controller\User\UserControllers\AddUserController::REQUEST_ACCEPTED_SUCCESS_CREATED, $title);
 
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::UNIQUE_USER_EMAIL_NOT_TO_BE_USED]);
         self::assertInstanceOf(User::class, $user);

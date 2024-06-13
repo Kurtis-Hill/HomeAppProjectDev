@@ -2,11 +2,11 @@
 
 namespace App\Tests\Devices\Builders\Request;
 
-use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
-use App\Devices\Builders\Request\DeviceWifiSettingsDTOBuilder;
-use App\Devices\DeviceServices\Request\DeviceSettingsUpdateRequestHandler;
-use App\Devices\DTO\Request\DeviceRequest\DeviceLoginCredentialsUpdateRequestDTO;
-use App\Devices\DTO\Request\DeviceRequest\DeviceWifiSettingsDTO;
+use App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder;
+use App\Builders\Device\Request\DeviceWifiSettingsDTOBuilder;
+use App\DTOs\Device\Request\DeviceRequest\DeviceLoginCredentialsUpdateRequestDTO;
+use App\DTOs\Device\Request\DeviceRequest\DeviceWifiSettingsDTO;
+use App\Services\Device\Request\DeviceSettingsUpdateRequestHandler;
 use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -68,7 +68,7 @@ class DeviceSettingsRequestDTOBuilderTest extends TestCase
 
     public function test_building_device_settings_just_device_credentials_without_password(): void
     {
-        $deviceSettingsRequestDTOBuilder = new DeviceSettingsRequestDTOBuilder();
+        $deviceSettingsRequestDTOBuilder = new \App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder();
 
         $userName = 'testUserName';
         $deviceLoginCredentialsUpdateRequestDTO = new DeviceLoginCredentialsUpdateRequestDTO(
@@ -99,7 +99,7 @@ class DeviceSettingsRequestDTOBuilderTest extends TestCase
 
         $normalizedObject = $serializer->normalize($deviceSettingsRequestDTO, 'json', [
             'groups' => [
-                DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS,
+                \App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS,
                 DeviceSettingsUpdateRequestHandler::PASSWORD_NOT_PRESENT,
             ],
         ]);
@@ -144,8 +144,8 @@ class DeviceSettingsRequestDTOBuilderTest extends TestCase
 
         $normalizedObject = $serializer->normalize($deviceSettingsRequestDTO, 'json', [
             'groups' => [
-                DeviceSettingsRequestDTOBuilder::WIFI,
-                DeviceWifiSettingsDTOBuilder::WIFI_CREDENTIALS,
+                \App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder::WIFI,
+                \App\Builders\Device\Request\DeviceWifiSettingsDTOBuilder::WIFI_CREDENTIALS,
             ],
         ]);
 
@@ -201,8 +201,8 @@ class DeviceSettingsRequestDTOBuilderTest extends TestCase
         $normalizedObject = $serializer->normalize($deviceSettingsRequestDTO, 'json', [
             'groups' => [
                 DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS,
-                DeviceSettingsRequestDTOBuilder::WIFI,
-                DeviceSettingsUpdateRequestHandler::PASSWORD_PRESENT,
+                \App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder::WIFI,
+                \App\Services\Device\Request\DeviceSettingsUpdateRequestHandler::PASSWORD_PRESENT,
                 DeviceSettingsUpdateRequestHandler::PASSWORD_NOT_PRESENT,
                 DeviceWifiSettingsDTOBuilder::WIFI_CREDENTIALS,
             ],

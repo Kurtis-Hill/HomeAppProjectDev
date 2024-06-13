@@ -2,38 +2,37 @@
 
 namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\CurrentReading;
 
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
-use App\Sensors\DTO\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\LDR;
-use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Exceptions\SensorNotFoundException;
-use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\SensorServices\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
-use App\Sensors\SensorServices\OutOfBounds\SensorOutOfBoundsHandlerInterface;
-use App\Sensors\SensorServices\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandlerVersionTwo;
-use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\ReadingTriggerHandlerInterface;
-use App\Sensors\SensorServices\Trigger\TriggerChecker\SensorReadingTriggerCheckerInterface;
+use App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO;
+use App\DTOs\Sensor\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\AnalogCurrentReadingUpdateRequestDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\HumidityCurrentReadingUpdateRequestDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\LatitudeCurrentReadingUpdateRequestDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\TemperatureCurrentReadingUpdateRequestDTO;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Entity\Sensor\SensorTypes\LDR;
+use App\Entity\Sensor\SensorTypes\Soil;
+use App\Exceptions\Sensor\SensorNotFoundException;
+use App\Factories\Sensor\SensorReadingType\SensorReadingTypeRepositoryFactory;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Services\Sensor\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
+use App\Services\Sensor\OutOfBounds\SensorOutOfBoundsHandlerInterface;
+use App\Services\Sensor\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandlerVersionTwo;
+use App\Services\Sensor\Trigger\SensorTriggerProcessor\ReadingTriggerHandlerInterface;
+use App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerCheckerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Psr\Log\LoggerInterface;
@@ -122,11 +121,11 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
         self::assertEquals($errorMessages, $result);
 
-        /** @var Sensor $sensorAfterUpdate */
+        /** @var \App\Entity\Sensor\Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->find($firstSensor->getSensorID());
         self::assertNotNull($sensorAfterUpdate);
 
-        /** @var AllSensorReadingTypeInterface[] $sensorReadingTypes */
+        /** @var \App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface[] $sensorReadingTypes */
         /** @TODO REPOSITORY FIX */
         $sensorReadingTypes = array_merge(
             $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($sensorAfterUpdate->getSensorID()),
@@ -331,7 +330,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $logger,
         );
 
-        /** @var Sensor[] $sensors */
+        /** @var \App\Entity\Sensor\Sensor[] $sensors */
         $sensors = $this->sensorRepository->findAll();
 
         $sensor = $sensors[0];
@@ -360,10 +359,10 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorTypeClass);
 
-        /** @var AllSensorReadingTypeInterface $sensorReadingType */
+        /** @var \App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface $sensorReadingType */
         $sensorReadingType = $sensorTypeRepository->findAll()[0];
 
-        /** @var Sensor $firstSensor */
+        /** @var \App\Entity\Sensor\Sensor $firstSensor */
         $firstSensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorReadingType])[0];
 
         $device = $firstSensor->getDevice();
@@ -411,7 +410,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
         /** @var Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->find($firstSensor->getSensorID());
-        /** @var AllSensorReadingTypeInterface[] $sensorReadingTypes */
+        /** @var \App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface[] $sensorReadingTypes */
         $sensorReadingTypes = array_merge(
             $this->entityManager->getRepository(AbstractStandardReadingType::class)->findBySensorID($sensorAfterUpdate->getSensorID()),
             $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBySensorID($sensorAfterUpdate->getSensorID()),

@@ -2,49 +2,45 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Common\API\APIErrorMessages;
-use App\Common\API\HTTPStatusCodes;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Sensors\Controller\SensorControllers\AddNewSensorController;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\AbstractSensorType;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\BoolSensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\AnalogReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\HumidityReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\RelayReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
-use App\Sensors\Entity\SensorTypes\LDR;
-use App\Sensors\Entity\SensorTypes\Sht;
-use App\Sensors\Entity\SensorTypes\Soil;
-use App\Sensors\Exceptions\DuplicateSensorException;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\AbstractSensorType;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\AnalogReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\HumidityReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\LatitudeReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\RelayReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Entity\Sensor\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
+use App\Entity\Sensor\SensorTypes\LDR;
+use App\Entity\Sensor\SensorTypes\Sht;
+use App\Entity\Sensor\SensorTypes\Soil;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Entity\UserInterface\Card\CardView;
+use App\Exceptions\Sensor\DuplicateSensorException;
+use App\Repository\Device\ORM\DeviceRepository;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\User\ORM\GroupRepository;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\HTTPStatusCodes;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepository;
-use App\UserInterface\Entity\Card\CardView;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use JsonException;
@@ -264,7 +260,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
 
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+        self::assertStringContainsString(\App\Controller\Sensor\SensorControllers\AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals($sensorName, $sensor->getSensorName());
         self::assertEquals($randomPin, $sensor->getPinNumber());
@@ -398,7 +394,7 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_cannot_add_new_sensor_with_identical_name(string $sensorTypeString): void
     {
-        /** @var Devices $device */
+        /** @var \App\Entity\Device\Devices $device */
         $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::PERMISSION_CHECK_DEVICES[ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]['referenceName']]);
         /** @var AbstractSensorType $sensorType */
         $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
@@ -510,7 +506,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         self::assertNull($sensor);
@@ -523,7 +519,7 @@ class AddNewSensorControllerTest extends WebTestCase
      */
     public function test_can_add_sensor_and_card_details_admin(string $sensorTypeString, string $sensorName, string $class, array $sensors): void
     {
-        /** @var AbstractSensorType $sensorType */
+        /** @var \App\Entity\Sensor\AbstractSensorType $sensorType */
         $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
         $formData = [
@@ -550,7 +546,7 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
 
-        /** @var SensorTypeInterface $sensorTypeObject */
+        /** @var \App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findAll()[0];
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
@@ -566,7 +562,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+        self::assertStringContainsString(\App\Controller\Sensor\SensorControllers\AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
@@ -589,7 +585,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensorTypeObject = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
-        /** @var GroupRepository $groupNameRepository */
+        /** @var \App\Repository\User\ORM\GroupRepository $groupNameRepository */
         $groupNameRepository = $this->entityManager->getRepository(Group::class);
         /** @var Group[] $groupsNotApartOf */
         $groupsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
@@ -606,7 +602,7 @@ class AddNewSensorControllerTest extends WebTestCase
                 break;
             }
         }
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $device = $devices[0];
 
         $devicePinsInUse = $this->deviceRepository->findAllDevicePinsInUse($device->getDeviceID());
@@ -706,7 +702,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertInstanceOf($class, $sensorTypeObject);
         self::assertInstanceOf(CardView::class, $cardView);
 
-        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+        self::assertStringContainsString(\App\Controller\Sensor\SensorControllers\AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
@@ -762,7 +758,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var SensorTypeInterface $sensorTypeObject */
+        /** @var \App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findAll()[0];
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
@@ -806,7 +802,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+        self::assertStringContainsString(\App\Controller\Sensor\SensorControllers\AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($sensorName, $responseData['payload']['sensorName']);
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
@@ -971,9 +967,9 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var GroupRepository $groupRepository */
         $groupRepository = $this->entityManager->getRepository(Group::class);
 
-        /** @var User $user */
+        /** @var \App\Entity\User\User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
-        /** @var Group[] $groupNames */
+        /** @var \App\Entity\User\Group[] $groupNames */
         $groupNames = $groupRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),

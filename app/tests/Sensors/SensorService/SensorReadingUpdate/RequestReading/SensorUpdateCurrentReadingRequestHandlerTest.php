@@ -2,22 +2,19 @@
 
 namespace App\Tests\Sensors\SensorService\SensorReadingUpdate\RequestReading;
 
-use App\Common\Services\DeviceRequestHandler;
-use App\Devices\Exceptions\DeviceIPNotSetException;
-use App\Devices\Factories\DeviceSensorRequestArgumentBuilderFactory;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Exceptions\SensorNotFoundException;
-use App\Sensors\Exceptions\SensorReadingTypeRepositoryFactoryException;
-use App\Sensors\Exceptions\SensorTypeException;
-use App\Sensors\Factories\SensorReadingType\SensorReadingTypeRepositoryFactory;
-use App\Sensors\Factories\SensorType\SensorTypeRepositoryFactory;
-use App\Sensors\Repository\ReadingType\ORM\MotionRepository;
-use App\Sensors\Repository\ReadingType\ORM\RelayRepository;
-use App\Sensors\Repository\Sensors\ORM\SensorRepository;
-use App\Sensors\SensorServices\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler;
+use App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO;
+use App\DTOs\Sensor\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Exceptions\Device\DeviceIPNotSetException;
+use App\Exceptions\Sensor\SensorNotFoundException;
+use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
+use App\Factories\Device\DeviceSensorRequestArgumentBuilderFactory;
+use App\Factories\Sensor\SensorReadingType\SensorReadingTypeRepositoryFactory;
+use App\Repository\Sensor\ReadingType\ORM\MotionRepository;
+use App\Repository\Sensor\ReadingType\ORM\RelayRepository;
+use App\Repository\Sensor\Sensors\ORM\SensorRepository;
+use App\Services\Device\Request\DeviceRequestHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -70,7 +67,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             $mockLogger,
         );
 
-        $sut = new SensorUpdateCurrentReadingRequestHandler(
+        $sut = new \App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
@@ -119,7 +116,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             $mockLogger,
         );
 
-        $sut = new SensorUpdateCurrentReadingRequestHandler(
+        $sut = new \App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
@@ -168,7 +165,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             $mockLogger,
         );
 
-        $sut = new SensorUpdateCurrentReadingRequestHandler(
+        $sut = new \App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
@@ -215,7 +212,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             $mockLogger,
         );
 
-        $sut = new SensorUpdateCurrentReadingRequestHandler(
+        $sut = new \App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,
@@ -263,7 +260,7 @@ class SensorUpdateCurrentReadingRequestHandlerTest extends KernelTestCase
             $mockLogger,
         );
 
-        $sut = new SensorUpdateCurrentReadingRequestHandler(
+        $sut = new \App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler(
             $sensorRepository,
             $sensorTypeRepositoryFactory,
             $deviceSensorRequestArgumentBuilderFactory,

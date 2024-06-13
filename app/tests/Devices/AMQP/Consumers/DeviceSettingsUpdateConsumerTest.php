@@ -2,12 +2,12 @@
 
 namespace App\Tests\Devices\AMQP\Consumers;
 
-use App\Common\Services\DeviceRequestHandler;
-use App\Devices\AMQP\Consumers\DeviceSettingsUpdateConsumer;
-use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
-use App\Devices\DeviceServices\Request\DeviceSettingsUpdateRequestHandler;
-use App\Devices\DTO\Internal\DeviceSettingsUpdateDTO;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
+use App\AMQP\Device\Consumers\DeviceSettingsUpdateConsumer;
+use App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder;
+use App\DTOs\Device\Internal\DeviceSettingsUpdateDTO;
+use App\Repository\Device\ORM\DeviceRepositoryInterface;
+use App\Services\Device\Request\DeviceRequestHandler;
+use App\Services\Device\Request\DeviceSettingsUpdateRequestHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;

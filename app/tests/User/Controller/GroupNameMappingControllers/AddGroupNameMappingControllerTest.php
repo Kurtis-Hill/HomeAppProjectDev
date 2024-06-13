@@ -2,17 +2,17 @@
 
 namespace App\Tests\User\Controller\GroupNameMappingControllers;
 
-use App\Authentication\Entity\GroupMapping;
-use App\Authentication\Repository\ORM\GroupMappingRepository;
-use App\Common\API\APIErrorMessages;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Controller\User\GroupMappingControllers\AddGroupMappingController;
+use App\Controller\User\GroupsControllers\AddGroupController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Authentication\GroupMapping;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Authentication\ORM\GroupMappingRepository;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Repository\User\ORM\UserRepositoryInterface;
+use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\GroupMappingControllers\AddGroupMappingController;
-use App\User\Controller\GroupsControllers\AddGroupController;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepositoryInterface;
-use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -240,7 +240,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
             }
         }
 
-        /** @var User[] $user */
+        /** @var \App\Entity\User\User[] $user */
         $user = $this->userRepository->findAll();
 
         $jsonData = json_encode([
@@ -301,7 +301,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
     public function test_sending_group_name_mapping_request_for_group_name_regular_user_doesnt_belong_to(): void
     {
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         $regularUserToAddGroupNameToo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
@@ -337,7 +337,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 
     public function test_admin_can_add_user_to_group_doesnt_belong_to(): void
     {
-        /** @var Group[] $groupsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         $regularUserToAddGroupNameToo = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);

@@ -2,16 +2,16 @@
 
 namespace App\Tests\User\Controller\UserControllers;
 
-use App\Authentication\Controller\SecurityController;
-use App\Common\API\CommonURL;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Controller\Authentication\SecurityController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Exceptions\User\GroupExceptions\GroupNotFoundException;
+use App\Exceptions\User\UserExceptions\IncorrectUserPasswordException;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Repository\User\ORM\UserRepository;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Exceptions\GroupExceptions\GroupNotFoundException;
-use App\User\Exceptions\UserExceptions\IncorrectUserPasswordException;
-use App\User\Repository\ORM\GroupRepositoryInterface;
-use App\User\Repository\ORM\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -225,7 +225,7 @@ class UpdateUserControllerTest extends WebTestCase
 
     public function test_updating_users_base_group_admin(): void
     {
-        /** @var Group $anyGroup */
+        /** @var \App\Entity\User\Group $anyGroup */
         $anyGroup = $this->entityManager->getRepository(Group::class)->findAll()[0];
 
         $this->client->request(
@@ -644,7 +644,7 @@ class UpdateUserControllerTest extends WebTestCase
 
     public function test_update_user_response(): void
     {
-        /** @var Group $newGroup */
+        /** @var \App\Entity\User\Group $newGroup */
         $newGroup = $this->groupRepository->findAll()[0];
 
         $this->client->request(

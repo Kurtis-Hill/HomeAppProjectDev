@@ -2,14 +2,13 @@
 
 namespace App\Tests\UserInterface\Controller;
 
-use App\Authentication\Entity\GroupMapping;
-use App\Common\API\HTTPStatusCodes;
-use App\ORM\DataFixtures\Core\RoomFixtures;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\Core\RoomFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Authentication\GroupMapping;
+use App\Entity\User\Room;
+use App\Entity\User\User;
+use App\Services\API\HTTPStatusCodes;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\Room;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

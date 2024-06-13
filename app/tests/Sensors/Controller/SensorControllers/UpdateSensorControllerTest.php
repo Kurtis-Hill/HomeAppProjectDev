@@ -2,23 +2,23 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Common\API\APIErrorMessages;
-use App\Common\API\CommonURL;
 use App\Common\Services\RequestQueryParameterHandler;
 use App\Common\Services\RequestTypeEnum;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Sensors\Controller\SensorControllers\UpdateSensorController;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Exceptions\DuplicateSensorException;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
+use App\Controller\Sensor\SensorControllers\UpdateSensorController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\Sensor;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Exceptions\Sensor\DuplicateSensorException;
+use App\Repository\Device\ORM\DeviceRepositoryInterface;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Repository\User\ORM\UserRepositoryInterface;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepositoryInterface;
-use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -71,7 +71,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_sending_wrong_format_should_return_bad_request(): void
     {
-        /** @var Sensor[] $sensors */
+        /** @var \App\Entity\Sensor\Sensor[] $sensors */
         $sensors = $this->sensorRepository->findAll();
 
         $sensor = $sensors[0];
@@ -98,7 +98,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $title = $responseData['title'];
         $errorsPayload = $responseData['errors'];
 
-        self::assertEquals(UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(\App\Controller\Sensor\SensorControllers\UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
         self::assertEquals([APIErrorMessages::FORMAT_NOT_SUPPORTED], $errorsPayload);
     }
 
@@ -108,7 +108,7 @@ class UpdateSensorControllerTest extends WebTestCase
      */
     public function test_sending_incorrect_data_types(mixed $sensorName, mixed $deviceID, mixed $pinNumber, mixed $readingInterval, array $errorMessage): void
     {
-        /** @var Sensor[] $sensors */
+        /** @var \App\Entity\Sensor\Sensor[] $sensors */
         $sensors = $this->sensorRepository->findAll();
 
         $sensor = $sensors[0];
@@ -140,10 +140,10 @@ class UpdateSensorControllerTest extends WebTestCase
         $title = $responseData['title'];
         $errorsPayload = $responseData['errors'];
 
-        self::assertEquals(UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(\App\Controller\Sensor\SensorControllers\UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
         self::assertEquals($errorMessage, $errorsPayload);
 
-        /** @var Sensor $sensorAfterUpdate */
+        /** @var \App\Entity\Sensor\Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensor->getSensorID()]);
         self::assertEquals($sensor->getSensorName(), $sensorAfterUpdate->getSensorName());
         self::assertEquals($sensor->getDevice(), $sensorAfterUpdate->getDevice());
@@ -238,12 +238,12 @@ class UpdateSensorControllerTest extends WebTestCase
     public function test_admin_can_change_sensor_to_device_not_apart_of(): void
     {
 
-        /** @var User $user */
+        /** @var \App\Entity\User\User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
 
         $userToken = $this->setUserToken($this->client, UserDataFixtures::ADMIN_USER_EMAIL_TWO);
 
-        /** @var Group[] $groupUserIsApartOf */
+        /** @var \App\Entity\User\Group[] $groupUserIsApartOf */
         $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         if (empty($groupUserIsApartOf)) {
@@ -265,7 +265,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $sensorToUpdate = $sensors[0];
 
-        /** @var Group[] $groupsUserIsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         foreach ($groupsUserIsNotApartOf as $group) {
@@ -309,12 +309,12 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_user_cannot_change_sensor_to_group_not_apart_of(): void
     {
-        /** @var User $user */
+        /** @var \App\Entity\User\User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
 
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_TWO, UserDataFixtures::REGULAR_PASSWORD);
 
-        /** @var Group[] $groupUserIsApartOf */
+        /** @var \App\Entity\User\Group[] $groupUserIsApartOf */
         $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         if (empty($groupUserIsApartOf)) {
@@ -331,12 +331,12 @@ class UpdateSensorControllerTest extends WebTestCase
             self::fail('No device found for user');
         }
 
-        /** @var Sensor[] $sensors */
+        /** @var \App\Entity\Sensor\Sensor[] $sensors */
         $sensors = $this->sensorRepository->findBy(['deviceID' => $device]);
 
         $sensorToUpdate = $sensors[0];
 
-        /** @var Group[] $groupsUserIsNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsUserIsNotApartOf */
         $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($user);
 
         foreach ($groupsUserIsNotApartOf as $group) {
@@ -373,7 +373,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals(UpdateSensorController::NOT_AUTHORIZED_TO_BE_HERE, $title);
         self::assertEquals([APIErrorMessages::ACCESS_DENIED], $errorsPayload);
 
-        /** @var Sensor $sensorAfterUpdate */
+        /** @var \App\Entity\Sensor\Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorToUpdate->getSensorID()]);
 
         self::assertEquals($sensorToUpdate->getSensorName(), $sensorAfterUpdate->getSensorName());
@@ -385,12 +385,12 @@ class UpdateSensorControllerTest extends WebTestCase
     {
         $sensors = $this->sensorRepository->findAll();
 
-        /** @var Sensor $sensorToUpdate */
+        /** @var \App\Entity\Sensor\Sensor $sensorToUpdate */
         $sensorToUpdate = $sensors[0];
 
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
-        /** @var Group[] $groupUserIsApartOf */
+        /** @var \App\Entity\User\Group[] $groupUserIsApartOf */
         $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         if (empty($groupUserIsApartOf)) {
@@ -445,7 +445,7 @@ class UpdateSensorControllerTest extends WebTestCase
     {
         $sensors = $this->sensorRepository->findAll();
 
-        /** @var Sensor $sensorToUpdate */
+        /** @var \App\Entity\Sensor\Sensor $sensorToUpdate */
         $sensorToUpdate = $sensors[0];
 
         $newSensorName = 'newName';
@@ -491,7 +491,7 @@ class UpdateSensorControllerTest extends WebTestCase
             }
         }
 
-        /** @var Sensor $sensor */
+        /** @var \App\Entity\Sensor\Sensor $sensor */
         $sensor = $this->sensorRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
 
         $this->client->request(
@@ -612,7 +612,7 @@ class UpdateSensorControllerTest extends WebTestCase
     {
         $sensors = $this->sensorRepository->findAll();
 
-        /** @var User $user */
+        /** @var \App\Entity\User\User $user */
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
         foreach ($sensors as $sensor) {
             if (
@@ -621,7 +621,7 @@ class UpdateSensorControllerTest extends WebTestCase
                     $user->getAssociatedGroupIDs(),
                     true
                 )) {
-                /** @var Sensor $sensorToUpdate */
+                /** @var \App\Entity\Sensor\Sensor $sensorToUpdate */
                 $sensorToUpdate = $sensor;
                 break;
             }
@@ -633,7 +633,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
 
-        /** @var Group[] $groupUserIsApartOf */
+        /** @var \App\Entity\User\Group[] $groupUserIsApartOf */
         $groupUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($user);
 
         if (empty($groupUserIsApartOf)) {
@@ -676,7 +676,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
         self::assertEquals($sensorToUpdate->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
 
-        /** @var Sensor $sensorAfterUpdate */
+        /** @var \App\Entity\Sensor\Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorToUpdate->getSensorID()]);
         self::assertEquals($sensorAfterUpdate->getDevice()->getDeviceID(), $deviceId);
         self::assertEquals($sensorAfterUpdate->getSensorName(), $newSensorName);
@@ -774,7 +774,7 @@ class UpdateSensorControllerTest extends WebTestCase
         $title = $responseData['title'];
         $errorsPayload = $responseData['errors'];
 
-        self::assertEquals(UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(\App\Controller\Sensor\SensorControllers\UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
         self::assertEquals([sprintf(DuplicateSensorException::MESSAGE, $sensor->getSensorName())], $errorsPayload);
     }
 

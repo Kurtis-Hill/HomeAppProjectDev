@@ -2,12 +2,12 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepository;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Device\ORM\DeviceRepository;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -73,7 +73,7 @@ class PingDeviceControllerTest extends WebTestCase
 
     public function test_pinging_device_no_access_to(): void
     {
-        /** @var User $regularUserTwo */
+        /** @var \App\Entity\User\User $regularUserTwo */
         $regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
 
         $regularUserToken = $this->setUserToken($this->client, $regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
@@ -83,7 +83,7 @@ class PingDeviceControllerTest extends WebTestCase
             $regularUserTwo->getAssociatedGroupIDs()
         );
 
-        /** @var Devices[] $devices */
+        /** @var \App\Entity\Device\Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsNotApartOf]);
         $device = $devices[array_rand($devices)];
 

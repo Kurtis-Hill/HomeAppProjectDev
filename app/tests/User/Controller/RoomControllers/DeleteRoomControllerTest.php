@@ -2,14 +2,13 @@
 
 namespace App\Tests\User\Controller\RoomControllers;
 
-use App\Common\API\APIErrorMessages;
-use App\Common\API\CommonURL;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\User\Room;
+use App\Entity\User\User;
+use App\Repository\User\ORM\RoomRepositoryInterface;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\RoomControllers\DeleteRoomController;
-use App\User\Entity\Room;
-use App\User\Entity\User;
-use App\User\Repository\ORM\RoomRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -52,7 +51,7 @@ class DeleteRoomControllerTest extends WebTestCase
     {
         while (true) {
             $roomID = random_int(1, 10000);
-            /** @var Room $room */
+            /** @var \App\Entity\User\Room $room */
             $room = $this->roomRepository->findOneBy(['roomID' => $roomID]);
             if ($room === null) {
                 break;
@@ -91,7 +90,7 @@ class DeleteRoomControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $title = $responseData['title'];
-        self::assertEquals(DeleteRoomController::NOT_AUTHORIZED_TO_BE_HERE, $title);
+        self::assertEquals(\App\Controller\User\RoomControllers\DeleteRoomController::NOT_AUTHORIZED_TO_BE_HERE, $title);
 
         $errors = $responseData['errors'];
         self::assertEquals([APIErrorMessages::ACCESS_DENIED], $errors);
@@ -116,10 +115,10 @@ class DeleteRoomControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $title = $responseData['title'];
-        self::assertEquals(DeleteRoomController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(\App\Controller\User\RoomControllers\DeleteRoomController::REQUEST_SUCCESSFUL, $title);
 
         $payload = $responseData['payload'];
-        self::assertEquals([sprintf(DeleteRoomController::DELETED_ROOM_SUCCESSFULLY, $room->getRoomID())], $payload);
+        self::assertEquals([sprintf(\App\Controller\User\RoomControllers\DeleteRoomController::DELETED_ROOM_SUCCESSFULLY, $room->getRoomID())], $payload);
     }
 
     protected function tearDown(): void

@@ -2,22 +2,21 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Authentication\Repository\ORM\GroupMappingRepository;
-use App\Common\Entity\IPLog;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\ORM\DataFixtures\Core\RoomFixtures;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\ORM\DataFixtures\ESP8266\ESP8266DeviceFixtures;
-use App\Authentication\Controller\SecurityController;
-use App\Authentication\Entity\GroupMapping;
-use App\Common\API\APIErrorMessages;
-use App\Common\API\HTTPStatusCodes;
-use App\Devices\Entity\Devices;
+use App\DataFixtures\Core\RoomFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
+use App\Entity\Authentication\GroupMapping;
+use App\Entity\Common\IPLog;
+use App\Entity\Device\Devices;
+use App\Entity\User\Group;
+use App\Entity\User\Room;
+use App\Entity\User\User;
+use App\Repository\Authentication\ORM\GroupMappingRepository;
+use App\Repository\Device\ORM\DeviceRepositoryInterface;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\HTTPStatusCodes;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\Room;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -561,7 +560,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
-        /** @var Group $groupUserIsNotApartOf */
+        /** @var \App\Entity\User\Group $groupUserIsNotApartOf */
         $groupUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),
@@ -758,7 +757,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_POST,
-            SecurityController::API_DEVICE_LOGIN,
+            \App\Controller\Authentication\SecurityController::API_DEVICE_LOGIN,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

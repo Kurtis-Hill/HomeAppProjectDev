@@ -2,14 +2,14 @@
 
 namespace App\Tests\Sensors\Controller\ReadingTypeControllers;
 
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Entity\ReadingTypes\ReadingTypes;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Repository\SensorReadingType\ORM\ReadingTypeRepository;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Sensor\ReadingTypes\ReadingTypes;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Repository\Sensor\SensorReadingType\ORM\ReadingTypeRepository;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -159,7 +159,7 @@ class GetReadingTypeControllerTest extends WebTestCase
 
         $readingTypeRepository = $this->entityManager->getRepository(ReadingTypes::class);
 
-        /** @var ReadingTypes $readingType */
+        /** @var \App\Entity\Sensor\ReadingTypes\ReadingTypes $readingType */
         $readingType = $readingTypeRepository->find($readingTypeToTest->getReadingTypeID());
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);

@@ -2,19 +2,16 @@
 
 namespace App\Tests\UserInterface\Controller;
 
-use App\ORM\DataFixtures\Core\RoomFixtures;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Authentication\Controller\SecurityController;
-use App\Authentication\Entity\GroupMapping;
-use App\Common\API\HTTPStatusCodes;
-use App\Devices\Entity\Devices;
+use App\DataFixtures\Core\RoomFixtures;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\User\Group;
+use App\Entity\User\Room;
+use App\Entity\User\User;
+use App\Services\API\HTTPStatusCodes;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\Group;
-use App\User\Entity\Room;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
-use JsonException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,7 +45,7 @@ class NavBarControllerTest extends WebTestCase
     public function test_get_navbar_data_response_regular_user(string $email, string $password, int $groupCount): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
-        /** @var User $testUser */
+        /** @var \App\Entity\User\User $testUser */
         $testUser = $userRepository->findOneBy(['email' => $email]);
 
         $userToken = $this->setUserToken($this->client, $email, $password);
@@ -131,12 +128,12 @@ class NavBarControllerTest extends WebTestCase
     public function test_get_navbar_data_response_admin_user(string $email, string $password): void
     {
         $userRepository = $this->entityManager->getRepository(User::class);
-        /** @var User $testUser */
+        /** @var \App\Entity\User\User $testUser */
         $testUser = $userRepository->findOneBy(['email' => $email]);
 
         $userToken = $this->setUserToken($this->client, $email, $password);
 
-        /** @var Room[] $userRooms */
+        /** @var \App\Entity\User\Room[] $userRooms */
         $userRooms = $this->entityManager->getRepository(Room::class)->findAll();
 
         $this->client->request(

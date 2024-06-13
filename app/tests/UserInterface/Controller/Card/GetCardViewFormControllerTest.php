@@ -2,30 +2,30 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\Common\API\APIErrorMessages;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Latitude;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\Sensor;
-use App\Sensors\Entity\SensorTypes\Bmp;
-use App\Sensors\Entity\SensorTypes\Dallas;
-use App\Sensors\Entity\SensorTypes\Dht;
-use App\Sensors\Entity\SensorTypes\GenericMotion;
-use App\Sensors\Entity\SensorTypes\GenericRelay;
-use App\Sensors\Entity\SensorTypes\Interfaces\SensorTypeInterface;
-use App\Sensors\Entity\SensorTypes\LDR;
-use App\Sensors\Entity\SensorTypes\Sht;
-use App\Sensors\Entity\SensorTypes\Soil;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Bmp;
+use App\Entity\Sensor\SensorTypes\Dallas;
+use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface;
+use App\Entity\Sensor\SensorTypes\LDR;
+use App\Entity\Sensor\SensorTypes\Sht;
+use App\Entity\Sensor\SensorTypes\Soil;
+use App\Entity\User\User;
+use App\Entity\UserInterface\Card\CardState;
+use App\Entity\UserInterface\Card\CardView;
+use App\Entity\UserInterface\Card\Colour;
+use App\Entity\UserInterface\Icons;
+use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\User;
-use App\UserInterface\Entity\Card\Colour;
-use App\UserInterface\Entity\Card\CardState;
-use App\UserInterface\Entity\Card\CardView;
-use App\UserInterface\Entity\Icons;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -75,7 +75,7 @@ class GetCardViewFormControllerTest extends WebTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findBy(['sensorTypeID' => $sensorType->getSensorTypeID()])[0];
         /** @var CardView $cardViewObject */
-        $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['sensor' => $sensor->getSensorID()])[0];
+        $cardViewObject = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\CardView::class)->findBy(['sensor' => $sensor->getSensorID()])[0];
 
         $this->client->request(
             Request::METHOD_GET,
@@ -122,8 +122,8 @@ class GetCardViewFormControllerTest extends WebTestCase
         $allIcons = $this->entityManager->getRepository(Icons::class)->findAll();
         /** @var Colour[] $allCardColours */
         $allCardColours = $this->entityManager->getRepository(Colour::class)->findAll();
-        /** @var CardState[] $allCardState */
-        $allCardState = $this->entityManager->getRepository(CardState::class)->findAll();
+        /** @var \App\Entity\UserInterface\Card\CardState[] $allCardState */
+        $allCardState = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\CardState::class)->findAll();
 
         self::assertEquals($cardViewObject->getCardViewID(), $responseData['cardViewID']);
 
@@ -192,7 +192,7 @@ class GetCardViewFormControllerTest extends WebTestCase
             /** @var CardView $cardView */
             $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['cardViewID' => $randomNumber]);
 
-            if (!$cardView instanceof CardView) {
+            if (!$cardView instanceof \App\Entity\UserInterface\Card\CardView) {
                 break;
             }
         }
@@ -214,7 +214,7 @@ class GetCardViewFormControllerTest extends WebTestCase
     {
         $userToken = $this->setUserToken($this->client, $username, $password);
 
-        /** @var User $user */
+        /** @var \App\Entity\User\User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
 
         /** @var CardView $cardViewObject */

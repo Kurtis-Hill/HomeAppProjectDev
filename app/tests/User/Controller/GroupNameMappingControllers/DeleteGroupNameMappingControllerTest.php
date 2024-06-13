@@ -2,16 +2,16 @@
 
 namespace App\Tests\User\Controller\GroupNameMappingControllers;
 
-use App\Authentication\Entity\GroupMapping;
-use App\Authentication\Repository\ORM\GroupMappingRepository;
-use App\Common\API\CommonURL;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Controller\User\GroupMappingControllers\DeleteGroupNameMappingController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Authentication\GroupMapping;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Authentication\ORM\GroupMappingRepository;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Repository\User\ORM\UserRepositoryInterface;
+use App\Services\API\CommonURL;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\GroupMappingControllers\DeleteGroupNameMappingController;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepositoryInterface;
-use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -69,7 +69,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
      */
     public function test_using_wrong_http_method(string $httpVerb): void
     {
-        /** @var GroupMapping[] $groupNameMappings */
+        /** @var \App\Entity\GroupMapping[] $groupNameMappings */
         $groupNameMappings = $this->groupNameMappingRepository->findAll();
 
         $this->client->request(
@@ -93,7 +93,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
 
     public function test_regular_user_cannot_delete_mapping_for_group_doesnt_own(): void
     {
-        /** @var Group[] $groupsRegularUserTwoDoesntOwn */
+        /** @var \App\Entity\User\Group[] $groupsRegularUserTwoDoesntOwn */
         $groupsRegularUserTwoDoesntOwn = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
 
         $groupMappingsRegularUserTwoDoesntOwn = $this->groupNameMappingRepository->findBy(['groupID' => $groupsRegularUserTwoDoesntOwn]);
@@ -120,7 +120,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
 
     public function test_regular_user_can_delete_mapping_for_group_owns(): void
     {
-        /** @var GroupMapping[] $groupNameMappingsRegularUserTwoOwns */
+        /** @var \App\Entity\GroupMapping[] $groupNameMappingsRegularUserTwoOwns */
         $groupNameMappingsRegularUserTwoOwns = $this->groupNameMappingRepository->findBy(['groupID' => $this->regularUserTwo->getGroup()->getGroupID()]);
 
         self::assertNotEmpty($groupNameMappingsRegularUserTwoOwns);

@@ -2,9 +2,9 @@
 
 namespace App\Tests\Common\Services;
 
-use App\Common\Entity\Operator;
-use App\Common\Exceptions\OperatorConvertionException;
-use App\Common\Services\OperatorValueCheckerConvertor;
+use App\Entity\Common\Operator;
+use App\Exceptions\Common\OperatorConvertionException;
+use App\Services\Common\OperatorValueCheckerConvertor;
 use Generator;
 use PHPUnit\Framework\TestCase;
 

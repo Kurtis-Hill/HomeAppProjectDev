@@ -2,12 +2,12 @@
 
 namespace App\Tests\Sensors\SensorService\Trigger\SensorTriggerProcessor;
 
-use App\Common\Entity\TriggerType;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Entity\SensorTrigger;
-use App\Sensors\Factories\TriggerFactories\TriggerTypeHandlerFactory;
-use App\Sensors\SensorServices\Trigger\SensorTriggerProcessor\ReadingTriggerHandler;
-use App\Sensors\SensorServices\Trigger\TriggerChecker\SensorReadingTriggerCheckerInterface;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Entity\Sensor\SensorTrigger;
+use App\Entity\Sensor\TriggerType;
+use App\Factories\Sensor\TriggerFactories\TriggerTypeHandlerFactory;
+use App\Services\Sensor\Trigger\SensorTriggerProcessor\ReadingTriggerHandler;
+use App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerCheckerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -67,7 +67,7 @@ class TriggerHandlerTest extends KernelTestCase
         $mockSensorReadingTriggerChecker->method('checkSensorForTriggers')->willReturn([$mockTrigger]);
         $mockLogger->expects($this->once())->method('error');
 
-        $sut = new ReadingTriggerHandler(
+        $sut = new \App\Services\Sensor\Trigger\SensorTriggerProcessor\ReadingTriggerHandler(
             $mockSensorReadingTriggerChecker,
             $triggerTypeHandlerFactory,
             $mockLogger,

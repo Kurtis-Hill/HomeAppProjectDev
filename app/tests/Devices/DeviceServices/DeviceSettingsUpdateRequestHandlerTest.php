@@ -2,13 +2,13 @@
 
 namespace App\Tests\Devices\DeviceServices;
 
-use App\Common\Services\DeviceRequestHandler;
-use App\Devices\Builders\Request\DeviceSettingsRequestDTOBuilder;
-use App\Devices\DeviceServices\Request\DeviceSettingsUpdateRequestHandler;
-use App\Devices\DTO\Internal\DeviceSettingsUpdateDTO;
-use App\Devices\Entity\Devices;
-use App\Devices\Repository\ORM\DeviceRepositoryInterface;
-use App\Sensors\Exceptions\DeviceNotFoundException;
+use App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder;
+use App\DTOs\Device\Internal\DeviceSettingsUpdateDTO;
+use App\Entity\Device\Devices;
+use App\Exceptions\Sensor\DeviceNotFoundException;
+use App\Repository\Device\ORM\DeviceRepositoryInterface;
+use App\Services\Device\Request\DeviceRequestHandler;
+use App\Services\Device\Request\DeviceSettingsUpdateRequestHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -66,7 +66,7 @@ class DeviceSettingsUpdateRequestHandlerTest extends KernelTestCase
 
     public function test_unsuccessful_response_code_returns_false(): void
     {
-        /** @var Devices $device */
+        /** @var \App\Entity\Device\Devices $device */
         $device = $this->deviceRepository->findAll()[0];
 
         $deviceSettingsUpdateDTO = new DeviceSettingsUpdateDTO(

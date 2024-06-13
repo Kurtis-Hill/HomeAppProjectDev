@@ -2,17 +2,17 @@
 
 namespace App\Tests\User\Controller\GroupsController;
 
-use App\Authentication\Entity\GroupMapping;
-use App\Authentication\Repository\ORM\GroupMappingRepository;
-use App\Common\API\APIErrorMessages;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
+use App\Controller\User\GroupsControllers\AddGroupController;
+use App\Controller\User\GroupsControllers\UpdateGroupController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Authentication\GroupMapping;
+use App\Entity\User\Group;
+use App\Entity\User\User;
+use App\Repository\Authentication\ORM\GroupMappingRepository;
+use App\Repository\User\ORM\GroupRepositoryInterface;
+use App\Repository\User\ORM\UserRepositoryInterface;
+use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Controller\GroupsControllers\AddGroupController;
-use App\User\Controller\GroupsControllers\UpdateGroupController;
-use App\User\Entity\Group;
-use App\User\Entity\User;
-use App\User\Repository\ORM\GroupRepositoryInterface;
-use App\User\Repository\ORM\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -173,7 +173,7 @@ class UpdateGroupControllerTest extends WebTestCase
 
     public function test_regular_user_cannot_update_group_not_apart_of(): void
     {
-        /** @var Group[] $groupsUserNotApartOf */
+        /** @var \App\Entity\User\Group[] $groupsUserNotApartOf */
         $groupsUserNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         if (empty($groupsUserNotApartOf)) {

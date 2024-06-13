@@ -2,19 +2,19 @@
 
 namespace App\Tests\Sensors\SensorService\TriggerChecker;
 
-use App\ORM\DataFixtures\Core\OperatorsFixtures;
-use App\ORM\DataFixtures\ESP8266\SensorFixtures;
-use App\ORM\DataFixtures\ESP8266\SensorTriggerFixtures;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Motion;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Analog;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Humidity;
-use App\Sensors\Entity\ReadingTypes\StandardReadingTypes\Temperature;
-use App\Sensors\Repository\ReadingType\ORM\BaseSensorReadingTypeRepository;
-use App\Sensors\Repository\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
-use App\Sensors\Repository\SensorReadingType\ORM\StandardReadingTypeRepository;
-use App\Sensors\Repository\Sensors\SensorRepositoryInterface;
-use App\Sensors\Repository\SensorTriggerRepository;
-use App\Sensors\SensorServices\Trigger\TriggerChecker\SensorReadingTriggerChecker;
+use App\DataFixtures\Core\OperatorsFixtures;
+use App\DataFixtures\ESP8266\SensorFixtures;
+use App\DataFixtures\ESP8266\SensorTriggerFixtures;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
+use App\Repository\Sensor\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
+use App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository;
+use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Repository\Sensor\SensorTriggerRepository;
+use App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -53,7 +53,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         string $sensorName,
         string $readingType,
     ): void {
-        /** @var StandardReadingTypeRepository $readingTypeRepository */
+        /** @var \App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository $readingTypeRepository */
         $sensor = $this->diContainer->get(SensorRepositoryInterface::class)->findOneBy(['sensorName' => $sensorName]);
 
         $baseReadingTypeRepository = $this->diContainer->get(BaseSensorReadingTypeRepository::class);
@@ -82,7 +82,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         };
         $sensorReadingType->setCurrentReading($currentValue);
 
-        $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository);
+        $sut = new \App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerChecker($this->sensorTriggerRepository);
         $result = $sut->checkSensorForTriggers(
             $sensorReadingType,
             $triggerDay,
@@ -100,7 +100,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         string $sensorName,
         string $readingType,
     ): void {
-        /** @var StandardReadingTypeRepository $readingTypeRepository */
+        /** @var \App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository $readingTypeRepository */
         $sensor = $this->diContainer->get(SensorRepositoryInterface::class)->findOneBy(['sensorName' => $sensorName]);
 
         $baseReadingTypeRepository = $this->diContainer->get(BaseSensorReadingTypeRepository::class);
@@ -130,7 +130,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
             default => throw new \Exception('Operator not found'),
         };
         $sensorReadingType->setCurrentReading($currentValue);
-        $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
+        $sut = new \App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
         $result = $sut->checkSensorForTriggers(
             $sensorReadingType,
             $triggerDay,
@@ -148,7 +148,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         string $sensorName,
         string $readingType,
     ): void {
-        /** @var StandardReadingTypeRepository $readingTypeRepository */
+        /** @var \App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository $readingTypeRepository */
         $sensor = $this->diContainer->get(SensorRepositoryInterface::class)->findOneBy(['sensorName' => $sensorName]);
 
         $baseReadingTypeRepository = $this->diContainer->get(BaseSensorReadingTypeRepository::class);
@@ -178,7 +178,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
                 default => throw new \Exception('Operator not found'),
             };
             $sensorReadingType->setCurrentReading($currentValue);
-            $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
+            $sut = new \App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
             $result = $sut->checkSensorForTriggers(
                 $sensorReadingType,
                 $triggerDay,
@@ -197,7 +197,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         string $sensorName,
         string $readingType,
     ): void {
-        /** @var StandardReadingTypeRepository $readingTypeRepository */
+        /** @var \App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository $readingTypeRepository */
         $sensor = $this->diContainer->get(SensorRepositoryInterface::class)->findOneBy(['sensorName' => $sensorName]);
 
         $baseReadingTypeRepository = $this->diContainer->get(BaseSensorReadingTypeRepository::class);
@@ -251,7 +251,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         string $sensorName,
         string $readingType,
     ): void {
-        /** @var StandardReadingTypeRepository $readingTypeRepository */
+        /** @var \App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository $readingTypeRepository */
         $sensor = $this->diContainer->get(SensorRepositoryInterface::class)->findOneBy(['sensorName' => $sensorName]);
 
         $baseReadingTypeRepository = $this->diContainer->get(BaseSensorReadingTypeRepository::class);

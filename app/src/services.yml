@@ -1,0 +1,73 @@
+parameters:
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  ################### Core ############################
+  App\:
+    resource: './*'
+    exclude: './{Entity}'
+
+  App\Controller\:
+    resource: './Controller'
+    tags: [ 'controller.service_arguments' ]
+
+
+  ######################## Producers ######################################################
+
+  ######################## Consumers ######################################################
+
+  ######################## UserInterface Services ######################################################
+  App\Services\UserInterface\Cards\CardCreation\CardCreationHandlerInterface:
+    alias: App\Services\UserInterface\Cards\CardCreation\CardCreationHandler
+
+  App\Services\UserInterface\Cards\CardPreparation\CardViewFormPreparationHandlerInterface:
+    alias: App\Services\UserInterface\Cards\CardPreparation\CardViewFormCreationHandler
+
+  App\Services\UserInterface\Cards\CardViewUpdate\CardViewUpdateInterface:
+    alias: App\Services\UserInterface\Cards\CardViewUpdate\CardViewUpdateFacade
+
+  App\UserInterface\Services\NavBar\NavBarDataProviderInterface:
+    alias : App\Services\UserInterface\NavBar\NavBarDataProvider
+  ######################## New Sensor Creation Services ########################################################
+
+  ######################## Factories ###########################################################################
+
+  ######################## Repositories ########################################################################
+  App\Repository\UserInterface\ORM\CardRepositories\CardViewRepositoryInterface:
+    alias: App\Repository\UserInterface\ORM\CardRepositories\CardViewRepository
+
+  App\Repository\UserInterface\ORM\CardRepositories\CardColourRepositoryInterface:
+    alias: App\Repository\UserInterface\ORM\CardRepositories\CardColourRepository
+
+  App\Repository\UserInterface\ORM\CardRepositories\CardStateRepositoryInterface:
+    alias: App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository
+
+  App\Repository\UserInterface\ORM\IconsRepositoryInterface:
+    alias: App\Repository\UserInterface\ORM\IconsRepository
+
+  ######################## End Of Sensors ######################################################################################
+
+
+  App\AMQP\Device\Producers\DeviceSettingsUpdateProducer: '@old_sound_rabbit_mq.send_device_settings_update_producer'
+
+  ######################## Services ########################################################################
+  App\Services\Device\NewDevice\NewDeviceHandlerInterface:
+    alias: 'App\Services\Device\NewDevice\NewESP8266DeviceHandler'
+
+  App\Services\Device\UpdateDeviceView\UpdateDeviceHandlerInterface:
+    alias: 'App\Services\Device\UpdateDeviceView\UpdateDeviceHandler'
+
+  App\Services\Device\DeleteDeviceModal\DeleteDeviceServiceInterface:
+    alias: 'App\Services\Device\DeleteDeviceModal\DeleteDeviceService'
+
+  App\Devices\Repository\ORM\DeviceRepositoryInterface:
+    alias: 'App\Devices\Repository\ORM\DeviceRepository'
+
+  App\Services\Device\DevicePasswordService\DevicePasswordEncoderInterface:
+    alias: 'App\Services\Device\DevicePasswordService\DevicePasswordEncoder'
+
+  App\Services\Device\GetDevices\DevicesForUserInterface:
+    alias: 'App\Services\Device\GetDevices\DevicesForUserHandler'

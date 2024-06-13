@@ -2,15 +2,15 @@
 
 namespace App\Tests\UserInterface\Controller\Card;
 
-use App\Common\API\APIErrorMessages;
-use App\ORM\DataFixtures\Core\UserDataFixtures;
-use App\Sensors\Controller\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
+use App\Controller\Sensor\ReadingTypeControllers\UpdateSensorBoundaryReadingsController;
+use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\User\User;
+use App\Entity\UserInterface\Card\CardState;
+use App\Entity\UserInterface\Card\CardView;
+use App\Entity\UserInterface\Card\Colour;
+use App\Entity\UserInterface\Icons;
+use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
-use App\User\Entity\User;
-use App\UserInterface\Entity\Card\Colour;
-use App\UserInterface\Entity\Card\CardState;
-use App\UserInterface\Entity\Card\CardView;
-use App\UserInterface\Entity\Icons;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -143,7 +143,7 @@ class UpdateCardViewControllerTest extends WebTestCase
 
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
-        /** @var CardView $cardViewObject */
+        /** @var \App\Entity\UserInterface\Card\CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 
         $sensorData = [
@@ -216,12 +216,12 @@ class UpdateCardViewControllerTest extends WebTestCase
 
         $cardColourRepository = $this->entityManager->getRepository(Colour::class);
         $iconRepository = $this->entityManager->getRepository(Icons::class);
-        $cardStateRepository = $this->entityManager->getRepository(CardState::class);
+        $cardStateRepository = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\CardState::class);
 
         if ($wrongColour === true) {
             while (true) {
                 $randomColour = random_int(1, 10000);
-                /** @var Colour $cardColour */
+                /** @var \App\Entity\UserInterface\Card\Colour $cardColour */
                 $cardColour = $cardColourRepository->findOneBy(['colourID' => $randomColour]);
                 if (!$cardColour instanceof Colour) {
                     $cardColour = $randomColour;
@@ -235,7 +235,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         if ($wrongIcon === true) {
             while (true) {
                 $randomIcon = random_int(1, 10000);
-                /** @var Icons $cardIcon */
+                /** @var \App\Entity\UserInterface\Icons $cardIcon */
                 $cardIcon = $iconRepository->findOneBy(['iconID' => $randomIcon]);
                 if (!$cardIcon instanceof Colour) {
                     $cardIcon = $randomIcon;
@@ -249,7 +249,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         if ($wrongState === true) {
             while (true) {
                 $randomState = random_int(1, 10000);
-                /** @var CardState $cardState */
+                /** @var \App\Entity\UserInterface\Card\CardState $cardState */
                 $cardState = $cardStateRepository->find($randomState);
                 if (!$cardState instanceof CardState) {
                     $cardState = $randomState;
@@ -257,7 +257,7 @@ class UpdateCardViewControllerTest extends WebTestCase
                 }
             }
         } else {
-            /** @var CardState[] $cardStates */
+            /** @var \App\Entity\UserInterface\Card\CardState[] $cardStates */
             $cardStates = $cardStateRepository->findAll();
             $cardState = $cardStates[0]->getStateID();
         }
@@ -326,9 +326,9 @@ class UpdateCardViewControllerTest extends WebTestCase
         bool $nullCardIcon,
         bool $nullCardState,
     ): void {
-        $cardColourRepository = $this->entityManager->getRepository(Colour::class);
+        $cardColourRepository = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\Colour::class);
         $iconRepository = $this->entityManager->getRepository(Icons::class);
-        $cardStateRepository = $this->entityManager->getRepository(CardState::class);
+        $cardStateRepository = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\CardState::class);
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
@@ -350,7 +350,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         if ($nullCardState === true) {
             $cardState = null;
         } else {
-            /** @var CardState[] $cardStateObject */
+            /** @var \App\Entity\UserInterface\Card\CardState[] $cardStateObject */
             $cardStateObject = $cardStateRepository->findAll();
             $cardState = $cardStateObject[0]->getStateID();
         }

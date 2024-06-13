@@ -2,10 +2,10 @@
 
 namespace App\Tests\Sensors\Builders\RequestSensorCurrentReadingUpdateArgumentBuilder;
 
-use App\Sensors\Builders\Request\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder;
-use App\Sensors\DTO\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
-use App\Sensors\Entity\ReadingTypes\BoolReadingTypes\Relay;
-use App\Sensors\Entity\Sensor;
+use App\Builders\Sensor\Request\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder;
+use App\DTOs\Sensor\Internal\CurrentReadingDTO\BoolCurrentReadingUpdateDTO;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\Sensor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Serializer;
 
 class RequestSensorCurrentReadingUpdateArgumentBuilderTest extends TestCase
 {
-    private RequestSensorCurrentReadingUpdateArgumentBuilder $sut;
+    private \App\Builders\Sensor\Request\RequestSensorCurrentReadingUpdateArgumentBuilder\RequestSensorCurrentReadingUpdateArgumentBuilder $sut;
 
     protected function setUp(): void
     {
