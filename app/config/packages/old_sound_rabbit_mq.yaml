@@ -12,22 +12,22 @@ old_sound_rabbit_mq:
 ##### Update Sensor Reading Request ##########
     producers:
         upload_current_reading_sensor_data:
-            class: App\Sensors\AMQP\Producers\UpdateCurrentDataProducer
+            class: App\AMQP\Sensor\Producers\UpdateCurrentDataProducer
             service_alias: current_sensor_reading_producer
             connection: default
             exchange_options: { name: '%env(UPDATE_SENSOR_EXCHANGE_NAME)%', type: direct }
         send_current_reading_sensor_data:
-          class: App\Sensors\AMQP\Producers\UploadSwitchSensorProducer
+          class: App\AMQP\Sensor\Producers\UploadSwitchSensorProducer
           service_alias: send_current_sensor_reading_producer
           connection: default
           exchange_options: { name: '%env(SEND_SENSOR_UPDATE_EXCHANGE_NAME)%', type: direct }
         send_sensor_data_update:
-          class: App\Sensors\AMQP\Producers\UploadSensorDataToDeviceProducer
+          class: App\AMQP\Sensor\Producers\UploadSensorDataToDeviceProducer
           service_alias: upload_sensor_data_to_device_producer
           connection: default
           exchange_options: { name: '%env(SEND_SENSOR_DATA_UPDATE_EXCHANGE_NAME)%', type: direct }
         send_device_settings_update:
-          class: App\Devices\AMQP\Producers\DeviceSettingsUpdateProducer
+          class: App\AMQP\Device\Producers\DeviceSettingsUpdateProducer
           service_alias: send_device_settings_update_producer
           connection: default
           exchange_options: { name: '%env(SEND_DEVICE_SETTINGS_UPDATE_EXCHANGE_NAME)%', type: direct }
@@ -38,7 +38,7 @@ old_sound_rabbit_mq:
             connection: default
             exchange_options: { name: '%env(UPDATE_SENSOR_EXCHANGE_NAME)%', type: direct }
             queue_options: { name: '%env(UPDATE_SENSOR_QUEUE_NAME)%' }
-            callback: App\Sensors\AMQP\Consumers\ProcessCurrentReadingRequestConsumer
+            callback: App\AMQP\Sensor\Consumers\ProcessCurrentReadingRequestConsumer
             graceful_max_execution:
               timeout: 900
               exit_code: 10
@@ -46,7 +46,7 @@ old_sound_rabbit_mq:
             connection: default
             exchange_options: { name: '%env(SEND_SENSOR_UPDATE_EXCHANGE_NAME)%', type: direct }
             queue_options: { name: '%env(SEND_SENSOR_UPDATE_QUEUE_NAME)%' }
-            callback: App\Devices\AMQP\Consumers\SensorSendUpdateReadingRequestConsumer
+            callback: App\AMQP\Device\Consumers\SensorSendUpdateReadingRequestConsumer
             graceful_max_execution:
               timeout: 900
               exit_code: 10
@@ -54,7 +54,7 @@ old_sound_rabbit_mq:
             connection: default
             exchange_options: { name: '%env(SEND_SENSOR_DATA_UPDATE_EXCHANGE_NAME)%', type: direct }
             queue_options: { name: '%env(SEND_SENSOR_DATA_UPDATE_QUEUE_NAME)%' }
-            callback: App\Sensors\AMQP\Consumers\SensorSendUpdateDataRequestConsumer
+            callback: App\AMQP\Sensor\Consumers\SensorSendUpdateDataRequestConsumer
             graceful_max_execution:
               timeout: 900
               exit_code: 10
@@ -62,7 +62,7 @@ old_sound_rabbit_mq:
           connection: default
           exchange_options: { name: '%env(SEND_DEVICE_SETTINGS_UPDATE_EXCHANGE_NAME)%', type: direct }
           queue_options: { name: '%env(SEND_DEVICE_SETTINGS_UPDATE_QUEUE_NAME)%' }
-          callback: App\Devices\AMQP\Consumers\DeviceSettingsUpdateConsumer
+          callback: App\AMQP\Device\Consumers\DeviceSettingsUpdateConsumer
           graceful_max_execution:
             timeout: 900
             exit_code: 10

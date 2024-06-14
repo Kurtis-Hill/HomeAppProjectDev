@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\EventListeners\Authentication;
+namespace App\Events\EventListeners\Authentication;
 
 use App\Entity\User\User;
 use DateTimeImmutable;

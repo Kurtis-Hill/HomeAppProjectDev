@@ -2,8 +2,8 @@
 
 namespace App\Tests\Sensors\Controller\SensorControllers;
 
-use App\Common\Services\RequestQueryParameterHandler;
-use App\Common\Services\RequestTypeEnum;
+use App\Services\Request\RequestQueryParameterHandler;
+use App\Services\Request\RequestTypeEnum;
 use App\Controller\Sensor\SensorControllers\UpdateSensorController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;

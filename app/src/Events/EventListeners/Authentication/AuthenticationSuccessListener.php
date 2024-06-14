@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListeners\Authentication;
+namespace App\Events\EventListeners\Authentication;
 
 use App\DTOs\Authentication\Request\DeviceAuthenticationIPRequestDTO;
 use App\DTOs\Authentication\Response\DeviceAuthenticationResponse;

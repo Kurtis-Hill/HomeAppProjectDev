@@ -27,34 +27,9 @@ doctrine:
     result_cache_driver:
       type: pool
       pool: doctrine.result_cache_pool
-#     mappings:
-#       Source:
-#         type: attribute
-#         dir: '%kernel.project_dir%/src/Sensors/Entity'
-#         alias: ESPSensor
-#         prefix: App\Sensors\Entity
-#       Device:
-#         type: attribute
-#         dir: '%kernel.project_dir%/src/Devices/Entity'
-#         alias: Devices
-#         prefix: App\Devices\Entity
-#       User:
-#         type: attribute
-#         dir: '%kernel.project_dir%/src/User/Entity'
-#         alias: User
-#         prefix: App\User\Entity
-#       UserInterface:
-#         type: attribute
-#         dir: '%kernel.project_dir%/src/UserInterface/Entity'
-#         alias: UserInterface
-#         prefix: App\UserInterface\Entity
-#       Authentication:
-#         type: attribute
-#         dir: '%kernel.project_dir%/src/Authentication/Entity'
-#         alias: Authentication
-#         prefix: App\Authentication\Entity
-#       Common:
-#         type: attribute
-#         dir: '%kernel.project_dir%/src/Common/Entity'
-#         alias: Common
-#         prefix: App\Common\Entity
+    mappings:
+      Source:
+        type: attribute
+        dir: '%kernel.project_dir%/src/Entity'
+        alias: App
+        prefix: App\Entity

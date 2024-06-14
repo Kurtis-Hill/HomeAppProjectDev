@@ -1,18 +1,18 @@
 security:
     password_hashers:
-        App\User\Entity\User:
+        App\Entity\User\User:
             algorithm: auto
-        App\Devices\Entity\Devices:
+        App\Entity\Device\Devices:
             algorithm: auto
 
     providers:
         app_user_provider:
             entity:
-                class: App\User\Entity\User
+                class: App\Entity\User\User
                 property: email
         api_device_provider:
             entity:
-                class: App\Devices\Entity\Devices
+                class: App\Entity\Device\Devices
                 property: deviceName
         user_and_device:
             chain:

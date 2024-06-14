@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Sensor;
 
-use App\Sensors\Exceptions\Throwable;
 use Exception;
 use JetBrains\PhpStorm\Pure;
+use Throwable;
 
 class SensorReadingTypeValidationException extends Exception
 {

@@ -3,6 +3,7 @@ imports:
     - { resource: elasticsearch.yaml }
 
 parameters:
+    elastic.overwrite: '%env(bool:HEAVY_WRITES_ELASTIC_ONLY)%'
 services:
     _defaults:
         autowire: true
@@ -83,16 +84,14 @@ services:
         - { name: 'console.command' }
 
     app.listener.redirect_404_to_homepage:
-      class: App\EventListener\UserInterface\RedirectHomePage
-      arguments:
-        - "@router"
+      class: App\Events\EventListeners\UserInterface\RedirectHomePage
       tags:
         - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
     App\Events\EventListeners\Authentication\AuthenticationSuccessListener:
         arguments: [ '@request_stack' ]
         tags:
-             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
 
     App\Events\EventListeners\Authentication\JWTAuthenticatedListener:
         tags:
@@ -106,32 +105,290 @@ services:
   ######################## Consumers ######################################################
 
   ######################## UserInterface Services ######################################################
-  App\Services\UserInterface\Cards\CardCreation\CardCreationHandlerInterface:
-    alias: App\Services\UserInterface\Cards\CardCreation\CardCreationHandler
+    App\Services\UserInterface\Cards\CardCreation\CardCreationHandlerInterface:
+        alias: App\Services\UserInterface\Cards\CardCreation\CardCreationHandler
 
-  App\Services\UserInterface\Cards\CardPreparation\CardViewFormPreparationHandlerInterface:
-    alias: App\Services\UserInterface\Cards\CardPreparation\CardViewFormCreationHandler
+    App\Services\UserInterface\Cards\CardPreparation\CardViewFormPreparationHandlerInterface:
+      alias: App\Services\UserInterface\Cards\CardPreparation\CardViewFormCreationHandler
 
-  App\Services\UserInterface\Cards\CardViewUpdate\CardViewUpdateInterface:
-    alias: App\Services\UserInterface\Cards\CardViewUpdate\CardViewUpdateFacade
+    App\Services\UserInterface\Cards\CardViewUpdate\CardViewUpdateInterface:
+      alias: App\Services\UserInterface\Cards\CardViewUpdate\CardViewUpdateFacade
 
-  App\UserInterface\Services\NavBar\NavBarDataProviderInterface:
-    alias : App\Services\UserInterface\NavBar\NavBarDataProvider
-  ######################## New Sensor Creation Services ########################################################
+    App\Services\UserInterface\NavBar\NavBarDataProviderInterface:
+      alias : App\Services\UserInterface\NavBar\NavBarDataProvider
+    ######################## New Sensor Creation Services ########################################################
+        ######################## Factories ###########################################################################
+        ######################## Repositories ########################################################################
+    App\Repository\UserInterface\ORM\CardRepositories\CardViewRepositoryInterface:
+      alias: App\Repository\UserInterface\ORM\CardRepositories\CardViewRepository
+
+    App\Repository\UserInterface\ORM\CardRepositories\CardColourRepositoryInterface:
+      alias: App\Repository\UserInterface\ORM\CardRepositories\CardColourRepository
+
+    App\Repository\UserInterface\ORM\CardRepositories\CardStateRepositoryInterface:
+      alias: App\Repository\UserInterface\ORM\CardRepositories\CardStateRepository
+
+    App\Repository\UserInterface\ORM\IconsRepositoryInterface:
+      alias: App\Repository\UserInterface\ORM\IconsRepository
+        ######################## End Of Sensors ######################################################################################
+
+    App\AMQP\Device\Producers\DeviceSettingsUpdateProducer: '@old_sound_rabbit_mq.send_device_settings_update_producer'
+
+  ######################## Services ########################################################################
+    App\Services\Device\NewDevice\NewDeviceHandlerInterface:
+        alias: 'App\Services\Device\NewDevice\NewESP8266DeviceHandler'
+
+    App\Services\Device\UpdateDeviceView\UpdateDeviceHandlerInterface:
+      alias: 'App\Services\Device\UpdateDeviceView\UpdateDeviceHandler'
+
+    App\Services\Device\DeleteDeviceModal\DeleteDeviceServiceInterface:
+      alias: 'App\Services\Device\DeleteDeviceModal\DeleteDeviceService'
+
+    App\Repository\Device\ORM\DeviceRepositoryInterface:
+      alias: 'App\Repository\Device\ORM\DeviceRepository'
+
+    App\Services\Device\DevicePasswordService\DevicePasswordEncoderInterface:
+        alias: 'App\Services\Device\DevicePasswordService\DevicePasswordEncoder'
+
+    App\Services\Device\GetDevices\DevicesForUserInterface:
+        alias: 'App\Services\Device\GetDevices\DevicesForUserHandler'
+
+    App\Controller\Sensor\SensorControllers\ESPSensorCurrentReadingUpdateController:
+        calls:
+              - setESPCurrentReadingProducer: [ '@current_sensor_reading_producer' ]
+
+    App\Controller\Sensor\SensorControllers\SwitchSensorController:
+        calls:
+              - setESPSendCurrentReadingProducer: [ '@send_current_sensor_reading_producer' ]
+
+    App\Services\Sensor\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor:
+        arguments:
+              $sendCurrentReadingAMQPProducer: '@send_current_sensor_reading_producer'
+
+    App\Events\Subscribers\Sensor\SensorUpdateEventSubscriber:
+      calls:
+          - setSensorDataUpdateProducer: [ '@upload_sensor_data_to_device_producer' ]
+####################### Producers ######################################################
+    App\AMQP\Sensor\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
+    App\AMQP\Sensor\Producers\UploadSensorDataToDeviceProducer: '@old_sound_rabbit_mq.upload_sensor_data_to_device_producer'
+    App\AMQP\Sensor\Producers\UploadSwitchSensorProducer: '@old_sound_rabbit_mq.send_current_sensor_reading_producer'
+
+  ######################## Consumers ######################################################
+    App\AMQP\Sensor\Consumers\ProcessCurrentReadingSensorDataRequestConsumer:
+    App\AMQP\Sensor\Consumers\SensorSendUpdateDataRequestConsumer:
+
+######################## Update Sensor Reading Services ######################################################
+    App\Services\Sensor\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface:
+        alias: 'App\Services\Sensor\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingsHandlerVersionTwo'
+
+    App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandlerInterface:
+        alias: 'App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler'
+
+    out.of.bounds.factory.elastic:
+      alias: 'App\Factories\Sensor\OufOfBounds\OutOfBoundsElasticFactory'
+      public: true
+    out.of.bounds.factory.orm:
+      alias: 'App\Factories\Sensor\OufOfBounds\OutOfBoundsORMFactory'
+      public: true
+
+    App\Services\Sensor\OutOfBounds\SensorOutOfBoundsHandlerInterface:
+      alias: 'App\Services\Sensor\OutOfBounds\OutOfBoundsReadingTypeFacade'
+
+    App\Services\Sensor\OutOfBounds\OutOfBoundsReadingTypeFacade:
+        arguments:
+            $outOfBoundsFactory: "@=service(parameter('elastic.overwrite') === true ? 'out.of.bounds.factory.elastic' : 'out.of.bounds.factory.orm')"
+
+    const.record.factory.elastic:
+      alias: 'App\Factories\Sensor\ConstRecord\ConstRecordElasticFactory'
+      public: true
+    const.record.factory.orm:
+      alias: 'App\Factories\Sensor\ConstRecord\ConstRecordORMFactory'
+      public: true
+
+    App\Services\Sensor\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler:
+      arguments:
+        $constRecordRepositoryFactory: "@=service(parameter('elastic.overwrite') === true ? 'const.record.factory.elastic' : 'const.record.factory.orm')"
+
+    App\Services\Sensor\ConstantlyRecord\SensorConstantlyRecordHandlerInterface:
+      alias: 'App\Services\Sensor\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler'
+
+    App\Services\Sensor\SensorReadingUpdate\UpdateBoundaryReadings\UpdateBoundaryReadingsInterface:
+        alias: 'App\Services\Sensor\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorFormsReadingBoundary'
+
+    App\Services\Sensor\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandlerInterface:
+        alias: 'App\Services\Sensor\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler'
+
+    App\Services\Sensor\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandlerInterface:
+        alias: 'App\Services\Sensor\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorBoundaryReadingsHandler'
+
+    App\Services\Sensor\TriggerChecker\SensorReadingTriggerCheckerInterface:
+        alias: 'App\Services\Sensor\TriggerChecker\SensorReadingTriggerChecker'
+
+######################## New Sensor Creation Services ########################################################
+    App\Services\Sensor\NewSensor\NewSensorCreationInterface:
+        alias: 'App\Services\Sensor\NewSensor\NewSensorCreationHandler'
+
+    App\Services\Sensor\NewReadingType\ReadingTypeCreationInterface:
+        alias: 'App\Services\Sensor\NewReadingType\ReadingTypeCreationFacade'
+
+    App\Services\Sensor\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface:
+        alias: 'App\Services\Sensor\SensorReadingTypesValidator\SensorReadingTypesValidatorFacade'
+
+######################## New Sensor Creation Services ########################################################
+    App\Services\Sensor\DeleteSensorService\DeleteSensorHandlerInterface:
+        alias: 'App\Services\Sensor\DeleteSensorService\DeleteSensorHandler'
+
+######################## Update Sensor Services ########################################################
+    App\Services\Sensor\UpdateSensor\UpdateSensorInterface:
+        alias: 'App\Services\Sensor\UpdateSensor\UpdateSensorHandler'
+
+######################## Builders ########################################################################
+
+######################## Repositories ########################################################################
+    App\Repository\Sensor\Sensors\SensorRepositoryInterface:
+        alias: 'App\Repository\Sensor\Sensors\ORM\SensorRepository'
+
+    App\Repository\Sensor\Sensors\ORM\SensorTypeRepositoryInterface:
+        alias: 'App\Repository\Sensor\Sensors\SensorTypeRepository'
+
+    App\Repository\Sensor\SensorReadingType\ReadingTypeRepositoryInterface:
+        alias: 'App\Repository\Sensor\SensorReadingType\ORM\ReadingTypeRepository'
+
+    App\Repository\Sensor\OutOfBounds\Elastic\OutOfBoundsAnalogRepository:
+      arguments:
+          $index: '@elastica.outofbounds_analog_index'
+
+    App\Repository\Sensor\OutOfBounds\Elastic\OutOfBoundsLatitudeRepository:
+      arguments:
+            $index: '@elastica.outofbounds_latitude_index'
+
+    App\Repository\Sensor\OutOfBounds\Elastic\OutOfBoundsTempRepository:
+        arguments:
+            $index: '@elastica.outofbounds_temperature_index'
+
+    App\Repository\Sensor\OutOfBounds\Elastic\OutOfBoundsHumidityRepository:
+      arguments:
+        $index: '@elastica.outofbounds_humidity_index'
+
+    App\Repository\Sensor\ConstRecord\Elastic\ConstRecordHumidityRepository:
+        arguments:
+          $index: '@elastica.constrecord_humidity_index'
+
+    App\Repository\Sensor\ConstRecord\Elastic\ConstRecordLatitudeRepository:
+       arguments:
+           $index: '@elastica.constrecord_latitude_index'
+
+    App\Repository\Sensor\ConstRecord\Elastic\ConstRecordTemperatureRepository:
+      arguments:
+        $index: '@elastica.constrecord_temperature_index'
+
+    App\Repository\Sensor\ConstRecord\Elastic\ConstRecordAnalogRepository:
+        arguments:
+          $index: '@elastica.constrecord_analog_index'
+
+    App\Services\Sensor\SensorTriggerProcessor\ReadingTriggerHandlerInterface:
+        alias: 'App\Services\Sensor\SensorTriggerProcessor\ReadingTriggerHandler'
+
+    App\Services\Sensor\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface:
+        alias: 'App\Services\Sensor\Trigger\TriggerCreationHandler\TriggerCreationHandler'
+
+######################## End Of Sensors ######################################################################################
+######################## Commands ######################################################################################
+    App\Command\Sensor\Elasticsearch\IndicesCreation\ElasticCreateConstRecordIndicesCommand:
+      arguments:
+        $indexMappings: [
+          {
+            index: '@elastica.constrecord_analog_index',
+            mapping: {
+              sensorFieldName: 'analogID',
+              sensorReading: 'float'
+            }
+          },
+          {
+            index: '@elastica.constrecord_temperature_index',
+            mapping: {
+              sensorFieldName: 'tempID',
+              sensorReading: 'float'
+            }
+          },
+          {
+            index: '@elastica.constrecord_humidity_index',
+            mapping: {
+              sensorFieldName: 'humidityID',
+              sensorReading: 'float'
+            },
+          },
+          {
+            index: '@elastica.constrecord_latitude_index',
+            mapping: {
+              sensorFieldName: 'latitudeID',
+              sensorReading: 'double'
+            },
+          }
+        ]
+      tags:
+        - { name: 'console.command' }
+
+    App\Command\Sensor\Elasticsearch\IndicesCreation\ElasticCreateOutOfBoundsIndices:
+      arguments:
+        $indexMappings: [
+          {
+            index: '@elastica.outofbounds_analog_index',
+            mapping: {
+              sensorFieldName: 'analogID',
+              sensorReading: 'float'
+            }
+          },
+          {
+            index: '@elastica.outofbounds_temperature_index',
+            mapping: {
+              sensorFieldName: 'tempID',
+              sensorReading: 'float'
+            }
+          },
+          {
+            index: '@elastica.outofbounds_humidity_index',
+            mapping: {
+              sensorFieldName: 'humidityID',
+              sensorReading: 'float'
+            },
+          },
+          {
+            index: '@elastica.outofbounds_latitude_index',
+            mapping: {
+              sensorFieldName: 'latitudeID',
+              sensorReading: 'double'
+            },
+          }
+        ]
+      tags:
+        - { name: 'console.command' }
+
+
+
+  ######################## UserExceptions Services ######################################################
+    App\Services\User\RoomServices\AddNewRoomServiceInterface:
+      alias: 'App\Services\User\RoomServices\AddNewRoomHandler'
+
+    App\Services\User\GroupServices\GroupCheck\GroupCheckServiceInterface:
+      alias: 'App\Services\User\GroupServices\GroupCheck\GroupCheckService'
 
   ######################## Factories ###########################################################################
 
   ######################## Repositories ########################################################################
-  App\Repository\UserInterface\ORM\CardRepositories\CardViewRepositoryInterface:
-    alias: App\Repository\UserInterface\ORM\CardRepositories\CardViewRepository
+    App\Repository\User\ORM\RoomRepositoryInterface:
+        alias: 'App\Repository\User\ORM\RoomRepository'
 
-  App\Repository\UserInterface\ORM\CardRepositories\CardColourRepositoryInterface:
-    alias: App\Repository\UserInterface\ORM\CardRepositories\CardColourRepository
+    App\Repository\User\ORM\GroupRepositoryInterface:
+        alias: 'App\Repository\User\ORM\GroupRepository'
 
-  App\Repository\UserInterface\ORM\CardRepositories\CardStateRepositoryInterface:
-    alias: App\UserInterface\Repository\ORM\CardRepositories\CardStateRepository
+    App\Repository\User\ORM\UserRepositoryInterface:
+        alias: 'App\Repository\User\ORM\UserRepository'
 
-  App\Repository\UserInterface\ORM\IconsRepositoryInterface:
-    alias: App\Repository\UserInterface\ORM\IconsRepository
+  ######################## Services ########################################################################
+    App\Services\User\User\UserCreationHandler:
+        arguments:
+            $profilePictureDir: '%env(USER_PROFILE_DIRECTORY)%'
 
-  ######################## End Of Sensors ######################################################################################
+    App\Services\Device\Request\DeviceRequestHandlerInterface:
+      alias: 'App\Services\Device\Request\DeviceRequestHandler'

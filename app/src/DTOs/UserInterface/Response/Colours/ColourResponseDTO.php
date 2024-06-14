@@ -2,7 +2,7 @@
 
 namespace App\DTOs\UserInterface\Response\Colours;
 
-use App\Common\Services\RequestTypeEnum;
+use App\Services\Request\RequestTypeEnum;
 use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 

@@ -2,9 +2,6 @@
 
 namespace App\Tests\Devices\Controller;
 
-use App\Common\Services\PaginationCalculator;
-use App\Common\Services\RequestQueryParameterHandler;
-use App\Common\Services\RequestTypeEnum;
 use App\Controller\Device\GetDeviceController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Device\Devices;
@@ -17,6 +14,9 @@ use App\Repository\User\ORM\GroupRepository;
 use App\Repository\User\ORM\UserRepository;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
+use App\Services\Request\PaginationCalculator;
+use App\Services\Request\RequestQueryParameterHandler;
+use App\Services\Request\RequestTypeEnum;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;

@@ -8,6 +8,7 @@ use App\Builders\Device\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Entity\Device\Devices;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
+use App\Exceptions\Sensor\ReadingTypeNotExpectedException;
 use App\Exceptions\User\GroupExceptions\GroupNotFoundException;
 use App\Exceptions\User\RoomsExceptions\RoomNotFoundException;
 use App\Services\API\APIErrorMessages;
@@ -45,9 +46,9 @@ class GetDeviceController extends AbstractController
     }
 
     /**
-     * @throws \App\Exceptions\User\GroupExceptions\GroupNotFoundException
+     * @throws GroupNotFoundException
      * @throws RoomNotFoundException
-     * @throws \App\Exceptions\Sensor\ReadingTypeNotExpectedException
+     * @throws ReadingTypeNotExpectedException
      */
     #[Route('all', name: 'get-user-devices-multiple', methods: [Request::METHOD_GET])]
     public function getAllDevices(
@@ -115,9 +116,9 @@ class GetDeviceController extends AbstractController
     }
 
     /**
-     * @throws \App\Exceptions\User\GroupExceptions\GroupNotFoundException
+     * @throws GroupNotFoundException
      * @throws RoomNotFoundException
-     * @throws \App\Exceptions\Sensor\ReadingTypeNotExpectedException
+     * @throws ReadingTypeNotExpectedException
      */
     #[Route(
         '{deviceID}/get',
