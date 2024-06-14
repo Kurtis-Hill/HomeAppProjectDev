@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Entity\Device;
 
-use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Entity\User\Group;
 use App\Entity\User\Room;
 use App\Entity\User\User;
 use App\Repository\Device\ORM\DeviceRepository;
+use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;

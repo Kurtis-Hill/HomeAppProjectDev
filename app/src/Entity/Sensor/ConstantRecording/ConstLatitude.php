@@ -2,8 +2,8 @@
 
 namespace App\Entity\Sensor\ConstantRecording;
 
-use App\CustomValidators\Sensor\SensorDataValidators\LatitudeConstraint;
 use App\Repository\Sensor\ConstRecord\ORM\ConstantlyRecordLatitudeRepository;
+use App\Services\CustomValidators\Sensor\SensorDataValidators\LatitudeConstraint;
 use Doctrine\ORM\Mapping as ORM;
 
 #[

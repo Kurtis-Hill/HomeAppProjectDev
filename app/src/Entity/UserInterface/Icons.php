@@ -2,8 +2,8 @@
 
 namespace App\Entity\UserInterface;
 
-use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Repository\UserInterface\ORM\IconsRepository;
+use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -2,8 +2,8 @@
 
 namespace App\Entity\Sensor\OutOfRangeRecordings;
 
-use App\CustomValidators\Sensor\SensorDataValidators\HumidityConstraint;
 use App\Repository\Sensor\OutOfBounds\ORM\OutOfBoundsHumidityRepository;
+use App\Services\CustomValidators\Sensor\SensorDataValidators\HumidityConstraint;
 use Doctrine\ORM\Mapping as ORM;
 
 #[

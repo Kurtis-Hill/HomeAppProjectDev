@@ -2,11 +2,11 @@
 
 namespace App\Entity\Sensor\OutOfRangeRecordings;
 
-use App\CustomValidators\Sensor\SensorDataValidators\LDRConstraint;
-use App\CustomValidators\Sensor\SensorDataValidators\SoilConstraint;
 use App\Entity\Sensor\SensorTypes\LDR;
 use App\Entity\Sensor\SensorTypes\Soil;
 use App\Repository\Sensor\OutOfBounds\ORM\OutOfBoundsAnalogRepository;
+use App\Services\CustomValidators\Sensor\SensorDataValidators\LDRConstraint;
+use App\Services\CustomValidators\Sensor\SensorDataValidators\SoilConstraint;
 use Doctrine\ORM\Mapping as ORM;
 
 #[

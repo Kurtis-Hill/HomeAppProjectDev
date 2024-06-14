@@ -2,8 +2,8 @@
 
 namespace App\Entity\UserInterface\Card;
 
-use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use App\Repository\UserInterface\ORM\CardRepositories\CardStateRepository;
+use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 

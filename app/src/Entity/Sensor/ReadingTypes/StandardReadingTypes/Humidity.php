@@ -2,9 +2,9 @@
 
 namespace App\Entity\Sensor\ReadingTypes\StandardReadingTypes;
 
-use App\CustomValidators\Sensor\SensorDataValidators\HumidityConstraint;
 use App\Entity\Sensor\SensorTypes\Interfaces\ReadingSymbolInterface;
 use App\Repository\Sensor\ReadingType\ORM\HumidityRepository;
+use App\Services\CustomValidators\Sensor\SensorDataValidators\HumidityConstraint;
 use Doctrine\ORM\Mapping as ORM;
 
 #[

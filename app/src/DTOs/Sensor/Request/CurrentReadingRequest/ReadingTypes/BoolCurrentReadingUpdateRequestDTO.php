@@ -2,9 +2,9 @@
 
 namespace App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes;
 
-use App\CustomValidators\Sensor\SensorDataValidators\BoolConstraint;
 use App\Entity\Sensor\SensorTypes\GenericMotion;
 use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Services\CustomValidators\Sensor\SensorDataValidators\BoolConstraint;
 
 class BoolCurrentReadingUpdateRequestDTO extends AbstractCurrentReadingUpdateRequestDTO
 {

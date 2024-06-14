@@ -24,7 +24,7 @@ services:
     App\:
       resource: '../src/*'
       exclude:
-        - '../src/{Traits, DependencyInjection, Kernel.php}'
+        - '../src/{Traits, Migrations, DependencyInjection, Kernel.php}'
 
 
     App\Services\Logs\ElasticLogger:
