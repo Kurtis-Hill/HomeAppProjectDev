@@ -13,6 +13,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
       APP_NAME: ${APP_NAME}
+      APP_SECRET: ${APP_SECRET}x
       HTTPS_APP_PORT: ${HTTPS_APP_PORT}
       SECONDARY_APP_PORT: ${SECONDARY_APP_PORT}
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
@@ -25,7 +26,7 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT}
     volumes:
-      - ../SymfonyReact:/var/www/html:cached
+      - ../app:/var/www/html:cached
       - ../SSL:/etc/ssl:ro
     depends_on:
       maria-db:
@@ -57,7 +58,7 @@ services:
       ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
       ELASTIC_ENABLED: ${ELASTIC_ENABLED}
     volumes:
-      - ../SymfonyReact:/var/www/html:cached
+      - ../app:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
     depends_on:
       maria-db:
@@ -101,7 +102,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
     volumes:
-      - ../SymfonyReact:/home/node/app/src:cached
+      - ../app:/home/node/app/src:cached
     networks:
       - HomeAppProjectNetwork
     depends_on:

@@ -1,31 +1,31 @@
 ###> symfony/framework-bundle ###
-SymfonyReact/.env
-SymfonyReact/.env.test.nonelocal
-SymfonyReact/.env.local
-SymfonyReact/.env.nonelocal
-SymfonyReact/.env.*.local
-SymfonyReact/public/bundles/
-SymfonyReact/var/
-SymfonyReact/vendor/
-SymfonyReact/.php-version
-SymfonyReact/bin/*
-SymfonyReact/tests/test-files/*
-SymfonyReact/config/jwt/private.pem
-SymfonyReact/config/jwt/public.pem
-SymfonyReact/supervisord.log
-SymfonyReact/supervisord.pid
+app/.env
+app/bin/.phpunit
+app/.env.test.nonelocal
+app/.env.local
+app/.env.nonelocal
+app/.env.*.local
+app/public/bundles/
+app/var/
+app/vendor/
+app/.php-version
+app/tests/test-files/*
+app/config/jwt/private.pem
+app/config/jwt/public.pem
+app/supervisord.log
+app/supervisord.pid
 
 ###> symfony/webpack-encore-bundle ###
-SymfonyReact/node_modules/
-SymfonyReact/public/build/
-SymfonyReact/npm-debug.log
-SymfonyReact/yarn-error.log
+app/node_modules/
+app/public/build/
+app/npm-debug.log
+app/yarn-error.log
 
 ### IDE tools
 .idea
 .idea/workspace.xml
 .vscode
-SymfonyReact/.idea
+app/.idea
 
 ### CS tools
 .php_cs.cache
@@ -33,9 +33,9 @@ SymfonyReact/.idea
 .php-cs-fixer.cache
 
 ###> symfony/phpunit-bridge ###
-SymfonyReact/.phpunit
-SymfonyReact/.phpunit.result.cache
-SymfonyReact/phpunit.xml
+app/.phpunit
+app/.phpunit.result.cache
+app/phpunit.xml
 
 ##< SSL >###
 SSL/custom/client-cert.pem

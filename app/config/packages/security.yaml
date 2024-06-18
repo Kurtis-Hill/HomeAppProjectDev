@@ -1,0 +1,98 @@
+security:
+    password_hashers:
+        App\Entity\User\User:
+            algorithm: auto
+        App\Entity\Device\Devices:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User\User
+                property: email
+        api_device_provider:
+            entity:
+                class: App\Entity\Device\Devices
+                property: deviceName
+        user_and_device:
+            chain:
+                providers: [ 'app_user_provider', 'api_device_provider' ]
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        login_device:
+            pattern: ^/HomeApp/api/device/login_check
+            stateless: true
+            provider: 'api_device_provider'
+            login_throttling:
+              max_attempts: 5
+            json_login:
+                check_path: /HomeApp/api/device/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        device_api:
+            pattern: ^/HomeApp/api/device
+            stateless: true
+            provider: 'user_and_device'
+            jwt: ~
+            entry_point: jwt
+            refresh_jwt:
+                check_path: /HomeApp/api/device/token/refresh
+
+        login_user:
+            pattern: ^/HomeApp/api/user/login_check
+            stateless: true
+            provider: 'app_user_provider'
+            login_throttling:
+                max_attempts: 5
+            json_login:
+                check_path: /HomeApp/api/user/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        user_api:
+            pattern: ^/HomeApp/api/user
+            stateless: true
+            provider: 'app_user_provider'
+            entry_point: jwt
+            jwt: ~
+            refresh_jwt:
+                check_path: /HomeApp/api/user/token/refresh
+
+
+#        webapp:
+#            pattern: ^/HomeApp/WebApp
+#            stateless: true
+#            provider: 'app_user_provider'
+#            entry_point: jwt
+#            jwt: ~
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    access_control:
+        # Token access
+        - { path: ^/HomeApp/api/device/(login_check|token/refresh), roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/api/user/(login_check|token/refresh), roles: PUBLIC_ACCESS }
+        # WebApp no auth access areas
+        - { path: ^/HomeApp/WebApp/login, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/WebApp/register, roles: PUBLIC_ACCESS }
+        - { path: ^/HomeApp/api/device/register, roles: PUBLIC_ACCESS }
+
+        # WebApp auth access areas
+        # - { path: ^/HomeApp/WebApp/admin, roles: ROLE_ADMIN }
+        # - { path: ^/HomeApp/WebApp/, roles: IS_AUTHENTICATED_FULLY }
+
+        # api endpoints pending on user
+        - { path: ^/HomeApp/api/device, roles: [ROLE_DEVICE, ROLE_USER, ROLE_ADMIN] }
+        - { path: ^/HomeApp/api/user, roles: ROLE_USER }
+
+#        DEV
+#         - { path: ^/HomeApp/api/JIT, roles: PUBLIC_ACCESS }
+#         - { path: ^/HomeApp/ssl, roles: PUBLIC_ACCESS }
+#         - { path: ^/HomeApp/api/user/csrfToken, roles: PUBLIC_ACCESS }
