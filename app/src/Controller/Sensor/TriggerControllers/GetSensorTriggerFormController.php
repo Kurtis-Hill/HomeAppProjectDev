@@ -9,7 +9,7 @@ use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuil
 use App\Builders\Sensor\Response\TriggerResponseBuilder\TriggerFormEncapsulationDTOBuilder;
 use App\Builders\Sensor\Response\TriggerResponseBuilder\TriggerTypeResponseBuilder;
 use App\Entity\User\User;
-use App\Repository\Common\OperatorRepository;
+use App\Repository\Common\ORM\OperatorRepository;
 use App\Repository\Sensor\ReadingType\ORM\RelayRepository;
 use App\Repository\Sensor\Sensors\ORM\SensorRepository;
 use App\Repository\Sensor\TriggerTypeRepository;

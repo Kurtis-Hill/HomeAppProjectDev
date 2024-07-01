@@ -3,7 +3,7 @@
 namespace App\Tests\Controller\Device;
 
 use App\Entity\Common\IPLog;
-use App\Repository\Common\IPLogRepository;
+use App\Repository\Common\ORM\IPLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

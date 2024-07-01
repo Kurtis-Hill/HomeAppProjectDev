@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services\Device\Request;
 
 use App\Builders\Device\Request\DevicePingRequestDTOBuilder;
+use App\Builders\Device\Request\DeviceRequestEncapsulationBuilder;
 use App\Entity\Device\Devices;
 use App\Exceptions\Device\DeviceIPNotSetException;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,13 +20,13 @@ readonly class DevicePingRequestHandler
     ) {}
 
     /**
-     * @throws \App\Exceptions\Device\DeviceIPNotSetException
+     * @throws DeviceIPNotSetException
      * @throws TransportExceptionInterface
      */
     public function pingDevice(Devices $device): bool
     {
         $devicePingRequestDTO = $this->devicePingRequestDTOBuilder->buildPingRequestDTO();
-        $deviceRequestEncapsulationDTO = \App\Builders\Device\Request\DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
+        $deviceRequestEncapsulationDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
             $device,
             $devicePingRequestDTO,
             self::PING_ENDPOINT

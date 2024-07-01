@@ -5,7 +5,7 @@ namespace App\Controller\Device;
 
 use App\DTOs\IPLog\Request\IPLogRequestDTO;
 use App\Entity\Common\IPLog;
-use App\Repository\Common\IPLogRepository;
+use App\Repository\Common\ORM\IPLogRepository;
 use App\Repository\Device\ORM\DeviceRepositoryInterface;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;

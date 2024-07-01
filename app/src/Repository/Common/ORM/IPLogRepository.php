@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Common;
+namespace App\Repository\Common\ORM;
 
 use App\Entity\Common\IPLog;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

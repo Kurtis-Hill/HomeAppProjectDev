@@ -52,3 +52,9 @@ services:
   es01:
     ports:
       - ${ELASTICSEARCH_EXTERNAL_PORT}:9200
+
+
+  rabbitmq:
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}

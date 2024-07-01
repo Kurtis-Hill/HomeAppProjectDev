@@ -18,7 +18,7 @@ services:
         $client: "@elastica.client"
         $level: !php/const Monolog\Logger::ERROR
         $bubble: true
-        $elasticsearchVersion: 8.4.3
+        $elasticsearchVersion: '%env(ELASTIC_VERSION)%'
 
   ################### Core ############################
     App\:
@@ -285,6 +285,10 @@ services:
     App\Repository\Sensor\ConstRecord\Elastic\ConstRecordAnalogRepository:
         arguments:
           $index: '@elastica.constrecord_analog_index'
+
+    App\Repository\Common\Elastic\LogRepository:
+        arguments:
+          $index: '@elastica.log_index'
 
     App\Services\Sensor\SensorTriggerProcessor\ReadingTriggerHandlerInterface:
         alias: 'App\Services\Sensor\SensorTriggerProcessor\ReadingTriggerHandler'

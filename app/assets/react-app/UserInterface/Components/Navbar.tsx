@@ -61,6 +61,18 @@ export default function NavBar(props: {
             const navbarResponse: AxiosResponse = await handleNavBarRequest();
             const navbarResponseData: NavBarResponseInterface = navbarResponse.data;
 
+            const queryNavElement: IndividualNavBarElement = {
+                header: 'Query',
+                icon: 'search',
+                itemName: 'Query',
+                listItemLinks: [
+                    {
+                        displayName: 'View Queries',
+                        link: '/HomeApp/WebApp/query'
+                    },
+                ]
+            }
+            navbarResponseData.payload.push(queryNavElement);
             const triggersNavElement: IndividualNavBarElement = {
                 header: 'Triggers',
                 icon: 'bolt',

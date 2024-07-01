@@ -7,7 +7,7 @@ use App\Builders\Device\DeviceUpdate\DeviceSettingsUpdateDTOBuilder;
 use App\Entity\Device\Devices;
 use App\Events\Device\DeviceUpdateEvent;
 use App\Exceptions\Device\DuplicateDeviceException;
-use App\Repository\Common\IPLogRepository;
+use App\Repository\Common\ORM\IPLogRepository;
 use App\Repository\Device\ORM\DeviceRepositoryInterface;
 use App\Repository\User\ORM\GroupRepositoryInterface;
 use App\Repository\User\ORM\RoomRepositoryInterface;
