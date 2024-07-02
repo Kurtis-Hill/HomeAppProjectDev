@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { AnnouncementFlashModal, AnnouncementFlashModalInterface } from "../Modals/AnnouncementFlashModal";
 import { AnnouncementFlashModalBuilder } from '../../Builders/ModalBuilder/AnnouncementFlashModalBuilder';
-import { useState, useEffect } from 'react';
 import { ResponseInterceptor } from '../../Response/Axios/ResponseInterceptor';
 
 export function ResponseComponent(props: {refreshNavBar: (newValue: boolean) => void}) {
