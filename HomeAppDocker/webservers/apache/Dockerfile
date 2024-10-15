@@ -9,22 +9,6 @@ RUN apt-get install -y \
 #  build-essential \
 #  wget 
 
-#  # Download PHP source code
-# RUN wget https://www.php.net/distributions/php-7.4.16.tar.gz
-
-# # Extract the downloaded file
-# RUN tar -xvf php-8.2.tar.gz
-
-# # Navigate to the extracted directory
-# WORKDIR php-8.2
-
-# # Configure PHP with a larger FD_SETSIZE
-# RUN ./configure --enable-fd-setsize=2048
-
-# RUN make && make install
-
-# WORKDIR /
-
 RUN update-ca-certificates
 
 RUN pecl install xdebug

@@ -18,7 +18,7 @@ class DeviceResponseNormalizer implements NormalizerInterface
     {
         if (!empty($context['groups'])) {
             $classMetadataFactory = new ClassMetadataFactory(
-                new AttributeLoader(
+                new AttributeLoader(}
                     new AnnotationReader()
                 )
             );
