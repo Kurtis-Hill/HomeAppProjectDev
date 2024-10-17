@@ -40,9 +40,9 @@
 //Web bits
 // Test
 //#define HOMEAPP_HOST "https://192.168.1.158"
-#define HOMEAPP_HOST "https://192.168.1.230"
+//#define HOMEAPP_HOST "https://192.168.1.230"
 // Prod
-//#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
+#define HOMEAPP_HOST "https://klh19901017.asuscomm.com"
 #define HOMEAPP_URL "HomeApp"
 #define HOMEAPP_PORT "8101"
 
@@ -1247,10 +1247,9 @@ bool setRelayValues() {
     Serial.printf("relay interval is: %d\n", relayData.interval[i]);
     
     relayData.sensorCount++;
-    Serial.print("Marking relays as set and active: ");
+    Serial.print("Is relay set and active: ");
     relayData.valuesAreSet = true;
     Serial.println(relayData.activeSensor);
-    Serial.println(relayData.valuesAreSet);
   }
 
   return true;
@@ -1445,18 +1444,14 @@ String sendHomeAppHttpsRequest(
   String jsonData,
   bool addAuthHeader
 ) {
-  Serial.printf(
-    "JSON data to send: %s",
-    jsonData
-  );
-  Serial.println("Building Https connection");
+  Serial.print("JSON data to send: ");
+  Serial.println(jsonData);
+  Serial.println("Building Https conn ection");
   std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
   client->setFingerprint(fingerprint);
   HTTPClient https;
-  Serial.printf(
-    "[HTTPS] begin connecting to: %s \n ",
-    url
-  );
+  Serial.print("[HTTPS] begin connecting to: ");
+  Serial.println(url);
   
   https.begin(*client, url);
   https.addHeader("Content-Type", "application/json");
@@ -1767,11 +1762,11 @@ bool setShtValues() {
     
     if (!sht31[i]->begin(0x44)) {
       Serial.println("Couldn't find SHT31");
-      while (1) delay(1);
-      int currentTime = millis();
-      if (timeout <= currentTime) {
-        break;
-      }
+//      delay(1);
+//      int currentTime = millis();
+//      if (timeout <= currentTime) {
+//        break;
+//      }
     } else {
       shtData.activeSensor = true;  
       shtData.sensorCount++;
@@ -1963,8 +1958,10 @@ String buildShtUpdateRequest(bool force = false) {
     if ((shtData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
       shtData.tempReading[i] = sht31[i]->readTemperature();
       shtData.humidReading[i] = sht31[i]->readHumidity();
-      Serial.printf("Sht Temperature readings is: %d \n", shtData.tempReading[i]);
-      Serial.printf("Sht Humidity readings is: %d \n", shtData.humidReading[i]);
+      Serial.print("Sht Temperature readings is: ");
+      Serial.println(shtData.tempReading[i]);
+      Serial.print("Sht Humidity readings is: ");
+      Serial.println(shtData.humidReading[i]);
       
       if (!isnan(shtData.tempReading[i])) {
         Serial.print("sensor name:");
@@ -1992,6 +1989,8 @@ bool sendShtUpdateRequest(bool force = false) {
   String payload = buildShtUpdateRequest(force);
   if (payload == "null") {
     Serial.println("Aborting Sht request payload empty");
+    
+    return false;
   }
   String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
 
@@ -2037,6 +2036,7 @@ bool setDallasValues() {
     strncpy(dallasTempData.sensorName[i], dallasDoc[i]["sensorName"].as<const char*>(), sizeof(dallasTempData.sensorName[i]));
     Serial.printf("Dallas sensor name check %s", dallasTempData.sensorName[i]);
     int readingInterval = dallasDoc[i]["readingInterval"].as<int>();
+    dallasTempData.interval[i] = readingInterval ? readingInterval : 6000;
     if (readingInterval) {
      dallasTempData.interval[i] = readingInterval;  
     } else {
@@ -2463,7 +2463,10 @@ void loop() {
   } 
 
   if (shtData.settingsJsonExists == true && shtData.valuesAreSet == false) {
-    setShtValues();
+    bool shtSetSuccess = setShtValues();
+    if (shtSetSuccess == false) {
+      shtData.valuesAreSet = false;
+    }
     Serial.println("Starting SHT");
     shtData.activeSensor = true;
   }
