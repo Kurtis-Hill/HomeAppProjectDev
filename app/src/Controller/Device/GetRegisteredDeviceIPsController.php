@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Device;
 
 use App\Builders\Device\DeviceResponse\DeviceIPResponseDTOBuilder;
-use App\Repository\Common\IPLogRepository;
+use App\Repository\Common\ORM\IPLogRepository;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
 use App\Traits\HomeAppAPITrait;

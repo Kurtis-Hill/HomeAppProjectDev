@@ -30,7 +30,7 @@ const cardReducer = (previousCards: CardSensorDataResponseInterface[]|undefined,
             continue;
         }
         for (let j = 0; j < cardForDisplay.sensorData.length; j++) {
-            if (cardForDisplay !== undefined && cardForDisplay.cardViewID === previousCard.cardViewID) {
+            if (cardForDisplay.cardViewID === previousCard.cardViewID) {
                 const sensorReadingData: CurrentSensorDataTypeStandardCard|undefined = cardForDisplay.sensorData[j];
                 const previousSensorReadingData: CurrentSensorDataTypeStandardCard|undefined = previousCard.sensorData[j];
                 if ((previousSensorReadingData !== undefined && sensorReadingData !== undefined) && sensorReadingData.readingType === previousSensorReadingData.readingType) {
@@ -72,6 +72,7 @@ export function CardReadingViewHandler(props: {
     const cardRefreshTimer = props.cardRefreshTimer
 
     useEffect(() => {
+        handleCardRefresh();
         const interval = setInterval(() => {
             handleCardRefresh();
         }, cardRefreshTimer);
@@ -81,7 +82,7 @@ export function CardReadingViewHandler(props: {
     
 
     const handleCardRefresh = async () => {
-        const cardData: Array<CardSensorDataResponseInterface> = await handleGettingSensorReadings();
+        const cardData: CardSensorDataResponseInterface[] = await handleGettingSensorReadings();
         if (Array.isArray(cardData) && cardData.length > 0) {
             setCardsForDisplay(cardData);
             setLoadingCards(false);

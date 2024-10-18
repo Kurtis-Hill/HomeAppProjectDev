@@ -12,7 +12,7 @@ use App\Entity\Sensor\SensorTrigger;
 use App\Entity\Sensor\TriggerType;
 use App\Entity\User\Group;
 use App\Entity\User\User;
-use App\Repository\Common\OperatorRepository;
+use App\Repository\Common\ORM\OperatorRepository;
 use App\Repository\Device\ORM\DeviceRepository;
 use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;

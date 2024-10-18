@@ -10,7 +10,7 @@ use App\Entity\User\User;
 use App\Exceptions\Sensor\BaseReadingTypeNotFoundException;
 use App\Exceptions\Sensor\OperatorNotFoundException;
 use App\Exceptions\Sensor\TriggerTypeNotFoundException;
-use App\Repository\Common\OperatorRepository;
+use App\Repository\Common\ORM\OperatorRepository;
 use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use App\Repository\Sensor\TriggerTypeRepository;
 use App\Services\Sensor\Trigger\TriggerHelpers\TriggerDateTimeConvertor;

@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace App\Entity\Common;
 
-use App\Repository\Common\OperatorRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: OperatorRepository::class),
+    ORM\Entity(repositoryClass: \App\Repository\Common\ORM\OperatorRepository::class),
     ORM\Table(name: "operators"),
     ORM\UniqueConstraint(name: "operatorName", columns: ["operatorName"]),
     ORM\UniqueConstraint(name: "operatorSymbol", columns: ["operatorSymbol"]),
