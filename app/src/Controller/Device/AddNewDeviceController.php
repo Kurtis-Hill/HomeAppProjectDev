@@ -7,6 +7,7 @@ use App\Builders\Device\DeviceUpdate\DeviceDTOBuilder;
 use App\DTOs\Device\Request\NewDeviceRequestDTO;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
+use App\Exceptions\Device\DeviceCreationFailureException;
 use App\Exceptions\User\GroupExceptions\GroupNotFoundException;
 use App\Exceptions\User\RoomsExceptions\RoomNotFoundException;
 use App\Services\API\APIErrorMessages;
@@ -49,8 +50,8 @@ class AddNewDeviceController extends AbstractController
     /**
      * @throws RoomNotFoundException
      * @throws ORMException
-     * @throws \App\Exceptions\Device\DeviceCreationFailureException
-     * @throws \App\Exceptions\User\GroupExceptions\GroupNotFoundException
+     * @throws DeviceCreationFailureException
+     * @throws GroupNotFoundException
      */
     #[Route('/add', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
