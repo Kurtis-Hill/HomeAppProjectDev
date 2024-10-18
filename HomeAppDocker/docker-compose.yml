@@ -115,11 +115,14 @@ services:
       context: ./rabbitmq
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-rabbitmq'
+    environment:
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     ports:
       - '${RABBIT_MQ_INTERFACE_PORT}:15672'
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
-#         - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s

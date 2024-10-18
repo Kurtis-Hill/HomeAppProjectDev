@@ -39,6 +39,9 @@ when@prod:
             elasticsearch:
                 type: service
                 id: Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler
+            app:
+                type: fingers_crossed
+                handler: elasticsearch
                 channels: ["app"]
             main:
                 type: fingers_crossed

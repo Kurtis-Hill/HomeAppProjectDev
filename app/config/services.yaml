@@ -10,6 +10,7 @@ services:
         autoconfigure: true
         bind:
           string $projectDir: '%kernel.project_dir%'
+          string $env: '%env(string:APP_ENV)%'
 
     Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
       arguments:
@@ -26,6 +27,12 @@ services:
       exclude:
         - '../src/{Traits, Migrations, DependencyInjection, Kernel.php}'
 
+    app.my_custom_redis_provider:
+        class: \Redis
+        factory: ['Symfony\Component\Cache\Adapter\RedisAdapter', 'createConnection']
+        arguments:
+            - '%env(resolve:REDIS_URL)%'
+            - { retry_interval: 2, timeout: 10 }
 
     App\Services\Logs\ElasticLogger:
       arguments:
@@ -102,6 +109,14 @@ services:
         - setDeviceUpdateProducer: ['@old_sound_rabbit_mq.send_device_settings_update_producer']
   ######################## Producers ######################################################
 
+######################## Clients ###########################################################################
+    App\Services\Common\Client\HomeAppAlertClientInterface:
+        alias: App\Services\Common\Client\HomeAppAltertSlackClient
+
+    App\Services\Common\Client\HomeAppAltertSlackClient:
+        arguments:
+            $slackAlertWebhookUrl: '%env(SLACK_WEBHOOK_ALERT_URL)%'
+            $httpClient: '@slack.hooks.client'
   ######################## Consumers ######################################################
 
   ######################## UserInterface Services ######################################################
@@ -117,8 +132,8 @@ services:
     App\Services\UserInterface\NavBar\NavBarDataProviderInterface:
       alias : App\Services\UserInterface\NavBar\NavBarDataProvider
     ######################## New Sensor Creation Services ########################################################
-        ######################## Factories ###########################################################################
-        ######################## Repositories ########################################################################
+
+    ######################## Repositories ########################################################################
     App\Repository\UserInterface\ORM\CardRepositories\CardViewRepositoryInterface:
       alias: App\Repository\UserInterface\ORM\CardRepositories\CardViewRepository
 
@@ -130,7 +145,7 @@ services:
 
     App\Repository\UserInterface\ORM\IconsRepositoryInterface:
       alias: App\Repository\UserInterface\ORM\IconsRepository
-        ######################## End Of Sensors ######################################################################################
+  ######################## End Of Sensors ######################################################################################
 
     App\AMQP\Device\Producers\DeviceSettingsUpdateProducer: '@old_sound_rabbit_mq.send_device_settings_update_producer'
 
@@ -168,6 +183,7 @@ services:
     App\Events\Subscribers\Sensor\SensorUpdateEventSubscriber:
       calls:
           - setSensorDataUpdateProducer: [ '@upload_sensor_data_to_device_producer' ]
+
 ####################### Producers ######################################################
     App\AMQP\Sensor\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
     App\AMQP\Sensor\Producers\UploadSensorDataToDeviceProducer: '@old_sound_rabbit_mq.upload_sensor_data_to_device_producer'
@@ -377,8 +393,6 @@ services:
     App\Services\User\GroupServices\GroupCheck\GroupCheckServiceInterface:
       alias: 'App\Services\User\GroupServices\GroupCheck\GroupCheckService'
 
-  ######################## Factories ###########################################################################
-
   ######################## Repositories ########################################################################
     App\Repository\User\ORM\RoomRepositoryInterface:
         alias: 'App\Repository\User\ORM\RoomRepository'
@@ -396,3 +410,8 @@ services:
 
     App\Services\Device\Request\DeviceRequestHandlerInterface:
       alias: 'App\Services\Device\Request\DeviceRequestHandler'
+
+
+    App\Services\Sensor\OutOfBounds\OutOfBoundsAlertHandler:
+        arguments:
+            $redisClient: '@app.my_custom_redis_provider'
