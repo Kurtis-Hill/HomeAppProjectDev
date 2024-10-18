@@ -4,7 +4,7 @@ namespace App\Services\Sensor\Trigger\UpdateTrigger;
 
 use App\DTOs\Sensor\Internal\Trigger\UpdateTriggerDTO;
 use App\Entity\Sensor\SensorTrigger;
-use App\Repository\Common\OperatorRepository;
+use App\Repository\Common\ORM\OperatorRepository;
 use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use App\Repository\Sensor\TriggerTypeRepository;
 use App\Services\API\APIErrorMessages;

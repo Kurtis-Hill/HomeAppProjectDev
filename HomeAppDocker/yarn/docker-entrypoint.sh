@@ -13,6 +13,7 @@ yarn config set network-timeout 1200000 -g
 if [ ${APP_ENV} = 'prod' ]; then
   echo "production environment installing..."
   yarn install --production --check-files
+  yarn update-browserslist-db@latest
   # yarn add @symfony/webpack-encore
   echo "building assets..."
   yarn build

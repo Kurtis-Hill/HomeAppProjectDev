@@ -6,18 +6,13 @@ use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\StandardReadingSensorInt
 use App\Factories\Sensor\OufOfBounds\OutOfBoundsFactoryInterface;
 use App\Factories\Sensor\ReadingTypeFactories\OutOfBoundsEntityCreationFactory;
 
-class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface
+readonly class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface
 {
-    private OutOfBoundsEntityCreationFactory $outOfBoundsCreationFactory;
-
-    private OutOfBoundsFactoryInterface $outOfBoundsFactory;
-
     public function __construct(
-        OutOfBoundsEntityCreationFactory $outOfBoundsCreationFactory,
-        OutOfBoundsFactoryInterface $outOfBoundsFactory,
+        private OutOfBoundsEntityCreationFactory $outOfBoundsCreationFactory,
+        private OutOfBoundsFactoryInterface $outOfBoundsFactory,
+        private OutOfBoundsAlertHandler $outOfBoundsAlertHandler,
     ) {
-        $this->outOfBoundsFactory = $outOfBoundsFactory;
-        $this->outOfBoundsCreationFactory = $outOfBoundsCreationFactory;
     }
 
     public function processOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void
@@ -30,6 +25,11 @@ class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface
 
             $outOfBoundsRepository = $this->outOfBoundsFactory->getOutOfBoundsServiceRepository($readingType);
             $outOfBoundsRepository->persist($outOfBoundsObject);
+
+            $this->outOfBoundsAlertHandler->handlerAlert(
+                $readingTypeObject,
+                $outOfBoundsObject,
+            );
         }
     }
 }

@@ -15,7 +15,7 @@
         "lexik/jwt-authentication-bundle": "^2.6",
         "php-amqplib/rabbitmq-bundle": "^2.8",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "predis/predis": "^2.0",
+        "predis/predis": "^2.2",
         "ruflin/elastica": "^7.2",
         "snc/redis-bundle": "^4.3",
         "symfony/asset": "6.4.*",

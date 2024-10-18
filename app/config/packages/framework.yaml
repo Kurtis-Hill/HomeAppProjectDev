@@ -10,6 +10,10 @@ framework:
           auth_basic: "%env(string:ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%:%env(string:ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%"
           verify_host: false
           verify_peer: false
+        slack.hooks.client:
+          base_uri: 'https://hooks.slack.com'
+          headers: { 'Content-Type': 'application/json' }
+
 
     #http_method_override: true
     # Enables session support. Note that the session will ONLY be started if you read or write from it.

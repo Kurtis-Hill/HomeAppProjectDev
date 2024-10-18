@@ -14,7 +14,7 @@ use App\Entity\Sensor\SensorTypes\GenericRelay;
 use App\Entity\Sensor\TriggerType;
 use App\Entity\User\Group;
 use App\Entity\User\User;
-use App\Repository\Common\OperatorRepository;
+use App\Repository\Common\ORM\OperatorRepository;
 use App\Repository\Device\ORM\DeviceRepository;
 use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
@@ -25,7 +25,6 @@ use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use JsonException;
-use Proxies\__CG__\App\Sensors\Entity\SensorType;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -546,7 +545,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         $devicesApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
         $deviceApartOf = $devicesApartOf[0];
 
-        /** @var \App\Entity\Sensor\SensorTypes\GenericRelay $relaySensorType */
+        /** @var GenericRelay $relaySensorType */
         $relaySensorType = $this->entityManager->getRepository(GenericRelay::class)->findAll()[0];
         $sensorsApartOf = $this->sensorRepository->findBy(['deviceID' => $deviceApartOf, 'sensorTypeID' => $relaySensorType->getSensorTypeID()]);
         $sensorApartOf = $sensorsApartOf[0];

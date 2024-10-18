@@ -24,7 +24,7 @@ export function AddNewSensorForm(props: {deviceID: number, refreshData?: () => v
     const [newSensorFormInputs, setNewSensorFormInputs] = useState<NewSensor>({
         sensorName: '',
         pinNumber: 0,
-        deviceID: 0,
+        deviceID: deviceID,
         sensorTypeID: 0,
         readingInterval: 500,
     });
