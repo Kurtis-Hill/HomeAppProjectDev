@@ -16,6 +16,7 @@ import DotCircleSpinner from "../../Common/Components/Spinners/DotCircleSpinner"
 import { AnnouncementFlashModal } from '../../Common/Components/Modals/AnnouncementFlashModal';
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import UserSettingsButton from '../../Common/Components/Buttons/UserSettingsButton';
+import QueryButton from "../../Common/Components/Buttons/QueryButton";
 
 export default function NavBar(props: {
     refreshNavbar: boolean,
@@ -121,14 +122,12 @@ export default function NavBar(props: {
             <ul className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion ${navbarToggleSizeSmall === true ? 'toggled' : ''}` }>
                 <HomeAppButton />
                 <hr className="sidebar-divider my-0" />
-                {
-                    admin === true
-                        ? 
-                            <li className="nav-item">
-                                <UserSettingsButton />
-                            </li>
-                        : null
-                }
+                <li className="nav-item">
+                    <QueryButton />
+                </li>
+                <li className="nav-item">
+                    <UserSettingsButton />
+                </li>
                 <SidebarDividerWithHeading heading="View options for:" />
                 {
                     loadingNavbarListItems === true

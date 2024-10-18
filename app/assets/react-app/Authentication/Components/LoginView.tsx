@@ -163,7 +163,7 @@ export default function LoginView() {
                                                 ? <DotCircleSpinner spinnerSize={2} classes="center-spinner" />
                                                 : <SubmitButton
                                                      type='submit'
-                                                      text="LoginView"
+                                                      text="Login"
                                                       onClickFunction={handleLoginRequest}
                                                       classes="btn-block"
                                                 /> 

@@ -23,7 +23,7 @@ import TriggerPage from '../Routes/Triggers/TriggerPage';
 import { DeviceView } from "../Devices/Components/DeviceView";
 import LoginView from "../Authentication/Components/LoginView";
 import { Logout } from '../Authentication/Components/Logout';
-import QueryView from "../Sensors/Components/QueryView";
+import QueryPage from "../Routes/Query/QueryPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -35,9 +35,9 @@ root.render(
                     <Route path="index" element={<LandingPage />} />
                     <Route path="cards/index" element={<CardLandingPage />} />
                     <Route path="devices/:deviceID" element={<DeviceView />} />
-                    <Route path="user-settings" element={<UserSettingsView />} />
                     <Route path="sensors/triggers" element={<TriggerPage />} />
-                    <Route path="query" element={<QueryView />} />
+                    <Route path="user-settings" element={<UserSettingsView />} />
+                    <Route path="query" element={<QueryPage />} />
                 </Route>
         </Routes>
     </BrowserRouter>

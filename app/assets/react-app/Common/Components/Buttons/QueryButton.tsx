@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 
 import { webappURL } from '../../URLs/CommonURLs';
 
-export default function AdminButton() {
+export default function QueryButton() {
     return (
-        <Link to={`${webappURL}admin`}>
+        <Link to={`${webappURL}query`}>
             <div className="nav-link">
-                <i className="fas fa-fw fa-tachometer-alt" />
-                <span>Admin Settings</span>
+                <i className="fas fa-fw fa-question" />
+                <span>Query</span>
             </div>
         </Link>
     );

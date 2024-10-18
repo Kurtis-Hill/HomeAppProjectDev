@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from "react-router-dom";
 
-import { webappURL } from '../../../Common/URLs/CommonURLs';
+import { webappURL } from '../../URLs/CommonURLs';
 
 export default function UserSettingsButton() {
     return (

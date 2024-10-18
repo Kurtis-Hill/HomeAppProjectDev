@@ -6,6 +6,10 @@ use App\Entity\Sensor\AbstractSensorType;
 use App\Entity\Sensor\SensorTypes\Bmp;
 use App\Entity\Sensor\SensorTypes\Dallas;
 use App\Entity\Sensor\SensorTypes\Dht;
+use App\Entity\Sensor\SensorTypes\GenericMotion;
+use App\Entity\Sensor\SensorTypes\GenericRelay;
+use App\Entity\Sensor\SensorTypes\LDR;
+use App\Entity\Sensor\SensorTypes\Sht;
 use App\Entity\Sensor\SensorTypes\Soil;
 use App\Repository\Sensor\Sensors\SensorTypeRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -32,7 +36,7 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
         return $this->find($id);
     }
 
-    #[ArrayShape([Bmp::class, Dallas::class, Dht::class, Soil::class])]
+    #[ArrayShape([Bmp::class, Dallas::class, Dht::class, Soil::class, LDR::class, Sht::class, GenericMotion::class, GenericRelay::class])]
     public function findAllSensorTypes(bool $cache = true): array
     {
         $qb = $this->createQueryBuilder('st');
