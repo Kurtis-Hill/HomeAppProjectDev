@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User\UserControllers;
+namespace App\Controller;
 
 use App\Services\API\CommonURL;
 use Elastica\Client;
@@ -9,11 +9,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-class ElasticBucketsController extends AbstractController
+class DataStoreController extends AbstractController
 {
     #[Route(CommonURL::USER_BASE_API_URL . 'query/user', name: 'get-user-indicies', methods: [Request::METHOD_GET])]
     public function listUserQueryBucket(
-        Request $request,
         Client $client
     ): JsonResponse {
         $indicies = $client->getCluster()->getIndexNames();

@@ -5,6 +5,7 @@ namespace App\Services\Sensor\OutOfBounds;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Factories\Sensor\OufOfBounds\OutOfBoundsFactoryInterface;
 use App\Factories\Sensor\ReadingTypeFactories\OutOfBoundsEntityCreationFactory;
+use Throwable;
 
 readonly class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerInterface
 {
@@ -15,6 +16,9 @@ readonly class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerI
     ) {
     }
 
+    /**
+     * @throws Throwable
+     */
     public function processOutOfBounds(StandardReadingSensorInterface $readingTypeObject): void
     {
         if ($readingTypeObject->isReadingOutOfBounds()) {
@@ -23,13 +27,26 @@ readonly class OutOfBoundsReadingTypeFacade implements SensorOutOfBoundsHandlerI
 
             $outOfBoundsObject = $outOfBoundsObjectBuilder->buildOutOfBoundsObject($readingTypeObject);
 
-            $outOfBoundsRepository = $this->outOfBoundsFactory->getOutOfBoundsServiceRepository($readingType);
-            $outOfBoundsRepository->persist($outOfBoundsObject);
+            $exception = null;
+            try {
+                $outOfBoundsRepository = $this->outOfBoundsFactory->getOutOfBoundsServiceRepository($readingType);
+                $outOfBoundsRepository->persist($outOfBoundsObject);
+            } catch (Throwable $e) {
+                $exception = $e;
+            }
 
-            $this->outOfBoundsAlertHandler->handlerAlert(
-                $readingTypeObject,
-                $outOfBoundsObject,
-            );
+            try {
+                $this->outOfBoundsAlertHandler->handlerAlert(
+                    $readingTypeObject,
+                    $outOfBoundsObject,
+                );
+            } catch (Throwable $e) {
+                $exception = $e;
+            }
+
+            if ($exception !== null) {
+                throw $exception;
+            }
         }
     }
 }

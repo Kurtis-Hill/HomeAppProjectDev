@@ -312,6 +312,10 @@ services:
     App\Services\Sensor\Trigger\TriggerCreationHandler\TriggerCreationHandlerInterface:
         alias: 'App\Services\Sensor\Trigger\TriggerCreationHandler\TriggerCreationHandler'
 
+    App\Repository\Logs\LogsRepository:
+        arguments:
+            $index: '@elastica.log_index'
+
 ######################## End Of Sensors ######################################################################################
 ######################## Commands ######################################################################################
     App\Command\Sensor\Elasticsearch\IndicesCreation\ElasticCreateConstRecordIndicesCommand:

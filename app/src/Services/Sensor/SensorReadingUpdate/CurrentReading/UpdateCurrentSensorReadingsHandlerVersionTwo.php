@@ -102,6 +102,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
                 try {
                     $this->outOfBoundsSensorService->processOutOfBounds($readingTypeObject);
                 } catch (Throwable $th) {
+
                     $this->elasticLogger->error(
                         'Error processing out of bounds',
                         [

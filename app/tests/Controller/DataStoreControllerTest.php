@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller\User\UserControllers;
+namespace App\Tests\Controller;
 
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\User\User;
@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class ElasticBucketsControllerTest extends WebTestCase
+class DataStoreControllerTest extends WebTestCase
 {
     private const ELASTIC_INDICES_URL = '/HomeApp/api/query/user';
 
