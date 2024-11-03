@@ -12,19 +12,18 @@ use Symfony\Component\Routing\Attribute\Route;
 class ElasticBucketsController extends AbstractController
 {
     #[Route(CommonURL::USER_BASE_API_URL . 'query/user', name: 'get-user-indicies', methods: [Request::METHOD_GET])]
-    public function listUserQueryBucket(Request $request, Client $client): JsonResponse
-    {
-        $user = $this->getUser();
+    public function listUserQueryBucket(
+        Request $request,
+        Client $client
+    ): JsonResponse {
+        $indicies = $client->getCluster()->getIndexNames();
 
+        return new JsonResponse($indicies);
+    }
 
-        dd($res);
-//        $this->denyAccessUnlessGranted(UserVoter::CAN_GET_USER, $user);
+    public function logSearchQuery(
+        Client $client,
+    ): JsonResponse {
 
-//        $query = $request->query->get('query');
-//        $bucket = $request->query->get('bucket');
-
-        $buckets = $elasticService->getBuckets($query, $bucket);
-
-        return $this->json($buckets);
     }
 }

@@ -117,8 +117,8 @@ abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, 
 
     public function isReadingOutOfBounds(): bool
     {
-        return $this->getCurrentReading() >= $this->getHighReading()
-            || $this->getCurrentReading() <= $this->getLowReading();
+        return $this->getCurrentReading() > $this->getHighReading()
+            || $this->getCurrentReading() < $this->getLowReading();
     }
 
     public function getMeasurementDifferenceHighReading(): int|float

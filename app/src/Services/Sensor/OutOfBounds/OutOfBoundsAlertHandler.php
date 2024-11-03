@@ -33,7 +33,7 @@ readonly class OutOfBoundsAlertHandler
         $highReading = $standardReadingSensor->getHighReading();
         $lowReading = $standardReadingSensor->getLowReading();
 
-        $isHighReading = $currentReading >= $highReading;
+        $isHighReading = $currentReading > $highReading;
 
         $message = sprintf(
             'Sensor reading is: %s for sensor name: %s in room: %s is out of bounds when the %s limit was set to %s',
