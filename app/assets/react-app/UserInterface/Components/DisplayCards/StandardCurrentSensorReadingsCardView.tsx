@@ -33,11 +33,11 @@ export function StandardCurrentSensorReadingsCardView(props: {
             setCardLoading={props.setLoadingCardModalView}
         >
             <React.Fragment>
-                <div className="card-sensor-type-display-name">Type: <b>{sensorType}</b></div>
+                <div className="card-sensor-type-display-name"><b>{sensorType}</b></div>
                 <div className="row no-gutters align-items-center">
                     <div className="col mr-2">
-                        <div className="d-flex font-weight-bold text text-uppercase mb-1">Name: {sensorName}</div>
-                        <div className="d-flex text text-uppercase mb-1 card-room-text-display">Area: {sensorRoom}</div>
+                        <div className="d-flex font-weight-bold text text-uppercase mb-1">{sensorName}</div>
+                        <div className="d-flex text text-uppercase mb-1 card-room-text-display">{sensorRoom}</div>
                             <CurrentReadingSensorDataOutputFactory 
                                 sensorData={sensorData}
                                 sensorType={sensorType}

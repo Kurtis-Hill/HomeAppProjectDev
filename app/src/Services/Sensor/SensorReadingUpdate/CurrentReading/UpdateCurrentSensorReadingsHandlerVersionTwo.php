@@ -79,7 +79,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
             if ($this->checkIfErrorsArePresent($currentValidationErrors)) {
                 $readingTypeRepository->refresh($readingTypeObject);
                 $validationErrors = [
-                    ...$this->getValidationErrorAsArray($validationErrors),
+                    ...$this->getValidationErrorAsArray($currentValidationErrors),
                     ...$validationErrors
                 ];
                 continue;
