@@ -13,7 +13,7 @@ class RedirectHomePage
         $throwable = $event->getThrowable();
         if ($throwable instanceof NotFoundHttpException) {
             $requestUri = $event->getRequest()->getRequestUri();
-            if (str_contains($requestUri, 'HomeApp/WebApp')) {
+            if (str_contains($requestUri, 'HomeApp')) {
                 $redirectResponse = new RedirectResponse('/HomeApp/WebApp/index');
                 $event->setResponse($redirectResponse);
             }
