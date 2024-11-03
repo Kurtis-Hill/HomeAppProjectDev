@@ -42,4 +42,9 @@ class DeviceResponseNormalizer implements NormalizerInterface
     {
         return $data instanceof DeviceResponseDTO;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [DeviceResponseDTO::class];
+    }
 }
