@@ -8,7 +8,7 @@ export const registerAccountUrl = `${webappURL}register`;
 
 export const indexUrl = `${webappURL}index`;
 
-export const cardIndex = `${webappURL}cards/index`;
+export const cardIndex = (cardURL: string) => `${webappURL}cards/${cardURL}`;
 
 export const loginUrl = `${webappURL}login`;
 

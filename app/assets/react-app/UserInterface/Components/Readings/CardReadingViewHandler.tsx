@@ -64,11 +64,12 @@ export function CardReadingViewHandler(props: {
 
     const [cardsForDisplay, setCardsForDisplay] = useReducer<CardSensorDataResponseInterface[]>(cardReducer, []);
 
-    const route:string = props.route ?? 'index';
-    
+
     const filterParams:CardFilterBarType|[] = props.filterParams ?? {'readingTypes': [], 'sensorTypes': []};
 
     const cardRefreshTimer = props.cardRefreshTimer
+
+    const route = props.route;
 
     useEffect(() => {
         handleCardRefresh().then(() => {

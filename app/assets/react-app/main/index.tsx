@@ -34,6 +34,8 @@ root.render(
                 <Route path="/HomeApp/WebApp/" element={<MainPageTop  />}>
                     <Route path="index" element={<LandingPage />} />
                     <Route path="cards/index" element={<CardLandingPage />} />
+                    <Route path="cards/room/:entityID" element={<CardLandingPage />} />
+                    <Route path="cards/device/:entityID" element={<CardLandingPage />} />
                     <Route path="devices/:deviceID" element={<DeviceView />} />
                     <Route path="sensors/triggers" element={<TriggerPage />} />
                     <Route path="user-settings" element={<UserSettingsView />} />

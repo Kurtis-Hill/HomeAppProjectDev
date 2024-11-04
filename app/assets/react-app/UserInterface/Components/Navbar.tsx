@@ -17,6 +17,7 @@ import { AnnouncementFlashModal } from '../../Common/Components/Modals/Announcem
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import UserSettingsButton from '../../Common/Components/Buttons/UserSettingsButton';
 import QueryButton from "../../Common/Components/Buttons/QueryButton";
+import {QuickViewOptionsNavBarElement} from "./Navbar/QuickViewOptionsNavBarElement";
 
 export default function NavBar(props: {
     refreshNavbar: boolean,
@@ -133,6 +134,9 @@ export default function NavBar(props: {
                     loadingNavbarListItems === true
                         ? <DotCircleSpinner classes="margin-spinner" />
                         : null
+                }
+                {
+                    <QuickViewOptionsNavBarElement />
                 }
                 <NavbarViewOptionListElements 
                     navbarResponseData={navbarResponseData} 

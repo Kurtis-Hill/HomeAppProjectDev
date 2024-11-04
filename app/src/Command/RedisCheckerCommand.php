@@ -36,7 +36,7 @@ class RedisCheckerCommand extends Command
         ]);
 
         $response = $this->redisClient->ping();
-dd($response);
+
         if ($response) {
             $output->writeln('<info>Redis is up and running</info>');
             $keys = $this->redisClient->keys('*');

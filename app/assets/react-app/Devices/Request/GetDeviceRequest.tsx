@@ -7,3 +7,9 @@ export async function getDeviceRequest(deviceID: number, type: string|null): Pro
         {params: {responseType: type}}
     );
 }
+
+export async function getAllDevicesRequest(): Promise<AxiosResponse> {
+    return await axios.get(
+        `${apiURL}user-devices/all`,
+    );
+}

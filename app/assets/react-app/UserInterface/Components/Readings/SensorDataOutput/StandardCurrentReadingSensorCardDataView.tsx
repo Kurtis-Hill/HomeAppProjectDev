@@ -2,7 +2,6 @@ import * as React from 'react';
 import { CurrentSensorDataTypeStandardCard } from '../../../Factories/CurrentReadingSensorDataOutputFactory';
 import { capitalizeFirstLetter } from '../../../../Common/StringFormatter';
 
-
 export function StandardCurrentReadingSensorCardDataView(props: { sensorData: CurrentSensorDataTypeStandardCard[]; }) {
     const sensorData: CurrentSensorDataTypeStandardCard[] = props.sensorData ?? undefined;
 

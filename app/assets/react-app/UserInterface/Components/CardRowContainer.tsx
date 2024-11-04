@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { CardReadingViewHandler,  } from './Readings/CardReadingViewHandler';
 import { sensorType, readingType } from '../../Sensors/SensorLanguage'
@@ -13,16 +13,18 @@ export function CardRowContainer(props: {
     horizontal?: boolean; 
     classes?: string; 
 }) {
+
+
     const { filterParams, route, horizontal, classes } = props;
-    
+
     const [cardRefreshTimer, setCardRefreshTimer] = useState<number>(4000)
-    
+
     const [sensorFilterParams, setSensorFilterParams] = useState<CardFilterBarType>(filterParams ?? {readingTypes: [], sensorTypes: []});
 
     const [selectedCardForQuickUpdate, setSelectedCardForQuickUpdate] = useState<number|null>(null);
 
     const [loadingCardModalView, setLoadingCardModalView] = useState<boolean>(false);
-    
+
     const addSensorFilterParamsForRequest = (filterParam: {type: string, value: string}): void => {
         const filterParamType = filterParam.type;
         
@@ -73,7 +75,7 @@ export function CardRowContainer(props: {
                 horizontal === true
                     ? <div className={classes ?? 'col-xl-12 col-md-12 mb-12'}>
                         <CardReadingViewHandler 
-                            route={route} 
+                            route={route}
                             filterParams={sensorFilterParams} 
                             cardRefreshTimer={cardRefreshTimer}
                             setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate} 
@@ -82,7 +84,7 @@ export function CardRowContainer(props: {
                         />
                     </div>  
                     :   <CardReadingViewHandler 
-                            route={route} 
+                            route={route}
                             filterParams={sensorFilterParams} 
                             cardRefreshTimer={cardRefreshTimer}
                             setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate} 
