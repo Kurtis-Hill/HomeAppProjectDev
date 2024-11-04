@@ -90,6 +90,10 @@ services:
       tags:
         - { name: 'console.command' }
 
+    App\Command\SlackAltertCheckerCommand:
+        tags:
+            - { name: 'console.command' }
+
     app.listener.redirect_404_to_homepage:
       class: App\Events\EventListeners\UserInterface\RedirectHomePage
       tags:
@@ -387,8 +391,6 @@ services:
         ]
       tags:
         - { name: 'console.command' }
-
-
 
   ######################## UserExceptions Services ######################################################
     App\Services\User\RoomServices\AddNewRoomServiceInterface:

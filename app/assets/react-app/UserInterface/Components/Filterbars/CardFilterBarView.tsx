@@ -91,7 +91,7 @@ export default function CardFilterBarView(props: {
                                         sensorData.readingTypes.map((sensorReadingType: ReadingTypeResponseInterface, index: Number) => (
                                             <React.Fragment key={index}>
                                                 <div style={{padding: '2%'}} className="row">
-                                                    <input onChange={handleClick} defaultChecked type="checkbox" name={readingTypesString} value={sensorReadingType.readingTypeName} />
+                                                    <input onChange={() => handleClick} defaultChecked type="checkbox" name={readingTypesString} value={sensorReadingType.readingTypeName} />
                                                     <label style={{padding: '2%'}} htmlFor={sensorReadingType.readingTypeName}>{capitalizeFirstLetter(sensorReadingType.readingTypeName)}</label>
                                                 </div>
                                             </React.Fragment>
@@ -104,7 +104,7 @@ export default function CardFilterBarView(props: {
                                         sensorData.sensorTypes.map((sensorType: SensorTypeResponseInterface, index: number) => (
                                             <React.Fragment key={index}>
                                                 <div style={{padding: '2%'}} className="row">
-                                                    <input onChange={handleClick} defaultChecked type="checkbox" name={sensorTypesString} value={sensorType.sensorTypeName} />
+                                                    <input onChange={() => handleClick} defaultChecked type="checkbox" name={sensorTypesString} value={sensorType.sensorTypeName} />
                                                     <label style={{padding: '2%'}} htmlFor={sensorType.sensorTypeName}>{capitalizeFirstLetter(sensorType.sensorTypeName)}</label>
                                                 </div>
                                             </React.Fragment>
@@ -115,7 +115,7 @@ export default function CardFilterBarView(props: {
                             <div className="card-filter-slider">
                                 <label className="form-label" htmlFor="card-refresh-slider">{ cardRefreshTimerInSeconds } seconds for data refresh</label>
                                 <div className="range">
-                                    <input onChange={ handleSliderChange } min={cardRefreshMinLimit} max={cardRefreshMaxLimit} value={ cardRefreshTimerInSeconds } type="range" className="form-range" id="card-refresh-slider" />
+                                    <input onChange={ () => handleSliderChange } min={cardRefreshMinLimit} max={cardRefreshMaxLimit} value={ cardRefreshTimerInSeconds } type="range" className="form-range" id="card-refresh-slider" />
                                 </div>
                             </div>
                         </div>
