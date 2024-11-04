@@ -421,3 +421,9 @@ services:
     App\Services\Sensor\OutOfBounds\OutOfBoundsAlertHandler:
         arguments:
             $redisClient: '@app.my_custom_redis_provider'
+
+    App\Command\RedisCheckerCommand:
+        arguments:
+            $redisClient: '@app.my_custom_redis_provider'
+        tags:
+            - { name: 'console.command' }

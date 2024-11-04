@@ -17,8 +17,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class SlackAltertCheckerCommand extends Command
 {
-    public function __construct(private readonly HomeAppAlertClientInterface $homeAppAlertClient)
-    {
+    public function __construct(
+        private readonly HomeAppAlertClientInterface $homeAppAlertClient,
+    ) {
         parent::__construct();
     }
 
