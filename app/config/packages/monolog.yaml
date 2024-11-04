@@ -16,7 +16,7 @@ when@dev:
                 channels: ["!event", "!doctrine", "!console"]
             elasticsearch:
                 type: service
-#                 id: Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler
+                 id: Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler
 #                 id: App\Services\Logs\ElasticLogger
                 channels: ["app"]
 when@test:

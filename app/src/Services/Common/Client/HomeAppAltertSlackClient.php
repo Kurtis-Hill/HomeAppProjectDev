@@ -2,8 +2,10 @@
 
 namespace App\Services\Common\Client;
 
+use App\Exceptions\Sensor\AlertNotSentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 readonly class HomeAppAltertSlackClient implements HomeAppAlertClientInterface
@@ -15,6 +17,9 @@ readonly class HomeAppAltertSlackClient implements HomeAppAlertClientInterface
     ) {
     }
 
+    /**
+     * @throws AlertNotSentException
+     */
     public function sendAlert(string $message): void
     {
         $this->logger->info(
@@ -26,12 +31,16 @@ readonly class HomeAppAltertSlackClient implements HomeAppAlertClientInterface
             ['message' => $message]
         );
 
-        $this->httpClient->request(
+        $response = $this->httpClient->request(
             Request::METHOD_POST,
             $this->slackAlertWebhookUrl, [
             'json' => [
                 'text' => $message,
             ],
         ]);
+
+        if ($response->getStatusCode() !== Response::HTTP_OK) {
+            throw new AlertNotSentException('Alert not sent');
+        }
     }
 }

@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { useState, useEffect, useReducer } from 'react';
+import {useEffect, useReducer, useState} from 'react';
 
-import { AxiosResponse } from 'axios';
-import { AxiosError } from 'axios';
+import {AxiosError, AxiosResponse} from 'axios';
 import CardReadingFactory from '../../Factories/CardReadingFactory';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
-import { CardSensorDataResponseInterface } from '../../Response/Cards/CurrentReadingCardData/CardDataResponseInterface';
-import { CurrentSensorDataTypeStandardCard } from '../../Factories/CurrentReadingSensorDataOutputFactory';
-import { handleSendingCardDataRequest } from '../../Request/Cards/CardPageRequest';
+import {CardSensorDataResponseInterface} from '../../Response/Cards/CurrentReadingCardData/CardDataResponseInterface';
+import {CurrentSensorDataTypeStandardCard} from '../../Factories/CurrentReadingSensorDataOutputFactory';
+import {handleSendingCardDataRequest} from '../../Request/Cards/CardPageRequest';
 import {CardFilterBarType} from "../Filterbars/CardFilterBarView";
 
 const initialCardDisplay = [];
@@ -72,12 +71,13 @@ export function CardReadingViewHandler(props: {
     const cardRefreshTimer = props.cardRefreshTimer
 
     useEffect(() => {
-        handleCardRefresh();
-        const interval = setInterval(() => {
-            handleCardRefresh();
-        }, cardRefreshTimer);
-        
-        return () => clearInterval(interval);
+        handleCardRefresh().then(() => {
+            const interval = setInterval(() => {
+                handleCardRefresh();
+            }, cardRefreshTimer);
+
+            return () => clearInterval(interval);
+        });
     }, [filterParams, cardRefreshTimer]);
     
 
@@ -95,9 +95,7 @@ export function CardReadingViewHandler(props: {
     const handleGettingSensorReadings = async (): Promise<Array<CardSensorDataResponseInterface|undefined>> => {
         try {
             const cardDataResponse: AxiosResponse = await handleSendingCardDataRequest({route, filterParams});
-            const cardData: Array<CardSensorDataResponseInterface> = cardDataResponse.data.payload;
-
-            return cardData;
+            return cardDataResponse.data.payload;
         } catch(error) {
             const err = error as AxiosError|Error;
             return [];           
