@@ -141,14 +141,11 @@ class GetCardViewControllerTest extends WebTestCase
                     }
                     if ($cardSensorReadingTypeObject instanceof Humidity) {
                         $humidity = true;
-//                        dd($payload['sensorData']);
-//                        dd($sensorDataArrayCount);
                         self::assertEquals(
                             Humidity::READING_TYPE,
                             $payload['sensorData'][$sensorDataArrayCount]['readingType']
                         );
                     }
-//                        dd($cardSensorReadingTypeObjects);
                     if ($cardSensorReadingTypeObject instanceof Analog) {
                         $analog = true;
                         self::assertEquals(

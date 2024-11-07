@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\User\RoomControllers;
 
+use App\Controller\User\RoomControllers\DeleteRoomController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\User\Room;
 use App\Entity\User\User;
@@ -51,7 +52,7 @@ class DeleteRoomControllerTest extends WebTestCase
     {
         while (true) {
             $roomID = random_int(1, 10000);
-            /** @var \App\Entity\User\Room $room */
+            /** @var Room $room */
             $room = $this->roomRepository->findOneBy(['roomID' => $roomID]);
             if ($room === null) {
                 break;
@@ -90,7 +91,7 @@ class DeleteRoomControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $title = $responseData['title'];
-        self::assertEquals(\App\Controller\User\RoomControllers\DeleteRoomController::NOT_AUTHORIZED_TO_BE_HERE, $title);
+        self::assertEquals(DeleteRoomController::NOT_AUTHORIZED_TO_BE_HERE, $title);
 
         $errors = $responseData['errors'];
         self::assertEquals([APIErrorMessages::ACCESS_DENIED], $errors);
@@ -115,10 +116,39 @@ class DeleteRoomControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $title = $responseData['title'];
-        self::assertEquals(\App\Controller\User\RoomControllers\DeleteRoomController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(DeleteRoomController::REQUEST_SUCCESSFUL, $title);
 
         $payload = $responseData['payload'];
-        self::assertEquals([sprintf(\App\Controller\User\RoomControllers\DeleteRoomController::DELETED_ROOM_SUCCESSFULLY, $room->getRoomID())], $payload);
+        self::assertEquals([sprintf(DeleteRoomController::DELETED_ROOM_SUCCESSFULLY, $room->getRoomID())], $payload);
+    }
+
+    /**
+     * @dataProvider wrongHttpsMethodDataProvider
+     */
+    public function test_using_wrong_http_method(string $httpVerb): void
+    {
+        $rooms = $this->roomRepository->findAll();
+        $room = $rooms[array_rand($rooms)];
+
+         $this->client->request(
+            $httpVerb,
+            sprintf(self::DELETE_ROOM_URL, $room->getRoomID()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+        );
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function wrongHttpsMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_GET],
+            [Request::METHOD_PUT],
+            [Request::METHOD_PATCH],
+            [Request::METHOD_POST],
+        ];
     }
 
     protected function tearDown(): void

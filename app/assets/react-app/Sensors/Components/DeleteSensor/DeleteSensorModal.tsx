@@ -16,7 +16,7 @@ export function DeleteSensorModal(props: {
 
     const [showDeleteSensorModal, setShowDeleteSensorModal] = useState<boolean>(false)
 
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<JSX.Element<Array<typeof AnnouncementFlashModal>>>([]);
 
     const deleteSensorHandler = async (e: Event) => {
         e.preventDefault();

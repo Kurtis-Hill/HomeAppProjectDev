@@ -125,7 +125,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $soilSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
-//        dd($soilSensor);
+
         self::assertTrue($result);
         self::assertEquals(
             $analogCurrentReadingUpdateMessage->getCurrentReading(),

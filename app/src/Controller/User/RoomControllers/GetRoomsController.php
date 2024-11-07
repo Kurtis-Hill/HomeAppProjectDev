@@ -3,6 +3,7 @@
 namespace App\Controller\User\RoomControllers;
 
 use App\Builders\User\RoomDTOBuilder\RoomResponseDTOBuilder;
+use App\Entity\User\Room;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
 use App\Repository\User\ORM\RoomRepositoryInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/', name: 'get-user-rooms')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/')]
 class GetRoomsController extends AbstractController
 {
     use HomeAppAPITrait;

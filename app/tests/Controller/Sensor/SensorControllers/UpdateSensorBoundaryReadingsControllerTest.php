@@ -436,7 +436,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             self::assertEquals($expectedDataPayloadMessage[$count]['readingType'], $dataPayload['readingType']);
 
             if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
-//                dd($expectedDataPayloadMessage, $dataPayload);
                 self::assertEquals($expectedDataPayloadMessage[$count]['highReading'], $dataPayload['highReading']);
 
                 if (!empty($expectedDataPayloadMessage[$count]['lowReading'])) {

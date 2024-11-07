@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Migrations;
+namespace DoctrineMigrations;
 
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;

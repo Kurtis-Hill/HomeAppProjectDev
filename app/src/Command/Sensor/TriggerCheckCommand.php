@@ -51,6 +51,7 @@ class TriggerCheckCommand extends Command
         $allSensors = array_merge($allStandardSensors, $allBoolSensors);
 
         foreach ($allSensors as $sensor) {
+            $output->writeln(sprintf('Checking base reading type id: %d', $sensor->getBaseReadingType()->getBaseReadingTypeID()));
             $this->readingTriggerHandler->handleTrigger(
                 $sensor,
             );

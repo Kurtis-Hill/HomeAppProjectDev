@@ -13,8 +13,6 @@ export function CardRowContainer(props: {
     horizontal?: boolean; 
     classes?: string; 
 }) {
-
-
     const { filterParams, route, horizontal, classes } = props;
 
     const [cardRefreshTimer, setCardRefreshTimer] = useState<number>(4000)
@@ -24,6 +22,15 @@ export function CardRowContainer(props: {
     const [selectedCardForQuickUpdate, setSelectedCardForQuickUpdate] = useState<number|null>(null);
 
     const [loadingCardModalView, setLoadingCardModalView] = useState<boolean>(false);
+
+    const [cardFilterSettingsForceReset, setCardFilterSettingsForceReset] = useState<boolean>(false);
+
+    const forceResetCardFilterSettings = (setting: boolean): void => {
+        if (setting === true) {
+            setCardFilterSettingsForceReset(true);
+        }
+        setCardFilterSettingsForceReset(false);
+    }
 
     const addSensorFilterParamsForRequest = (filterParam: {type: string, value: string}): void => {
         const filterParamType = filterParam.type;
@@ -69,6 +76,7 @@ export function CardRowContainer(props: {
                 removeFilterParams={removeSensorFilterParamsForRequest}
                 setCardRefreshTimer={setCardRefreshTimer}
                 cardRefreshTimer={cardRefreshTimer}
+                setCardFilterSettingsForceReset={forceResetCardFilterSettings}
             />
 
             {

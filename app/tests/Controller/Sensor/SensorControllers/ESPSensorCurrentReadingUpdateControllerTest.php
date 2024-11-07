@@ -83,7 +83,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
-//        dd($requestResponse->getContent());
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());
@@ -365,7 +364,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         );
 
         $requestResponse = $this->client->getResponse();
-//        dd($requestResponse->getContent());
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $requestResponse->getStatusCode());
@@ -639,7 +637,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
             ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
             $jsonData
         );
-//        dd($this->client->getResponse()->getContent());
 
         $requestResponse = $this->client->getResponse();
         $responseData = json_decode($requestResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);

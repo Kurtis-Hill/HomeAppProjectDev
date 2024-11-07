@@ -18,11 +18,14 @@ import GroupResponseInterface from '../../../User/Response/Group/GroupResponseIn
 import { DeleteDeviceModal } from '../DeleteDevice/DeleteDeviceModal';
 import { DeviceResponseInterface } from '../../Response/DeviceResponseInterface';
 
-type UpdateDeviceFormInputsInterface = {
+type UpdateDeviceFormInputsType = {
+    deviceID?: number;
     deviceName?: string;
     password?: string;
     deviceGroup?: number;
+    deviceGroupName?: string;
     deviceRoom?: number;
+    deviceRoomName?: string;
 }
 
 export function UpdateDeviceView(props: {
@@ -39,7 +42,7 @@ export function UpdateDeviceView(props: {
         deviceRoom: false,
     });
 
-    const [deviceUpdateFormInputs, setDeviceUpdateFormInputs] = useState<UpdateDeviceFormInputsInterface>({
+    const [deviceUpdateFormInputs, setDeviceUpdateFormInputs] = useState<UpdateDeviceFormInputsType>({
         deviceName: deviceData.deviceName,
         password: '',
         deviceGroup: deviceData.group.groupID,
@@ -48,7 +51,7 @@ export function UpdateDeviceView(props: {
         deviceRoomName: deviceData.room.roomName,
     });
 
-    const originalDeviceData = useRef<UpdateDeviceFormInputsInterface>({
+    const originalDeviceData = useRef<UpdateDeviceFormInputsType>({
         deviceID: deviceData.deviceID,
         deviceName: deviceData.deviceName,
         password: '',
@@ -62,7 +65,7 @@ export function UpdateDeviceView(props: {
         userRooms: [] as RoomResponseInterface[],
     });
 
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<JSX.Element<Array<typeof AnnouncementFlashModal>>>([]);
 
     const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
         setAnnouncementModals([
@@ -174,7 +177,7 @@ export function UpdateDeviceView(props: {
 
             if (deviceUpdateResponse.status === 200) {
                 const deviceResponsePayload = deviceUpdateResponse.data.payload as DeviceResponseInterface;
-                showAnnouncementFlash([deviceUpdateResponse.data.title], 'Success', 30);
+                showAnnouncementFlash([deviceUpdateResponse.data.title], 'Success');
 
                 setDeviceUpdateFormInputs({
                     ...deviceUpdateFormInputs,

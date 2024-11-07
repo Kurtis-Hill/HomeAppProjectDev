@@ -531,7 +531,6 @@ class UpdateSensorControllerTest extends WebTestCase
 //
 //        $randomPin = $devicePinsInUse[1];
 //
-    ////        dd($randomPin);
 //
 //        /** @var Sensor $sensor */
 //        $sensor = $this->sensorRepository->findOneBy(['deviceID' => $device->getDeviceID()]);

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ ${APP_ENV} = 'prod' ]; then
+if [ "${APP_ENV}" = 'prod' ]; then
   echo "production container build"
   echo "installing composer packages..."
   git clean -f
@@ -11,7 +11,7 @@ if [ ${APP_ENV} = 'prod' ]; then
   echo "...Migrations complete"
 fi
 
-if [ ${APP_ENV} = 'dev' ]; then
+if [ "${APP_ENV}" = 'dev' ]; then
 	echo "dev container build"
 	echo "installing composer packages..."
   	composer install --prefer-dist --no-interaction

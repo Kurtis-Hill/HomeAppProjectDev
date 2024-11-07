@@ -17,7 +17,7 @@ import { getCardViewFormRequest } from '../../Request/Cards/Card/GetCardViewForm
 export function UpdateCard(props: {cardViewID: number}) {
     const { cardViewID } = props;
 
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<JSX.Element[Array<typeof AnnouncementFlashModal>]>([]);
 
     const [updateCardRequestLoading, setUpdateCardRequestLoading] = useState<boolean>(false);
     

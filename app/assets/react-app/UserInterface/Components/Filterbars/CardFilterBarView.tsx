@@ -7,6 +7,7 @@ import { capitalizeFirstLetter } from '../../../Common/StringFormatter';
 import ReadingTypeResponseInterface from '../../../Sensors/Response/ReadingTypes/ReadingTypeResponseInterface';
 import { SensorTypeResponseInterface } from '../../../Sensors/Response/SensorType/SensorTypeResponseInterface';
 import CardFilterButton from '../Buttons/CardFilterButton';
+import {AcceptButton} from "../../../Common/Components/Buttons/AcceptButton";
 
 
 export type CardFilterBarType = {
@@ -20,8 +21,11 @@ export default function CardFilterBarView(props: {
     removeFilterParams: (filterParams: {type: string, value: string}) => void,
     setCardRefreshTimer: (timer: number) => void,
     cardRefreshTimer: number,
+    setCardFilterSettingsForceReset?: (boolean) => void,
 }) {
     const [showFilters, setShowFilters] = useState<boolean>(false);
+
+    const [internalSliderValue, setInternalSliderValue] = useState<number>(4000);
 
     const addFilterParams = props.addFilterParams;
 
@@ -30,6 +34,8 @@ export default function CardFilterBarView(props: {
     const cardRefreshTimer = props.cardRefreshTimer;
 
     const setCardRefreshTimer = props.setCardRefreshTimer;
+
+    const setCardFilterSettingsForceReset = props.setCardFilterSettingsForceReset;
 
     const itemDropdownToggleClass: string = showFilters === true ? 'show' : '';
 
@@ -74,9 +80,13 @@ export default function CardFilterBarView(props: {
 
             if (newRefreshValue >= cardRefreshMinLimit && newRefreshValue <= cardRefreshMaxLimit) {
                 const refreshValueInMillieSeconds = newRefreshValue * 1000;          
-                setCardRefreshTimer(refreshValueInMillieSeconds);
+                setInternalSliderValue(refreshValueInMillieSeconds);
             }
-        } 
+        }
+
+        const setSliderValue = (e: Event) => {
+            setCardRefreshTimer(internalSliderValue);
+        }
         
         const cardRefreshTimerInSeconds = cardRefreshTimer / 1000;
         return (
@@ -91,7 +101,7 @@ export default function CardFilterBarView(props: {
                                         sensorData.readingTypes.map((sensorReadingType: ReadingTypeResponseInterface, index: Number) => (
                                             <React.Fragment key={index}>
                                                 <div style={{padding: '2%'}} className="row">
-                                                    <input onChange={() => handleClick} defaultChecked type="checkbox" name={readingTypesString} value={sensorReadingType.readingTypeName} />
+                                                    <input onChange={handleClick} defaultChecked type="checkbox" name={readingTypesString} value={sensorReadingType.readingTypeName} />
                                                     <label style={{padding: '2%'}} htmlFor={sensorReadingType.readingTypeName}>{capitalizeFirstLetter(sensorReadingType.readingTypeName)}</label>
                                                 </div>
                                             </React.Fragment>
@@ -104,7 +114,7 @@ export default function CardFilterBarView(props: {
                                         sensorData.sensorTypes.map((sensorType: SensorTypeResponseInterface, index: number) => (
                                             <React.Fragment key={index}>
                                                 <div style={{padding: '2%'}} className="row">
-                                                    <input onChange={() => handleClick} defaultChecked type="checkbox" name={sensorTypesString} value={sensorType.sensorTypeName} />
+                                                    <input onChange={handleClick} defaultChecked type="checkbox" name={sensorTypesString} value={sensorType.sensorTypeName} />
                                                     <label style={{padding: '2%'}} htmlFor={sensorType.sensorTypeName}>{capitalizeFirstLetter(sensorType.sensorTypeName)}</label>
                                                 </div>
                                             </React.Fragment>
@@ -115,7 +125,8 @@ export default function CardFilterBarView(props: {
                             <div className="card-filter-slider">
                                 <label className="form-label" htmlFor="card-refresh-slider">{ cardRefreshTimerInSeconds } seconds for data refresh</label>
                                 <div className="range">
-                                    <input onChange={ () => handleSliderChange } min={cardRefreshMinLimit} max={cardRefreshMaxLimit} value={ cardRefreshTimerInSeconds } type="range" className="form-range" id="card-refresh-slider" />
+                                    <input onChange={handleSliderChange} min={cardRefreshMinLimit} max={cardRefreshMaxLimit} value={ internalSliderValue } type="range" className="form-range" id="card-refresh-slider" />
+                                    <AcceptButton clickEvent={setSliderValue} dataName="cardRefreshSlider" />
                                 </div>
                             </div>
                         </div>

@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { CardRowContainer } from '../../UserInterface/Components/CardRowContainer';
-import {useParams} from "react-router-dom";
 
-export function CardLandingPage() {
-    const params = useParams();
-    const entity: number = parseInt(params.entityID);
+export function CardLandingPage(props: {route?: string}) {
+    const { route } = props;
 
     return (
         <React.Fragment>
@@ -12,7 +10,8 @@ export function CardLandingPage() {
                 <div id="content"> 
                     <div className="container-fluid">
                         <div className="row">
-                            <CardRowContainer route={window.location.href.includes('room') ? `room/${entity}` : window.location.href.includes('device') ? `device/${entity}` : 'index'} />
+                            {/*<CardRowContainer route={window.location.href.includes('room') ? `room/${entity}` : window.location.href.includes('device') ? `device/${entity}` : 'index'} />*/}
+                            <CardRowContainer route={route ?? 'index'} />
                         </div>
                     </div>
                 </div>

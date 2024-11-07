@@ -26,7 +26,7 @@ doctrine:
       pool: doctrine.system_cache_pool
     result_cache_driver:
       type: pool
-      pool: doctrine.result_cache_pool
+      pool: custom_cache_pool
     mappings:
       Source:
         type: attribute

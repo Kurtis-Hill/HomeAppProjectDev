@@ -84,12 +84,6 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
             );
         }
 
-//        dd( $this->cardViewFilterExecution(
-//            $qb,
-//            $cardViewTypeFilterDTO,
-//            $cardDataPostFilterDTO,
-//            $parameters,
-//            $hydrationMode));
         return $this->cardViewFilterExecution(
             $qb,
             $cardViewTypeFilterDTO,
@@ -150,7 +144,6 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         $qb->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS . '.sensor = ' . CardView::ALIAS . '.sensor');
         $readingTypeAlias = $this->prepareSensorJoinsForQuery($cardDataPostFilterDTO->getReadingTypesToQuery(), $qb);
 
-//        dd($readingTypeAlias);
         $qb->select($readingTypeAlias, CardView::ALIAS, Room::ALIAS, Colour::ALIAS, Icons::ALIAS, Sensor::ALIAS, CardState::ALIAS, Devices::ALIAS, AbstractSensorType::ALIAS, Sensor::ALIAS, BaseSensorReadingType::ALIAS)
             ->innerJoin(Devices::class, Devices::ALIAS, Join::WITH, Devices::ALIAS . $this->createJoinConditionString('deviceID', 'deviceID', Sensor::ALIAS))
             ->innerJoin(CardState::class, CardState::ALIAS, Join::WITH, CardState::ALIAS . $this->createJoinConditionString('stateID', 'cardStateID', CardView::ALIAS))
@@ -182,7 +175,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         if ($cardViewTypeFilterDTO !== null) {
             if ($cardViewTypeFilterDTO->getDevice() !== null) {
                 $qb->andWhere($expr->eq(Devices::ALIAS . '.deviceID', ':deviceID'));
-                $parameters['deviceNameID'] = $cardViewTypeFilterDTO->getDevice()->getDeviceID();
+                $parameters['deviceID'] = $cardViewTypeFilterDTO->getDevice()->getDeviceID();
             }
             if ($cardViewTypeFilterDTO->getRoom() !== null) {
                 $qb->andWhere($expr->eq(Room::ALIAS . '.roomID', ':roomID'));

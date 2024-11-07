@@ -653,8 +653,6 @@ class AddNewSensorControllerTest extends WebTestCase
             $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBySensorID($sensor->getSensorID()),
         );
         self::assertNotEmpty($newReadingTypeObjects);
-//        dd($newReadingTypeObjects, $sensor);
-//        dd($newReadingTypeObjects);
         if ($sensorTypeObject instanceof SensorTypeInterface) {
             //            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
             self::assertEquals($sensorTypeObject::getReadingTypeName(), $sensor->getSensorTypeObject()::getReadingTypeName());
@@ -664,17 +662,11 @@ class AddNewSensorControllerTest extends WebTestCase
             /** @var AllSensorReadingTypeInterface $sensorType */
             $sensorType = $this->entityManager->getRepository($sensorTypeClass::class)->findBySensorID($sensor->getSensorID())[0];
             self::assertInstanceOf($sensorTypeClass::class, $sensorType);
-            //        dd($sensorTypeMappingObject, $sensorType);
-//            dd(
-//                $sensorTypeObject->getMaxTemperature(),
-//                $sensorTypeClass,
-//            );
             if ($sensorTypeClass instanceof TemperatureReadingTypeInterface) {
                 self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeClass->getHighReading());
                 self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorTypeClass->getLowReading());
             }
             if ($sensorTypeClass instanceof HumidityReadingTypeInterface) {
-//                dd($sensorTypeClass, $sensorTypeObject);
                 self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorTypeClass->getHighReading());
                 self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorTypeClass->getLowReading());
             }
