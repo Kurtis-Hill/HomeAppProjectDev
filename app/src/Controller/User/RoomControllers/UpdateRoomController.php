@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/')]
@@ -27,7 +28,10 @@ class UpdateRoomController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    #[Route('{room}/update', name: 'update-user-room', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
+    #[
+        Route('{room}/update', name: 'update-user-room', methods: [Request::METHOD_PUT, Request::METHOD_PATCH]),
+        IsGranted('ROLE_ADMIN')
+    ]
     public function updateRoom(
         #[MapRequestPayload]
         RoomRequestDTO $roomRequestDTO,
@@ -62,6 +66,7 @@ class UpdateRoomController extends AbstractController
         } catch (Exception $e) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
         }
+        $managerRegistry->getManager()->flush();
 
         return $this->sendSuccessfulJsonResponse($normalizedRoom);
     }

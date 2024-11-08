@@ -34,7 +34,7 @@ export function UpdateRoom(props: {
         roomName: roomData.roomName,
     })
 
-    const [announcementModals, setAnnouncementModals] = useState<JSX.Element<Array<typeof AnnouncementFlashModal>>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
         setAnnouncementModals([
@@ -48,7 +48,7 @@ export function UpdateRoom(props: {
     }
 
     useEffect(() => {
-        if (roomData.roomID !== originalRoomData.current.roomID) {
+        if (roomData.roomID === originalRoomData.current.roomID) {
             setRoomUpdateFormInputs({
                 roomName: roomData.roomName,
             });
@@ -87,7 +87,7 @@ export function UpdateRoom(props: {
 
     const sendUpdateRoomRequest = async (e: Event) => {
         const name = (e.target as HTMLElement).dataset.name;
-        let dataToSend: { roomName: string } = {};
+        let dataToSend: { roomName?: string } = {};
 
         switch (name) {
             case 'roomName':
@@ -122,7 +122,7 @@ export function UpdateRoom(props: {
         } catch (error) {
             const err = error as AxiosError;
             if (err.response?.status === 400) {
-                showAnnouncementFlash(err.response.data.errors, 'Error', 20);
+                showAnnouncementFlash([err.message], 'Error', 20);
             } else {
                 showAnnouncementFlash(['An error occurred. Please try again later.'], 'Error', 20);
             }

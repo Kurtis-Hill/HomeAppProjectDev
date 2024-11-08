@@ -21,7 +21,7 @@ export function DeleteDeviceModal(props: {
 
     const [showDeleteDeviceModal, setShowDeleteDeviceModal] = useState<boolean>(false)
 
-    const [announcementModals, setAnnouncementModals] = useState<JSX.Element<Array<typeof AnnouncementFlashModal>>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const navigate: NavigateFunction = useNavigate();
 

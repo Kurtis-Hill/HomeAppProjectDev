@@ -3,7 +3,7 @@ import { IconResponseInterface } from "../../../Response/Icons/IconResponseInter
 import StateResponseInterface from "../../../Response/State/StateResponseInterface"
 
 export interface CurrentUserSelections {
-    icons: IconResponseInterface
-    colours: ColourResponseInterface
-    states: StateResponseInterface
+    icons: IconResponseInterface[]
+    colours: ColourResponseInterface[]
+    states: StateResponseInterface[]
 }

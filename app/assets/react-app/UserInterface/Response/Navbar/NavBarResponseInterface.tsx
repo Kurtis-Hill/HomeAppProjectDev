@@ -13,6 +13,6 @@ export interface IndividualNavBarElement {
 }
 
 export interface ListLinkItem {
-    displayName: string|JSX.Element;
+    displayName: string;
     link: string;
 }

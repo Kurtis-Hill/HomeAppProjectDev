@@ -6,7 +6,7 @@ import { Label } from '../Elements/Label';
 export default function InputWLabel(props: { 
     labelName: string; 
     name: string; 
-    value?: object;
+    value?: object|string|number;
     type?: string; 
     placeHolder?: string; 
     autoComplete?: string; 
@@ -19,7 +19,7 @@ export default function InputWLabel(props: {
 }) {
     const labelName = props.labelName ?? ''
     const name: string = props.name ?? ''
-    const value: object = props.value
+    const value: object|string|number = props.value
     const type: string = props.type ?? 'text'
     const placeHolder: string = props.placeHolder ?? ''
     const autoComplete: string = props.autoComplete ?? 'true'

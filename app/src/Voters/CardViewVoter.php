@@ -4,6 +4,7 @@ namespace App\Voters;
 
 use App\Entity\Device\Devices;
 use App\Entity\Sensor\Sensor;
+use App\Entity\User\Group;
 use App\Entity\User\Room;
 use App\Entity\User\User;
 use App\Entity\UserInterface\Card\CardView;
@@ -21,6 +22,8 @@ class CardViewVoter extends Voter
 
     public const VIEW_ROOM_CARD_DATA = 'view-room-card-data';
 
+    public const VIEW_GROUP_CARD_DATA = 'view-group-card-data';
+
     public const CAN_ADD_NEW_CARD = 'can-add-new-card';
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -30,6 +33,7 @@ class CardViewVoter extends Voter
             self::CAN_VIEW_CARD_VIEW_FORM,
             self::VIEW_DEVICE_CARD_DATA,
             self::VIEW_ROOM_CARD_DATA,
+            self::VIEW_GROUP_CARD_DATA,
             self::CAN_ADD_NEW_CARD
         ])) {
             return false;
@@ -48,8 +52,24 @@ class CardViewVoter extends Voter
             self::VIEW_DEVICE_CARD_DATA => $this->viewDeviceCardData($user, $subject),
             self::VIEW_ROOM_CARD_DATA => $this->viewRoomCardData($user, $subject),
             self::CAN_ADD_NEW_CARD => $this->canAddNewCardView($user, $subject),
+
             default => false
         };
+    }
+
+    public function canViewGroupCardData(UserInterface $user, Group $group): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if (in_array($group->getGroupID(), $user->getAssociatedGroupIDs())) {
+            return true;
+        }
+
+        $checkCommon = $this->checkCommon($user);
+
+        return $checkCommon ?? true;
     }
 
     private function canAddNewCardView(UserInterface $user, Sensor $sensor): bool

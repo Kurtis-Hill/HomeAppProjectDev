@@ -14,6 +14,7 @@ use App\Repository\Common\ORM\OperatorRepository;
 use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
 use App\Repository\Sensor\TriggerTypeRepository;
 use App\Services\Sensor\Trigger\TriggerHelpers\TriggerDateTimeConvertor;
+use InvalidArgumentException;
 
 readonly class CreateNewTriggerDTOBuilder
 {
@@ -28,6 +29,7 @@ readonly class CreateNewTriggerDTOBuilder
      * @throws OperatorNotFoundException
      * @throws TriggerTypeNotFoundException
      * @throws \App\Exceptions\Sensor\BaseReadingTypeNotFoundException
+     * @throws InvalidArgumentException
      */
     public function buildCreateNewTriggerDTOFromValues(
         int $operatorID,
@@ -101,6 +103,7 @@ readonly class CreateNewTriggerDTOBuilder
                 "friday" => $friday = true,
                 "saturday" => $saturday = true,
                 "sunday" => $sunday = true,
+                default => throw new InvalidArgumentException('Invalid day'),
             };
         }
 

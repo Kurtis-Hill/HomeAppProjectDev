@@ -65,7 +65,6 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
             try {
                 $validationErrors = $this->sensorDeviceDataQueueConsumerService->handleUpdateSensorCurrentReading(
                     $sensorData,
-                    $device
                 );
                 if ($validationErrors) {
                     $this->elasticLogger->error('Validation errors', ['errors' => $validationErrors]);

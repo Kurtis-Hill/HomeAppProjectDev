@@ -70,7 +70,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
 
     const [createCardLoading, setCreateCardLoading] = useState<boolean>(false);
 
-    const [announcementModals, setAnnouncementModals] = useState<JSX.Element<Array<typeof AnnouncementFlashModal>>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const toggleFormInput = (event: Event) => {
         const name = (event.target as HTMLElement|HTMLInputElement).dataset.name !== undefined

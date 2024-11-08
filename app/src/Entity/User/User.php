@@ -152,10 +152,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     }
 
     #[ArrayShape(['int'])]
-    public function getAssociatedGroupIDs(): array
+    public function     getAssociatedGroupIDs(): array
     {
         $groupNames[] = $this->getGroup()->getGroupID();
-        /** @var \App\Entity\GroupMapping $entity */
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = $entity->getGroup()->getGroupID();
         }

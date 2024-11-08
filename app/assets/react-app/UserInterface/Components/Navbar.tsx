@@ -30,7 +30,7 @@ export default function NavBar(props: {
     const [loadingNavbarListItems, setLoadingNavbarListItems] = useState<boolean>(true);
     const [navbarToggleSizeSmall, setNavbarToggleSizeSmall] = useState<boolean>(false);
 
-    const [announcementModals, setAnnouncementModals] = useState<JSX.Element<Array<typeof AnnouncementFlashModal>>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const [announcementCount, setAnnouncementCount] = useState<number>(0);
     

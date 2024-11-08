@@ -81,7 +81,7 @@ export function CardReadingViewHandler(props: {
 
             }
 
-    , [filterParams]);
+    , [filterParams, route]);
     
 
     const handleCardRefresh = async () => {

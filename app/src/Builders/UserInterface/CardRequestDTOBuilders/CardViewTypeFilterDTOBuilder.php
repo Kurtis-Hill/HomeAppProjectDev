@@ -4,6 +4,7 @@ namespace App\Builders\UserInterface\CardRequestDTOBuilders;
 
 use App\DTOs\UserInterface\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\Entity\Device\Devices;
+use App\Entity\User\Group;
 use App\Entity\User\Room;
 
 class CardViewTypeFilterDTOBuilder
@@ -11,6 +12,7 @@ class CardViewTypeFilterDTOBuilder
     public static function buildCardViewTypeFilterDTO(
         ?Room $cardViewType = null,
         ?Devices $cardViewTypeFilter = null,
+        ?Group $cardViewTypeFilter = null,
     ): CardViewUriFilterDTO {
         return new CardViewUriFilterDTO(
             $cardViewType,

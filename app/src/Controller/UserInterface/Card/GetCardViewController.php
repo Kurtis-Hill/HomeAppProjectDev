@@ -8,6 +8,7 @@ use App\DTOs\Sensor\Internal\Sensor\SensorFilterDTO;
 use App\DTOs\UserInterface\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\DTOs\UserInterface\RequestDTO\CardViewFilterRequestDTO;
 use App\Entity\Device\Devices;
+use App\Entity\User\Group;
 use App\Entity\User\Room;
 use App\Entity\User\User;
 use App\Exceptions\UserInterface\CardTypeNotRecognisedException;
@@ -114,6 +115,36 @@ class GetCardViewController extends AbstractController
         $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
 
         $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO($room);
+        try {
+            $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::ROOM_VIEW);
+        } catch (WrongUserTypeException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        } catch (ORMException) {
+            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()->getUserIdentifier()]);
+
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Cards')]);
+        }
+
+        return $this->commonCardDTOResponse($cardData);
+    }
+
+    #[Route('group/{id}', name: 'group-card-data-v2', methods: [Request::METHOD_GET])]
+    public function groupCards(Group $group, Request $request): Response
+    {
+        try {
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
+        } catch (CardViewRequestException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidationErrorsArray());
+        }
+        try {
+            $this->denyAccessUnlessGranted(CardViewVoter::VIEW_GROUP_CARD_DATA, $group);
+        } catch (AccessDeniedException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        }
+
+        $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
+
+        $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO($group);
         try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::ROOM_VIEW);
         } catch (WrongUserTypeException) {

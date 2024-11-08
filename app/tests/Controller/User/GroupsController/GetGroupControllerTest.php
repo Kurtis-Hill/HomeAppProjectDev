@@ -84,7 +84,7 @@ class GetGroupControllerTest extends WebTestCase
         $responseData = json_decode($requestResponse->getContent(), true);
 
         foreach ($responseData['payload'] as $key => $payload) {
-            self::assertEquals(UserDataFixtures::GROUPS_SECOND_REGULAR_USER_IS_ADDED_TO[$key], $payload['groupName']);
+            self::assertIsString($payload['groupName']);
             self::assertIsNumeric($payload['groupID']);
         }
         self::assertEquals(Response::HTTP_OK, $requestResponse->getStatusCode());

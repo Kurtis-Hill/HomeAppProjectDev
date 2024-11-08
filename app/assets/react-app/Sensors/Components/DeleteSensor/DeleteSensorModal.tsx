@@ -15,11 +15,12 @@ export function DeleteSensorModal(props: {
     const { sensorID, sensorName, refreshData } = props;
 
     const [showDeleteSensorModal, setShowDeleteSensorModal] = useState<boolean>(false)
-
-    const [announcementModals, setAnnouncementModals] = useState<JSX.Element<Array<typeof AnnouncementFlashModal>>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
+                                                                                      // [Array<typeof AnnouncementFlashModal>]>
 
     const deleteSensorHandler = async (e: Event) => {
-        e.preventDefault();
+        // e.preventDefault();
+        console.log('sss');
         const sensorDeletedRequestPayload = await deleteSensorRequest(sensorID);
 
         if (sensorDeletedRequestPayload !== null) {
@@ -61,7 +62,7 @@ export function DeleteSensorModal(props: {
                 })
 
             }
-            <button type="delete" onClick={() => setShowDeleteSensorModal(true)} style={{ borderRadius: "5px" }} ><i className="fas fa-trash delete fa-fw"></i></button>
+            <button type="button" onClick={() => setShowDeleteSensorModal(true)} style={{ borderRadius: "5px" }} ><i className="fas fa-trash delete fa-fw"></i></button>
             {
                 showDeleteSensorModal === true
                     ?

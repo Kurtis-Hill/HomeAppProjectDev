@@ -65,7 +65,7 @@ export function UpdateDeviceView(props: {
         userRooms: [] as RoomResponseInterface[],
     });
 
-    const [announcementModals, setAnnouncementModals] = useState<JSX.Element<Array<typeof AnnouncementFlashModal>>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
         setAnnouncementModals([
@@ -79,7 +79,7 @@ export function UpdateDeviceView(props: {
     }
 
     useEffect(() => {
-        if (deviceData.deviceID !== originalDeviceData.current.deviceID) {
+        if (deviceData.deviceID === originalDeviceData.current.deviceID) {
             setDeviceUpdateFormInputs({
                 deviceName: deviceData.deviceName,
                 password: '',

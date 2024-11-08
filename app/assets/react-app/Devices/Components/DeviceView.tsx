@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { getDeviceRequest } from '../Request/GetDeviceRequest';
@@ -12,7 +12,6 @@ import { DeviceResponseInterface } from '../Response/DeviceResponseInterface';
 import { TabSelector } from '../../Common/Components/TabSelector';
 import {ResponseTypeEnum} from "../../Common/Response/APIResponseEnum";
 import { SensorsView } from '../../Sensors/Components/SensorsView';
-import {CardLandingPage} from "../../Routes/LandingPage/CardLandingPage";
 import {CardRowContainer} from "../../UserInterface/Components/CardRowContainer";
 
 export function DeviceView() {

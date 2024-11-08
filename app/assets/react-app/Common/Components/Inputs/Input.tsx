@@ -2,7 +2,7 @@ import * as React from 'react';
 
 export default function Input(props: { 
     name: string; 
-    value?: object; 
+    value?: object|string|number;
     type?: string; 
     placeHolder?: string; 
     autoComplete?: string; 
@@ -14,7 +14,7 @@ export default function Input(props: {
     dataName?: string,
 }) {
     const name: string = props.name ?? ''
-    const value: object = props.value
+    const value: object|string|number = props.value
     const type: string = props.type ?? 'text'
     const placeHolder: string = props.placeHolder ?? ''
     const autoComplete: string = props.autoComplete ?? ''
