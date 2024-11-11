@@ -46,7 +46,7 @@ class UpdateSensorController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('/{sensorID}/update', name: 'update-sensor', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
+    #[Route('/{sensorID}', name: 'update-sensor', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
     public function updateSensor(
         Sensor $sensor,
         Request $request,

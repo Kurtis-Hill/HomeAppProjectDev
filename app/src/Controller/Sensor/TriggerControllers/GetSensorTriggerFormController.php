@@ -29,7 +29,7 @@ class GetSensorTriggerFormController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route('/get', name: 'get-sensor-trigger-form', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'get-sensor-trigger-form', methods: [Request::METHOD_GET])]
     public function getSensorTriggerForm(
         OperatorRepository $operatorRepository,
         SensorRepository $sensorRepository,
@@ -41,7 +41,7 @@ class GetSensorTriggerFormController extends AbstractController
     ): JsonResponse {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            $this->createAccessDeniedException(APIErrorMessages::FORBIDDEN_ACTION);
+            throw $this->createAccessDeniedException(APIErrorMessages::FORBIDDEN_ACTION);
         }
 
         $allOperators = $operatorRepository->findAll();

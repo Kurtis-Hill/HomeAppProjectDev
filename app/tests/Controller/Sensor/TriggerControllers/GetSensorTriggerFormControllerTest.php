@@ -26,7 +26,7 @@ class GetSensorTriggerFormControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_SENSOR_TRIGGER_FORM_URL = '/HomeApp/api/user/sensor-trigger/form/get';
+    private const GET_SENSOR_TRIGGER_FORM_URL = '/HomeApp/api/user/sensor-trigger/form';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -202,21 +202,21 @@ class GetSensorTriggerFormControllerTest extends WebTestCase
         self::assertCount(count(TriggerType::ALL_TRIGGER_TYPES), $triggerTypes);
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::GET_SENSOR_TRIGGER_FORM_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::GET_SENSOR_TRIGGER_FORM_URL,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

@@ -44,7 +44,7 @@ class DeleteDeviceController extends AbstractController
      */
     #[
         Route(
-            path: '{deviceID}/delete',
+            path: '{deviceID}',
             name: 'delete-esp-device',
             methods: [Request::METHOD_DELETE]
         )

@@ -4,7 +4,7 @@ import {apiURL} from "../../../Common/URLs/CommonURLs";
 
 export async function addNewSensorRequest(newSensorData: NewSensorInterface): Promise<AxiosResponse> {
     return await axios.post(
-        `${apiURL}sensor/add`,
+        `${apiURL}sensor`,
         newSensorData,
     );
 }

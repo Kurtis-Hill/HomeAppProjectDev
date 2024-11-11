@@ -83,6 +83,10 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
                 $expr->in(Devices::ALIAS . '.groupID', ':groupID'),
             );
         }
+        if ($cardViewTypeFilterDTO->getGroup() !== null) {
+            $qb->andWhere($expr->eq(Devices::ALIAS . '.groupID', ':groupID'));
+            $parameters['groupID'] = $cardViewTypeFilterDTO->getGroup()->getGroupID();
+        }
 
         return $this->cardViewFilterExecution(
             $qb,

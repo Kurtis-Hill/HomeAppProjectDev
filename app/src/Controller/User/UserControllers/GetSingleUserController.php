@@ -32,7 +32,7 @@ class GetSingleUserController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('{user}/get', name: 'get-single-user', methods: [Request::METHOD_GET])]
+    #[Route('{user}', name: 'get-single-user', methods: [Request::METHOD_GET])]
     public function getSingleUser(User $user, Request $request, UserResponseBuilder $userResponseBuilder): JsonResponse
     {
         try {

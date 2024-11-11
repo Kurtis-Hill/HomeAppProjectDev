@@ -5,7 +5,7 @@ import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterfa
 
 export async function deleteSensorRequest(sensorID: number, responseType: string = 'only'): Promise<SensorResponseInterface|null> {
     const deleteSensorResponse: AxiosResponse = await axios.delete(
-        `${apiURL}sensor/${sensorID}/delete?${responseType}`,
+        `${apiURL}sensor/${sensorID}?${responseType}`,
     );
 
     if (deleteSensorResponse.status === 200) {

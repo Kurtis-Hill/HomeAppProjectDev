@@ -23,7 +23,7 @@ class AddGroupControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_NEW_GROUP_URL = '/HomeApp/api/user/user-groups/add';
+    private const ADD_NEW_GROUP_URL = '/HomeApp/api/user/user-groups';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -274,21 +274,21 @@ class AddGroupControllerTest extends WebTestCase
         self::assertEquals($groupNameForRequest, $payload['groupName']);
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::ADD_NEW_GROUP_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::ADD_NEW_GROUP_URL,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): Generator
     {

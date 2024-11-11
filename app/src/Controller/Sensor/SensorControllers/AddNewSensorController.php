@@ -50,7 +50,7 @@ class AddNewSensorController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('/add', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
+    #[Route('', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         Request $request,
         NewSensorCreationInterface $newSensorCreationService,

@@ -43,7 +43,7 @@ class AddNewRoomController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('add', name:'add-new-room', methods: [Request::METHOD_POST])]
+    #[Route('', name:'add-new-room', methods: [Request::METHOD_POST])]
     public function addNewRoom(
         Request $request,
         AddNewRoomServiceInterface $addNewRoomService,

@@ -29,7 +29,7 @@ class UpdateRoomController extends AbstractController
     use ValidatorProcessorTrait;
 
     #[
-        Route('{room}/update', name: 'update-user-room', methods: [Request::METHOD_PUT, Request::METHOD_PATCH]),
+        Route('{room}', name: 'update-user-room', methods: [Request::METHOD_PUT, Request::METHOD_PATCH]),
         IsGranted('ROLE_ADMIN')
     ]
     public function updateRoom(

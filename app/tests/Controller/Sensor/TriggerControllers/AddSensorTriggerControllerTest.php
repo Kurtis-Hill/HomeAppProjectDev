@@ -34,7 +34,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_NEW_SENSOR_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger/form/add';
+    private const ADD_NEW_SENSOR_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger';
 
     private ?EntityManagerInterface $entityManager;
 

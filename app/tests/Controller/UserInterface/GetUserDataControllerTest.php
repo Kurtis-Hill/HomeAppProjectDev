@@ -19,7 +19,7 @@ class GetUserDataControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_USER_DATA_URL = '/HomeApp/api/user-data/get';
+    private const GET_USER_DATA_URL = '/HomeApp/api/user-data';
 
     private ?string $userToken = null;
 

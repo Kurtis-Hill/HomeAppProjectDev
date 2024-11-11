@@ -35,7 +35,7 @@ class GetRoomsController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('all', name: 'get-user-rooms_multiple', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'get-user-rooms_multiple', methods: [Request::METHOD_GET])]
     public function getAllUserRooms(Request $request, RoomRepositoryInterface $roomRepository): JsonResponse
     {
         $user = $this->getUser();

@@ -9,7 +9,7 @@ export type UpdateRoomRequestType = {
 
 export default async function updateRoomRequest(roomID: number, roomData: UpdateRoomRequestType, responseType?: string): Promise<AxiosResponse> {
     return await axios.patch(
-        `${apiURL}user-rooms/${roomID}/update`,
+        `${apiURL}user-rooms/${roomID}`,
         roomData,
         {params: {responseType: responseType ?? ResponseTypeEnum.ResponseTypeFull}}
     );

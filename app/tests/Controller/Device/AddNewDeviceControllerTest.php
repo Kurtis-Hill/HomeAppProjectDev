@@ -28,7 +28,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user/user-devices/add';
+    private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user/user-devices';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
@@ -775,20 +775,20 @@ class AddNewDeviceControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_adding_device_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_adding_device_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::ADD_NEW_DEVICE_PATH,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

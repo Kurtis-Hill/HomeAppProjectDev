@@ -5,7 +5,7 @@ import {ResponseTypeEnum} from "../../Common/Response/APIResponseEnum";
 
 export async function addNewDeviceRequest(addNewDeviceInputs: AddNewDeviceInputInterface): Promise<AxiosResponse> {
     return await axios.post(
-        `${apiURL}user-devices/add?responseType=${ResponseTypeEnum.SensitiveFull}`,
+        `${apiURL}user-devices?responseType=${ResponseTypeEnum.SensitiveFull}`,
         addNewDeviceInputs,
     );
 }

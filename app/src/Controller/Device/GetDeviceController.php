@@ -28,7 +28,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-device/', name: 'get-user-devices')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-device')]
 class GetDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -50,7 +50,7 @@ class GetDeviceController extends AbstractController
      * @throws RoomNotFoundException
      * @throws ReadingTypeNotExpectedException
      */
-    #[Route('all', name: 'get-user-devices-multiple', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'get-user-devices-multiple', methods: [Request::METHOD_GET])]
     public function getAllDevices(
         Request $request,
         DevicesForUserInterface $getDevicesForUser,
@@ -121,7 +121,7 @@ class GetDeviceController extends AbstractController
      * @throws ReadingTypeNotExpectedException
      */
     #[Route(
-        '{deviceID}/get',
+        '/{deviceID}',
         name: 'get-user-device-single',
         methods: [Request::METHOD_GET]
     )]

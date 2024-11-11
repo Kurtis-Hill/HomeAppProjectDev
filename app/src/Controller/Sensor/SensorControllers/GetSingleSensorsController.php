@@ -37,7 +37,7 @@ class GetSingleSensorsController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('/{sensorID}/get', name: 'get-single-sensor', methods: [Request::METHOD_GET])]
+    #[Route('/{sensorID}', name: 'get-single-sensor', methods: [Request::METHOD_GET])]
     public function getSingleSensor(Sensor $sensor, Request $request, SensorResponseDTOBuilder $sensorResponseDTOBuilder): JsonResponse
     {
         try {

@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor-trigger/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor-trigger')]
 class GetSensorTriggersController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -39,7 +39,7 @@ class GetSensorTriggersController extends AbstractController
     /**
      * @throws AccessDeniedException
      */
-    #[Route('all', name: 'get-sensor-triggers', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'get-sensor-triggers', methods: [Request::METHOD_GET])]
     public function getSensorTriggers(
         Request $request,
         SensorTriggerRepository $sensorTriggerRepository,
@@ -87,7 +87,7 @@ class GetSensorTriggersController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedResponse);
     }
 
-    #[Route('{sensorTrigger}/get', name: 'get-single-sensor-triggers', methods: [Request::METHOD_GET])]
+    #[Route('/{sensorTrigger}', name: 'get-single-sensor-triggers', methods: [Request::METHOD_GET])]
     public function getSensorTriggersByBaseReadingTypeID(SensorTrigger $sensorTrigger): JsonResponse
     {
         $user = $this->getUser();

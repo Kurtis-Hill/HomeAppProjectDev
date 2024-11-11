@@ -4,7 +4,7 @@ import { apiURL } from "../../../Common/URLs/CommonURLs";
 
 export async function getSingleUserRequest(userID: number): Promise<AxiosResponse> {
     const getSingleUserResponse = await axios.get(
-        `${apiURL}${userID}/get`
+        `${apiURL}${userID}`
     );
 
     return getSingleUserResponse;

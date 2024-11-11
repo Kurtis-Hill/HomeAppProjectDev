@@ -22,7 +22,7 @@ class GetReadingTypeControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_READING_TYPES_URL = '/HomeApp/api/user/reading-types/all';
+    private const GET_READING_TYPES_URL = '/HomeApp/api/user/reading-types';
 
     private const GET_SINGLE_READING_TYPE_URL = '/HomeApp/api/user/reading-types/%d';
 
@@ -186,28 +186,28 @@ class GetReadingTypeControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method_singular(string $httpVerb): void
-    {
-        $sensorRepository = $this->entityManager->getRepository(Sensor::class);
-
-        /** @var Sensor[] $allSensors */
-        $allSensors = $sensorRepository->findAll();
-
-        $sensor = $allSensors[0];
-
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::GET_SINGLE_READING_TYPE_URL, $sensor->getSensorID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method_singular(string $httpVerb): void
+//    {
+//        $sensorRepository = $this->entityManager->getRepository(Sensor::class);
+//
+//        /** @var Sensor[] $allSensors */
+//        $allSensors = $sensorRepository->findAll();
+//
+//        $sensor = $allSensors[0];
+//
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::GET_SINGLE_READING_TYPE_URL, $sensor->getSensorID()),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

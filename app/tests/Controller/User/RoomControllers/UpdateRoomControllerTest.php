@@ -18,7 +18,7 @@ class UpdateRoomControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ROOM_UPDATE_URL = '/HomeApp/api/user/user-rooms/%d/update';
+    private const ROOM_UPDATE_URL = '/HomeApp/api/user/user-rooms/%d';
 
     private ?EntityManagerInterface $entityManager;
 

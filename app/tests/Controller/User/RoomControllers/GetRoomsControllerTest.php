@@ -15,7 +15,7 @@ class GetRoomsControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_USER_ROOMS_URL = '/HomeApp/api/user/user-rooms/all';
+    private const GET_USER_ROOMS_URL = '/HomeApp/api/user/user-rooms';
 
     private ?EntityManagerInterface $entityManager;
 

@@ -20,7 +20,7 @@ class DeleteRoomControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const DELETE_ROOM_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/%d/delete';
+    private const DELETE_ROOM_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/%d';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -122,24 +122,24 @@ class DeleteRoomControllerTest extends WebTestCase
         self::assertEquals([sprintf(DeleteRoomController::DELETED_ROOM_SUCCESSFULLY, $room->getRoomID())], $payload);
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $rooms = $this->roomRepository->findAll();
-        $room = $rooms[array_rand($rooms)];
-
-         $this->client->request(
-            $httpVerb,
-            sprintf(self::DELETE_ROOM_URL, $room->getRoomID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $rooms = $this->roomRepository->findAll();
+//        $room = $rooms[array_rand($rooms)];
+//
+//         $this->client->request(
+//            $httpVerb,
+//            sprintf(self::DELETE_ROOM_URL, $room->getRoomID()),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

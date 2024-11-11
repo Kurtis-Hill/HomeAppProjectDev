@@ -12,11 +12,12 @@ class CardViewTypeFilterDTOBuilder
     public static function buildCardViewTypeFilterDTO(
         ?Room $cardViewType = null,
         ?Devices $cardViewTypeFilter = null,
-        ?Group $cardViewTypeFilter = null,
+        ?Group $cardViewTypeFilterGroup = null,
     ): CardViewUriFilterDTO {
         return new CardViewUriFilterDTO(
             $cardViewType,
             $cardViewTypeFilter,
+            $cardViewTypeFilterGroup,
         );
     }
 }

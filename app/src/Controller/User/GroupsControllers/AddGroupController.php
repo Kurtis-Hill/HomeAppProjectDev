@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-groups/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-groups')]
 class AddGroupController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -45,7 +45,7 @@ class AddGroupController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('add', name: 'add-group', methods: [Request::METHOD_POST])]
+    #[Route('', name: 'add-group', methods: [Request::METHOD_POST])]
     public function addNewGroupName(
         Request $request,
         ValidatorInterface $validator,

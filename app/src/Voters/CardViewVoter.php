@@ -52,6 +52,7 @@ class CardViewVoter extends Voter
             self::VIEW_DEVICE_CARD_DATA => $this->viewDeviceCardData($user, $subject),
             self::VIEW_ROOM_CARD_DATA => $this->viewRoomCardData($user, $subject),
             self::CAN_ADD_NEW_CARD => $this->canAddNewCardView($user, $subject),
+            self::VIEW_GROUP_CARD_DATA => $this->canViewGroupCardData($user, $subject),
 
             default => false
         };
@@ -61,6 +62,10 @@ class CardViewVoter extends Voter
     {
         if (!$user instanceof User) {
             return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
         }
 
         if (in_array($group->getGroupID(), $user->getAssociatedGroupIDs())) {

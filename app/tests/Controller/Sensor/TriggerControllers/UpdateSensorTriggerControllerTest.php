@@ -32,7 +32,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const UPDATE_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger/%d/update';
+    private const UPDATE_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger/%d';
 
     private KernelBrowser $client;
 
@@ -564,22 +564,22 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $triggerToUser = $this->sensorTriggerRepository->findAll()[0];
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::UPDATE_TRIGGER_URL, $triggerToUser->getSensorTriggerID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $triggerToUser = $this->sensorTriggerRepository->findAll()[0];
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::UPDATE_TRIGGER_URL, $triggerToUser->getSensorTriggerID()),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

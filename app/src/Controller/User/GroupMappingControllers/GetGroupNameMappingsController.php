@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'group-mapping/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'group-mapping')]
 class GetGroupNameMappingsController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -29,7 +29,7 @@ class GetGroupNameMappingsController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('all', name: 'get-all-group-name-mappings', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'get-all-group-name-mappings', methods: [Request::METHOD_GET])]
     public function getGroupNameMappings(Request $request, GetGroupNameMappingHandler $groupNameMappingHandler): JsonResponse
     {
         $user = $this->getUser();

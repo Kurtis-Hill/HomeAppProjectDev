@@ -43,8 +43,8 @@ export function ResponseInterceptor(props: {
                     urlOfRequest !== `${apiURL}token/refresh`
                     && urlOfRequest !== `${apiURL}navbar/navbar-data`
                     && urlOfRequest !== `${apiURL}ping`
-                    && urlOfRequest !== `${apiURL}reading-types/all`
-                    && urlOfRequest !== `${apiURL}sensor-types/all`
+                    && urlOfRequest !== `${apiURL}reading-types`
+                    && urlOfRequest !== `${apiURL}sensor-types`
                 ) {
                     const refreshToken: string|null = getRefreshToken();
                     if (refreshToken !== null) {

@@ -36,7 +36,7 @@ class UpdateCardViewController extends AbstractController
         $this->logger = $logger;
     }
 
-    #[Route('{id}/update', name: 'update-card-view-form-v2', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
+    #[Route('{id}', name: 'update-card-view-form-v2', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
     public function updateCardView(
         \App\Entity\UserInterface\Card\CardView $cardViewObject,
         Request $request,

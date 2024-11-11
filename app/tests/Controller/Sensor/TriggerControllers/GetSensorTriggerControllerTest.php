@@ -28,9 +28,9 @@ class GetSensorTriggerControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_ALL_SENSOR_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger/all';
+    private const GET_ALL_SENSOR_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger';
 
-    private const GET_SENSOR_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger/%d/get';
+    private const GET_SENSOR_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger/%d';
 
     private ?EntityManagerInterface $entityManager;
 

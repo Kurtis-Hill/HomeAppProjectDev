@@ -17,7 +17,7 @@ class DeleteUserControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const DELETE_USER_URL = CommonURL::USER_HOMEAPP_API_URL . '%d/delete';
+    private const DELETE_USER_URL = CommonURL::USER_HOMEAPP_API_URL . '%d';
 
     private ?EntityManagerInterface $entityManager;
 

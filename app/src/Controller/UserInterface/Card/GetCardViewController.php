@@ -45,6 +45,8 @@ class GetCardViewController extends AbstractController
 
     public const DEVICE_VIEW = 'device';
 
+    public const GROUP_VIEW = 'group';
+
     private SensorFilter $cardDataFilterService;
 
     private CurrentReadingCardViewPreparationHandler $cardPreparationService;
@@ -144,9 +146,9 @@ class GetCardViewController extends AbstractController
 
         $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
 
-        $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO($group);
+        $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO(cardViewTypeFilterGroup: $group);
         try {
-            $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::ROOM_VIEW);
+            $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::GROUP_VIEW);
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {

@@ -4,7 +4,7 @@ import { AddNewTriggerType } from './AddNewTriggerRequest';
 
 export async function updateTriggerData(triggerID: number, triggerData: AddNewTriggerType): Promise<AxiosPromise> {
     return await axios.put(
-        `${apiURL}sensor-trigger/${triggerID}/update`,
+        `${apiURL}sensor-trigger/${triggerID}`,
         triggerData,
     );
 }

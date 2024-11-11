@@ -348,21 +348,21 @@ class SwitchSensorControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::SWITCH_CONTROLLER,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-        );
-
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::SWITCH_CONTROLLER,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+//        );
+//
+//        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

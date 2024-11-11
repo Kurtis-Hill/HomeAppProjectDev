@@ -5,7 +5,7 @@ import { AddNewRoomUserInput } from '../../Components/Room/AddNewRoomForm';
 
 export async function addNewRoomRequest(addNewRoomInputs: AddNewRoomUserInput): Promise<AxiosResponse> {
     return await axios.post(
-        `${apiURL}user-rooms/add`,
+        `${apiURL}user-rooms`,
         addNewRoomInputs
     );
 }

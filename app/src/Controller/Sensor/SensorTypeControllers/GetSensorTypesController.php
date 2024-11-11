@@ -28,7 +28,7 @@ class GetSensorTypesController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('/all', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'get-sensor-types', methods: [Request::METHOD_GET])]
     public function getAllSensorTypes(Request $request, SensorTypeRepositoryInterface $sensorTypeRepository, SensorTypeResponseDTOBuilder $responseDTOBuilder): Response
     {
         try {
