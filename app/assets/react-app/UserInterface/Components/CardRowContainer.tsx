@@ -50,7 +50,7 @@ export function CardRowContainer(props: {
                 setSensorFilterParams({
                     ...sensorFilterParams, 
                     readingTypes: readingTypes.filter((readingType: string) => {
-                        readingType !== filterParam.value
+                        return readingType !== filterParam.value
                     })
                 });
             }
@@ -61,7 +61,7 @@ export function CardRowContainer(props: {
                 setSensorFilterParams({
                     ...sensorFilterParams, 
                     sensorTypes: sensorTypes.filter((sensorType: string) => {
-                        sensorType !== filterParam.value
+                        return sensorType !== filterParam.value
                     })
                 });
             }
@@ -70,13 +70,14 @@ export function CardRowContainer(props: {
 
     return (
         <>
-            <CardFilterBarView 
-                filterParams={sensorFilterParams} 
-                addFilterParams={addSensorFilterParamsForRequest} 
-                removeFilterParams={removeSensorFilterParamsForRequest}
-                setCardRefreshTimer={setCardRefreshTimer}
-                cardRefreshTimer={cardRefreshTimer}
-                setCardFilterSettingsForceReset={forceResetCardFilterSettings}
+            <
+                CardFilterBarView
+                    filterParams={sensorFilterParams}
+                    addFilterParams={addSensorFilterParamsForRequest}
+                    removeFilterParams={removeSensorFilterParamsForRequest}
+                    setCardRefreshTimer={setCardRefreshTimer}
+                    cardRefreshTimer={cardRefreshTimer}
+                    setCardFilterSettingsForceReset={forceResetCardFilterSettings}
             />
 
             {

@@ -81,8 +81,8 @@ export function CardReadingViewHandler(props: {
 
             }
 
-    , [filterParams, route]);
-    
+    , [filterParams, route, cardRefreshTimer]);
+
 
     const handleCardRefresh = async () => {
         const cardData: CardSensorDataResponseInterface[] = await handleGettingSensorReadings();

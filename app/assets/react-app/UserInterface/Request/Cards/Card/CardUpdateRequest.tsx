@@ -10,7 +10,7 @@ export interface CardUpdateRequestInterface {
 
 export async function updateCardRequest(cardViewID: number, cardUpdateRequest: CardUpdateRequestInterface): Promise<AxiosResponse> {
     const updateCardResponse: AxiosResponse = await axios.put(
-        `${apiURL}card/${cardViewID}/update`,
+        `${apiURL}card/${cardViewID}`,
         cardUpdateRequest
     );
 
