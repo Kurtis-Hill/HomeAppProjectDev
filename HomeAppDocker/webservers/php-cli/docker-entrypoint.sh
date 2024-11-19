@@ -51,8 +51,9 @@ echo "Starting supervisor..."
 supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf
 echo "Supervisor Started..."
 
-echo "Starting cron..."
-service cron start
-echo "Cron Started..."
+
+echo "Starting symfony transport..."
+bin/console messenger:consume scheduler_default -vv
+echo "transport started..."
 
 exec "$@"
