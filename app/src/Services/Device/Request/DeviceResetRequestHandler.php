@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services\Device\Request;
 
+use App\Builders\Device\Request\DeviceRequestEncapsulationBuilder;
 use App\Builders\Device\Request\DeviceResetRequestDTOBuilder;
 use App\Entity\Device\Devices;
 use App\Exceptions\Device\DeviceIPNotSetException;
@@ -26,7 +27,7 @@ readonly class DeviceResetRequestHandler
     public function resetDevice(Devices $device): bool
     {
         $deviceResetRequestDTO = $this->deviceResetRequestDTOBuilder->buildResetRequestDTO();
-        $deviceRequestEncapsulationDTO = \App\Builders\Device\Request\DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
+        $deviceRequestEncapsulationDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
             $device,
             $deviceResetRequestDTO,
             self::RESET_ENDPOINT

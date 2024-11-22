@@ -5,6 +5,7 @@ namespace App\Services\Sensor\UpdateDeviceSensorData;
 use App\Builders\Device\Request\DeviceRequestEncapsulationBuilder;
 use App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder;
 use App\Builders\Sensor\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder;
+use App\DTOs\Sensor\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface;
 use App\Entity\Sensor\SensorTypes\Bmp;
 use App\Entity\Sensor\SensorTypes\Dallas;
 use App\Entity\Sensor\SensorTypes\Dht;
@@ -14,6 +15,8 @@ use App\Entity\Sensor\SensorTypes\LDR;
 use App\Entity\Sensor\SensorTypes\Sht;
 use App\Entity\Sensor\SensorTypes\Soil;
 use App\Exceptions\Sensor\SensorNotFoundException;
+use App\Exceptions\Sensor\SensorRequestException;
+use App\Exceptions\Sensor\SensorTypeException;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\Device\Request\DeviceRequestHandlerInterface;
 use Exception;
@@ -32,11 +35,11 @@ readonly class UpdateDeviceSensorDataHandler
     ) {}
 
     /**
-     * @param \App\DTOs\Sensor\Request\SendRequests\SensorDataUpdate\SensorUpdateRequestDTOInterface[] $sensorUpdateRequestDTOs
-     * @throws \App\Exceptions\Sensor\SensorNotFoundException
-     * @throws \App\Exceptions\Sensor\SensorTypeException
+     * @param SensorUpdateRequestDTOInterface[] $sensorUpdateRequestDTOs
+     * @throws SensorNotFoundException
+     * @throws SensorTypeException
      *
-     * @throws \App\Exceptions\Sensor\SensorRequestException
+     * @throws SensorRequestException
      */
     public function handleSensorsUpdateRequest(array $sensorUpdateRequestDTOs): bool
     {

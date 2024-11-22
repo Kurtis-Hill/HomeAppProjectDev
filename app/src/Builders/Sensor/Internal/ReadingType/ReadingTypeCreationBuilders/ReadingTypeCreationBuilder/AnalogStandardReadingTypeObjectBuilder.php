@@ -15,7 +15,7 @@ class AnalogStandardReadingTypeObjectBuilder extends AbstractStandardReadingType
 {
     /**
      * @throws OptimisticLockException
-     * @throws \App\Exceptions\Sensor\SensorTypeException
+     * @throws SensorTypeException
      * @throws ORMException
      * @throws \Doctrine\ORM\Exception\ORMException
      * @throws SensorReadingTypeRepositoryFactoryException

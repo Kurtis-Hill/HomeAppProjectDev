@@ -130,7 +130,7 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
     }
 
     /**
-     * @throws \App\Exceptions\Sensor\ReadingTypeNotSupportedException
+     * @throws ReadingTypeNotSupportedException
      */
     private function resetEntityBackToOriginalState(
         AllSensorReadingTypeInterface $sensorReadingTypeObject,

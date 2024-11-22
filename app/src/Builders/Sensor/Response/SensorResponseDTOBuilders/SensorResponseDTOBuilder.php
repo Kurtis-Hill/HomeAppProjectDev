@@ -74,12 +74,12 @@ class SensorResponseDTOBuilder
     }
 
     /**
-     * @param \App\Entity\Sensor\Sensor $sensor
+     * @param Sensor $sensor
      * @param array $sensorReadingTypeDTOs
      * @param bool|null $canEdit
      * @param bool|null $canDelete
      * @param CardView|null $cardView
-     * @return \App\DTOs\Sensor\Response\SensorResponse\SensorResponseDTO
+     * @return SensorResponseDTO
      */
     public static function buildSensorResponseDTO(
         Sensor $sensor,

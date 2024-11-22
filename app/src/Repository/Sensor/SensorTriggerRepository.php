@@ -10,7 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\SensorTrigger>
+ * @extends ServiceEntityRepository<SensorTrigger>
  *
  * @method SensorTrigger|null find($id, $lockMode = null, $lockVersion = null)
  * @method SensorTrigger|null findOneBy(array $criteria, array $orderBy = null)

@@ -13,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature>
+ * @extends ServiceEntityRepository<Temperature>
  *
  * @method Temperature|null find($id, $lockMode = null, $lockVersion = null)
  * @method Temperature|null findOneBy(array $criteria, array $orderBy = null)

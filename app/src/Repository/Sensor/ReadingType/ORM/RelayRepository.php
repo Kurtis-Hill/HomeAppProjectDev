@@ -87,7 +87,7 @@ class RelayRepository extends ServiceEntityRepository implements ReadingTypeRepo
     }
 
     /**
-     * @return \App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay[]
+     * @return Relay[]
      */
     #[ArrayShape([Relay::class])]
     public function findBySensorID(int $sensorID): array

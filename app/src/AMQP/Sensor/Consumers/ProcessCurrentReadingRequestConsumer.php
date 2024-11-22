@@ -31,7 +31,7 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            /** @var \App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO $sensorData */
+            /** @var UpdateSensorCurrentReadingTransportMessageDTO $sensorData */
             $sensorData = unserialize(
                 $msg->getBody(),
                 [

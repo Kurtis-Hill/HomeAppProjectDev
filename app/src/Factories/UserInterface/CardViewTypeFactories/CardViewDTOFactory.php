@@ -26,7 +26,7 @@ class CardViewDTOFactory
     }
 
     /**
-     * @throws \App\Exceptions\UserInterface\CardTypeNotRecognisedException
+     * @throws CardTypeNotRecognisedException
      */
     public function getCardViewBuilderService(string $type): SensorTypeCardViewDTOBuilder
     {

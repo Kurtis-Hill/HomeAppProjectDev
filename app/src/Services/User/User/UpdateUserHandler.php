@@ -36,7 +36,7 @@ class UpdateUserHandler
      * @throws IncorrectUserPasswordException
      * @throws NotAllowedToChangeUserRoleException
      * @throws CannotUpdateUsersGroupException
-     * @throws \App\Exceptions\User\GroupExceptions\GroupNotFoundException
+     * @throws GroupNotFoundException
      * @throws NotAllowedToUpdatePasswordException
      * @throws UserNotAllowedException
      */

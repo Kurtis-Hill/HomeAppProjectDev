@@ -33,7 +33,7 @@ class AddNewRoomHandler implements AddNewRoomServiceInterface
     }
 
     /**
-     * @throws \App\Exceptions\User\RoomsExceptions\DuplicateRoomException|ORMException
+     * @throws DuplicateRoomException|ORMException
      */
     private function checkForRoomDuplicates(AddNewRoomDTO $addNewRoomDTO): void
     {

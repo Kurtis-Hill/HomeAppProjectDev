@@ -13,7 +13,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\\App\Entity\Authentication\GroupMapping>
+ * @extends ServiceEntityRepository<GroupMapping>
  *
  * @method GroupMapping|null find($id, $lockMode = null, $lockVersion = null)
  * @method GroupMapping|null findOneBy(array $criteria, array $orderBy = null)

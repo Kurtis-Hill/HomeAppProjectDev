@@ -8,7 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\SensorTypes\Dallas>
+ * @extends ServiceEntityRepository<Dallas>
  *
  * @method Dallas|null find($id, $lockMode = null, $lockVersion = null)
  * @method Dallas|null findOneBy(array $criteria, array $orderBy = null)

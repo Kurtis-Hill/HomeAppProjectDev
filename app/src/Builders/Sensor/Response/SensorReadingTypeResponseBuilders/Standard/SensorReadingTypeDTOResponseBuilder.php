@@ -7,6 +7,7 @@ use App\DTOs\Sensor\Response\SensorReadingTypeResponse\Standard\StandardReadingT
 use App\Entity\Sensor\Sensor;
 use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Exceptions\Sensor\SensorReadingTypeObjectNotFoundException;
+use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Factories\Sensor\SensorReadingType\SensorReadingTypeResponseFactory;
 use App\Services\Sensor\SensorReadingTypeFetcher;
 use JetBrains\PhpStorm\ArrayShape;
@@ -26,9 +27,9 @@ class SensorReadingTypeDTOResponseBuilder
     }
 
     /**
-     * @return \App\DTOs\Sensor\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface[]
+     * @return AllSensorReadingTypeResponseDTOInterface[]
      *
-     * @throws SensorReadingTypeObjectNotFoundException|\App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws SensorReadingTypeObjectNotFoundException|SensorReadingTypeRepositoryFactoryException
      */
     #[ArrayShape([StandardReadingTypeResponseInterface::class])]
     public function buildSensorReadingTypeResponseDTOs(Sensor $sensor): array

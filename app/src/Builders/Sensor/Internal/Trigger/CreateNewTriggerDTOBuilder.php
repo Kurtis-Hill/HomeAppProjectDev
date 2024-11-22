@@ -28,7 +28,7 @@ readonly class CreateNewTriggerDTOBuilder
     /**
      * @throws OperatorNotFoundException
      * @throws TriggerTypeNotFoundException
-     * @throws \App\Exceptions\Sensor\BaseReadingTypeNotFoundException
+     * @throws BaseReadingTypeNotFoundException
      * @throws InvalidArgumentException
      */
     public function buildCreateNewTriggerDTOFromValues(
@@ -41,7 +41,7 @@ readonly class CreateNewTriggerDTOBuilder
         ?float $endTime,
         ?int $baseReadingTypeThatTriggersID,
         ?int $baseReadingTypeThatIsTriggeredID,
-    ): \App\DTOs\Sensor\Internal\Trigger\CreateNewTriggerDTO {
+    ): CreateNewTriggerDTO {
         $operator = $this->operatorRepository->find($operatorID);
         if ($operator === null) {
             throw new OperatorNotFoundException(

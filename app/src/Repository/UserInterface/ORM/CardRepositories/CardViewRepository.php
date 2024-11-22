@@ -24,7 +24,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\UserInterface\Card\CardView>
+ * @extends ServiceEntityRepository<CardView>
  *
  * @method CardView|null find($id, $lockMode = null, $lockVersion = null)
  * @method CardView|null findOneBy(array $criteria, array $orderBy = null)
@@ -161,7 +161,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
      * @param CardViewUriFilterDTO|null $cardViewTypeFilterDTO
      * @param QueryBuilder $qb
      * @param array $parameters
-     * @param \App\DTOs\UserInterface\Internal\CardDataQueryDTO\CardDataQueryEncapsulationFilterDTO|null $cardDataPostFilterDTO
+     * @param CardDataQueryEncapsulationFilterDTO|null $cardDataPostFilterDTO
      * @param int $hydrationMode
      * @return float|int|mixed|string Depends on hydration mode
      *
@@ -187,7 +187,7 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
             }
         }
         if ($cardDataPostFilterDTO !== null) {
-            /** @var \App\DTOs\UserInterface\Internal\CardDataQueryDTO\SensorTypeNotJoinQueryDTO $excludeSensorType */
+            /** @var SensorTypeNotJoinQueryDTO $excludeSensorType */
             foreach ($cardDataPostFilterDTO->getSensorTypesToExclude() as $excludeSensorType) {
                 $sensorTypeAlias = $excludeSensorType->getAlias();
                 $sensorTypeID = $excludeSensorType->getSensorTypeID();

@@ -15,7 +15,7 @@ class RelayReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder 
 {
     /**
      * @throws OptimisticLockException
-     * @throws \App\Exceptions\Sensor\SensorTypeException
+     * @throws SensorTypeException
      * @throws ORMException
      * @throws SensorReadingTypeRepositoryFactoryException
      */

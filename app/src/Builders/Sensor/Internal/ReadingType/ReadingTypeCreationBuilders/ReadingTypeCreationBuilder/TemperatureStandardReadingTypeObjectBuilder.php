@@ -8,6 +8,7 @@ use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Entity\Sensor\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
 use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Exceptions\Sensor\SensorTypeException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 
 class TemperatureStandardReadingTypeObjectBuilder extends AbstractStandardReadingTypeBuilder implements ReadingTypeObjectBuilderInterface
@@ -16,8 +17,8 @@ class TemperatureStandardReadingTypeObjectBuilder extends AbstractStandardReadin
      * @throws OptimisticLockException
      * @throws SensorTypeException
      * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\Exception\ORMException
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws ORMException
+     * @throws SensorReadingTypeRepositoryFactoryException
      */
     public function buildReadingTypeObject(Sensor $sensor): AllSensorReadingTypeInterface
     {

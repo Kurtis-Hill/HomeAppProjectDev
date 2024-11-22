@@ -5,6 +5,7 @@ namespace App\Builders\Sensor\Response\SensorReadingTypeResponseBuilders\Standar
 use App\Builders\Sensor\Response\SensorReadingTypeResponseBuilders\SensorResponseDTOBuilderInterface;
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\DTOs\Sensor\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
+use App\DTOs\Sensor\Response\SensorReadingTypeResponse\Standard\LatitudeResponseDTO;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Exceptions\Sensor\SensorReadingTypeObjectNotFoundException;
@@ -18,7 +19,7 @@ class LatitudeResponseDTOBuilder implements SensorResponseDTOBuilderInterface
                 SensorReadingTypeObjectNotFoundException::SENSOR_READING_TYPE_OBJECT_NOT_FOUND_EXCEPTION
             );
         }
-        return new \App\DTOs\Sensor\Response\SensorReadingTypeResponse\Standard\LatitudeResponseDTO(
+        return new LatitudeResponseDTO(
             $readingTypeObject->getReadingTypeID(),
             $readingTypeObject->getBaseReadingType()->getBaseReadingTypeID(),
             SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),

@@ -11,7 +11,7 @@ use App\Exceptions\Sensor\ReadingTypeNotSupportedException;
 class BoolReadingTypeResponseBuilder implements ReadingTypeResponseBuilderInterface
 {
     /**
-     * @throws \App\Exceptions\Sensor\ReadingTypeNotSupportedException
+     * @throws ReadingTypeNotSupportedException
      */
     public function buildReadingTypeBoundaryReadingsResponseDTO(
         AllSensorReadingTypeInterface $readingTypeObject

@@ -4,6 +4,7 @@ namespace App\Repository\Sensor\SensorReadingType\ORM;
 
 use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,7 +25,7 @@ class BoolReadingBaseSensorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return \App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface[]
+     * @return BoolReadingSensorInterface[]
      */
     public function findBySensorID(int $sensorID): array
     {

@@ -22,7 +22,7 @@ readonly class UpdateTriggerDTOBuilder
             ? $this->baseSensorReadingTypeRepository->find($sensorTriggerUpdateRequestDTO->getBaseReadingTypeThatIsTriggered())
             : null;
 
-        return new \App\DTOs\Sensor\Internal\Trigger\UpdateTriggerDTO(
+        return new UpdateTriggerDTO(
             operator: $sensorTriggerUpdateRequestDTO->getOperator(),
             triggerType: $sensorTriggerUpdateRequestDTO->getTriggerType(),
             baseReadingTypeThatTriggers: $baseReadingTypeThatTriggers,

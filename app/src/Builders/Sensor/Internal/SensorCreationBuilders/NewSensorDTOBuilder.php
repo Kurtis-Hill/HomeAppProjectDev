@@ -20,8 +20,8 @@ readonly class NewSensorDTOBuilder
     ) {}
 
     /**
-     * @throws \App\Exceptions\Sensor\SensorTypeNotFoundException
-     * @throws \App\Exceptions\Sensor\DeviceNotFoundException
+     * @throws SensorTypeNotFoundException
+     * @throws DeviceNotFoundException
      */
     public function buildNewSensorDTO(
         string $sensorName,

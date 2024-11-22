@@ -9,7 +9,7 @@ use App\Exceptions\Common\OperatorConvertionException;
 class OperatorValueCheckerConvertor
 {
     /**
-     * @throws \App\Exceptions\Common\OperatorConvertionException
+     * @throws OperatorConvertionException
      */
     public static function checkValuesAgainstOperator(
         Operator $operator,

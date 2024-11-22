@@ -87,7 +87,7 @@ class MotionRepository extends ServiceEntityRepository implements ReadingTypeRep
     }
 
     /**
-     * @return \App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion[]
+     * @return Motion[]
      */
     #[ArrayShape([Motion::class])]
     public function findBySensorID(int $sensorID): array

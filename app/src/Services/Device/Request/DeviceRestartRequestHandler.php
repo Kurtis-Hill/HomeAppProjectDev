@@ -20,7 +20,7 @@ readonly class DeviceRestartRequestHandler
     ) {}
 
     /**
-     * @throws \App\Exceptions\Device\DeviceIPNotSetException
+     * @throws DeviceIPNotSetException
      * @throws TransportExceptionInterface
      */
     public function restartDevice(Devices $device): bool

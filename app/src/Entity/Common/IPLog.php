@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace App\Entity\Common;
 
+use App\Repository\Common\ORM\IPLogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
-    ORM\Entity(repositoryClass: \App\Repository\Common\ORM\IPLogRepository::class),
+    ORM\Entity(repositoryClass: IPLogRepository::class),
     ORM\Table(name: "iplog"),
     ORM\UniqueConstraint(name: "ipAddress", columns: ["ipAddress"]),
 ]

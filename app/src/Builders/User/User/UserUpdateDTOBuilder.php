@@ -16,7 +16,7 @@ class UserUpdateDTOBuilder
         ?string $newPassword,
         ?string $oldPassword,
         ?int $groupID,
-    ): \App\DTOs\User\Internal\User\UserUpdateDTO {
+    ): UserUpdateDTO {
         return new UserUpdateDTO(
             $userToUpdate,
             $firstName,

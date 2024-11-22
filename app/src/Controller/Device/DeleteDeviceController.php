@@ -39,7 +39,7 @@ class DeleteDeviceController extends AbstractController
     }
 
     /**
-     * @throws \App\Exceptions\User\RoomsExceptions\RoomNotFoundException
+     * @throws RoomNotFoundException
      * @throws GroupNotFoundException
      */
     #[

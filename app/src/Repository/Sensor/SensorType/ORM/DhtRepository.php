@@ -8,7 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\SensorTypes\Dht>
+ * @extends ServiceEntityRepository<Dht>
  *
  * @method Dht|null find($id, $lockMode = null, $lockVersion = null)
  * @method Dht|null findOneBy(array $criteria, array $orderBy = null)

@@ -211,7 +211,7 @@ class GetCardViewController extends AbstractController
     }
 
     /**
-     * @throws ORMException|\App\Exceptions\UserInterface\WrongUserTypeException
+     * @throws ORMException|WrongUserTypeException
      */
     private function prepareCardDataForUser(
         SensorFilterDTO $cardDataPreFilterDTO,

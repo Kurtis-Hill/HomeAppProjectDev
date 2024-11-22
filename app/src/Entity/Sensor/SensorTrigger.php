@@ -83,7 +83,7 @@ class SensorTrigger
     private Operator $operator;
 
     #[
-        ORM\ManyToOne(targetEntity: \App\Entity\Sensor\TriggerType::class),
+        ORM\ManyToOne(targetEntity: TriggerType::class),
         ORM\JoinColumn(name: "triggerTypeID", referencedColumnName: "triggerTypeID"),
     ]
     private TriggerType $triggerType;
@@ -269,7 +269,7 @@ class SensorTrigger
         $this->endTime = $endTime;
     }
 
-    public function getTriggerType(): \App\Entity\Sensor\TriggerType
+    public function getTriggerType(): TriggerType
     {
         return $this->triggerType;
     }

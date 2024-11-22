@@ -15,10 +15,10 @@ class HumidityStandardReadingTypeObjectBuilder extends AbstractStandardReadingTy
 {
     /**
      * @throws OptimisticLockException
-     * @throws \App\Exceptions\Sensor\SensorTypeException
+     * @throws SensorTypeException
      * @throws ORMException
      * @throws \Doctrine\ORM\Exception\ORMException
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws SensorReadingTypeRepositoryFactoryException
      */
     public function buildReadingTypeObject(Sensor $sensor, int|float|bool $currentReading = 10): AllSensorReadingTypeInterface
     {

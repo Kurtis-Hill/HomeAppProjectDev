@@ -9,7 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\OutOfRangeRecordings\OutOfRangeHumid>
+ * @extends ServiceEntityRepository<OutOfRangeHumid>
  *
  * @method OutOfRangeHumid|null find($id, $lockMode = null, $lockVersion = null)
  * @method OutOfRangeHumid|null findOneBy(array $criteria, array $orderBy = null)

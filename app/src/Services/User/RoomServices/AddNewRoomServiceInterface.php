@@ -4,13 +4,14 @@ namespace App\Services\User\RoomServices;
 
 use App\DTOs\User\Internal\RoomDTOs\AddNewRoomDTO;
 use App\Entity\User\Room;
+use App\Exceptions\User\RoomsExceptions\DuplicateRoomException;
 use Doctrine\ORM\Exception\ORMException;
 use JetBrains\PhpStorm\ArrayShape;
 
 interface AddNewRoomServiceInterface
 {
     /**
-     * @throws \App\Exceptions\User\RoomsExceptions\DuplicateRoomException|ORMException
+     * @throws DuplicateRoomException|ORMException
      */
     public function preProcessNewRoomValues(AddNewRoomDTO $addNewRoomDTO): void;
 

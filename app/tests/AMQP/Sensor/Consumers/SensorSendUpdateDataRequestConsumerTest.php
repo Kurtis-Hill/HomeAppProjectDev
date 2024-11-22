@@ -71,7 +71,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
             $deviceSettingsRequestDTOBuilder,
             $mockLogger,
         );
-        $this->sut = new \App\AMQP\Sensor\Consumers\SensorSendUpdateDataRequestConsumer(
+        $this->sut = new SensorSendUpdateDataRequestConsumer(
             $updateDeviceSensorDataHandler,
             $mockLogger
         );

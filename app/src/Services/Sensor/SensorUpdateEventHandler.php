@@ -22,7 +22,7 @@ readonly class SensorUpdateEventHandler
     ) {}
 
     /**
-     * @param \App\Entity\Sensor\Sensor[] $sensors
+     * @param Sensor[] $sensors
      * @return void
      * @throws SensorNotFoundException
      */

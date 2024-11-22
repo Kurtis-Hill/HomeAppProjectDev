@@ -8,7 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\UserInterface\Card\CardState>
+ * @extends ServiceEntityRepository<CardState>
  *
  * @method CardState|null find($id, $lockMode = null, $lockVersion = null)
  * @method CardState|null findOneBy(array $criteria, array $orderBy = null)
