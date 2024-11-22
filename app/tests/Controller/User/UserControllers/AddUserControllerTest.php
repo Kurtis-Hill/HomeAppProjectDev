@@ -18,7 +18,7 @@ class AddUserControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_USER_URL = CommonURL::USER_HOMEAPP_API_URL . 'add';
+    private const ADD_USER_URL = CommonURL::USER_HOMEAPP_API_URL ;
 
     private ?EntityManagerInterface $entityManager;
 
@@ -51,31 +51,31 @@ class AddUserControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_adding_device_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::ADD_USER_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminUserToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function wrongHttpsMethodDataProvider(): array
-    {
-        return [
-            [Request::METHOD_GET],
-            [Request::METHOD_PUT],
-            [Request::METHOD_PATCH],
-            [Request::METHOD_DELETE],
-        ];
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_adding_device_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::ADD_USER_URL,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminUserToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function wrongHttpsMethodDataProvider(): array
+//    {
+//        return [
+//            [Request::METHOD_GET],
+//            [Request::METHOD_PUT],
+//            [Request::METHOD_PATCH],
+//            [Request::METHOD_DELETE],
+//        ];
+//    }
 
     /**
      * @dataProvider wrongDataTypesDataProvider

@@ -1,6 +1,5 @@
 #!/bin/sh
 
-composer require symfony/messenger
 if [ "${APP_ENV}" = 'prod' ]; then
   echo "production container build"
   echo "installing composer packages..."

@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-rooms')]
 class AddNewRoomController extends AbstractController
 {
     use HomeAppAPITrait;

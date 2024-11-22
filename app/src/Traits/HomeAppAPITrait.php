@@ -334,6 +334,7 @@ trait HomeAppAPITrait
     {
         return new JsonResponse($data, $statusCode);
     }
+
     /**
      * @throws ExceptionInterface
      */
@@ -352,9 +353,9 @@ trait HomeAppAPITrait
         }
 
         $normalizer = [new ObjectNormalizer($annotationClassMetadataFactory ?? null)];
-        $normalizer = new Serializer($normalizer);
+        $serializer  = new Serializer($normalizer);
 
-        return $normalizer->normalize($data, null, $context);
+        return $serializer->normalize($data, null, $context);
     }
 
     /**

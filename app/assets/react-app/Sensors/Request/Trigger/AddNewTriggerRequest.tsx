@@ -15,7 +15,7 @@ export type AddNewTriggerType = {
 
 export async function addNewTriggerForm(triggerData: AddNewTriggerType): Promise<AxiosPromise> {
     return await axios.post(
-        `${apiURL}sensor-trigger/form`,
+        `${apiURL}sensor-trigger`,
         triggerData,
     );
 }

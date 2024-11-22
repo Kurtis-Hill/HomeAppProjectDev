@@ -26,14 +26,12 @@ class GetRegisteredDeviceIPsController extends AbstractController
         foreach ($allDeviceIPs as $deviceIP) {
             $deviceIPs[] = $deviceIPResponseDTOBuilder->buildDeviceIPResponseDTOBuilder($deviceIP);
         }
-
         if (empty($deviceIPs)) {
             return $this->sendSuccessfulJsonResponse([], 'No devices registered');
         }
 
         try {
             $normalizedResponse = $this->normalize($deviceIPs);
-
             return $this->sendSuccessfulJsonResponse($normalizedResponse);
         } catch (NotNormalizableValueException) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);

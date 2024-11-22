@@ -33,8 +33,12 @@ export default function TriggerPage() {
     const fetchAllTriggerData = async () => {
         setLoadingTriggerData(true);
         const response = await getAllSensorTriggerTypesRequest();
-        if (response.status === 200 && Array.isArray(response.data.payload)) {
-            setTriggerData(response.data.payload);
+        if (response.status === 200) {
+            if (Array.isArray(response.data.payload)) {
+                setTriggerData(response.data.payload);
+            } else {
+                setTriggerData([]);
+            }
             setLoadingTriggerData(false);
         } else {
             setLoadingTriggerData(false);
@@ -42,6 +46,7 @@ export default function TriggerPage() {
     }
 
     const handleShowDeleteModal = (triggerID: number|null) => {
+        setShowUpdateModal(false);
         if (triggerID === null) {
             setShowDeleteModal(false);    
         } else {
@@ -54,9 +59,10 @@ export default function TriggerPage() {
     const deleteTrigger = async () => {
         const response = await deleteTriggerRequest(selectedTriggerID);
         if (response.status === 200) {
+            setShowDeleteModal(false);
             await fetchAllTriggerData();
         }
-    } 
+    }
 
     const handleSendNewTriggerRequest = async (e: Event, triggerRequest: AddNewTriggerType) => {
         const response = await addNewTriggerForm(triggerRequest);
