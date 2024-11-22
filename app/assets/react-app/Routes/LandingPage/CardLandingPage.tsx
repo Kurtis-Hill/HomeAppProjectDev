@@ -10,8 +10,7 @@ export function CardLandingPage(props: {route?: string}) {
                 <div id="content"> 
                     <div className="container-fluid">
                         <div className="row">
-                            {/*<CardRowContainer route={window.location.href.includes('room') ? `room/${entity}` : window.location.href.includes('device') ? `device/${entity}` : 'index'} />*/}
-                            <CardRowContainer route={route ?? 'index'} />
+                            <CardRowContainer route={route ?? 'index'} horizontal={false} />
                         </div>
                     </div>
                 </div>

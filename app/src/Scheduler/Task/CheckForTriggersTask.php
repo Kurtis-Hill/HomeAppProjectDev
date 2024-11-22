@@ -15,7 +15,7 @@ class CheckForTriggersTask
         private readonly ReadingTriggerHandler $readingTriggerHandler,
         private readonly StandardReadingTypeRepository $standardReadingTypeRepository,
         private readonly BoolReadingBaseSensorRepository $boolReadingBaseSensorRepository,
-        private readonly LoggerInterface $elasticLogger,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -23,7 +23,7 @@ class CheckForTriggersTask
     {
         $now = new DateTimeImmutable();
 
-        $this->elasticLogger->info(sprintf('Trigger check started at %s', $now->format('d-m-Y H:i:s')));
+        $this->logger->info(sprintf('Trigger check started at %s', $now->format('d-m-Y H:i:s')));
 
         $allStandardSensors = $this->standardReadingTypeRepository->findAll();
         $allBoolSensors = $this->boolReadingBaseSensorRepository->findAll();

@@ -11,7 +11,7 @@ export function BaseCard(props: {
     setCardLoading?: (loading: boolean) => void;
  }): React {
     const colour: string = props.colour ?? 'primary';
-    const cardClasses = props.cardClasses ?? 'col-xl-3 col-md-6 mb-4 hover'
+    const cardClasses = props.cardClasses ?? 'col-xl-12 col-md-6 mb-4 hover'
     const id = props.id ?? 0;
     const loading = props.loading ?? false;
 

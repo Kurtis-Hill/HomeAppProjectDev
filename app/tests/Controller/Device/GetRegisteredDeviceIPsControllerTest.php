@@ -55,7 +55,6 @@ class GetRegisteredDeviceIPsControllerTest extends WebTestCase
         $response = $this->client->getResponse();
 
         $responseContent = json_decode($response->getContent(), true);
-
         $payload = $responseContent['payload'];
         $allIPLogs = $this->ipLogRepostory->findAll();
 

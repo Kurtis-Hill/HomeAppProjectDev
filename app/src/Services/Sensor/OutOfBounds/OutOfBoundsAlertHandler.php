@@ -49,8 +49,9 @@ readonly class OutOfBoundsAlertHandler
                 $tx->set($redisKey, true);
                 $tx->expire($redisKey, 60 * 60);
             });
+
+            $this->homeAppAlertClient->sendAlert($message);
         }
 
-        $this->homeAppAlertClient->sendAlert($message);
     }
 }

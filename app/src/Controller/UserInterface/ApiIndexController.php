@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/HomeApp/api/user', name: 'home')]
+#[Route('/HomeApp/api/user/application/')]
 class ApiIndexController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route('/ping', name: 'ping', methods: [Request::METHOD_GET])]
+    #[Route('ping', name: 'ping_endpoint', methods: [Request::METHOD_GET])]
     public function pingAction(): JsonResponse
     {
         return new JsonResponse('pong', Response::HTTP_OK);

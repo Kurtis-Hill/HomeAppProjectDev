@@ -47,8 +47,8 @@ security:
             pattern: ^/HomeApp/api/user/login_check
             stateless: true
             provider: 'app_user_provider'
-            login_throttling:
-                max_attempts: 5
+#             login_throttling:
+#                 max_attempts: 5
             json_login:
                 check_path: /HomeApp/api/user/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success

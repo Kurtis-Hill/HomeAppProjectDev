@@ -21,7 +21,7 @@ export type TriggerFormType = {
     baseReadingTypeThatTriggers: number;
     baseReadingTypeThatIsTriggered: number;
     days: SensorTriggerDaysType;
-    valueThatTriggers: number|boolean;
+    valueThatTriggers: number|boolean|string;
     startTime: number|null;
     endTime: number|null;
     override: boolean;
@@ -237,12 +237,12 @@ export default function TriggerForm(props: {
                 <Label text='Value that triggers' htmlFor='valueThatTriggers' />
                 <br />
                 <span>Enter the value that triggers the notification/relay switch event this can be 'true/false' for relays or a number for temperature/humidity</span>
-                <Input value={triggerRequest !== null ? triggerRequest.valueThatTriggers : ''} required={true} type='text' name='valueThatTriggers' onChangeFunction={handleAddNewTriggerInput} />
+                <Input value={triggerRequest.valueThatTriggers} required={true} type='text' name='valueThatTriggers' onChangeFunction={handleAddNewTriggerInput} />
                 <br />
                 <Label text='Choose an operator' htmlFor='operator' />
                 <br />
                 <span>Select the operator that will be used to compare the value that triggers against the reading it receives</span>
-                <select defaultValue={triggerRequest !== null ? triggerRequest.operator : ''} className="form-control" name='operator' id='operator' onChange={handleAddNewTriggerInput}>
+                <select defaultValue={triggerRequest.operator} className="form-control" name='operator' id='operator' onChange={handleAddNewTriggerInput}>
                     {
                         triggerFormInputs?.operators.map((operator: OperatorResponseInterface, index) => {
                             return (
