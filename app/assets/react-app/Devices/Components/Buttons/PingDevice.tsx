@@ -11,7 +11,7 @@ export function PingDevice(props: { deviceID: number }) {
     
     const [pingDeviceLoading, setPingDeviceLoading] = useState<boolean>(false);
     
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const pingDevice = async () => {
         setPingDeviceLoading(true);

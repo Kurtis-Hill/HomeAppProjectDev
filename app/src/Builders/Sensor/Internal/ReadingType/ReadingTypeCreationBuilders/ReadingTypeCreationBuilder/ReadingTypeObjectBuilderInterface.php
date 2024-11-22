@@ -12,8 +12,8 @@ use Doctrine\ORM\ORMInvalidArgumentException;
 interface ReadingTypeObjectBuilderInterface
 {
     /**
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
-     * @throws \App\Exceptions\Sensor\SensorTypeException
+     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws SensorTypeException
      * @throws ORMException
      * @throws ORMInvalidArgumentException
      */

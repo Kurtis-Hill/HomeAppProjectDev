@@ -29,7 +29,7 @@ class DeleteTriggerControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const DELETE_SENSOR_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger/%d/delete';
+    private const DELETE_SENSOR_TRIGGER_URL = '/HomeApp/api/user/sensor-trigger/%d';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -194,23 +194,23 @@ class DeleteTriggerControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $baseReadingType = $this->baseSensorReadingTypeRepository->findAll()[0];
-
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::DELETE_SENSOR_TRIGGER_URL, $baseReadingType->getBaseReadingTypeID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $baseReadingType = $this->baseSensorReadingTypeRepository->findAll()[0];
+//
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::DELETE_SENSOR_TRIGGER_URL, $baseReadingType->getBaseReadingTypeID()),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

@@ -40,7 +40,7 @@ class UpdateSensorTriggerController extends AbstractController
 
     #[
         Route(
-            path: '{sensorTrigger}/update',
+            path: '{sensorTrigger}',
             name: 'update-esp-device',
             methods: [Request::METHOD_PUT, Request::METHOD_PATCH]
         )

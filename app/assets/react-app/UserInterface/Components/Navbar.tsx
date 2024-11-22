@@ -17,6 +17,7 @@ import { AnnouncementFlashModal } from '../../Common/Components/Modals/Announcem
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import UserSettingsButton from '../../Common/Components/Buttons/UserSettingsButton';
 import QueryButton from "../../Common/Components/Buttons/QueryButton";
+import {QuickViewOptionsNavBarElement} from "./Navbar/QuickViewOptionsNavBarElement";
 
 export default function NavBar(props: {
     refreshNavbar: boolean,
@@ -29,7 +30,7 @@ export default function NavBar(props: {
     const [loadingNavbarListItems, setLoadingNavbarListItems] = useState<boolean>(true);
     const [navbarToggleSizeSmall, setNavbarToggleSizeSmall] = useState<boolean>(false);
 
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const [announcementCount, setAnnouncementCount] = useState<number>(0);
     
@@ -134,6 +135,9 @@ export default function NavBar(props: {
                         ? <DotCircleSpinner classes="margin-spinner" />
                         : null
                 }
+                {/*{*/}
+                {/*    <QuickViewOptionsNavBarElement />*/}
+                {/*}*/}
                 <NavbarViewOptionListElements 
                     navbarResponseData={navbarResponseData} 
                     setRefreshNavDataFlag={setRefreshNavDataFlag}

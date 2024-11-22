@@ -36,7 +36,7 @@ readonly class SensorTypeCheckerFactory
 
 
     /**
-     * @throws \App\Exceptions\Sensor\SensorTypeNotFoundException
+     * @throws SensorTypeNotFoundException
      */
     public function fetchSensorReadingTypeChecker(string $sensorType): SensorTypeReadingTypeInterface
     {

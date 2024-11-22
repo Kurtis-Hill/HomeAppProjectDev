@@ -22,7 +22,7 @@ readonly class SensorTriggerResponseDTOBuilder
     }
 
     /**
-     * @throws \App\Exceptions\Sensor\UserNotAllowedException
+     * @throws UserNotAllowedException
      */
     public static function buildSensorTriggerResponseDTO(
         SensorTrigger $sensorTrigger,
@@ -60,7 +60,7 @@ readonly class SensorTriggerResponseDTOBuilder
     }
 
     /**
-     * @throws \App\Exceptions\Sensor\UserNotAllowedException
+     * @throws UserNotAllowedException
      */
     public function buildFullSensorTriggerResponseDTO(SensorTrigger $sensorTrigger): SensorTriggerResponseDTO
     {

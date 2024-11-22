@@ -4,13 +4,14 @@ namespace App\Builders\UserInterface\UserData;
 
 use App\Builders\User\GroupName\GroupResponseDTOBuilder;
 use App\Builders\User\RoomDTOBuilder\RoomResponseDTOBuilder;
+use App\DTOs\UserInterface\Response\UserData\UserDataResponseDTO;
 
 class UserDataDTOBuilder
 {
     public static function buildUserDataDTOBuilder(
         array $userRooms,
         array $userGroups,
-    ): \App\DTOs\UserInterface\Response\UserData\UserDataResponseDTO {
+    ): UserDataResponseDTO {
         foreach ($userRooms as $userRoom) {
             $userRoomDTOs[] = RoomResponseDTOBuilder::buildRoomResponseDTO(
                 $userRoom
@@ -23,7 +24,7 @@ class UserDataDTOBuilder
             );
         }
 
-        return new \App\DTOs\UserInterface\Response\UserData\UserDataResponseDTO(
+        return new UserDataResponseDTO(
             $userRoomDTOs ?? [],
                 $userGroupDTOs ?? [],
         );

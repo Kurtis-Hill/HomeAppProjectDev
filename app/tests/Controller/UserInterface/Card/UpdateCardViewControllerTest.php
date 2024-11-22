@@ -22,7 +22,7 @@ class UpdateCardViewControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const UPDATE_CARD_FORM_URL =  '/HomeApp/api/user/card/%d/update';
+    private const UPDATE_CARD_FORM_URL =  '/HomeApp/api/user/card/%d';
 
     private ?string $userToken = null;
 

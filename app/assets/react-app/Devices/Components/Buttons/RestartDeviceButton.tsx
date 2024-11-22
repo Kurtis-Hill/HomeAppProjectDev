@@ -11,7 +11,7 @@ export function RestartDeviceButton(props: { deviceID: number }) {
 
     const [restartDeviceLoading, setRestartDeviceLoading] = useState<boolean>(false);
 
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const restartDevice = async () => {
         setRestartDeviceLoading(true);

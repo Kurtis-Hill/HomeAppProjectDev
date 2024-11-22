@@ -51,7 +51,12 @@ class DataStoreControllerTest extends WebTestCase
             Request::METHOD_GET,
             self::ELASTIC_INDICES_URL,
         );
+        self::assertResponseIsSuccessful();
+
         $response = $this->client->getResponse();
-        dd($response);
+        $data = json_decode($response->getContent(), true);
+        $payload = $data['payload'];
+
+        self::assertCount(10, $payload);
     }
 }

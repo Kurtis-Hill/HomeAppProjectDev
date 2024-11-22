@@ -29,7 +29,7 @@ class DeleteTriggerController extends AbstractController
     /**
      * @throws AccessDeniedException
      */
-    #[Route('{sensorTrigger}/delete', name: 'delete-sensor-trigger', methods: [Request::METHOD_DELETE])]
+    #[Route('{sensorTrigger}', name: 'delete-sensor-trigger', methods: [Request::METHOD_DELETE])]
     public function deleteTrigger(SensorTrigger $sensorTrigger, SensorTriggerRepository $sensorTriggerRepository): JsonResponse
     {
         $user = $this->getUser();

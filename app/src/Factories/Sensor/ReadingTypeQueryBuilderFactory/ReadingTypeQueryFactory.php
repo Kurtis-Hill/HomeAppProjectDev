@@ -49,7 +49,7 @@ class ReadingTypeQueryFactory
     }
 
     /**
-     * @throws \App\Exceptions\UserInterface\ReadingTypeBuilderFailureException
+     * @throws ReadingTypeBuilderFailureException
      */
     public function getReadingTypeQueryDTOBuilder(string $readingType): ReadingTypeQueryDTOBuilderInterface
     {

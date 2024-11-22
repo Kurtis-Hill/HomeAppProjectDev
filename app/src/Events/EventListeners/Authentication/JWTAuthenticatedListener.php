@@ -32,7 +32,7 @@ class JWTAuthenticatedListener
             'user' => $authenticatedUser,
             'userType' => $userType,
             'time' => (new DateTimeImmutable('now'))->format('d/m/y H:i:s'),
-            ]);
+        ]);
 //        $user = $authenticatedEvent->getToken()->getUser();
 //
 //        $userCredentials = [$user, 'getUserID'];
@@ -46,5 +46,6 @@ class JWTAuthenticatedListener
 //                $this->logger->error($exception->getMessage());
 //            }
 //        }
+
     }
 }

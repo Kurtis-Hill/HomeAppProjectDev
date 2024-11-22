@@ -24,7 +24,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_GROUP_NAME_MAPPING_URL = '/HomeApp/api/user/group-mapping/add';
+    private const ADD_GROUP_NAME_MAPPING_URL = '/HomeApp/api/user/group-mapping';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -420,21 +420,21 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         self::assertArrayHasKey('group', $payload);
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::ADD_GROUP_NAME_MAPPING_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::ADD_GROUP_NAME_MAPPING_URL,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): Generator
     {

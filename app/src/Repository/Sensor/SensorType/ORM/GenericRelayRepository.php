@@ -8,7 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\SensorTypes\GenericRelay>
+ * @extends ServiceEntityRepository<GenericRelay>
  *
  * @method GenericRelay|null find($id, $lockMode = null, $lockVersion = null)
  * @method GenericRelay|null findOneBy(array $criteria, array $orderBy = null)

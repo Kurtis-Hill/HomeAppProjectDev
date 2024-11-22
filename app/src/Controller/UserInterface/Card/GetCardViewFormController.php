@@ -35,7 +35,7 @@ class GetCardViewFormController extends AbstractController
         $this->logger = $logger;
     }
 
-    #[Route('{id}/get', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
+    #[Route('{id}', name: 'get-card-view-form-v2', methods: [Request::METHOD_GET])]
     public function getCardViewForm(
         CardView $cardViewObject,
         CardViewFormPreparationHandlerInterface $cardViewFormPreparationService,

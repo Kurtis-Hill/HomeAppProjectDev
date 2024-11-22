@@ -37,7 +37,7 @@ class DeleteSensorController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('/{sensorID}/delete', name: 'delete-sensor', methods: [Request::METHOD_DELETE])]
+    #[Route('/{sensorID}', name: 'delete-sensor', methods: [Request::METHOD_DELETE])]
     public function deleteSensor(Sensor $sensor, Request $request, SensorDeletionInterface $sensorDeletionHandler): Response
     {
         try {

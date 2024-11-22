@@ -35,7 +35,7 @@ readonly class SensorTypeQueryFactory
     ) {}
 
     /**
-     * @throws \App\Exceptions\UserInterface\SensorTypeBuilderFailureException
+     * @throws SensorTypeBuilderFailureException
      */
     public function getSensorTypeQueryDTOBuilder(string $sensorType): SensorTypeQueryDTOBuilderInterface
     {

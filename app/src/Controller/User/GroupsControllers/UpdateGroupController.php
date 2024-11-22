@@ -44,7 +44,7 @@ class UpdateGroupController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('{groupID}/update', name: 'update-group', methods: [Request::METHOD_PATCH, Request::METHOD_PUT])]
+    #[Route('{groupID}', name: 'update-group', methods: [Request::METHOD_PATCH, Request::METHOD_PUT])]
     public function updateGroupName(
         Group $groupID,
         Request $request,

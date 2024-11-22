@@ -8,6 +8,7 @@ use App\DTOs\Sensor\Internal\Sensor\SensorFilterDTO;
 use App\DTOs\UserInterface\Internal\CardDataFiltersDTO\CardViewUriFilterDTO;
 use App\DTOs\UserInterface\RequestDTO\CardViewFilterRequestDTO;
 use App\Entity\Device\Devices;
+use App\Entity\User\Group;
 use App\Entity\User\Room;
 use App\Entity\User\User;
 use App\Exceptions\UserInterface\CardTypeNotRecognisedException;
@@ -43,6 +44,8 @@ class GetCardViewController extends AbstractController
     public const ROOM_VIEW = 'room';
 
     public const DEVICE_VIEW = 'device';
+
+    public const GROUP_VIEW = 'group';
 
     private SensorFilter $cardDataFilterService;
 
@@ -88,7 +91,7 @@ class GetCardViewController extends AbstractController
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::DEVICE_VIEW);
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        } catch (ORMException) {
+        } catch (ORMException $e) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()?->getUserIdentifier()]);
 
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILURE, 'Card filters')]);
@@ -116,6 +119,36 @@ class GetCardViewController extends AbstractController
         $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO($room);
         try {
             $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::ROOM_VIEW);
+        } catch (WrongUserTypeException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        } catch (ORMException) {
+            $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'Card filters'), ['user' => $this->getUser()->getUserIdentifier()]);
+
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::QUERY_FAILURE, ' Cards')]);
+        }
+
+        return $this->commonCardDTOResponse($cardData);
+    }
+
+    #[Route('group/{id}', name: 'group-card-data-v2', methods: [Request::METHOD_GET])]
+    public function groupCards(Group $group, Request $request): Response
+    {
+        try {
+            $cardViewRequestDTO = $this->validateRequestDTO($request);
+        } catch (CardViewRequestException $e) {
+            return $this->sendBadRequestJsonResponse($e->getValidationErrorsArray());
+        }
+        try {
+            $this->denyAccessUnlessGranted(CardViewVoter::VIEW_GROUP_CARD_DATA, $group);
+        } catch (AccessDeniedException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        }
+
+        $cardDatePreFilterDTO = $this->prepareFilters($cardViewRequestDTO);
+
+        $cardViewTypeFilter = CardViewTypeFilterDTOBuilder::buildCardViewTypeFilterDTO(cardViewTypeFilterGroup: $group);
+        try {
+            $cardData = $this->prepareCardDataForUser($cardDatePreFilterDTO, $cardViewTypeFilter, self::GROUP_VIEW);
         } catch (WrongUserTypeException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         } catch (ORMException) {
@@ -178,7 +211,7 @@ class GetCardViewController extends AbstractController
     }
 
     /**
-     * @throws ORMException|\App\Exceptions\UserInterface\WrongUserTypeException
+     * @throws ORMException|WrongUserTypeException
      */
     private function prepareCardDataForUser(
         SensorFilterDTO $cardDataPreFilterDTO,

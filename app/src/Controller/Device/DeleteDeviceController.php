@@ -39,12 +39,12 @@ class DeleteDeviceController extends AbstractController
     }
 
     /**
-     * @throws \App\Exceptions\User\RoomsExceptions\RoomNotFoundException
+     * @throws RoomNotFoundException
      * @throws GroupNotFoundException
      */
     #[
         Route(
-            path: '{deviceID}/delete',
+            path: '{deviceID}',
             name: 'delete-esp-device',
             methods: [Request::METHOD_DELETE]
         )

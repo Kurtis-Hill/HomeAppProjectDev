@@ -50,7 +50,7 @@ class UpdateUserController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('{userToUpdate}/update', name: 'update_user', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
+    #[Route('{userToUpdate}', name: 'update_user', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
     public function updateUser(
         User $userToUpdate,
         Request $request,

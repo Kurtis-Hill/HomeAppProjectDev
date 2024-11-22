@@ -9,7 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\OutOfRangeRecordings\OutOfRangeAnalog>
+ * @extends ServiceEntityRepository<OutOfRangeAnalog>
  *
  * @method OutOfRangeAnalog|null find($id, $lockMode = null, $lockVersion = null)
  * @method OutOfRangeAnalog|null findOneBy(array $criteria, array $orderBy = null)

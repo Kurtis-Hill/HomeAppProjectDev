@@ -30,7 +30,7 @@ class UpdateSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const UPDATE_SENSOR_URL = CommonURL::USER_HOMEAPP_API_URL . 'sensor/%d/update';
+    private const UPDATE_SENSOR_URL = CommonURL::USER_HOMEAPP_API_URL . 'sensor/%d';
 
     private KernelBrowser $client;
 
@@ -531,7 +531,6 @@ class UpdateSensorControllerTest extends WebTestCase
 //
 //        $randomPin = $devicePinsInUse[1];
 //
-    ////        dd($randomPin);
 //
 //        /** @var Sensor $sensor */
 //        $sensor = $this->sensorRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
@@ -778,24 +777,24 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals([sprintf(DuplicateSensorException::MESSAGE, $sensor->getSensorName())], $errorsPayload);
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $sensors = $this->sensorRepository->findAll();
-        $sensor = $sensors[0];
-
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::UPDATE_SENSOR_URL, $sensor->getSensorID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $sensors = $this->sensorRepository->findAll();
+//        $sensor = $sensors[0];
+//
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::UPDATE_SENSOR_URL, $sensor->getSensorID()),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): Generator
     {

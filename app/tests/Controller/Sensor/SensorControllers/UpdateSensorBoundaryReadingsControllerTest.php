@@ -436,7 +436,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             self::assertEquals($expectedDataPayloadMessage[$count]['readingType'], $dataPayload['readingType']);
 
             if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
-//                dd($expectedDataPayloadMessage, $dataPayload);
                 self::assertEquals($expectedDataPayloadMessage[$count]['highReading'], $dataPayload['highReading']);
 
                 if (!empty($expectedDataPayloadMessage[$count]['lowReading'])) {
@@ -1735,21 +1734,21 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, 1),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, 1),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

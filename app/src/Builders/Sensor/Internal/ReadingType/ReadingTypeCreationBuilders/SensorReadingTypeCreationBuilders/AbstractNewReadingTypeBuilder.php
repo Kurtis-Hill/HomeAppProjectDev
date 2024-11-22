@@ -28,7 +28,7 @@ readonly abstract class AbstractNewReadingTypeBuilder
     ) {}
 
     /**
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorTypeException
      * @throws ORMException
      */
@@ -39,8 +39,8 @@ readonly abstract class AbstractNewReadingTypeBuilder
     }
 
     /**
-     * @throws \App\Exceptions\Sensor\SensorTypeException
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws SensorTypeException
+     * @throws SensorReadingTypeRepositoryFactoryException
      * @throws ORMException
      */
     protected function buildSensorReadingTypeObjects(Sensor $sensor): array

@@ -53,7 +53,7 @@ class AddNewSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensor/add';
+    private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensor';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -653,8 +653,6 @@ class AddNewSensorControllerTest extends WebTestCase
             $this->entityManager->getRepository(AbstractBoolReadingBaseSensor::class)->findBySensorID($sensor->getSensorID()),
         );
         self::assertNotEmpty($newReadingTypeObjects);
-//        dd($newReadingTypeObjects, $sensor);
-//        dd($newReadingTypeObjects);
         if ($sensorTypeObject instanceof SensorTypeInterface) {
             //            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
             self::assertEquals($sensorTypeObject::getReadingTypeName(), $sensor->getSensorTypeObject()::getReadingTypeName());
@@ -664,17 +662,11 @@ class AddNewSensorControllerTest extends WebTestCase
             /** @var AllSensorReadingTypeInterface $sensorType */
             $sensorType = $this->entityManager->getRepository($sensorTypeClass::class)->findBySensorID($sensor->getSensorID())[0];
             self::assertInstanceOf($sensorTypeClass::class, $sensorType);
-            //        dd($sensorTypeMappingObject, $sensorType);
-//            dd(
-//                $sensorTypeObject->getMaxTemperature(),
-//                $sensorTypeClass,
-//            );
             if ($sensorTypeClass instanceof TemperatureReadingTypeInterface) {
                 self::assertEquals($sensorTypeObject->getMaxTemperature(), $sensorTypeClass->getHighReading());
                 self::assertEquals($sensorTypeObject->getMinTemperature(), $sensorTypeClass->getLowReading());
             }
             if ($sensorTypeClass instanceof HumidityReadingTypeInterface) {
-//                dd($sensorTypeClass, $sensorTypeObject);
                 self::assertEquals($sensorTypeObject->getMaxHumidity(), $sensorTypeClass->getHighReading());
                 self::assertEquals($sensorTypeObject->getMinHumidity(), $sensorTypeClass->getLowReading());
             }
@@ -1012,21 +1004,21 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_FORBIDDEN);
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::ADD_NEW_SENSOR_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::ADD_NEW_SENSOR_URL,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

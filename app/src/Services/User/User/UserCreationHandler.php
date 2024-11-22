@@ -3,6 +3,7 @@
 namespace App\Services\User\User;
 
 use App\Builders\User\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
+use App\Builders\User\User\NewUserBuilder;
 use App\Entity\User\Group;
 use App\Entity\User\User;
 use App\Exceptions\User\GroupExceptions\GroupMappingValidationException;
@@ -30,7 +31,7 @@ class UserCreationHandler
 
     private GroupRepository $groupRepository;
 
-    private \App\Builders\User\User\NewUserBuilder $newUserBuilder;
+    private NewUserBuilder $newUserBuilder;
 
     private UserRepository $userRepository;
 
@@ -48,7 +49,7 @@ class UserCreationHandler
 
     public function __construct(
         GroupRepository $groupNameRepository,
-        \App\Builders\User\User\NewUserBuilder $newUserBuilder,
+        NewUserBuilder $newUserBuilder,
         UserRepository $userRepository,
         AddGroupHandler $addGroupNameHandler,
         AddGroupMappingHandler $addGroupNameMappingHandler,
@@ -72,10 +73,10 @@ class UserCreationHandler
      * @throws ORMException
      * @throws OptimisticLockException
      * @throws UniqueConstraintViolationException
-     * @throws \App\Exceptions\User\UserExceptions\UserCreationValidationErrorsException
-     * @throws \App\Exceptions\User\GroupExceptions\GroupValidationException
+     * @throws UserCreationValidationErrorsException
+     * @throws GroupValidationException
      * @throws GroupNotFoundException
-     * @throws \App\Exceptions\User\GroupExceptions\GroupMappingValidationException
+     * @throws GroupMappingValidationException
      */
     public function handleNewUserCreation(
         string $firstName,
@@ -137,7 +138,7 @@ class UserCreationHandler
      * @throws GroupNotFoundException
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws \App\Exceptions\User\GroupExceptions\GroupMappingValidationException
+     * @throws GroupMappingValidationException
      */
     private function addNewUserToSharedUserGroups(User $user): void
     {

@@ -9,7 +9,7 @@ use App\Exceptions\Sensor\SensorReadingTypeObjectNotFoundException;
 interface SensorResponseDTOBuilderInterface
 {
     /**
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeObjectNotFoundException
+     * @throws SensorReadingTypeObjectNotFoundException
      */
     public function buildSensorReadingTypeResponseDTO(AllSensorReadingTypeInterface $readingTypeObject): AllSensorReadingTypeResponseDTOInterface;
 }

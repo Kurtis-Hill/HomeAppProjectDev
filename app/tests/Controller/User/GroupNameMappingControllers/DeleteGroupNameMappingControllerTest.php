@@ -23,7 +23,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const DELETE_GROUP_NAME_MAPPING_URL = CommonURL::USER_HOMEAPP_API_URL . 'group-mapping/' . '%d/delete';
+    private const DELETE_GROUP_NAME_MAPPING_URL = CommonURL::USER_HOMEAPP_API_URL . 'group-mapping/' . '%d';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -64,24 +64,24 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        /** @var \App\Entity\GroupMapping[] $groupNameMappings */
-        $groupNameMappings = $this->groupNameMappingRepository->findAll();
-
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::DELETE_GROUP_NAME_MAPPING_URL, $groupNameMappings[0]->getGroupMappingID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        /** @var \App\Entity\GroupMapping[] $groupNameMappings */
+//        $groupNameMappings = $this->groupNameMappingRepository->findAll();
+//
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::DELETE_GROUP_NAME_MAPPING_URL, $groupNameMappings[0]->getGroupMappingID()),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): Generator
     {

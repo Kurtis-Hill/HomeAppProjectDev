@@ -9,7 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\ConstantRecording\ConstTemp>
+ * @extends ServiceEntityRepository<ConstTemp>
  *
  * @method ConstTemp|null find($id, $lockMode = null, $lockVersion = null)
  * @method ConstTemp|null findOneBy(array $criteria, array $orderBy = null)

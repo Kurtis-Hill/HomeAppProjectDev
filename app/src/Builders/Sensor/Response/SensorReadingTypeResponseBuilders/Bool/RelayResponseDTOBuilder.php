@@ -5,6 +5,7 @@ namespace App\Builders\Sensor\Response\SensorReadingTypeResponseBuilders\Bool;
 use App\Builders\Sensor\Response\SensorReadingTypeResponseBuilders\SensorResponseDTOBuilderInterface;
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\DTOs\Sensor\Response\SensorReadingTypeResponse\AllSensorReadingTypeResponseDTOInterface;
+use App\DTOs\Sensor\Response\SensorReadingTypeResponse\Bool\RelayResponseDTO;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
 use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Exceptions\Sensor\SensorReadingTypeObjectNotFoundException;
@@ -19,7 +20,7 @@ class RelayResponseDTOBuilder implements SensorResponseDTOBuilderInterface
             );
         }
 
-        return new \App\DTOs\Sensor\Response\SensorReadingTypeResponse\Bool\RelayResponseDTO(
+        return new RelayResponseDTO(
             sensorResponseDTO: SensorResponseDTOBuilder::buildSensorResponseDTO($readingTypeObject->getSensor()),
             baseReadingTypeID: $readingTypeObject->getBaseReadingType()->getBaseReadingTypeID(),
             boolID: $readingTypeObject->getBoolID(),

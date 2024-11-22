@@ -5,7 +5,7 @@ import { AnnouncementFlashModalBuilder } from '../../Builders/ModalBuilder/Annou
 import { ResponseInterceptor } from '../../Response/Axios/ResponseInterceptor';
 
 export function ResponseComponent(props: {refreshNavBar: (newValue: boolean) => void}) {
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const [announcementCount, setAnnouncementCount] = useState<number>(0);
 

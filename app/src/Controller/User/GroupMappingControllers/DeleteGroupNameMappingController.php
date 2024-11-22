@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'group-mapping/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'group-mapping')]
 class DeleteGroupNameMappingController extends AbstractController
 {
     use HomeAppAPITrait;
@@ -22,7 +22,7 @@ class DeleteGroupNameMappingController extends AbstractController
 
     public const DELETE_GROUP_NAME_MAPPING_SUCCESS = 'Group name mapping with id: %d deleted successfully';
 
-    #[Route('{groupMappingID}/delete', name: 'delete-group', methods: [Request::METHOD_DELETE])]
+    #[Route('/{groupMappingID}', name: 'delete-group', methods: [Request::METHOD_DELETE])]
     public function deleteGroupNameMapping(
         GroupMapping $groupMappingID,
         DeleteGroupNameMappingHandler $deleteGroupNameMappingHandler,

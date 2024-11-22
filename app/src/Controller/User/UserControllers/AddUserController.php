@@ -46,7 +46,7 @@ class AddUserController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('add', name: 'add_user', methods: [Request::METHOD_POST])]
+    #[Route('', name: 'add_user', methods: [Request::METHOD_POST])]
     public function addNewUser(
         Request $request,
         ValidatorInterface $validator,

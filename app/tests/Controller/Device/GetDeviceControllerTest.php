@@ -29,9 +29,9 @@ class GetDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/%d/get';
+    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/%d';
 
-    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/all';
+    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device';
 
     private ?string $adminToken = null;
 

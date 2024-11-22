@@ -7,13 +7,10 @@ use App\Exceptions\Sensor\DuplicateSensorException;
 use App\Repository\Device\ORM\DeviceRepository;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 
-class DuplicateSensorCheckService
+readonly class DuplicateSensorCheckService
 {
-    private SensorRepositoryInterface $sensorRepository;
-
-    public function __construct(SensorRepositoryInterface $sensorRepository, DeviceRepository $deviceRepository)
+    public function __construct(private SensorRepositoryInterface $sensorRepository)
     {
-        $this->sensorRepository = $sensorRepository;
     }
 
     /**

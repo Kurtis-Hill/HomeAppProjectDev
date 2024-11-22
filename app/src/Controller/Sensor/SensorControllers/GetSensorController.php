@@ -41,7 +41,7 @@ class GetSensorController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('/all', name: 'get-all-sensors', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'get-all-sensors', methods: [Request::METHOD_GET])]
     public function getAllSensors(
         Request $request,
         ValidatorInterface $validator,

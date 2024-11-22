@@ -7,12 +7,14 @@ use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
 use App\Entity\Sensor\Sensor;
+use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Entity\Sensor\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Entity\Sensor\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Exceptions\Sensor\SensorTypeException;
 use App\Factories\Sensor\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
+use App\Repository\Sensor\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 
@@ -20,11 +22,10 @@ abstract class AbstractBoolReadingTypeBuilder extends AbstractReadingTypeBuilder
 {
     protected SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory;
 
-
     public function __construct(
         BaseReadingTypeBuilder $baseSensorReadingType,
         BaseSensorReadingTypeRepository $baseSensorReadingTypeRepository,
-        SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory
+        SensorReadingTypeRepositoryFactory $sensorReadingTypeRepositoryFactory,
     ) {
         $this->sensorReadingTypeRepositoryFactory = $sensorReadingTypeRepositoryFactory;
         parent::__construct($baseSensorReadingType, $baseSensorReadingTypeRepository);
@@ -64,6 +65,10 @@ abstract class AbstractBoolReadingTypeBuilder extends AbstractReadingTypeBuilder
 
         $readingTypeRepository = $this->sensorReadingTypeRepositoryFactory->getSensorReadingTypeRepository($boolObject::getReadingTypeName());
 
-        $readingTypeRepository->persist($boolObject);
+        if ($boolObject instanceof AllSensorReadingTypeInterface) {
+            $readingTypeRepository->persist($boolObject);
+        } else {
+            throw new SensorTypeException();
+        }
     }
 }

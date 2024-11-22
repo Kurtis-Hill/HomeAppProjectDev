@@ -16,7 +16,7 @@ class GetUserDataController extends AbstractController
 {
     use HomeAppAPITrait;
 
-    #[Route('/get', name: 'get-user-data', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'get-user-data', methods: [Request::METHOD_GET])]
     public function getGeneralUserData(UserDataProvider $userDataProvider): Response
     {
         $user = $this->getUser();

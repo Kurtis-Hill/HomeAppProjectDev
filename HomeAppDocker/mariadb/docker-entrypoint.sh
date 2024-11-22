@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ ${APP_ENV} = 'dev' ]; then
+if [ "${APP_ENV}" = 'dev' ]; then
     echo "dev container build"
     echo "Creating test Database and test user..."
     mysql -u root -p"$MYSQL_ROOT_PASSWORD" --execute \

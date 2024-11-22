@@ -13,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity>
+ * @extends ServiceEntityRepository<Humidity>
  *
  * @method Humidity|null find($id, $lockMode = null, $lockVersion = null)
  * @method Humidity|null findOneBy(array $criteria, array $orderBy = null)

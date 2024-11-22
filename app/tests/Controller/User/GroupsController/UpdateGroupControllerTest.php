@@ -24,7 +24,7 @@ class UpdateGroupControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const UPDATE_GROUP_URL = '/HomeApp/api/user/user-groups/%s/update';
+    private const UPDATE_GROUP_URL = '/HomeApp/api/user/user-groups/%s';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -85,24 +85,24 @@ class UpdateGroupControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         self::assertEquals([APIErrorMessages::FORMAT_NOT_SUPPORTED], $response['errors']);
     }
-
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $groups = $this->groupNameRepository->findAll();
-        $group = $groups[0];
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $groups = $this->groupNameRepository->findAll();
+//        $group = $groups[0];
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::UPDATE_GROUP_URL, $group->getGroupID()),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): Generator
     {

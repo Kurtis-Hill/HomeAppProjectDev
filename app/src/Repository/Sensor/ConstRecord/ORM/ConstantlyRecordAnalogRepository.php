@@ -9,7 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\ConstantRecording\ConstAnalog>
+ * @extends ServiceEntityRepository<ConstAnalog>
  *
  * @method ConstAnalog|null find($id, $lockMode = null, $lockVersion = null)
  * @method ConstAnalog|null findOneBy(array $criteria, array $orderBy = null)

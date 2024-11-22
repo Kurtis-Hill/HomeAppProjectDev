@@ -12,6 +12,7 @@ use App\DTOs\Device\Request\DeviceUpdateRequestDTO;
 use App\DTOs\Device\Response\DeviceResponseDTO;
 use App\Entity\Device\Devices;
 use App\Entity\Sensor\Sensor;
+use App\Exceptions\Sensor\ReadingTypeNotExpectedException;
 use App\Exceptions\User\GroupExceptions\GroupNotFoundException;
 use App\Exceptions\User\RoomsExceptions\RoomNotFoundException;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
@@ -66,7 +67,7 @@ class DeviceResponseDTOBuilder
     /**
      * @throws GroupNotFoundException
      * @throws RoomNotFoundException
-     * @throws \App\Exceptions\Sensor\ReadingTypeNotExpectedException
+     * @throws ReadingTypeNotExpectedException
      */
     public function buildFullDeviceResponseDTO(Devices $device, bool $includeSensors = false): DeviceResponseDTO
     {

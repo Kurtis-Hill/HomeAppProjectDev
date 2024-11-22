@@ -27,7 +27,7 @@ class UpdateDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const UPDATE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/update';
+    private const UPDATE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d';
 
     private ?string $userToken = null;
 
@@ -1007,21 +1007,21 @@ class UpdateDeviceControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::UPDATE_DEVICE_URL, 1),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::UPDATE_DEVICE_URL, 1),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

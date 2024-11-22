@@ -28,6 +28,8 @@ services:
     volumes:
       - ../app:/var/www/html:cached
       - ../SSL:/etc/ssl:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     depends_on:
       maria-db:
         condition: service_healthy
@@ -62,6 +64,8 @@ services:
     volumes:
       - ../app:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     depends_on:
       maria-db:
         condition: service_healthy
@@ -88,6 +92,7 @@ services:
     volumes:
       - ./mariadb/db_data:/var/lib/mysql:rw,delegated
       - ../SSL/custom:/etc/mysql/ssl:ro
+      - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$MARIADB_PASSWORD
       interval: 5s
@@ -123,6 +128,8 @@ services:
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
         - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -140,10 +147,14 @@ services:
     environment:
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
     command:
-      - /bin/sh
-      - -c
-      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}" && sysctl vm.overcommit_memory=1
+        - /bin/sh
+        - -c
+        - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}" && sysctl vm.overcommit_memory=1
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork

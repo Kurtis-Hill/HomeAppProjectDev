@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use Exception;
 use Predis\Client;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -35,16 +36,20 @@ class RedisCheckerCommand extends Command
             'Checking redis...'
         ]);
 
-        $response = $this->redisClient->ping();
-dd($response);
-        if ($response) {
-            $output->writeln('<info>Redis is up and running</info>');
-            $keys = $this->redisClient->keys('*');
-            $output->writeln('<info>Redis keys:</info>');
-            foreach ($keys as $key) {
-                $output->writeln($key);
+        try {
+            $response = $this->redisClient->ping();
+
+            if ($response) {
+                $output->writeln('<info>Redis is up and running</info>');
+                $keys = $this->redisClient->keys('*');
+                $output->writeln('<info>Redis keys:</info>');
+                foreach ($keys as $key) {
+                    $output->writeln($key);
+                }
+                return Command::SUCCESS;
             }
-            return Command::SUCCESS;
+        } catch (Exception $e) {
+            $output->writeln(sprintf('<error>Redis is not running exception %s</error>', $e->getMessage()));
         }
 
         $output->writeln('<error>Redis is not running</error>');

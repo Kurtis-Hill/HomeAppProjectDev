@@ -25,7 +25,7 @@ class UpdateGroupHandler
     }
 
     /**
-     * @throws \App\Exceptions\User\GroupExceptions\GroupValidationException
+     * @throws GroupValidationException
      */
     public function updateGroup(UpdateGroupDTO $updateGroupDTO): void
     {

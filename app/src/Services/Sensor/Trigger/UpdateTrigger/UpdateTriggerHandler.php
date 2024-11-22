@@ -10,6 +10,7 @@ use App\Repository\Sensor\TriggerTypeRepository;
 use App\Services\API\APIErrorMessages;
 use App\Services\Sensor\Trigger\TriggerHelpers\TriggerDateTimeConvertor;
 use App\Traits\ValidatorProcessorTrait;
+use InvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -37,6 +38,9 @@ class UpdateTriggerHandler
         $this->validator = $validator;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[ArrayShape(['validationErrors'])]
     public function handleUpdateOfTrigger(SensorTrigger $sensorTriggerToUpdate, UpdateTriggerDTO $updateTriggerDTO): array
     {
@@ -50,7 +54,7 @@ class UpdateTriggerHandler
             }
         }
         if ($updateTriggerDTO->getValueThatTriggers() !== null) {
-            $sensorTriggerToUpdate->setValueThatTriggers($updateTriggerDTO->getValueThatTriggers());
+            $sensorTriggerToUpdate->setValueThatTriggers((string)$updateTriggerDTO->getValueThatTriggers());
         }
         if (!empty($updateTriggerDTO->getDays())) {
             foreach ($updateTriggerDTO->getDays() as $day) {
@@ -62,6 +66,7 @@ class UpdateTriggerHandler
                     "friday" => $friday = true,
                     "saturday" => $saturday = true,
                     "sunday" => $sunday = true,
+                    default => throw new InvalidArgumentException('Invalid day'),
                 };
             }
             $sensorTriggerToUpdate->setMonday($monday ?? false);

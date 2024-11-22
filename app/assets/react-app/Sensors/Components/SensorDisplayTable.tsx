@@ -70,7 +70,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
 
     const [createCardLoading, setCreateCardLoading] = useState<boolean>(false);
 
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const toggleFormInput = (event: Event) => {
         const name = (event.target as HTMLElement|HTMLInputElement).dataset.name !== undefined
@@ -223,13 +223,13 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                                         changeEvent={handleUpdateSensorInput}
                                         nameParam='sensorName'
                                         value={sensorUpdateFormInputs.sensorName}
-                                        dataName='sensorName' 
+                                        dataName='sensorName'
                                         acceptClickEvent={(e: Event) => sendUpdateSensorRequest(e)}
                                         declineClickEvent={(e: Event) => toggleFormInput(e)}
                                         extraClasses='center-text'
                                     />
-                                        
-                                :                
+
+                                :
                                     <span className={`${canEdit === true ? 'hover' : ''}`} data-name="sensorName" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.sensorName}</span>
                             }
                     </GeneralTableRow>
@@ -248,7 +248,7 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                                     />
                                 :
                                     <span className={`${canEdit === true ? 'hover' : ''}`} data-name="pinNumber" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.sensorReadingTypes.analog !== undefined  ? 'A' : '' }{originalSensorData.current.pinNumber}</span>
-                        }                            
+                        }
                     </GeneralTableRow>
                     <GeneralTableRow>
                         {
@@ -272,11 +272,11 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                     </GeneralTableRow>
                     <GeneralTableRow>
                         <span>{sensor?.createdBy?.email}</span>
-                    </GeneralTableRow>                            
+                    </GeneralTableRow>
                     <GeneralTableRow>
                         { createCardLoading === false ? <i onClick={() => handleCardViewModal(cardView)} className={`fas fa-${cardView ? 'check' : 'times'} hover`}></i> : <DotCircleSpinner classes='center-spinner-absolute' spinnerSize={2} />}
                     </GeneralTableRow>
-                    {         
+                    {
                         canDelete === true
                             ?
                                 <GeneralTableRow>
@@ -286,12 +286,12 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                                         refreshData={refreshData}
                                     />
                                 </GeneralTableRow>
-                            : 
-                            null            
+                            :
+                            null
                     }
-                    
+
                 </GeneralTableBody>
-            </GeneralTable>    
+            </GeneralTable>
         </>
     );
 }

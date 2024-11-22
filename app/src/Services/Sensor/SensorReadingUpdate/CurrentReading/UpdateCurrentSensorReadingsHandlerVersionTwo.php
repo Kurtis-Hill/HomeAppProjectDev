@@ -6,6 +6,7 @@ use App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadi
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Exceptions\Sensor\SensorNotFoundException;
+use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Factories\Sensor\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\Sensor\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
@@ -33,8 +34,8 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
     ) {}
 
     /**
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
-     * @throws \App\Exceptions\Sensor\SensorNotFoundException
+     * @throws SensorReadingTypeRepositoryFactoryException
+     * @throws SensorNotFoundException
      */
     #[ArrayShape(["errors"])]
     public function handleUpdateSensorCurrentReading(

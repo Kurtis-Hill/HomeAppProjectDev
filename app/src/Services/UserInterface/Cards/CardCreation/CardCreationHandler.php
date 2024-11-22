@@ -58,7 +58,7 @@ class CardCreationHandler implements CardCreationHandlerInterface
 
 
     /**
-     * @throws \App\Exceptions\UserInterface\CardStateException
+     * @throws CardStateException
      */
     #[ArrayShape(['errors'])]
     public function createUserCardForSensor(Sensor $sensorObject, User $user, ?NewCardOptionsDTO $cardOptionsDTO = null): array
@@ -129,7 +129,7 @@ class CardCreationHandler implements CardCreationHandlerInterface
     }
 
     /**
-     * @throws \App\Exceptions\UserInterface\CardColourException
+     * @throws CardColourException
      * @throws NonUniqueResultException
      * @throws NoResultException
      */

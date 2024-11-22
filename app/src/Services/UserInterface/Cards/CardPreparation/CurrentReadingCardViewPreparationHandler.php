@@ -42,25 +42,17 @@ class CurrentReadingCardViewPreparationHandler
             $cardViewTypeFilterDTO
         );
 
-        $flatterResult = [];
+        $flattenedResult = [];
         foreach ($cardResultUnFlattened as $result) {
             $sensorID = $result['sensors_sensorID'];
-            $flatterResult[$sensorID][] = array_filter($result, static function ($value) {
-                return $value !== null;
-            }, ARRAY_FILTER_USE_BOTH);
-        }
-
-        $flatteredMergedResult = [];
-        foreach ($flatterResult as $flattenedResultKey => $flattenedResultValue) {
-            if (count($flattenedResultValue) > 1) {
-                array_walk_recursive($flattenedResultValue, static function ($a, $b) use (&$flatteredMergedResult, $flattenedResultKey) {
-                    $flatteredMergedResult[$flattenedResultKey][$b] = $a;
-                });
-                continue;
+            $filteredResult = array_filter($result, static fn($value) => $value !== null, ARRAY_FILTER_USE_BOTH);
+            if (isset($flattenedResult[$sensorID])) {
+                $flattenedResult[$sensorID] = array_merge($flattenedResult[$sensorID], $filteredResult);
+            } else {
+                $flattenedResult[$sensorID] = $filteredResult;
             }
-            $flatteredMergedResult[$flattenedResultKey] = $flattenedResultValue[0];
         }
 
-        return $flatteredMergedResult;
+        return $flattenedResult;
     }
 }

@@ -32,7 +32,7 @@ export async function getSensorsRequest(getSensorInputs: GetSensorsRequestType):
     getSensorsUrlSearchParams.append('page', getSensorInputs.page.toString());
 
     const getSensorRequest = await axios.get(
-        `${apiURL}sensors/all?${getSensorsUrlSearchParams.toString()}`,
+        `${apiURL}sensors?${getSensorsUrlSearchParams.toString()}`,
     );
 
     return getSensorRequest;

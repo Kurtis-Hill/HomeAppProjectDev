@@ -16,7 +16,7 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
     ) {}
 
     /**
-     * @return \App\Entity\Sensor\SensorTrigger[]
+     * @return SensorTrigger[]
      *@throws OperatorConvertionException
      *
      */

@@ -51,7 +51,7 @@ export default function TriggerPage() {
     }
 
 
-    const deleteTrigger = async (e: Event) => {
+    const deleteTrigger = async () => {
         const response = await deleteTriggerRequest(selectedTriggerID);
         if (response.status === 200) {
             await fetchAllTriggerData();
@@ -149,7 +149,7 @@ export default function TriggerPage() {
                                                     name='delete-device'
                                                     action='submit'
                                                     classes='add-new-submit-button'
-                                                    onClickFunction={() => deleteTrigger}
+                                                    onClickFunction={deleteTrigger}
                                                 />
                                                 <CloseButton 
                                                     close={setShowDeleteModal}

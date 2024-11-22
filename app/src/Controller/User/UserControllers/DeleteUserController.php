@@ -30,7 +30,7 @@ class DeleteUserController extends AbstractController
         $this->elasticLogger = $elasticLogger;
     }
 
-    #[Route('{userID}/delete', name: 'delete_user', methods: [Request::METHOD_DELETE])]
+    #[Route('{userID}', name: 'delete_user', methods: [Request::METHOD_DELETE])]
     public function deleteUser(User $user, DeleteUserHandler $deleteUserHandler): JsonResponse
     {
         $this->denyAccessUnlessGranted(UserVoter::DELETE_USER, $user);

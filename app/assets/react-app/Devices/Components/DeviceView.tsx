@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { getDeviceRequest } from '../Request/GetDeviceRequest';
@@ -12,14 +12,14 @@ import { DeviceResponseInterface } from '../Response/DeviceResponseInterface';
 import { TabSelector } from '../../Common/Components/TabSelector';
 import {ResponseTypeEnum} from "../../Common/Response/APIResponseEnum";
 import { SensorsView } from '../../Sensors/Components/SensorsView';
+import {CardRowContainer} from "../../UserInterface/Components/CardRowContainer";
 
 export function DeviceView() {
-    const tabOptions = ['Device', 'Sensors', 'Commands'];
+    const tabOptions = ['Card View', 'Edit', 'Sensors', 'Commands'];
 
     const { setRefreshNavbar } = useMainIndicators();
 
     const params = useParams();
-
     const deviceID: number = parseInt(params.deviceID);
 
     const [deviceData, setDeviceData] = useState<DeviceResponseInterface|null>(null);
@@ -64,7 +64,15 @@ export function DeviceView() {
                 />
                 {
                     currentTab === tabOptions[0]
-                        ? 
+                        ?
+                            <CardRowContainer route={`device/${deviceID}`} />
+                        :
+                            null
+
+                }
+                {
+                    currentTab === tabOptions[1]
+                        ?
                             <UpdateDeviceView
                                 setDeviceData={setDeviceData}
                                 setRefreshNavbar={setRefreshNavbar}
@@ -74,14 +82,14 @@ export function DeviceView() {
                             null
                 }
                 {
-                    currentTab === tabOptions[1]
+                    currentTab === tabOptions[2]
                         ?
                             <SensorsView deviceID={deviceID} sensorData={deviceData.sensorData} refreshData={getDeviceData} />
                         :
                             null
                 }
                 {
-                    currentTab === tabOptions[2]
+                    currentTab === tabOptions[3]
                         ?
                             <h1>Commands</h1>
                         :

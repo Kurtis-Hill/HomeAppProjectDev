@@ -130,7 +130,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private DateTimeInterface $createdAt;
 
     #[
-        ArrayShape([\App\Entity\Authentication\GroupMapping::class]),
+        ArrayShape([GroupMapping::class]),
         ORM\OneToMany(mappedBy: "user", targetEntity: GroupMapping::class),
     ]
     private Selectable|array $userGroupMappingEntities;
@@ -140,7 +140,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         $this->userGroupMappingEntities = new ArrayCollection();
     }
 
-    #[ArrayShape([\App\Entity\Authentication\GroupMapping::class])]
+    #[ArrayShape([GroupMapping::class])]
     public function getUserGroupMappingEntities(): ArrayCollection|Selectable
     {
         return $this->userGroupMappingEntities;
@@ -152,10 +152,10 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     }
 
     #[ArrayShape(['int'])]
-    public function getAssociatedGroupIDs(): array
+    public function     getAssociatedGroupIDs(): array
     {
         $groupNames[] = $this->getGroup()->getGroupID();
-        /** @var \App\Entity\GroupMapping $entity */
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = $entity->getGroup()->getGroupID();
         }
@@ -169,7 +169,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
             'groupID' => $this->getGroup()->getGroupID(),
             'groupName' => $this->getGroup()->getGroupName()
         ];
-        /** @var \App\Entity\Authentication\GroupMapping $entity */
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = [
                 'groupID' => $entity->getGroup()->getGroupID(),
@@ -184,7 +184,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     public function getAssociatedGroups(): array
     {
         $groupNames[] = $this->getGroup();
-        /** @var \App\Entity\GroupMapping $entity */
+        /** @var GroupMapping $entity */
         foreach ($this->userGroupMappingEntities as $entity) {
             $groupNames[] = $entity->getGroup();
         }
@@ -199,7 +199,7 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ArrayShape([Group::class])]
     public function getGroupMappings(): array
     {
-        /** @var \App\Entity\GroupMapping $groupName */
+        /** @var GroupMapping $groupName */
         foreach ($this->userGroupMappingEntities as $groupName) {
             $groupNameArray[] = $groupName->getGroup();
         }

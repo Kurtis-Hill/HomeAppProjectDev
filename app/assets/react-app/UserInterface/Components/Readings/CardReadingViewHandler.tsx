@@ -64,22 +64,25 @@ export function CardReadingViewHandler(props: {
 
     const [cardsForDisplay, setCardsForDisplay] = useReducer<CardSensorDataResponseInterface[]>(cardReducer, []);
 
-    const route:string = props.route ?? 'index';
-    
     const filterParams:CardFilterBarType|[] = props.filterParams ?? {'readingTypes': [], 'sensorTypes': []};
 
     const cardRefreshTimer = props.cardRefreshTimer
 
+    const route = props.route;
+
     useEffect(() => {
-        handleCardRefresh().then(() => {
+        handleCardRefresh()
+            // .then(() => {
             const interval = setInterval(() => {
                 handleCardRefresh();
             }, cardRefreshTimer);
 
-            return () => clearInterval(interval);
-        });
-    }, [filterParams, cardRefreshTimer]);
-    
+            return () => clearInterval(interval)
+
+            }
+
+    , [filterParams, route, cardRefreshTimer]);
+
 
     const handleCardRefresh = async () => {
         const cardData: CardSensorDataResponseInterface[] = await handleGettingSensorReadings();
@@ -98,7 +101,7 @@ export function CardReadingViewHandler(props: {
             return cardDataResponse.data.payload;
         } catch(error) {
             const err = error as AxiosError|Error;
-            return [];           
+            return [];
         }
     }
 
@@ -109,26 +112,38 @@ export function CardReadingViewHandler(props: {
             </div>
         );
     }
-    return (   
-        <React.Fragment>
-            {            
-                cardsForDisplay.length > 0 
-                    ? cardsForDisplay.map((card: CardSensorDataResponseInterface|undefined, index: number) => {
-                        if (card !== undefined) {
-                                    return (
-                                        <React.Fragment key={index}>
-                                            <CardReadingFactory
-                                                cardData={card} 
-                                                setSelectedCardForQuickUpdate={props.setSelectedCardForQuickUpdate}
-                                                loadingCardModalView={props.loadingCardModalView}
-                                                setLoadingCardModalView={props.setLoadingCardModalView}
-                                            />
-                                        </React.Fragment>
-                                    )
+
+    if (cardsForDisplay.length > 0) {
+        return (
+            <React.Fragment>
+                {
+                    cardsForDisplay.map((card: CardSensorDataResponseInterface|undefined, index: number) => {
+                        return (
+                            <React.Fragment key={card?.cardViewID}>
+                                {
+                                    (card !== undefined)
+                                        ?
+                                            <div>
+                                                <CardReadingFactory
+                                                    cardData={card}
+                                                    setSelectedCardForQuickUpdate={props.setSelectedCardForQuickUpdate}
+                                                    loadingCardModalView={props.loadingCardModalView}
+                                                    setLoadingCardModalView={props.setLoadingCardModalView}
+                                                />
+                                            </div>
+                                        :
+                                            null
                                 }
-                            })
-                    : <div className="no-data-message">No data to display</div>
-            }            
-        </React.Fragment>
-    );
+                            </React.Fragment>
+                        )})
+                }
+            </React.Fragment>
+        );
+    } else {
+        return (
+            <>
+                <div className="no-data-message">No data to display</div>
+            </>
+        )
+    }
 }

@@ -36,7 +36,7 @@ class ConstRecordORMFactory implements ConstRecordFactoryInterface
     }
 
     /**
-     * @throws \App\Exceptions\Sensor\ReadingTypeNotSupportedException
+     * @throws ReadingTypeNotSupportedException
      */
     public function getConstRecordServiceRepository(string $sensorReadingTypeObject): ConstantlyRecordRepositoryInterface
     {

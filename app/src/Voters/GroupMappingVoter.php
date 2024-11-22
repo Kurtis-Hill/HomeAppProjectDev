@@ -47,7 +47,7 @@ class GroupMappingVoter extends Voter
             return true;
         }
 
-        if ($user->getGroup()?->getGroupID() === $addNewGroupNameMappingDTO->getGroupToAddUserTo()->getGroupID()) {
+        if ($user->getGroup()->getGroupID() === $addNewGroupNameMappingDTO->getGroupToAddUserTo()->getGroupID()) {
             return true;
         }
 
@@ -60,7 +60,7 @@ class GroupMappingVoter extends Voter
             return true;
         }
 
-        if ($user->getGroup()?->getGroupID() === $groupNameMapping->getGroup()->getGroupID()) {
+        if ($user->getGroup()->getGroupID() === $groupNameMapping->getGroup()->getGroupID()) {
             return true;
         }
 

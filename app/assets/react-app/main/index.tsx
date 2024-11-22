@@ -24,6 +24,8 @@ import { DeviceView } from "../Devices/Components/DeviceView";
 import LoginView from "../Authentication/Components/LoginView";
 import { Logout } from '../Authentication/Components/Logout';
 import QueryPage from "../Routes/Query/QueryPage";
+import {RoomView} from "../User/Components/Room/RoomView";
+import {GroupView} from "../User/Components/Group/GroupView";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -34,7 +36,11 @@ root.render(
                 <Route path="/HomeApp/WebApp/" element={<MainPageTop  />}>
                     <Route path="index" element={<LandingPage />} />
                     <Route path="cards/index" element={<CardLandingPage />} />
+                    {/*<Route path="cards/room/:entityID" element={<CardLandingPage />} />*/}
+                    {/*<Route path="cards/device/:entityID" element={<CardLandingPage />} />*/}
                     <Route path="devices/:deviceID" element={<DeviceView />} />
+                    <Route path="room/:roomID" element={<RoomView />} />
+                    <Route path="group/:groupID" element={<GroupView />} />
                     <Route path="sensors/triggers" element={<TriggerPage />} />
                     <Route path="user-settings" element={<UserSettingsView />} />
                     <Route path="query" element={<QueryPage />} />

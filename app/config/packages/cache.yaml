@@ -11,6 +11,14 @@ framework:
         app: cache.adapter.redis
         default_redis_provider: '%env(resolve:REDIS_URL)%'
 
+        pools:
+          custom_cache_pool:
+            adapter: cache.adapter.redis
+          doctrine.result_cache_pool:
+              adapter: cache.adapter.redis
+          doctrine.system_cache_pool:
+              adapter: cache.adapter.redis
+
         # APCu (not recommended with heavy random-write workloads as memory fragmentation can cause perf issues)
         #app: cache.adapter.apcu
 

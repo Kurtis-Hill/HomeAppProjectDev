@@ -24,8 +24,8 @@ readonly class DeviceDTOBuilder
     ) {}
 
     /**
-     * @throws \App\Exceptions\User\GroupExceptions\GroupNotFoundException
-     * @throws \App\Exceptions\User\RoomsExceptions\RoomNotFoundException
+     * @throws GroupNotFoundException
+     * @throws RoomNotFoundException
      */
     public function buildUpdateDeviceInternalDTO(
         DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
@@ -91,7 +91,7 @@ readonly class DeviceDTOBuilder
 
     /**
      * @throws RoomNotFoundException
-     * @throws \App\Exceptions\User\GroupExceptions\GroupNotFoundException
+     * @throws GroupNotFoundException
      */
     public function buildNewDeviceDTOFromNewDeviceRequest(NewDeviceRequestDTO $newDeviceRequestDTO, User $createdByUser): NewDeviceDTO
     {

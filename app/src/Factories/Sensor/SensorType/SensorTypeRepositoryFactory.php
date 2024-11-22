@@ -35,7 +35,7 @@ readonly class SensorTypeRepositoryFactory
     ) {}
 
     /**
-     * @throws \App\Exceptions\Sensor\SensorTypeException
+     * @throws SensorTypeException
      */
     public function getSensorTypeRepository(string $sensorType): GenericSensorTypeRepositoryInterface
     {

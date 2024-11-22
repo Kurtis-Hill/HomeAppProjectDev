@@ -17,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Device\Devices>
+ * @extends ServiceEntityRepository<Devices>
  *
  * @method Devices|null find($id, $lockMode = null, $lockVersion = null)
  * @method Devices|null findOneBy(array $criteria, array $orderBy = null)

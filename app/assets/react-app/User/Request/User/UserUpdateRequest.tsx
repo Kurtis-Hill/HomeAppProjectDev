@@ -16,7 +16,7 @@ export type UserUpdateRequestType = {
 
 export default async function UserUpdateRequest(userData: UserUpdateRequestType, userID: number, responseType?: string): Promise<AxiosResponse> {
     return await axios.patch(
-        `${apiURL}${userID}/update`,
+        `${apiURL}${userID}`,
         userData,
         {params: {responseType: responseType ?? ResponseTypeEnum.ResponseTypeFull}}
     );

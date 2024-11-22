@@ -6,6 +6,7 @@ use App\Builders\UserInterface\NavBarDTOBuilders\NavBarDTOBuilder;
 use App\Builders\UserInterface\NavBarDTOBuilders\NavBarListLinkDTOBuilder;
 use App\DTOs\UserInterface\Response\NavBar\NavBarResponseDTO;
 use App\Entity\Device\Devices;
+use App\Entity\User\Group;
 use App\Entity\User\Room;
 use App\Entity\User\User;
 use App\Repository\Device\ORM\DeviceRepositoryInterface;
@@ -74,7 +75,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
 
     private function getGroupNameNavBarResponseObjects(array $userGroups): NavBarResponseDTO
     {
-        /** @var \App\Entity\User\Group $group */
+        /** @var Group $group */
         foreach ($userGroups as $group) {
             $userGroupNavbarListLinkResponseDTO[] = NavBarListLinkDTOBuilder::buildNavBarListLinkDTO(
                 $group->getGroupName(),

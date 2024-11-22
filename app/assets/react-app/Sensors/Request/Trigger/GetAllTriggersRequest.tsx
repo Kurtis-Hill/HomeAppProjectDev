@@ -4,6 +4,6 @@ import {apiURL} from "../../../Common/URLs/CommonURLs";
 
 export async function getAllSensorTriggerTypesRequest(): Promise<AxiosPromise> {
     return await axios.get(
-        `${apiURL}sensor-trigger/all`,
+        `${apiURL}sensor-trigger`,
     );
 }

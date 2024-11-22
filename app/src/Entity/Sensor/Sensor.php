@@ -59,7 +59,7 @@ class Sensor
     private AbstractSensorType $sensorTypeID;
 
     #[
-        ORM\ManyToOne(targetEntity: \App\Entity\Device\Devices::class),
+        ORM\ManyToOne(targetEntity: Devices::class),
         ORM\JoinColumn(name: "deviceID", referencedColumnName: "deviceID"),
     ]
     private Devices $deviceID;

@@ -49,7 +49,7 @@ class SensorReadingTypeResponseFactory
     }
 
     /**
-     * @throws SensorReadingTypeRepositoryFactoryException|\App\Exceptions\Sensor\SensorReadingTypeObjectNotFoundException
+     * @throws SensorReadingTypeRepositoryFactoryException|SensorReadingTypeObjectNotFoundException
      */
     public function getSensorReadingTypeDTOResponseBuilder(string $readingType): SensorResponseDTOBuilderInterface
     {

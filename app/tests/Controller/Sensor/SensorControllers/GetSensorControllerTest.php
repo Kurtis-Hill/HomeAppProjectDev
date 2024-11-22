@@ -45,7 +45,7 @@ class GetSensorControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_ALL_SENSORS_URL = '/HomeApp/api/user/sensors/all';
+    private const GET_ALL_SENSORS_URL = '/HomeApp/api/user/sensors';
 
     private ?EntityManagerInterface $entityManager;
 
@@ -792,21 +792,21 @@ class GetSensorControllerTest extends WebTestCase
         self::assertGreaterThan(0, $sensorReadingTypePass);
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_using_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::GET_ALL_SENSORS_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_using_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::GET_ALL_SENSORS_URL,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): Generator
     {

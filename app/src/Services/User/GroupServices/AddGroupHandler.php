@@ -41,11 +41,11 @@ class AddGroupHandler
     }
 
     /**
-     * @throws \App\Exceptions\User\GroupExceptions\GroupValidationException
+     * @throws GroupValidationException
      * @throws ORMException
      * @throws OptimisticLockException
      * @throws NonUniqueResultException
-     * @throws \App\Exceptions\User\GroupExceptions\GroupMappingValidationException
+     * @throws GroupMappingValidationException
      */
     public function addNewGroup(string $groupName, User $user = null): Group
     {

@@ -17,7 +17,7 @@ class MotionReadingTypeReadingTypeBuilder extends AbstractBoolReadingTypeBuilder
      * @throws OptimisticLockException
      * @throws SensorTypeException
      * @throws ORMException
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws SensorReadingTypeRepositoryFactoryException
      */
     public function buildReadingTypeObject(Sensor $sensor): AllSensorReadingTypeInterface
     {

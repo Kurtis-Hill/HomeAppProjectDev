@@ -11,7 +11,7 @@ use JetBrains\PhpStorm\ArrayShape;
 interface NewDeviceHandlerInterface
 {
     /**
-     * @throws \App\Exceptions\Device\DeviceCreationFailureException
+     * @throws DeviceCreationFailureException
      */
     #[ArrayShape(['validationErrors'])]
     public function processNewDevice(NewDeviceDTO $newDeviceDTO): array;

@@ -141,14 +141,11 @@ class GetCardViewControllerTest extends WebTestCase
                     }
                     if ($cardSensorReadingTypeObject instanceof Humidity) {
                         $humidity = true;
-//                        dd($payload['sensorData']);
-//                        dd($sensorDataArrayCount);
                         self::assertEquals(
                             Humidity::READING_TYPE,
                             $payload['sensorData'][$sensorDataArrayCount]['readingType']
                         );
                     }
-//                        dd($cardSensorReadingTypeObjects);
                     if ($cardSensorReadingTypeObject instanceof Analog) {
                         $analog = true;
                         self::assertEquals(
@@ -313,7 +310,7 @@ class GetCardViewControllerTest extends WebTestCase
                         );
                     }
                     self::assertEquals(
-                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
+                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s')->modify('+1second'),
                         $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
                     );
                     self::assertEquals(

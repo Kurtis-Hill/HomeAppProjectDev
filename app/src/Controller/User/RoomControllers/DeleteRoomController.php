@@ -30,7 +30,7 @@ class DeleteRoomController extends AbstractController
         $this->logger = $elasticLogger;
     }
 
-    #[Route('{roomID}/delete', name:'delete-new-room', methods: [Request::METHOD_DELETE])]
+    #[Route('{roomID}', name:'delete-new-room', methods: [Request::METHOD_DELETE])]
     public function deleteRoom(Room $roomID, Request $request, DeleteRoomHandler $deleteRoomHandler): JsonResponse
     {
         try {

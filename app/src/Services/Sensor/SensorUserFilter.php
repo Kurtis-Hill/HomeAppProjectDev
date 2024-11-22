@@ -24,7 +24,7 @@ class SensorUserFilter
 
     /**
      * @param Sensor[] $sensors
-     * @throws \App\Exceptions\Sensor\UserNotAllowedException
+     * @throws UserNotAllowedException
      */
     #[ArrayShape([Sensor::class])]
     public function filterSensorsAllowedForUser(array $sensors, GetSensorQueryDTO $getSensorQueryDTO): array

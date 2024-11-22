@@ -3,8 +3,8 @@ import axios, { AxiosResponse } from 'axios';
 import { baseCardDataURL } from '../../../Common/URLs/CommonURLs';
 import { CardFilterBarType } from '../../Components/Filterbars/CardFilterBarView';
 
-export async function handleSendingCardDataRequest(props: { route:string; filterParams?: CardFilterBarType }): Promise<AxiosResponse> {
-    const route:string = props.route ?? 'index';
+export async function handleSendingCardDataRequest(props: { route: string; filterParams?: CardFilterBarType }): Promise<AxiosResponse> {
+    const route: string = props.route ?? 'index';
     const filterParams = props.filterParams;
     
     let filterParamsObject: URLSearchParams|null = null;

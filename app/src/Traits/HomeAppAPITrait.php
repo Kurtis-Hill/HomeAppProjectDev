@@ -354,7 +354,7 @@ trait HomeAppAPITrait
         $normalizer = [new ObjectNormalizer($annotationClassMetadataFactory ?? null)];
         $normalizer = new Serializer($normalizer);
 
-        return $normalizer->normalize($data, null, $context ?? []);
+        return $normalizer->normalize($data, null, $context);
     }
 
     /**

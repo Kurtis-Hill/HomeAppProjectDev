@@ -8,7 +8,7 @@ export async function deviceUpdatePatchRequest(
     responseType?: string
 ): Promise<AxiosResponse> {
     return await axios.patch(
-        `${apiURL}user-devices/${deviceID}/update`,
+        `${apiURL}user-devices/${deviceID}`,
         deviceUpdatePatchInputs,
         {params: {responseType: responseType}}
     );

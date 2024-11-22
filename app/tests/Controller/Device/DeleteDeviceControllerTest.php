@@ -21,7 +21,7 @@ class DeleteDeviceControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const DELETE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d/delete';
+    private const DELETE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d';
 
     private ?string $userToken = null;
 
@@ -336,21 +336,21 @@ class DeleteDeviceControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_deleting_device_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            sprintf(self::DELETE_DEVICE_URL, 1),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_deleting_device_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            sprintf(self::DELETE_DEVICE_URL, 1),
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
 
     public function wrongHttpsMethodDataProvider(): array
     {

@@ -21,6 +21,7 @@ use App\Entity\Sensor\SensorTypes\Interfaces\MotionSensorReadingTypeInterface;
 use App\Entity\Sensor\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Entity\Sensor\SensorTypes\Interfaces\TemperatureReadingTypeInterface;
+use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Exceptions\Sensor\SensorTypeNotFoundException;
 use App\Factories\Sensor\SensorReadingType\SensorReadingTypeRepositoryFactory;
 use JetBrains\PhpStorm\ArrayShape;
@@ -33,8 +34,8 @@ readonly abstract class AbstractCardDTOBuilder
     }
 
     /**
-     * @throws \App\Exceptions\Sensor\SensorTypeNotFoundException
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws SensorTypeNotFoundException
+     * @throws SensorReadingTypeRepositoryFactoryException
      */
     #[ArrayShape([CardViewReadingResponseDTOInterface::class])]
     public function formatSensorTypeObjectsByReadingType(SensorTypeInterface $cardDTOData, Sensor $sensor): array

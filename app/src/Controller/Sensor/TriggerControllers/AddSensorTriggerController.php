@@ -26,13 +26,13 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor-trigger/form')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor-trigger')]
 class AddSensorTriggerController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    #[Route('/add', name: 'create-sensor-trigger', methods: [Request::METHOD_POST])]
+    #[Route('', name: 'create-sensor-trigger', methods: [Request::METHOD_POST])]
     public function handleSensorTriggerFormSubmission(
         Request $request,
         ValidatorInterface $validator,

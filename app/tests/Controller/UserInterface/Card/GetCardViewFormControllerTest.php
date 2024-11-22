@@ -36,7 +36,7 @@ class GetCardViewFormControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const GET_CARD_FORM_URL =  '/HomeApp/api/user/card-form/%d/get';
+    private const GET_CARD_FORM_URL =  '/HomeApp/api/user/card-form/%d';
 
     private ?string $userToken = null;
 

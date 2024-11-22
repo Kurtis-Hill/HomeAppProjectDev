@@ -8,7 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<\App\Entity\Sensor\SensorTypes\Soil>
+ * @extends ServiceEntityRepository<Soil>
  *
  * @method Soil|null find($id, $lockMode = null, $lockVersion = null)
  * @method Soil|null findOneBy(array $criteria, array $orderBy = null)

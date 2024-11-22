@@ -53,7 +53,7 @@ class AddNewDeviceController extends AbstractController
      * @throws DeviceCreationFailureException
      * @throws GroupNotFoundException
      */
-    #[Route('/add', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
+    #[Route('', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
         Request $request,
         ValidatorInterface $validator,

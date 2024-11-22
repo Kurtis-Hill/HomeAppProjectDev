@@ -4,6 +4,7 @@ namespace App\Controller\UserInterface\Card;
 
 use App\Builders\UserInterface\CardUpdateDTOBuilders\CardResponseDTOBuilder;
 use App\DTOs\UserInterface\RequestDTO\CardViewRequestDTO;
+use App\Entity\UserInterface\Card\CardView;
 use App\Repository\UserInterface\ORM\CardRepositories\CardViewRepositoryInterface;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
@@ -36,9 +37,9 @@ class UpdateCardViewController extends AbstractController
         $this->logger = $logger;
     }
 
-    #[Route('{id}/update', name: 'update-card-view-form-v2', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
+    #[Route('{id}', name: 'update-card-view-form-v2', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
     public function updateCardView(
-        \App\Entity\UserInterface\Card\CardView $cardViewObject,
+        CardView $cardViewObject,
         Request $request,
         CardViewRepositoryInterface $cardViewRepository,
         CardViewUpdateFacade $cardViewUpdateService,

@@ -28,7 +28,7 @@ class UserDataProvider
     }
 
     #[ArrayShape([UserDataResponseDTO::class])]
-    public function getGeneralUserData(User $user): \App\DTOs\UserInterface\Response\UserData\UserDataResponseDTO
+    public function getGeneralUserData(User $user): UserDataResponseDTO
     {
         $userGroups = $this->getGroupNameData($user);
         try {

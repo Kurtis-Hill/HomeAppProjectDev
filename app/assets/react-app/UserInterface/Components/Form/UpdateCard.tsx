@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { AnnouncementFlashModalBuilder } from '../../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import SubmitButton from '../../../Common/Components/Buttons/SubmitButton';
 import { Label } from '../../../Common/Components/Elements/Label';
@@ -17,7 +17,7 @@ import { getCardViewFormRequest } from '../../Request/Cards/Card/GetCardViewForm
 export function UpdateCard(props: {cardViewID: number}) {
     const { cardViewID } = props;
 
-    const [announcementModals, setAnnouncementModals] = useState<Array<typeof AnnouncementFlashModal>>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const [updateCardRequestLoading, setUpdateCardRequestLoading] = useState<boolean>(false);
     
@@ -48,7 +48,7 @@ export function UpdateCard(props: {cardViewID: number}) {
         handleCardViewFormRequest();
     }, [cardViewID])
 
-    const updateCardFormInput = (e: Event): void => {
+    const updateCardFormInput = (e: React.ChangeEvent<HTMLSelectElement>): void => {
         const target = e.target as HTMLInputElement;
         const name = target.name;
         const value = target.value;
@@ -145,7 +145,7 @@ export function UpdateCard(props: {cardViewID: number}) {
                     text="Colour Selection"
                     htmlFor='card-colour'
                 />
-                <select name="card-colour" value={cardViewUserForm.currentCardColour.colourID} onChange={(e: Event) => {updateCardFormInput(e)}} className="form-control form-bottom-margin">
+                <select name="card-colour" value={cardViewUserForm.currentCardColour.colourID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="form-control form-bottom-margin">
                     {cardViewUserForm.cardUserSelectionOptions.colours.map((colour: ColourResponseInterface) => (
                     <option value={colour.colourID} key={colour.colourID}>{capitalizeFirstLetter(colour.colour)}</option>
                     ))}
@@ -155,7 +155,7 @@ export function UpdateCard(props: {cardViewID: number}) {
                     text="Card State Selection"
                     htmlFor='card-view-state'
                 />
-                <select name="card-view-state" value={cardViewUserForm.currentViewState.cardStateID} onChange={(e: Event) => {updateCardFormInput(e)}} className="form-control form-bottom-margin">
+                <select name="card-view-state" value={cardViewUserForm.currentViewState.cardStateID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="form-control form-bottom-margin">
                     {cardViewUserForm.cardUserSelectionOptions.states.map((states: StateResponseInterface) => (
                     <option value={states.cardStateID} key={states.cardStateID}>{capitalizeFirstLetter(states.cardState)}</option>
                     ))}
@@ -166,7 +166,7 @@ export function UpdateCard(props: {cardViewID: number}) {
                     htmlFor='card-icon'
                 />
                 <br />
-                <select name="card-icon" id="icon-select" value={cardViewUserForm.currentCardIcon.iconID} onChange={(e: Event, ) => {updateCardFormInput(e)}} className="form-space-left form-bottom-margin">
+                <select name="card-icon" id="icon-select" value={cardViewUserForm.currentCardIcon.iconID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="form-space-left form-bottom-margin">
                     {cardViewUserForm.cardUserSelectionOptions.icons.map((icon: IconResponseInterface) => (
                         <option key={icon.iconID} value={icon.iconID}>{capitalizeFirstLetter(icon.iconName)}</option>
                     ))}

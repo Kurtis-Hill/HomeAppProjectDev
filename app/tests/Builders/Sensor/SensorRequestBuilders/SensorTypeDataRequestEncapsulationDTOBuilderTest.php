@@ -137,7 +137,6 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
             $context
         );
 
-//        dd($normalizedResponse);
         if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === GenericRelay::NAME) {
             $response = $normalizedResponse['relay'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);

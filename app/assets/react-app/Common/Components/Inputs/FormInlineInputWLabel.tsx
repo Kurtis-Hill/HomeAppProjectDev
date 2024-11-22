@@ -7,7 +7,7 @@ export function FormInlineInputWLabel(props: {
     labelName: string;
     nameParam: string;
     changeEvent: (event: Event) => void;
-    value: object;
+    value: object|string|number;
     acceptClickEvent: (e: Event) => void;
     declineClickEvent: (e: Event) => void;
     dataName?: string;

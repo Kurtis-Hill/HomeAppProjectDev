@@ -16,7 +16,7 @@ use JetBrains\PhpStorm\ArrayShape;
 interface NewSensorReadingTypeBuilderInterface
 {
     /**
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws SensorReadingTypeRepositoryFactoryException
      * @throws SensorTypeException
      */
     #[ArrayShape([Temperature::class|Humidity::class|Latitude::class|Analog::class|Relay::class|Motion::class])]

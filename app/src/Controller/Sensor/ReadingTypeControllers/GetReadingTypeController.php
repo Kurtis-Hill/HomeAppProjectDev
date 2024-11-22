@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'reading-types/', name: 'reading_types')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'reading-types', name: 'reading_types')]
 class GetReadingTypeController extends AbstractController
 {
     private const MAX_READING_TYPE_RETURN_SIZE = 100;
@@ -36,7 +36,7 @@ class GetReadingTypeController extends AbstractController
         $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
-    #[Route('all', name: 'all-reading-types', methods: [Request::METHOD_GET])]
+    #[Route('', name: 'all-reading-types', methods: [Request::METHOD_GET])]
     public function getAllReadingTypes(Request $request, ReadingTypeRepositoryInterface $readingTypeRepository): JsonResponse
     {
         try {
@@ -76,7 +76,7 @@ class GetReadingTypeController extends AbstractController
         return $this->sendSuccessfulJsonResponse($normalizedReadingTypesDTOs);
     }
 
-    #[Route('{readingTypeID}', name: 'singular-reading-types', methods: [Request::METHOD_GET])]
+    #[Route('/{readingTypeID}', name: 'singular-reading-types', methods: [Request::METHOD_GET])]
     public function getSingleReadingTypes(ReadingTypes $readingType, Request $request): JsonResponse
     {
         try {

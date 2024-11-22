@@ -80,7 +80,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         $requestDTOValidationErrors = $validator->validate($updateBoundaryReadingRequestDTO);
-//        dd($requestDTOValidationErrors, $updateBoundaryReadingRequestDTO);
         if ($this->checkIfErrorsArePresent($requestDTOValidationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestDTOValidationErrors));
         }
@@ -101,7 +100,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
         $sensorProcessingErrors = [];
         $validationErrors = [];
-//        dd($updateBoundaryReadingRequestDTO->getSensorData());
         foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateData) {
             try {
                 $sensorUpdateBuilder = $sensorUpdateFactory->getSensorUpdateBuilder($updateData['readingType'] ?? null);
@@ -118,7 +116,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 }
                 continue;
             }
-//            dd($updateBoundaryDataDTO);
 
             try {
                 $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject(

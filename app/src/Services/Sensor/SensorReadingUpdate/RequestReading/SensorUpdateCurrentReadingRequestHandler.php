@@ -7,7 +7,9 @@ use App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentRead
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
 use App\Entity\Sensor\SensorTypes\GenericRelay;
 use App\Exceptions\Device\DeviceIPNotSetException;
+use App\Exceptions\Device\DeviceRequestArgumentBuilderTypeNotFoundException;
 use App\Exceptions\Sensor\SensorNotFoundException;
+use App\Exceptions\Sensor\SensorPinNumberNotSetException;
 use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Factories\Device\DeviceSensorRequestArgumentBuilderFactory;
 use App\Factories\Sensor\SensorReadingType\SensorReadingTypeRepositoryFactory;
@@ -31,13 +33,13 @@ readonly class SensorUpdateCurrentReadingRequestHandler implements SensorUpdateC
     ) {}
 
     /**
-     * @param \App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\RequestSensorCurrentReadingUpdateTransportMessageDTO $currentReadingUpdateMessageDTO
+     * @param RequestSensorCurrentReadingUpdateTransportMessageDTO $currentReadingUpdateMessageDTO
      * @return bool
      * @throws DeviceIPNotSetException
-     * @throws \App\Exceptions\Device\DeviceRequestArgumentBuilderTypeNotFoundException
+     * @throws DeviceRequestArgumentBuilderTypeNotFoundException
      * @throws SensorNotFoundException
-     * @throws \App\Exceptions\Sensor\SensorPinNumberNotSetException
-     * @throws \App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException
+     * @throws SensorPinNumberNotSetException
+     * @throws SensorReadingTypeRepositoryFactoryException
      * @throws ORMException
      * @throws HttpException
      * @throws ExceptionInterface

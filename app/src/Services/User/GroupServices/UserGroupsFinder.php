@@ -18,7 +18,7 @@ class UserGroupsFinder
 
     #[ArrayShape([Group::class])]
     /**
-     * @return \App\Entity\User\Group[]
+     * @return Group[]
      */
     public function getUsersGroups(User $user): array
     {

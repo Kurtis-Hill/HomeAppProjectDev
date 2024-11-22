@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 export function LandingPage() {
     return (
         <>
-            <Link to={`${cardIndex}`}> 
+            <Link to={cardIndex('index')}>
                 <span>Sensor Card Display Index</span>
             </Link>
         </>

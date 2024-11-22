@@ -8,7 +8,7 @@ use App\Exceptions\Sensor\SensorTriggerConversionException;
 class SensorTriggerUserInputToStringConvertor
 {
     /**
-     * @throws \App\Exceptions\Sensor\SensorTriggerConversionException
+     * @throws SensorTriggerConversionException
      */
     public static function convertMixedToString(mixed $mixed): string
     {

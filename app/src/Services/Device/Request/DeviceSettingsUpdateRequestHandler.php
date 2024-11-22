@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Services\Device\Request;
 
 use App\Builders\Device\Request\DeviceLoginCredentialsUpdateRequestDTOBuilder;
+use App\Builders\Device\Request\DeviceRequestEncapsulationBuilder;
 use App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder;
 use App\DTOs\Device\Internal\DeviceSettingsUpdateDTO;
+use App\Exceptions\Device\DeviceIPNotSetException;
 use App\Exceptions\Sensor\DeviceNotFoundException;
 use App\Repository\Device\ORM\DeviceRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
@@ -23,14 +25,14 @@ readonly class DeviceSettingsUpdateRequestHandler
     public function __construct(
         private DeviceRequestHandler $deviceRequestHandler,
         private DeviceRepositoryInterface $deviceRepository,
-        private \App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder $deviceSettingsRequestDTOBuilder,
+        private DeviceSettingsRequestDTOBuilder $deviceSettingsRequestDTOBuilder,
     ) {}
 
     /**
      * @throws NonUniqueResultException
      * @throws ORMException
-     * @throws \App\Exceptions\Sensor\DeviceNotFoundException
-     * @throws \App\Exceptions\Device\DeviceIPNotSetException
+     * @throws DeviceNotFoundException
+     * @throws DeviceIPNotSetException
      */
     public function handleDeviceSettingsUpdateRequest(DeviceSettingsUpdateDTO $deviceSettingsUpdateDTO): bool
     {
@@ -47,7 +49,7 @@ readonly class DeviceSettingsUpdateRequestHandler
         $deviceSettingsRequestDTO = $this->deviceSettingsRequestDTOBuilder->buildDeviceSettingsRequestDTO(
             deviceCredentials: $deviceLoginCredentialsUpdateRequestDTO,
         );
-        $deviceEncapsulationRequestDTO = \App\Builders\Device\Request\DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
+        $deviceEncapsulationRequestDTO = DeviceRequestEncapsulationBuilder::buildDeviceRequestEncapsulation(
             $device,
             $deviceSettingsRequestDTO,
             self::SETTINGS_ENDPOINT
@@ -56,7 +58,7 @@ readonly class DeviceSettingsUpdateRequestHandler
             $deviceResponse = $this->deviceRequestHandler->handleDeviceRequest(
             $deviceEncapsulationRequestDTO,
             $deviceSettingsUpdateDTO->getPassword() !== null
-                ? [self::PASSWORD_PRESENT, \App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS]
+                ? [self::PASSWORD_PRESENT, DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS]
                 : [self::PASSWORD_NOT_PRESENT, DeviceSettingsRequestDTOBuilder::DEVICE_CREDENTIALS]
         );
 

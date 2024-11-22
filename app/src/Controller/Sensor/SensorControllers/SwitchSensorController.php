@@ -47,8 +47,8 @@ class SwitchSensorController extends AbstractController
     }
 
     /**
-     * @throws \App\Exceptions\Sensor\SensorDataCurrentReadingUpdateBuilderException
-     * @throws \App\Exceptions\Sensor\ReadingTypeNotFoundException
+     * @throws SensorDataCurrentReadingUpdateBuilderException
+     * @throws ReadingTypeNotFoundException
      */
     #[Route('switch-sensor', name: 'switch-sensor', methods: [Request::METHOD_POST])]
     public function switchSensorAction(

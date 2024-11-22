@@ -24,7 +24,7 @@ class SensorReadingTypeFetcher
     }
 
     /**
-     * @return AbstractBoolReadingBaseSensor[]|\App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository[]
+     * @return AbstractBoolReadingBaseSensor[]|StandardReadingTypeRepository[]
      */
     #[ArrayShape([AbstractBoolReadingBaseSensor::class|StandardReadingTypeRepository::class])]
     public function fetchAllSensorReadingTypesBySensor(Sensor $sensor): array

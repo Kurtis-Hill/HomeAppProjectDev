@@ -1,6 +1,7 @@
 #!/bin/sh
 
-if [ ${APP_ENV} = 'prod' ]; then
+composer require symfony/messenger
+if [ "${APP_ENV}" = 'prod' ]; then
   echo "production container build"
   echo "installing composer packages..."
   git clean -f
@@ -11,10 +12,10 @@ if [ ${APP_ENV} = 'prod' ]; then
   echo "...Migrations complete"
 fi
 
-if [ ${APP_ENV} = 'dev' ]; then
+if [ "${APP_ENV}" = 'dev' ]; then
 	echo "dev container build"
 	echo "installing composer packages..."
-  	composer install --prefer-dist --no-interaction
+  composer install --prefer-dist --no-interaction
 	echo "Executing database migrations for test environment..."
 	bin/console d:m:m --no-interaction --env=test
 	echo "...Test migrations complete"
@@ -51,8 +52,8 @@ echo "Starting supervisor..."
 supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf
 echo "Supervisor Started..."
 
-echo "Starting cron..."
-service cron start
-echo "Cron Started..."
+echo "Starting symfony transport..."
+bin/console messenger:consume scheduler_default -vv
+echo "transport started..."
 
 exec "$@"

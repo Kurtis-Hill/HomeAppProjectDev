@@ -41,9 +41,6 @@ readonly class ReadingTriggerHandler implements ReadingTriggerHandlerInterface
                 } catch (BaseReadingTypeNotFoundException) {
                     $this->elasticLogger->error(sprintf('Base reading type needs to be set for a relay to be activated for trigger %d', $trigger->getSensorTriggerID()));
                     continue;
-                } catch (Exception $e) {
-                    $this->elasticLogger->error(sprintf('Failed to process trigger %d', $trigger->getSensorTriggerID()),[$e->getMessage()]);
-                    continue;
                 }
             }
         }

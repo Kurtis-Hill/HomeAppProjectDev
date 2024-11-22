@@ -16,7 +16,7 @@ readonly class DeviceSensorRequestArgumentBuilderFactory
     ) {}
 
     /**
-     * @throws \App\Exceptions\Device\DeviceRequestArgumentBuilderTypeNotFoundException
+     * @throws DeviceRequestArgumentBuilderTypeNotFoundException
      */
     public function fetchDeviceRequestArgumentBuilder(string $deviceRequestType): DeviceRequestArgumentBuilderInterface
     {

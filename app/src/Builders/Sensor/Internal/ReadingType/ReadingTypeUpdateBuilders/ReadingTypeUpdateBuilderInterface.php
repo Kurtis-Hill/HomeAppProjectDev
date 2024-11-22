@@ -11,7 +11,7 @@ use App\Exceptions\Sensor\ReadingTypeObjectBuilderException;
 interface ReadingTypeUpdateBuilderInterface
 {
     /**
-     * @throws \App\Exceptions\Sensor\ReadingTypeObjectBuilderException
+     * @throws ReadingTypeObjectBuilderException
      * @throws ReadingTypeNotExpectedException
      */
     public function buildReadingTypeCurrentReadingUpdateDTO(

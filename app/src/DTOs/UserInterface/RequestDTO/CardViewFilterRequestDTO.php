@@ -8,8 +8,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CardViewFilterRequestDTO
 {
-    //These are the sensor types and reading types not to be queried
-
     #[
         Assert\Type(type: ['array', "null"], message: 'sensorTypes must be an {{ type }} you have provided {{ value }}'),
         SensorTypeRequestConstraint

@@ -31,7 +31,7 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg): bool
     {
         try {
-            /** @var \App\DTOs\Sensor\Internal\CurrentReadingDTO\AMQPDTOs\UpdateSensorCurrentReadingTransportMessageDTO $sensorData */
+            /** @var UpdateSensorCurrentReadingTransportMessageDTO $sensorData */
             $sensorData = unserialize(
                 $msg->getBody(),
                 [
@@ -65,7 +65,6 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
             try {
                 $validationErrors = $this->sensorDeviceDataQueueConsumerService->handleUpdateSensorCurrentReading(
                     $sensorData,
-                    $device
                 );
                 if ($validationErrors) {
                     $this->elasticLogger->error('Validation errors', ['errors' => $validationErrors]);
