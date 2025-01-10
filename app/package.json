@@ -2,7 +2,7 @@
   "name": "homeapp_project",
   "version": "1.0.0",
   "description": "Monitor sensors from a centralized hub",
-  "main": "index.js",
+  "main": "index.tsx",
   "author": "Kurtis Hill",
   "license": "MIT",
   "dependencies": {

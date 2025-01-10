@@ -38,7 +38,7 @@ class GroupVoter extends Voter
             return false;
         }
 
-        return match($attribute) {
+        return match ($attribute) {
             self::ADD_NEW_GROUP => $this->canAddNewGroup($user, $subject),
             self::UPDATE_GROUP => $this->canUpdateGroup($user, $subject),
             self::GET_SINGLE_GROUP => $this->canGetSingleGroup($user, $subject),

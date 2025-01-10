@@ -38,8 +38,6 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     public const DEFAULT_PROFILE_PICTURE = 'guest.jpg';
 
-//    public const USER_TYPE = 'user';
-
     #[
         ORM\Column(name: "userID", type: "integer", nullable: false),
         ORM\Id,
