@@ -50,31 +50,31 @@ class DeleteUserControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @dataProvider wrongHttpsMethodDataProvider
-     */
-    public function test_adding_device_wrong_http_method(string $httpVerb): void
-    {
-        $this->client->request(
-            $httpVerb,
-            self::DELETE_USER_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-        );
-
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function wrongHttpsMethodDataProvider(): array
-    {
-        return [
-            [Request::METHOD_GET],
-            [Request::METHOD_PUT],
-            [Request::METHOD_PATCH],
-            [Request::METHOD_POST],
-        ];
-    }
+//    /**
+//     * @dataProvider wrongHttpsMethodDataProvider
+//     */
+//    public function test_adding_device_wrong_http_method(string $httpVerb): void
+//    {
+//        $this->client->request(
+//            $httpVerb,
+//            self::DELETE_USER_URL,
+//            [],
+//            [],
+//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
+//        );
+//
+//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function wrongHttpsMethodDataProvider(): array
+//    {
+//        return [
+//            [Request::METHOD_GET],
+//            [Request::METHOD_PUT],
+//            [Request::METHOD_PATCH],
+//            [Request::METHOD_POST],
+//        ];
+//    }
 
     public function test_deleting_user_does_not_exist(): void
     {

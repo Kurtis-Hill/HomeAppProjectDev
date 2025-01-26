@@ -74,9 +74,9 @@ export default function CardFilterBarView(props: {
             }
         }
 
+
         const handleSliderChange = (e: Event) => {
-            console.log('slider change', e.currentTarget.value);
-            const sliderElement = e.currentTarget as HTMLInputElement;  
+            const sliderElement = e.currentTarget as HTMLInputElement;
             const newRefreshValue: number = parseInt(sliderElement.value);
 
             if (newRefreshValue >= cardRefreshMinLimit && newRefreshValue <= cardRefreshMaxLimit) {

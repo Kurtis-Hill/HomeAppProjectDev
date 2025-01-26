@@ -20,7 +20,6 @@ export function DeleteSensorModal(props: {
 
     const deleteSensorHandler = async (e: Event) => {
         // e.preventDefault();
-        console.log('sss');
         const sensorDeletedRequestPayload = await deleteSensorRequest(sensorID);
 
         if (sensorDeletedRequestPayload !== null) {

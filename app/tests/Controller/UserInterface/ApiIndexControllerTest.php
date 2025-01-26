@@ -5,12 +5,13 @@ namespace App\Tests\Controller\UserInterface;
 use App\Tests\Traits\TestLoginTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class ApiIndexControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const PING_URL = '/HomeApp/api/user/ping';
+    private const PING_URL = '/HomeApp/api/user/application/ping';
 
     private ?string $userToken = null;
 
@@ -26,7 +27,7 @@ class ApiIndexControllerTest extends WebTestCase
     public function testLoggedInUserReceivesSuccessResponse(): void
     {
         $this->client->request(
-            'GET',
+            Request::METHOD_GET,
             self::PING_URL,
             [],
             [],

@@ -2,7 +2,7 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 import { apiURL } from '../../URLs/CommonURLs';
-import { ErrorResponseInterface } from '../../Response/ErrorResponseInterface';
+import { ErrorResponseInterface } from '../ErrorResponseInterface';
 import { loginUrl } from '../../URLs/CommonURLs';
 import { handleTokenRefresh } from '../../../Authentication/Request/LoginRequest';
 import {getRefreshToken, refreshUserTokens, removeTokens} from '../../../Authentication/Session/UserSessionHelper';

@@ -11,7 +11,7 @@ export interface AddNewCardTypeInterface {
 
 export async function addNewCardRequest(addNewCardData: AddNewCardTypeInterface): Promise<AxiosResponse> {
     const addNewCardResponse: AxiosResponse = await axios.post(
-        `${apiURL}card/add`,
+        `${apiURL}card`,
         addNewCardData,
     );
 

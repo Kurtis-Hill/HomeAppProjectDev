@@ -14,7 +14,7 @@ fi
 if [ "${APP_ENV}" = 'dev' ]; then
 	echo "dev container build"
 	echo "installing composer packages..."
-  	composer install --prefer-dist --no-interaction
+  composer install --prefer-dist --no-interaction
 	echo "Executing database migrations for test environment..."
 	bin/console d:m:m --no-interaction --env=test
 	echo "...Test migrations complete"

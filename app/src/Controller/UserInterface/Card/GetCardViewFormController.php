@@ -66,7 +66,7 @@ class GetCardViewFormController extends AbstractController
         try {
             $normalizedResponseData = $this->normalize($cardViewFormDTO);
         } catch (ExceptionInterface) {
-            return $this->sendPartialContentJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_PREPARE_DATA]);
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponseData);

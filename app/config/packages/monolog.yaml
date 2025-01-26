@@ -9,7 +9,8 @@ when@dev:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: error
-                channels: ["!event", "!doctrine"]
+#                 channels: ["!event", "!doctrine"]
+                channels: ["app"]
             console:
                 type: console
                 process_psr_3_messages: false

@@ -69,7 +69,6 @@ class GetReadingTypeControllerTest extends WebTestCase
 
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
         self::assertEquals('Invalid JWT Token', $responseData['message']);
-
     }
 
     public function test_getting_all_reading_types(): void

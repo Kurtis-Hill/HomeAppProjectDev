@@ -12,7 +12,7 @@ enum ReadingTypeEnum: string
 
     case Analog = 'Analog';
 
-    case RELAY = 'RELAY';
+    case Relay = 'RELAY';
 
-    case MOTION = 'MOTION';
+    case Motion = 'MOTION';
 }

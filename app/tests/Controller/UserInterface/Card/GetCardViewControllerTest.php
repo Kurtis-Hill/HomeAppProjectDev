@@ -310,7 +310,8 @@ class GetCardViewControllerTest extends WebTestCase
                         );
                     }
                     self::assertEquals(
-                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s')->modify('+1second'),
+//                        $cardSensorReadingTypeObject->getUpdatedAt()->modify('+1second')->format('d-m-Y H:i:s'),
+                        $cardSensorReadingTypeObject->getUpdatedAt()->format('d-m-Y H:i:s'),
                         $payload['sensorData'][$sensorDataArrayCount]['updatedAt']
                     );
                     self::assertEquals(

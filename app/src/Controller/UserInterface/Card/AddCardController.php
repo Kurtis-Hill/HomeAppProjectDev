@@ -22,13 +22,13 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card/')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'card')]
 class AddCardController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    #[Route('add', name: 'add-card-form-v2', methods: [Request::METHOD_POST])]
+    #[Route('', name: 'add-card-form-v2', methods: [Request::METHOD_POST])]
     public function addCardForUser(Request $request, ValidatorInterface $validator, SensorRepositoryInterface $sensorRepository, CardCreationHandlerInterface $cardCreationHandler): JsonResponse
     {
         $newCardRequestDTO = new NewCardRequestDTO();

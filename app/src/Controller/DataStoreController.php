@@ -23,9 +23,9 @@ class DataStoreController extends AbstractController
         return $this->sendSuccessfulJsonResponse($indicies);
     }
 
-    public function logSearchQuery(
-        Client $client,
-    ): JsonResponse {
-
-    }
+//    public function logSearchQuery(
+//        Client $client,
+//    ): JsonResponse {
+//
+//    }
 }
