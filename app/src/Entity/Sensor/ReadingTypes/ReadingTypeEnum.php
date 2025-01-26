@@ -15,4 +15,6 @@ enum ReadingTypeEnum: string
     case Relay = 'RELAY';
 
     case Motion = 'MOTION';
+
+    case LED = 'LED';
 }
