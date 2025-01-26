@@ -31,5 +31,6 @@ if [ "${APP_ENV}" = 'dev' ]; then
 #    yarn encore dev-server --hot  --disable-host-check --port ${HTTPS_APP_PORT}
   echo "... encore dev server began"
 fi
+npx update-browserslist-db@latest
 
 exec "$@"
