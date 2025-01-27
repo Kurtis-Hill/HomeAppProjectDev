@@ -7,7 +7,7 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 }
 Encore
     .setOutputPath('public/build/')
-    .setPublicPath('/HomeApp/build')
+    .setPublicPath('/build')
     .setManifestKeyPrefix('build/')
     // only needed for CDN's or sub-directory deploy
 

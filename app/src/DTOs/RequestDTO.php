@@ -24,7 +24,7 @@ class RequestDTO
             message: RequestQueryParameterHandler::RESPONSE_TYPE .' must be one of {{ choices }} you have provided {{ value }}'
         )
     ]
-    private mixed $responseType;
+    private ?string $responseType = RequestTypeEnum::ONLY->value;
 
     #[
         Assert\Range(
@@ -33,7 +33,7 @@ class RequestDTO
             min: 0,
         ),
     ]
-    private mixed $page;
+    private ?int $page = 1;
 
     #[
         Assert\Range(
@@ -43,7 +43,7 @@ class RequestDTO
             max: 100
         ),
     ]
-    private mixed $limit;
+    private ?int $limit = 10;
 
     public function getResponseType(): string
     {

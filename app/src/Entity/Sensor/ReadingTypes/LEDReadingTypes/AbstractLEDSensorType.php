@@ -15,11 +15,11 @@ use Doctrine\ORM\Mapping\InheritanceType;
 #[
     Entity(repositoryClass: LEDReadingBaseSensorRepository::class),
     InheritanceType('SINGLE_TABLE'),
-    ORM\Table(name: 'boolreadingtype'),
+    ORM\Table(name: 'led'),
     ORM\Index(columns: ["currentReading"], name: "currentReading"),
     ORM\Index(columns: ["constRecord"], name: "constRecord"),
     ORM\Index(columns: ["updatedAt"], name: "updatedAt"),
-    ORM\Index(columns: ["standardReadingType"], name: "standardreadingtypeIndex"),
+    ORM\Index(columns: ["ledReadingType"], name: "ledReadingType"),
     ORM\Index(columns: ["sensorID"], name: "sensorID"),
     ORM\Index(columns: ["createdAt"], name: "createdAt"),
     DiscriminatorColumn(name: 'ledReadingType', type: 'string'),

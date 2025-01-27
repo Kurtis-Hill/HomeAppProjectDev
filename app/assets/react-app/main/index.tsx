@@ -29,11 +29,11 @@ import {GroupView} from "../User/Components/Group/GroupView";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <BrowserRouter>
+    <BrowserRouter basename="/HomeApp">
         <Routes>
-            <Route path="/HomeApp/WebApp/login" element={<LoginView />}></Route>
-            <Route path="/HomeApp/WebApp/logout" element={<Logout />}></Route>
-                <Route path="/HomeApp/WebApp/" element={<MainPageTop  />}>
+            <Route path="/WebApp/login" element={<LoginView />}></Route>
+            <Route path="/WebApp/logout" element={<Logout />}></Route>
+                <Route path="/WebApp/" element={<MainPageTop  />}>
                     <Route path="index" element={<LandingPage />} />
                     <Route path="cards/index" element={<CardLandingPage />} />
                     {/*<Route path="cards/room/:entityID" element={<CardLandingPage />} />*/}
