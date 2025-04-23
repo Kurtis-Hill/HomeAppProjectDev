@@ -5,6 +5,7 @@ namespace App\Controller\Device;
 use App\Builders\Device\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Builders\Device\DeviceUpdate\DeviceDTOBuilder;
 use App\DTOs\Device\Request\NewDeviceRequestDTO;
+use App\DTOs\RequestDTO;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
 use App\Exceptions\Device\DeviceCreationFailureException;
@@ -24,6 +25,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -61,31 +64,12 @@ class AddNewDeviceController extends AbstractController
         DeleteDeviceServiceInterface $deleteDeviceHandler,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
         DeviceDTOBuilder $deviceDTOBuilder,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        NewDeviceRequestDTO $newDeviceRequestDTO,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        ?RequestDTO $requestDTO = null,
     ): JsonResponse {
-        $newDeviceRequestDTO = new NewDeviceRequestDTO();
-        try {
-            $this->deserializeRequest(
-                $request->getContent(),
-                NewDeviceRequestDTO::class,
-                'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $newDeviceRequestDTO]
-            );
-        } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
-        }
-        $requestValidationErrors = $validator->validate($newDeviceRequestDTO);
-        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
-        }
-
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::SENSITIVE_ONLY->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
-
+        $requestDTO ??= new RequestDTO();
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();

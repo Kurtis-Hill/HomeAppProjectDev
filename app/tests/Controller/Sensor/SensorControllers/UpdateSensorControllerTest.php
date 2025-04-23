@@ -71,7 +71,7 @@ class UpdateSensorControllerTest extends WebTestCase
 
     public function test_sending_wrong_format_should_return_bad_request(): void
     {
-        /** @var \App\Entity\Sensor\Sensor[] $sensors */
+        /** @var Sensor[] $sensors */
         $sensors = $this->sensorRepository->findAll();
 
         $sensor = $sensors[0];
@@ -106,9 +106,14 @@ class UpdateSensorControllerTest extends WebTestCase
     /**
      * @dataProvider incorrectDataTypesDataProvider
      */
-    public function test_sending_incorrect_data_types(mixed $sensorName, mixed $deviceID, mixed $pinNumber, mixed $readingInterval, array $errorMessage): void
-    {
-        /** @var \App\Entity\Sensor\Sensor[] $sensors */
+    public function test_sending_incorrect_data_types(
+        mixed $sensorName,
+        mixed $deviceID,
+        mixed $pinNumber,
+        mixed $readingInterval,
+        array $errorMessage
+    ): void {
+        /** @var Sensor[] $sensors */
         $sensors = $this->sensorRepository->findAll();
 
         $sensor = $sensors[0];
@@ -143,7 +148,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals(\App\Controller\Sensor\SensorControllers\UpdateSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
         self::assertEquals($errorMessage, $errorsPayload);
 
-        /** @var \App\Entity\Sensor\Sensor $sensorAfterUpdate */
+        /** @var Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensor->getSensorID()]);
         self::assertEquals($sensor->getSensorName(), $sensorAfterUpdate->getSensorName());
         self::assertEquals($sensor->getDevice(), $sensorAfterUpdate->getDevice());
@@ -331,7 +336,7 @@ class UpdateSensorControllerTest extends WebTestCase
             self::fail('No device found for user');
         }
 
-        /** @var \App\Entity\Sensor\Sensor[] $sensors */
+        /** @var Sensor[] $sensors */
         $sensors = $this->sensorRepository->findBy(['deviceID' => $device]);
 
         $sensorToUpdate = $sensors[0];
@@ -373,7 +378,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals(UpdateSensorController::NOT_AUTHORIZED_TO_BE_HERE, $title);
         self::assertEquals([APIErrorMessages::ACCESS_DENIED], $errorsPayload);
 
-        /** @var \App\Entity\Sensor\Sensor $sensorAfterUpdate */
+        /** @var Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorToUpdate->getSensorID()]);
 
         self::assertEquals($sensorToUpdate->getSensorName(), $sensorAfterUpdate->getSensorName());
@@ -385,7 +390,7 @@ class UpdateSensorControllerTest extends WebTestCase
     {
         $sensors = $this->sensorRepository->findAll();
 
-        /** @var \App\Entity\Sensor\Sensor $sensorToUpdate */
+        /** @var Sensor $sensorToUpdate */
         $sensorToUpdate = $sensors[0];
 
         $user = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
@@ -445,7 +450,7 @@ class UpdateSensorControllerTest extends WebTestCase
     {
         $sensors = $this->sensorRepository->findAll();
 
-        /** @var \App\Entity\Sensor\Sensor $sensorToUpdate */
+        /** @var Sensor $sensorToUpdate */
         $sensorToUpdate = $sensors[0];
 
         $newSensorName = 'newName';
@@ -491,7 +496,7 @@ class UpdateSensorControllerTest extends WebTestCase
             }
         }
 
-        /** @var \App\Entity\Sensor\Sensor $sensor */
+        /** @var Sensor $sensor */
         $sensor = $this->sensorRepository->findOneBy(['deviceID' => $device->getDeviceID()]);
 
         $this->client->request(
@@ -620,7 +625,7 @@ class UpdateSensorControllerTest extends WebTestCase
                     $user->getAssociatedGroupIDs(),
                     true
                 )) {
-                /** @var \App\Entity\Sensor\Sensor $sensorToUpdate */
+                /** @var Sensor $sensorToUpdate */
                 $sensorToUpdate = $sensor;
                 break;
             }
@@ -675,7 +680,7 @@ class UpdateSensorControllerTest extends WebTestCase
         self::assertEquals($device->getDeviceName(), $payload['device']['deviceName']);
         self::assertEquals($sensorToUpdate->getSensorTypeObject()::getReadingTypeName(), $payload['sensorType']['sensorTypeName']);
 
-        /** @var \App\Entity\Sensor\Sensor $sensorAfterUpdate */
+        /** @var Sensor $sensorAfterUpdate */
         $sensorAfterUpdate = $this->sensorRepository->findOneBy(['sensorID' => $sensorToUpdate->getSensorID()]);
         self::assertEquals($sensorAfterUpdate->getDevice()->getDeviceID(), $deviceId);
         self::assertEquals($sensorAfterUpdate->getSensorName(), $newSensorName);

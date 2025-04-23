@@ -31,6 +31,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     depends_on:
+      php-cli:
+        condition: service_healthy
       maria-db:
         condition: service_healthy
       rabbitmq:
@@ -61,6 +63,11 @@ services:
       ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
       ELASTIC_ENABLED: ${ELASTIC_ENABLED}
       ELASTIC_VERSION: ${ELASTIC_VERSION}
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     volumes:
       - ../app:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
@@ -92,6 +99,7 @@ services:
     volumes:
       - ./mariadb/db_data:/var/lib/mysql:rw,delegated
       - ../SSL/custom:/etc/mysql/ssl:ro
+      - ./mariadb/dumps:/dumps
       - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$MARIADB_PASSWORD

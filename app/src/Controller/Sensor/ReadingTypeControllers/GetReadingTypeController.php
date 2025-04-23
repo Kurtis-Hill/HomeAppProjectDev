@@ -41,11 +41,10 @@ class GetReadingTypeController extends AbstractController
     #[Route('', name: 'all-reading-types', methods: [Request::METHOD_GET])]
     public function getAllReadingTypes(
         #[MapRequestPayload]
-        ?RequestDTO $requestDTO,
-//        Request $request,
+        ?RequestDTO $requestDTO = null,
         ReadingTypeRepositoryInterface $readingTypeRepository
     ): JsonResponse {
-        $requestDTO = $requestDTO ?? new RequestDTO();
+        $requestDTO ??= new RequestDTO();
 
         $allReadingTypes = $readingTypeRepository->findAllPaginatedResults(
             $requestDTO->getLimit(),

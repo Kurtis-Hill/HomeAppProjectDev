@@ -34,11 +34,14 @@ class UpdateSensorDetailsRequestDTO
     private mixed $pinNumber = null;
 
     #[
+        Assert\NotNull(
+            message: "readingInterval cannot be null"
+        ),
+        Assert\Type(type: 'integer', message: 'readingInterval must be a number'),
         Assert\Range(
             notInRangeMessage: "readingInterval must be greater than {{ min }}",
-            minMessage: "readingInterval must be greater than " . Sensor::MIN_READING_INTERVAL,
             invalidMessage: "readingInterval must be a number",
-            min: Sensor::MIN_READING_INTERVAL,
+            min: Sensor::MIN_READING_INTERVAL
         ),
     ]
     private mixed $readingInterval = null;

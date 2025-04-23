@@ -56,7 +56,7 @@ readonly class DuplicateSensorCheckService
                 )
             );
         }
-
+// had to disable due to analog pins and digital pins using the same pin number
 //        $pinCheck = $this->sensorRepository->findSensorsObjectByDeviceIDAndPinNumber($deviceID, $pinToUpdateTo ?? $sensor->getPinNumber());
 //        if ($pinCheck instanceof Sensor && $pinCheck->getSensorID() !== $sensorID) {
 //            throw new DuplicateSensorException(

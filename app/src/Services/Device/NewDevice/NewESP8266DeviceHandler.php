@@ -18,12 +18,6 @@ class NewESP8266DeviceHandler extends AbstractESPDeviceService implements NewDev
     public function processNewDevice(NewDeviceDTO $newDeviceDTO): array
     {
         $deviceUser = $newDeviceDTO->getCreatedByUserObject();
-        if (!$deviceUser instanceof User) {
-            $this->logger->error('Device not created by user', ['device' => $deviceUser->getUserIdentifier()]);
-            throw new DeviceCreationFailureException(
-                DeviceCreationFailureException::DEVICE_FAILED_TO_CREATE
-            );
-        }
 
         $newDevice = $newDeviceDTO->getNewDevice();
         $newDevice->setDeviceName($newDeviceDTO->getDeviceName());
@@ -36,6 +30,8 @@ class NewESP8266DeviceHandler extends AbstractESPDeviceService implements NewDev
 
         $validationResult = $this->validateNewDevice($newDevice);
         if (empty($validationResult)) {
+            $newDevice->setRoles([Devices::ROLE]);
+            $newDevice->setDeviceSecret($newDevice->getPassword());
             $this->devicePasswordEncoder->encodeDevicePassword($newDevice);
         }
 
@@ -60,11 +56,6 @@ class NewESP8266DeviceHandler extends AbstractESPDeviceService implements NewDev
         } catch (ORMException $e) {
             $this->logger->error($e->getMessage());
             $userErrors[] = "device check query failed";
-        }
-
-        if (empty($userErrors)) {
-            $newDevice->setDeviceSecret($newDevice->getPassword());
-            $newDevice->setRoles([Devices::ROLE]);
         }
 
         return $userErrors ?? [];

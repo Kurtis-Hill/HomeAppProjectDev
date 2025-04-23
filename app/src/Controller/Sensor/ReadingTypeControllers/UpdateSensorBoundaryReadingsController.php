@@ -29,8 +29,8 @@ use Doctrine\ORM\OptimisticLockException;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -69,7 +69,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         SensorRepositoryInterface $sensorRepository,
         SensorReadingUpdateFactory $sensorUpdateFactory,
         ReadingTypeResponseBuilderFactory $readingTypeResponseBuilderFactory,
-    ): Response {
+    ): JsonResponse {
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
                 $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),

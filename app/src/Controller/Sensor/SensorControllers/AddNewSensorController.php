@@ -27,6 +27,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -53,6 +54,8 @@ class AddNewSensorController extends AbstractController
     #[Route('', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         Request $request,
+        #[MapRequestPayload]
+        AddNewSensorRequestDTO $newSensorRequestDTO,
         NewSensorCreationInterface $newSensorCreationService,
         CardCreationHandlerInterface $cardCreationService,
         ReadingTypeCreationInterface $readingTypeCreation,
@@ -60,17 +63,6 @@ class AddNewSensorController extends AbstractController
         NewSensorDTOBuilder $newSensorDTOBuilder,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $newSensorRequestDTO = new AddNewSensorRequestDTO();
-        try {
-            $this->deserializeRequest(
-                $request->getContent(),
-                AddNewSensorRequestDTO::class,
-                'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $newSensorRequestDTO]
-            );
-        } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
-        }
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
                 $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),
@@ -82,11 +74,6 @@ class AddNewSensorController extends AbstractController
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
-        }
-
-        $requestValidationErrors = $validator->validate($newSensorRequestDTO);
-        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
         }
 
         try {
@@ -114,7 +101,7 @@ class AddNewSensorController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
         try {
-            $sensorCreationErrors = $newSensorCreationService->processNewSensor($newSensorDTO);
+            $sensorCreationErrors = $newSensorCreationService->processNewSensor($newSensorDTO, $user);
         } catch (UserNotAllowedException $exception) {
             return $this->sendForbiddenAccessJsonResponse([$exception->getMessage()]);
         }

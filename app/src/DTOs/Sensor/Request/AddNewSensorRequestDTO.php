@@ -13,7 +13,7 @@ class AddNewSensorRequestDTO
             message: "sensorTypeID cannot be null"
         ),
     ]
-    private mixed $sensorTypeID = null;
+    private int $sensorTypeID;
 
     #[
         Assert\Type(type: 'integer', message: 'deviceNameID must be a {{ type }} you have provided {{ value }}'),
@@ -21,7 +21,7 @@ class AddNewSensorRequestDTO
             message: "deviceID name cannot be null"
         ),
     ]
-    private mixed $deviceID = null;
+    private int $deviceID;
 
     #[
         Assert\Type(type: 'string', message: 'sensorName must be a {{ type }} you have provided {{ value }}'),
@@ -29,7 +29,7 @@ class AddNewSensorRequestDTO
             message: "sensorName name cannot be null"
         ),
     ]
-    private mixed $sensorName = null;
+    private string $sensorName;
 
     #[
         Assert\Range(
@@ -42,64 +42,66 @@ class AddNewSensorRequestDTO
             message: "pinNumber name cannot be null"
         ),
     ]
-    private mixed $pinNumber = null;
+    private int $pinNumber;
 
     #[
+        Assert\NotNull(
+            message: "readingInterval cannot be null"
+        ),
         Assert\Range(
             notInRangeMessage: "readingInterval must be greater than {{ min }}",
-            minMessage: "readingInterval must be greater than " . Sensor::MIN_READING_INTERVAL,
             invalidMessage: "readingInterval must be a number",
-            min: Sensor::MIN_READING_INTERVAL,
+            min: Sensor::MIN_READING_INTERVAL
         ),
     ]
-    private mixed $readingInterval = null;
+    private int $readingInterval;
 
-    public function getSensorTypeID(): mixed
+    public function getSensorTypeID(): int
     {
         return $this->sensorTypeID;
     }
 
-    public function setSensorTypeID(mixed $sensorTypeID): void
+    public function setSensorTypeID(int $sensorTypeID): void
     {
         $this->sensorTypeID = $sensorTypeID;
     }
 
-    public function getDeviceID(): mixed
+    public function getDeviceID(): int
     {
         return $this->deviceID;
     }
 
-    public function setDeviceID(mixed $deviceID): void
+    public function setDeviceID(int $deviceID): void
     {
         $this->deviceID = $deviceID;
     }
 
-    public function getSensorName(): mixed
+    public function getSensorName(): string
     {
         return $this->sensorName;
     }
 
-    public function setSensorName(mixed $sensorName): void
+    public function setSensorName(string $sensorName): void
     {
         $this->sensorName = $sensorName;
     }
 
-    public function getPinNumber(): mixed
+    public function getPinNumber(): int
     {
         return $this->pinNumber;
     }
 
-    public function setPinNumber(mixed $pinNumber): void
+    public function setPinNumber(int $pinNumber): void
     {
         $this->pinNumber = $pinNumber;
     }
 
-    public function getReadingInterval(): mixed
+    public function getReadingInterval(): int
     {
         return $this->readingInterval;
     }
 
-    public function setReadingInterval(mixed $readingInterval): void
+    public function setReadingInterval(int $readingInterval): void
     {
         $this->readingInterval = $readingInterval;
     }

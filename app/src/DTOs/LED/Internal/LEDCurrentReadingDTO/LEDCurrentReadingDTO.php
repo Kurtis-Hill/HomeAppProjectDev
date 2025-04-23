@@ -2,7 +2,7 @@
 
 namespace App\DTOs\LED\Internal\LEDCurrentReadingDTO;
 
-class LEDCurrentReadingDTO
+readonly class LEDCurrentReadingDTO
 {
     public function __construct(
         private int $red,

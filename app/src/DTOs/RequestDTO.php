@@ -47,7 +47,7 @@ class RequestDTO
 
     public function getResponseType(): string
     {
-        return $this->responseType ?? RequestTypeEnum::ONLY->value;
+        return $this->responseType ?? RequestTypeEnum::FULL->value;
     }
 
     public function setResponseType(mixed $responseType): void

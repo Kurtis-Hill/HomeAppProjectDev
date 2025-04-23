@@ -4,6 +4,7 @@ namespace App\Services\Sensor\NewSensor;
 
 use App\DTOs\Sensor\Internal\Sensor\NewSensorDTO;
 use App\Entity\Sensor\Sensor;
+use App\Entity\User\User;
 use App\Exceptions\Sensor\DuplicateSensorException;
 use App\Exceptions\Sensor\UserNotAllowedException;
 use App\Repository\Device\ORM\DeviceRepositoryInterface;
@@ -42,11 +43,7 @@ class NewSensorCreationHandler implements NewSensorCreationInterface
     public function processNewSensor(NewSensorDTO $newSensorDTO): array
     {
         $sensor = $newSensorDTO->getSensor();
-        try {
-            $sensor->setCreatedBy($newSensorDTO->getUser());
-        } catch (TypeError) {
-            throw new UserNotAllowedException(UserNotAllowedException::MESSAGE);
-        }
+        $sensor->setCreatedBy($newSensorDTO->getUser());
         $sensor->setSensorName($newSensorDTO->getSensorName());
         $sensor->setSensorTypeID($newSensorDTO->getSensorType());
         $sensor->setDevice($newSensorDTO->getDevice());
