@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Sensor\SensorControllers;
 
+use App\Controller\Sensor\SensorControllers\AddNewSensorController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Entity\Device\Devices;
@@ -260,7 +261,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
 
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString(\App\Controller\Sensor\SensorControllers\AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals($sensorName, $sensor->getSensorName());
         self::assertEquals($randomPin, $sensor->getPinNumber());
@@ -562,7 +563,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString(\App\Controller\Sensor\SensorControllers\AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
@@ -694,7 +695,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertInstanceOf($class, $sensorTypeObject);
         self::assertInstanceOf(CardView::class, $cardView);
 
-        self::assertStringContainsString(\App\Controller\Sensor\SensorControllers\AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
@@ -794,7 +795,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
         self::assertInstanceOf(Sensor::class, $sensor);
-        self::assertStringContainsString(\App\Controller\Sensor\SensorControllers\AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+        self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($sensorName, $responseData['payload']['sensorName']);
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());

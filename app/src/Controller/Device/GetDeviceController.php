@@ -5,6 +5,7 @@ namespace App\Controller\Device;
 
 use App\Builders\Device\DeviceGet\GetDeviceDTOBuilder;
 use App\Builders\Device\DeviceResponse\DeviceResponseDTOBuilder;
+use App\DTOs\RequestDTO;
 use App\Entity\Device\Devices;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
@@ -24,8 +25,11 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-device')]
@@ -52,24 +56,17 @@ class GetDeviceController extends AbstractController
      */
     #[Route('', name: 'get-user-devices-multiple', methods: [Request::METHOD_GET])]
     public function getAllDevices(
-        Request $request,
         DevicesForUserInterface $getDevicesForUser,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        #[MapRequestPayload]
+        ?RequestDTO $requestDTO = null,
     ): Response {
+        $requestDTO ??= new RequestDTO();
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-                $request->get('page'),
-                $request->get('limit', DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
         $getDeviceDTO = GetDeviceDTOBuilder::buildGetDeviceDTO(
             min(
                 $requestDTO->getLimit(),
@@ -125,29 +122,33 @@ class GetDeviceController extends AbstractController
         name: 'get-user-device-single',
         methods: [Request::METHOD_GET]
     )]
+    #[isGranted(DeviceVoter::GET_DEVICE, subject: 'devices')]
     public function getDeviceByID(
         Devices $devices,
         Request $request,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        #[MapRequestPayload]
+        ?RequestDTO $requestDTO = null,
     ): Response {
-        try {
-            $this->denyAccessUnlessGranted(DeviceVoter::GET_DEVICE, $devices);
-        } catch (AccessDeniedException) {
-            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        }
-        $responseType = $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value);
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $responseType
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
+        $requestDTO ??= new RequestDTO();
+//        try {
+//            $this->denyAccessUnlessGranted(DeviceVoter::GET_DEVICE, $devices);
+//        } catch (AccessDeniedException) {
+//            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+//        }
+//        $responseType = $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value);
+//        try {
+//            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
+//                $responseType
+//            );
+//        } catch (ValidatorProcessorException $e) {
+//            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
+//        }
 
         $deviceDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO(
             $devices,
             in_array(
-                $responseType,
+                $requestDTO->getResponseType(),
                 [
                     RequestTypeEnum::SENSITIVE_FULL->value,
                     RequestTypeEnum::FULL->value
