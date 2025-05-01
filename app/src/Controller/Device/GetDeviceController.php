@@ -67,7 +67,7 @@ class GetDeviceController extends AbstractController
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }
 
-        $getDeviceDTO = GetDeviceDTOBuilder::buildGetDeviceDTO(
+            $getDeviceDTO = GetDeviceDTOBuilder::buildGetDeviceDTO(
             min(
                 $requestDTO->getLimit(),
                 DevicesForUserInterface::MAX_DEVICE_RETURN_SIZE
@@ -131,19 +131,6 @@ class GetDeviceController extends AbstractController
         ?RequestDTO $requestDTO = null,
     ): Response {
         $requestDTO ??= new RequestDTO();
-//        try {
-//            $this->denyAccessUnlessGranted(DeviceVoter::GET_DEVICE, $devices);
-//        } catch (AccessDeniedException) {
-//            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-//        }
-//        $responseType = $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value);
-//        try {
-//            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-//                $responseType
-//            );
-//        } catch (ValidatorProcessorException $e) {
-//            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-//        }
 
         $deviceDTO = $deviceResponseDTOBuilder->buildFullDeviceResponseDTO(
             $devices,

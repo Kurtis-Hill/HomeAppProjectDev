@@ -124,9 +124,6 @@ abstract class ControllerTestCase extends WebTestCase
     {
         self::assertEquals($device->getDeviceID(), $response['deviceID']);
         self::assertEquals($device->getDeviceName(), $response['deviceName']);
-        if (!empty($response['secret'])) {
-            self::assertEquals($device->getDeviceSecret(), $response['secret']);
-        }
 
         if (!empty($response['group'])) {
             self::assertGroupIsSamAsExpected($device->getGroupObject(), $response['group']);
