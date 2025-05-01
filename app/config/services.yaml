@@ -430,3 +430,7 @@ services:
     App\Events\EventListeners\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+    App\Events\Subscribers\CastQueryParametersAfterDeserializationSubscriber:
+        tags:
+            - { name: 'kernel.event_subscriber' }

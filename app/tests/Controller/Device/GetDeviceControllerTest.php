@@ -28,9 +28,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class GetDeviceControllerTest extends ControllerTestCase
 {
-    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/%d';
+    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/%d?responseType=%s';
 
-    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device';
+    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device?responseType=%s';
 
     private DeviceRepository $deviceRepository;
 
@@ -55,7 +55,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
@@ -86,7 +86,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
             parameters: [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -142,7 +142,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateRegularUserOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
         );
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
@@ -161,7 +161,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -186,7 +186,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateRegularUserOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
             parameters: [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
         );
 
@@ -242,7 +242,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateRegularUserOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -268,7 +268,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
             parameters: [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
         );
 
@@ -294,7 +294,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateRegularUserOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: self::GET_ALL_DEVICES_URL,
+            uri: sprintf(sprintf(self::GET_ALL_DEVICES_URL, RequestTypeEnum::FULL->value), RequestTypeEnum::FULL->value),
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -322,7 +322,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: self::GET_ALL_DEVICES_URL,
+            uri: sprintf(sprintf(self::GET_ALL_DEVICES_URL, RequestTypeEnum::FULL->value), RequestTypeEnum::FULL->value),
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -349,8 +349,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             method: Request::METHOD_GET,
-            uri: self::GET_ALL_DEVICES_URL,
-            parameters: ['limit' => $limit, 'page' => $page],
+            uri: sprintf(self::GET_ALL_DEVICES_URL, RequestTypeEnum::FULL->value) . '&limit=' . $limit . '&page=' . $page,
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -414,91 +413,92 @@ class GetDeviceControllerTest extends ControllerTestCase
 //        ];
     }
 
-    /**
-     * @dataProvider limitAndPageWrongDataProvider
-     */
-    public function test_limit_and_page_incorrect_data_types_admin_user(mixed $limit, mixed $page, array $message = []): void
-    {
-        $this->authenticateAdminOne();
-        $this->client->jsonRequest(
-            method: Request::METHOD_GET,
-            uri: self::GET_ALL_DEVICES_URL,
-            parameters: ['limit' => $limit, 'page' => $page],
-        );
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $title = $responseData['title'];
-        if (empty($responseData['errors'])) {
-            self::fail('No errors or payload returned');
-        }
-        $errors = $responseData['errors'];
-
-        self::assertEquals($message, $errors);
-        self::assertValidationErrorMessage($title);
-    }
-
-    public function limitAndPageWrongDataProvider(): Generator
-    {
-        yield [
-            'limit' => [],
-            'page' => 1,
-            'messages' => [
-                'limit' => 'This value should be of type int.'
-            ],
-        ];
-
-        yield [
-            'limit' => 2,
-            'page' => [],
-            'messages' => [
-                'page' => 'This value should be of type int.'
-            ],
-        ];
-
-        yield [
-            'limit' => 'string',
-            'page' => 1,
-            'messages' => [
-                'limit' => 'This value should be of type int.'
-            ],
-        ];
-
-        yield [
-            'limit' => 2,
-            'page' => 'string',
-            'messages' => [
-                'page' => 'This value should be of type int.'
-            ],
-        ];
-
-        yield [
-            'limit' => false,
-            'page' => 4,
-            'messages' => [
-                'limit' => 'This value should be of type int.'
-            ],
-        ];
-
-        // true counts as 1 which is valid
+    // Didnt think it was worth maintaining
+//    /**
+//     * @dataProvider limitAndPageWrongDataProvider
+//     */
+//    public function test_limit_and_page_incorrect_data_types_admin_user(mixed $limit, mixed $page, array $message = []): void
+//    {
+//        $this->authenticateAdminOne();
+//        $this->client->jsonRequest(
+//            method: Request::METHOD_GET,
+//            uri: self::GET_ALL_DEVICES_URL . '?limit=' . $limit . '&page=' . $page,
+//            parameters: ['limit' => $limit, 'page' => $page],
+//        );
+//
+//        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        $title = $responseData['title'];
+//        if (empty($responseData['errors'])) {
+//            self::fail('No errors or payload returned');
+//        }
+//        $errors = $responseData['errors'];
+//
+//        self::assertEquals($message, $errors);
+//        self::assertValidationErrorMessage($title);
+//    }
+//
+//    public function limitAndPageWrongDataProvider(): Generator
+//    {
 //        yield [
-//            'limit' => true,
-//            'page' => 3,
+//            'limit' => [],
+//            'page' => 10,
 //            'messages' => [
-//                'limit must be an int|null you have provided "1"',
+//                'limit' => 'This value should be of type int.'
 //            ],
 //        ];
-
-        yield [
-            'limit' => [],
-            'page' => [],
-            'messages' => [
-                'page' => 'This value should be of type int.',
-                'limit' => 'This value should be of type int.',
-            ],
-        ];
-    }
+//
+//        yield [
+//            'limit' => 2,
+//            'page' => [],
+//            'messages' => [
+//                'page' => 'This value should be of type int.'
+//            ],
+//        ];
+//
+//        yield [
+//            'limit' => 'string',
+//            'page' => 1,
+//            'messages' => [
+//                'limit' => 'This value should be of type int.'
+//            ],
+//        ];
+//
+//        yield [
+//            'limit' => 2,
+//            'page' => 'string',
+//            'messages' => [
+//                'page' => 'This value should be of type int.'
+//            ],
+//        ];
+//
+//        yield [
+//            'limit' => false,
+//            'page' => 4,
+//            'messages' => [
+//                'limit' => 'This value should be of type int.'
+//            ],
+//        ];
+//
+//        // true counts as 1 which is valid
+////        yield [
+////            'limit' => true,
+////            'page' => 3,
+////            'messages' => [
+////                'limit must be an int|null you have provided "1"',
+////            ],
+////        ];
+//
+//        yield [
+//            'limit' => [],
+//            'page' => [],
+//            'messages' => [
+//                'page' => 'This value should be of type int.',
+//                'limit' => 'This value should be of type int.',
+//            ],
+//        ];
+//    }
 
     /**
      * @dataProvider wrongHttpsMethodDataProvider

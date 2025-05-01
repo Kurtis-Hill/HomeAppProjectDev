@@ -17,6 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -40,9 +41,9 @@ class GetReadingTypeController extends AbstractController
 
     #[Route('', name: 'all-reading-types', methods: [Request::METHOD_GET])]
     public function getAllReadingTypes(
-        #[MapRequestPayload]
+        ReadingTypeRepositoryInterface $readingTypeRepository,
+        #[MapQueryString]
         ?RequestDTO $requestDTO = null,
-        ReadingTypeRepositoryInterface $readingTypeRepository
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();
 
@@ -75,16 +76,12 @@ class GetReadingTypeController extends AbstractController
     }
 
     #[Route('/{readingTypeID}', name: 'singular-reading-types', methods: [Request::METHOD_GET])]
-    public function getSingleReadingTypes(ReadingTypes $readingType, Request $request): JsonResponse
-    {
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
-
+    public function getSingleReadingTypes(
+        ReadingTypes $readingType,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
+    ): JsonResponse {
+        $requestDTO ??= new RequestDTO();
         $readingTypeResponseDTO = ReadingTypeResponseBuilder::buildReadingTypeResponseDTO($readingType);
 
         try {

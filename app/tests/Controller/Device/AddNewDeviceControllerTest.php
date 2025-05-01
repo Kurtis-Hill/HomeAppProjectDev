@@ -82,13 +82,12 @@ class AddNewDeviceControllerTest extends ControllerTestCase
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
-            'responseType' => RequestTypeEnum::SENSITIVE_FULL->value,
         ];
 
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
@@ -119,13 +118,12 @@ class AddNewDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => $this->regularUserTwo->getGroup()->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
             'deviceIPAddress' => $deviceIPAddress,
-            'responseType' => RequestTypeEnum::SENSITIVE_FULL->value,
         ];
 
         $this->authenticateRegularUserTwo();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
@@ -165,7 +163,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $this->authenticateRegularUserTwo();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
@@ -186,7 +184,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
@@ -211,7 +209,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
@@ -231,7 +229,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
 
@@ -255,7 +253,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
 
@@ -279,7 +277,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
 
@@ -301,7 +299,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
 
@@ -383,7 +381,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
 
@@ -629,13 +627,13 @@ class AddNewDeviceControllerTest extends ControllerTestCase
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
-            'responseType' => RequestTypeEnum::SENSITIVE_FULL->value,
+            
         ];
 
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
             $formData,
         );
 

@@ -4,6 +4,6 @@ import {apiURL} from "../../Common/URLs/CommonURLs";
 
 export async function deleteDeviceRequest(deviceID: number, responseType?: string): Promise<AxiosResponse> {
     return await axios.delete(
-        `${apiURL}user-devices/${deviceID}?${responseType}`
+        `${apiURL}user-devices/${deviceID}?responseType=${responseType}`
     );
 }

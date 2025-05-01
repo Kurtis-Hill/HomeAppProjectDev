@@ -5,6 +5,7 @@ namespace App\Controller\Device;
 use App\Builders\Device\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Builders\Device\DeviceUpdate\DeviceDTOBuilder;
 use App\DTOs\Device\Request\DeviceUpdateRequestDTO;
+use App\DTOs\RequestDTO;
 use App\Entity\Device\Devices;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
@@ -22,6 +23,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -54,40 +57,15 @@ class UpdateDeviceController extends AbstractController
     ]
     public function updateDevice(
         Devices $deviceToUpdate,
-        Request $request,
-        ValidatorInterface $validator,
         UpdateDeviceHandlerInterface $updateDeviceHandler,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
         DeviceDTOBuilder $deviceDTOBuilder,
+        #[MapRequestPayload]
+        DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
     ): JsonResponse {
-        $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
-
-        try {
-            $this->deserializeRequest(
-                $request->getContent(),
-                DeviceUpdateRequestDTO::class,
-                'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $deviceUpdateRequestDTO],
-            );
-        } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
-        }
-
-        $requestValidationErrors = $validator->validate($deviceUpdateRequestDTO);
-        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse(
-                $this->getValidationErrorAsArray($requestValidationErrors),
-                APIErrorMessages::VALIDATION_ERRORS
-            );
-        }
-
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::SENSITIVE_FULL->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
+        $requestDTO ??= new RequestDTO();
 
         $user = $this->getUser();
         if (!$user instanceof User) {

@@ -1,5 +1,6 @@
 import axios, {AxiosResponse} from 'axios';
 import {apiURL} from "../../Common/URLs/CommonURLs";
+import {ResponseTypeEnum} from "../../Common/Response/APIResponseEnum";
 
 export async function getDeviceRequest(deviceID: number, type: string|null): Promise<AxiosResponse> {
     return await axios.get(
@@ -8,8 +9,9 @@ export async function getDeviceRequest(deviceID: number, type: string|null): Pro
     );
 }
 
-export async function getAllDevicesRequest(): Promise<AxiosResponse> {
+export async function getAllDevicesRequest(type: string|null): Promise<AxiosResponse> {
     return await axios.get(
         `${apiURL}user-devices`,
+        {params: {responseType: type ?? ResponseTypeEnum.ResponseTypeFull}}
     );
 }

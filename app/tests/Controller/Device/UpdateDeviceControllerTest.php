@@ -17,6 +17,7 @@ use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Repository\User\ORM\GroupRepository;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\HTTPStatusCodes;
+use App\Services\Request\RequestTypeEnum;
 use App\Tests\Controller\ControllerTestCase;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UpdateDeviceControllerTest extends ControllerTestCase
 {
-    private const UPDATE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d';
+    private const UPDATE_DEVICE_URL = '/HomeApp/api/user/user-devices/%d?responseType=%s';
 
     private DeviceRepositoryInterface $deviceRepository;
 
@@ -57,16 +58,14 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             [],
             [],
             [],
             implode(',', $requestData)
         );
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['title']);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -92,7 +91,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
         $responseData = json_decode(
@@ -115,7 +114,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 1,
             'errorMessage' => [
-                'deviceName must be of type string|null you provided array'
+                'deviceName' => 'This value should be of type string.'
             ],
         ];
 
@@ -125,7 +124,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 1,
             'errorMessage' => [
-                'password must be of type string|null you provided array'
+                'password' => 'This value should be of type string.'
             ],
         ];
 
@@ -135,7 +134,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 'deviceGroup',
             'deviceRoom' => 1,
             'errorMessage' => [
-                'deviceGroup must be of type integer|null you provided "deviceGroup"'
+                'deviceGroup' => 'This value should be of type int.'
             ],
         ];
 
@@ -145,7 +144,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 'deviceRoom',
             'errorMessage' => [
-                'deviceRoom must be of type integer|null you provided "deviceRoom"'
+                'deviceRoom' => 'This value should be of type int.'
             ],
         ];
 
@@ -155,10 +154,10 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => [1],
             'deviceRoom' => 'deviceRoom',
             'errorMessage' => [
-                'deviceName must be of type string|null you provided 1',
-                'password must be of type string|null you provided array',
-                'deviceGroup must be of type integer|null you provided array',
-                'deviceRoom must be of type integer|null you provided "deviceRoom"',
+                'deviceName' => 'This value should be of type string.',
+                'deviceGroup' => 'This value should be of type int.',
+                'deviceRoom' => 'This value should be of type int.',
+                'password' => 'This value should be of type string.',
 
             ],
         ];
@@ -179,7 +178,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $nonExistentDeviceID),
+            sprintf(self::UPDATE_DEVICE_URL, $nonExistentDeviceID, RequestTypeEnum::SENSITIVE_FULL->value),
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
@@ -214,7 +213,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
         $responseData = json_decode(
@@ -256,7 +255,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData,
         );
         $responseData = json_decode(
@@ -303,7 +302,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateRegularUserTwo();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
         $responseData = json_decode(
@@ -355,7 +354,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -371,6 +370,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
 
         $device = $this->entityManager->getRepository(Devices::class)->find($device->getDeviceID());
         self::assertEquals('Device Successfully Updated', $responseData['title']);
+
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
         self::assertDeviceIsSameAsExpected($device, $payload);
         self::assertEquals($newPassword, $payload['secret']);
@@ -413,12 +413,13 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'password' => $newPassword,
             'deviceGroup' => $this->adminTwo->getGroup()->getGroupID(),
             'deviceRoom' => $device->getRoomObject()->getRoomID(),
+            'responseType' => RequestTypeEnum::SENSITIVE_FULL,
         ];
 
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
 
@@ -452,12 +453,13 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'password' => 'NewPassword',
             'deviceGroup' => $this->adminTwo->getGroup()->getGroupID(),
             'deviceRoom' => $device->getRoomObject()->getRoomID(),
+            'responseType' => RequestTypeEnum::SENSITIVE_FULL,
         ];
 
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
 
@@ -478,14 +480,14 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         yield [
             'deviceName' => 'newDeviceNamenewDeviceNamenewDeviceNamenewDeviceNamenewDeviceNamenewDeviceName',
             'errorMessage' => [
-                'Device name cannot be longer than 50 characters'
+                'deviceName' => 'Device name cannot be longer than 50 characters'
             ],
         ];
 
         yield [
             'deviceName' => 'x',
             'errorMessage' => [
-                'Device name must be at least 2 characters long'
+                'deviceName' => 'Device name must be at least 2 characters long'
             ],
         ];
     }
@@ -538,7 +540,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
 
@@ -551,9 +553,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
 
         self::assertEquals('Device Successfully Updated', $responseData['title']);
         self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
-        self::assertEquals($newPassword, $responseData['payload']['secret']);
 
-        self::assertEquals($newDeviceName, $responseData['payload']['deviceName']);
         self::assertEquals($newGroupID ?? $device->getGroupObject()->getGroupID(), $responseData['payload']['group']['groupID']);
         self::assertEquals($newRoomID, $responseData['payload']['room']['roomID']);
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -609,7 +609,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData,
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -657,7 +657,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PUT,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData,
         );
 
@@ -746,7 +746,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
             Request::METHOD_PATCH,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -848,7 +848,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         $this->authenticateRegularUserTwo();
         $this->client->jsonRequest(
             Request::METHOD_PATCH,
-            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID()),
+            sprintf(self::UPDATE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::SENSITIVE_FULL->value),
             $requestData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);

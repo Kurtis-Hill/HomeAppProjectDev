@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -57,15 +58,13 @@ class AddNewDeviceController extends AbstractController
      */
     #[Route('', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
     public function addNewDevice(
-        Request $request,
-        ValidatorInterface $validator,
         NewDeviceHandlerInterface $newDeviceHandler,
         DeleteDeviceServiceInterface $deleteDeviceHandler,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
         DeviceDTOBuilder $deviceDTOBuilder,
         #[MapRequestPayload(acceptFormat: 'json')]
         NewDeviceRequestDTO $newDeviceRequestDTO,
-        #[MapRequestPayload(acceptFormat: 'json')]
+        #[MapQueryString]
         ?RequestDTO $requestDTO = null,
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();

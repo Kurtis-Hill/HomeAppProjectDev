@@ -27,6 +27,10 @@ class RequestDTO
     private ?string $responseType = RequestTypeEnum::ONLY->value;
 
     #[
+        Assert\Type(
+            type: ['int', "null"],
+            message: 'page must be an {{ type }} you have provided {{ value }}'
+        ),
         Assert\Range(
             minMessage: 'page must be greater than {{ limit }}',
             invalidMessage: 'page must be an int|null you have provided {{ value }}',
@@ -36,6 +40,10 @@ class RequestDTO
     private ?int $page = 1;
 
     #[
+        Assert\Type(
+            type: ['int', "null"],
+            message: 'limit must be an {{ type }} you have provided {{ value }}'
+        ),
         Assert\Range(
             notInRangeMessage: 'limit must be greater than {{ min }} but less than {{ max }}',
             invalidMessage: 'limit must be an int|null you have provided {{ value }}',

@@ -547,7 +547,7 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
 
-        /** @var \App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
+        /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findAll()[0];
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);
@@ -562,8 +562,8 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertInstanceOf(CardView::class, $cardView);
 
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
-        self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
+
 
         self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
@@ -751,7 +751,7 @@ class AddNewSensorControllerTest extends WebTestCase
 
         /** @var Sensor $sensor */
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorID' => $sensorID]);
-        /** @var \App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface $sensorTypeObject */
+        /** @var SensorTypeInterface $sensorTypeObject */
         $sensorTypeObject = $this->entityManager->getRepository($class)->findAll()[0];
         /** @var CardView $cardView */
         $cardView = $this->entityManager->getRepository(CardView::class)->findOneBy(['sensor' => $sensorID]);

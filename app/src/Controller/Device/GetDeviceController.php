@@ -58,7 +58,7 @@ class GetDeviceController extends AbstractController
     public function getAllDevices(
         DevicesForUserInterface $getDevicesForUser,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
-        #[MapRequestPayload]
+        #[MapQueryString]
         ?RequestDTO $requestDTO = null,
     ): Response {
         $requestDTO ??= new RequestDTO();

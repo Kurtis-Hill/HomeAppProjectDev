@@ -43,7 +43,7 @@ export function AnnouncementFlashModal(props: AnnouncementFlashModalInterface) {
               <div className="modal-body error-modal">
                 {
                   dataToList.map((error, index) => (
-                      <li className="error-modal-list" key={index}>{error}</li>
+                      <li className="error-modal-list" key={index}>{index} {error}</li>
                   ))
                 }
               </div>
