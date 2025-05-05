@@ -2,10 +2,14 @@
 
 namespace App\DTOs\Sensor\Request\SensorUpdateDTO;
 
+use App\DTOs\Sensor\Request\CanAdjustSensorDeviceIDAndSensorNameInterface;
 use App\Entity\Sensor\Sensor;
+use App\Services\CustomValidators\Device\DeviceIDExists;
+use App\Services\CustomValidators\Sensor\UniqueSensorForDevice;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UpdateSensorDetailsRequestDTO
+#[UniqueSensorForDevice]
+class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorNameInterface
 {
     #[
         Assert\Type(
@@ -19,7 +23,8 @@ class UpdateSensorDetailsRequestDTO
         Assert\Type(
             type: ['int', "null"],
             message: "device must be of type {{ type }} you provided {{ value }}"
-        )
+        ),
+        DeviceIDExists,
     ]
     private mixed $deviceID = null;
 
@@ -56,12 +61,12 @@ class UpdateSensorDetailsRequestDTO
         $this->deviceID = $deviceID;
     }
 
-    public function getSensorName(): mixed
+    public function getSensorName(): string
     {
         return $this->sensorName;
     }
 
-    public function getDeviceID(): mixed
+    public function getDeviceID(): int
     {
         return $this->deviceID;
     }

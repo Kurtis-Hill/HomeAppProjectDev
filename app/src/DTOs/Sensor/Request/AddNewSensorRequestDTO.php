@@ -3,9 +3,12 @@
 namespace App\DTOs\Sensor\Request;
 
 use App\Entity\Sensor\Sensor;
+use App\Services\CustomValidators\Device\DeviceIDExists;
+use App\Services\CustomValidators\Sensor\UniqueSensorForDevice;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class AddNewSensorRequestDTO
+#[UniqueSensorForDevice]
+class AddNewSensorRequestDTO implements CanAdjustSensorDeviceIDAndSensorNameInterface
 {
     #[
         Assert\Type(type: 'integer', message: 'sensorTypeID must be a {{ type }} you have provided {{ value }}'),
@@ -20,6 +23,7 @@ class AddNewSensorRequestDTO
         Assert\NotNull(
             message: "deviceID name cannot be null"
         ),
+        DeviceIDExists,
     ]
     private int $deviceID;
 

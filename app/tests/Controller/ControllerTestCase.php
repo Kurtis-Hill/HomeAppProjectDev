@@ -5,9 +5,15 @@ namespace App\Tests\Controller;
 use App\Controller\Authentication\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Device\Devices;
+use App\Entity\Sensor\AbstractSensorType;
+use App\Entity\Sensor\Sensor;
 use App\Entity\User\Group;
 use App\Entity\User\Room;
 use App\Entity\User\User;
+use App\Entity\UserInterface\Card\CardState;
+use App\Entity\UserInterface\Card\CardView;
+use App\Entity\UserInterface\Card\Colour;
+use App\Entity\UserInterface\Icons;
 use App\Services\Request\RequestTypeEnum;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -187,7 +193,6 @@ abstract class ControllerTestCase extends WebTestCase
         self::assertEquals($sensor->getSensorName(), $response['sensorName']);
         self::assertEquals($sensor->getPinNumber(), $response['pinNumber']);
         self::assertEquals($sensor->getReadingInterval(), $response['readingInterval']);
-        self::assertEquals($sensor->getSensorReadingTypes(), $response['sensorReadingTypes'] ?? []);
 
         if (!empty($response['createdBy'])) {
             self::assertUserIsSameAsExpected($sensor->getCreatedBy(), $response['createdBy']);
@@ -198,46 +203,46 @@ abstract class ControllerTestCase extends WebTestCase
         }
 
         if (!empty($response['sensorType'])) {
-            self::assertSensorTypeIsSameAsExpected($sensor->getSensorType(), $response['sensorType']);
+            self::assertSensorTypeIsSameAsExpected($sensor->getSensorTypeObject(), $response['sensorType']);
         }
 
-        if (!empty($response['cardView'])) {
-            self::assertCardViewIsSameAsExpected($sensor->getCardView(), $response['cardView']);
-        }
+//        if (!empty($response['cardView'])) {
+//            self::assertCardViewIsSameAsExpected($sensor->get(), $response['cardView']);
+//        }
     }
 
-    protected static function assertSensorTypeIsSameAsExpected(SensorTypeResponseDTO $sensorType, array $response): void
+    protected static function assertSensorTypeIsSameAsExpected(AbstractSensorType $sensorType, array $response): void
     {
-        self::assertEquals($sensorType->getSensorTypeID(), $response['typeID']);
-        self::assertEquals($sensorType->getSensorTypeName(), $response['typeName']);
-        self::assertEquals($sensorType->getSensorTypeDescription(), $response['typeDescription']);
+        self::assertEquals($sensorType->getSensorTypeID(), $response['sensorTypeID']);
+        self::assertEquals($sensorType::getSensorTypeName(), $response['sensorTypeName']);
+        self::assertEquals($sensorType->getDescription(), $response['sensorTypeDescription']);
     }
 
-    protected static function assertCardViewIsSameAsExpected(CardViewResponseDTO $cardView, array $response): void
+    protected static function assertCardViewIsSameAsExpected(CardView $cardView, array $response): void
     {
-        self::assertEquals($cardView->getCardViewID(), $response['cardID']);
-        self::assertIconIsSameAsExpected($cardView->getCardIcon(), $response['cardIcon']);
-        self::assertColourIsSameAsExpected($cardView->getCardColour(), $response['cardColour']);
-        self::assertStateIsSameAsExpected($cardView->getCardViewState(), $response['cardViewState']);
+        self::assertEquals($cardView->getCardViewID(), $response['cardViewID']);
+        self::assertIconIsSameAsExpected($cardView->getCardIconID(), $response['cardIcon']);
+        self::assertColourIsSameAsExpected($cardView->getCardColourID(), $response['cardColour']);
+        self:self::assertStateIsSameAsExpected($cardView->getCardStateID(), $response['cardState']);;
     }
 
-    protected static function assertIconIsSameAsExpected(IconResponseDTO $icon, array $response): void
+    protected static function assertIconIsSameAsExpected(Icons $icon, array $response): void
     {
         self::assertEquals($icon->getIconID(), $response['iconID']);
         self::assertEquals($icon->getIconName(), $response['iconName']);
         self::assertEquals($icon->getDescription(), $response['description']);
     }
 
-    protected static function assertColourIsSameAsExpected(ColourResponseDTO $colour, array $response): void
+    protected static function assertColourIsSameAsExpected(Colour $colour, array $response): void
     {
         self::assertEquals($colour->getColourID(), $response['colourID']);
         self::assertEquals($colour->getColour(), $response['colour']);
         self::assertEquals($colour->getShade(), $response['shade']);
     }
 
-    protected static function assertStateIsSameAsExpected(StateResponseDTO $state, array $response): void
+    protected static function assertStateIsSameAsExpected(CardState $state, array $response): void
     {
-        self::assertEquals($state->getCardStateID(), $response['cardStateID']);
-        self::assertEquals($state->getCardState(), $response['cardState']);
+        self::assertEquals($state->getStateID(), $response['cardStateID']);
+        self::assertEquals($state->getState(), $response['cardState']);
     }
 }

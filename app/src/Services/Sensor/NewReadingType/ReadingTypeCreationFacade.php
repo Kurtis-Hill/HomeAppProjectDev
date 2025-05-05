@@ -17,22 +17,11 @@ use App\Factories\Sensor\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use App\Services\Sensor\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface;
 use JetBrains\PhpStorm\ArrayShape;
 
-class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
+readonly class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
 {
-    private SensorTypeRepositoryFactory $sensorTypeFactory;
-
-    private SensorTypeCreationFactory $readingTypeCreationFactory;
-
-    private SensorReadingTypesValidatorInterface $sensorReadingTypesValidatorService;
-
     public function __construct(
-        SensorTypeRepositoryFactory $sensorTypeFactory,
-        SensorTypeCreationFactory $readingTypeCreationFactory,
-        SensorReadingTypesValidatorInterface $sensorReadingTypesValidator,
+        private SensorTypeCreationFactory $readingTypeCreationFactory,
     ) {
-        $this->sensorTypeFactory = $sensorTypeFactory;
-        $this->readingTypeCreationFactory = $readingTypeCreationFactory;
-        $this->sensorReadingTypesValidatorService = $sensorReadingTypesValidator;
     }
 
     /**
@@ -58,7 +47,7 @@ class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
     #[ArrayShape([Temperature::class|Humidity::class|Latitude::class|Analog::class|Relay::class|Motion::class])]
     private function createNewSensorReadingTypeData(Sensor $sensor): array
     {
-        $sensorType = $sensor->getSensorTypeObject()::getReadingTypeName();
+        $sensorType = $sensor->getSensorTypeObject()::getSensorTypeName();
 
         $sensorReadingCreationService = $this->readingTypeCreationFactory
             ->getSensorReadingTypeBuilder(

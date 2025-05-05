@@ -179,7 +179,7 @@ class DeleteSensorControllerTest extends WebTestCase
         $deletedDeviceSensorTypeResponse = $payload['sensorType'];
 
         self::assertEquals($deletedDeviceSensorType->getSensorTypeID(), $deletedDeviceSensorTypeResponse['sensorTypeID']);
-        self::assertEquals($deletedDeviceSensorType::getReadingTypeName(), $deletedDeviceSensorTypeResponse['sensorTypeName']);
+        self::assertEquals($deletedDeviceSensorType::getSensorTypeName(), $deletedDeviceSensorTypeResponse['sensorTypeName']);
         self::assertEquals($deletedDeviceSensorType->getDescription(), $deletedDeviceSensorTypeResponse['sensorTypeDescription']);
 
         self::assertArrayHasKey('sensorReadingTypes', $payload);

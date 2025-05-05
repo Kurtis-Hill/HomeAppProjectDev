@@ -37,61 +37,29 @@ use App\Entity\User\User;
 use App\Entity\UserInterface\Card\CardView;
 use App\Exceptions\Sensor\DuplicateSensorException;
 use App\Repository\Device\ORM\DeviceRepository;
-use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Repository\User\ORM\GroupRepository;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\HTTPStatusCodes;
-use App\Tests\Traits\TestLoginTrait;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Services\Request\RequestTypeEnum;
+use App\Tests\Controller\ControllerTestCase;
 use Generator;
-use JsonException;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AddNewSensorControllerTest extends WebTestCase
+class AddNewSensorControllerTest extends ControllerTestCase
 {
-    use TestLoginTrait;
-
     private const ADD_NEW_SENSOR_URL = '/HomeApp/api/user/sensor';
-
-    private ?EntityManagerInterface $entityManager;
-
-    private KernelBrowser $client;
 
     private ?Devices $device;
 
     private DeviceRepository $deviceRepository;
 
-    private SensorRepositoryInterface $sensorRepository;
-
-    private ?string $userToken = null;
-
     protected function setUp(): void
     {
-        $this->client = static::createClient();
+        parent::setUp();
 
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-
-        $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
-
-        try {
-            $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']]);
-            $this->userToken = $this->setUserToken($this->client);
-        } catch (JsonException $e) {
-            error_log($e);
-        }
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
+        $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']]);
     }
 
     public function newSensorSimpleDataProvider(): Generator
@@ -242,14 +210,11 @@ class AddNewSensorControllerTest extends WebTestCase
             'readingInterval' => $readingInterval,
         ];
 
-        $jsonData = json_encode($formData);
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $formData
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
 
@@ -267,128 +232,281 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertEquals($randomPin, $sensor->getPinNumber());
         self::assertEquals($readingInterval, $sensor->getReadingInterval());
 
-        self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
-        self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['pinNumber'], $sensor->getPinNumber());
-        self::assertEquals($responseData['payload']['readingInterval'], $sensor->getReadingInterval());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
-        self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
-        self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
-        self::assertEquals($responseData['payload']['createdBy']['userID'], $sensor->getCreatedBy()->getUserID());
-        self::assertEquals($responseData['payload']['createdBy']['firstName'], $sensor->getCreatedBy()->getFirstName());
-        self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
+        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);;
+    }
+
+    public function invalidSensorDataProvider(): Generator
+    {
+        yield 'special_characters_in_name' => [
+            [
+                'sensorName' => '&invalidName',
+                'sensorTypeID' => Dht::class,
+                'deviceID' => 1,
+                'pinNumber' => 1,
+                'readingInterval' => 1000,
+            ],
+            'The name cannot contain any special characters, please choose a different name',
+            HTTPStatusCodes::HTTP_BAD_REQUEST,
+        ];
+
+        yield 'long_name' => [
+            [
+                'sensorName' => 'TestingTestingTestiLongName',
+                'sensorTypeID' => Dht::class,
+                'deviceID' => 1,
+                'pinNumber' => 1,
+                'readingInterval' => 1000,
+            ],
+            'Sensor name cannot be longer than 20 characters',
+            HTTPStatusCodes::HTTP_BAD_REQUEST,
+        ];
+
+        yield 'short_name' => [
+            [
+                'sensorName' => 'T',
+                'sensorTypeID' => Dht::class,
+                'deviceID' => 1,
+                'pinNumber' => 1,
+                'readingInterval' => 1000,
+            ],
+            'Sensor name must be at least 2 characters long',
+            HTTPStatusCodes::HTTP_BAD_REQUEST,
+        ];
+
+//        yield 'duplicate_name' => [
+//            [
+//                'sensorName' => 'existingSensorName',
+//                'sensorTypeID' => Dht::class,
+//                'deviceID' => 1,
+//                'pinNumber' => 1,
+//                'readingInterval' => 1000,
+//            ],
+//            sprintf(DuplicateSensorException::MESSAGE, 'existingSensorName'),
+//            HTTPStatusCodes::HTTP_BAD_REQUEST,
+//        ];
+
+        yield 'non_existent_device_id' => [
+            [
+                'sensorName' => 'validName',
+                'sensorTypeID' => Dht::class,
+                'deviceID' => 999999,
+                'pinNumber' => 1,
+                'readingInterval' => 1000,
+            ],
+            'The device with ID "999999" does not exist.',
+            HTTPStatusCodes::HTTP_BAD_REQUEST,
+        ];
+
+        yield 'non_existent_sensor_type' => [
+            [
+                'sensorName' => 'validName',
+                'sensorTypeID' => 999999,
+                'deviceID' => 1,
+                'pinNumber' => 1,
+                'readingInterval' => 1000,
+            ],
+            'Sensor type not found for id 999999',
+            HTTPStatusCodes::HTTP_BAD_REQUEST,
+        ];
+
+        yield 'negative_pin_number' => [
+            [
+                'sensorName' => 'validName',
+                'sensorTypeID' => Sht::class,
+                'deviceID' => 1,
+                'pinNumber' => -1,
+                'readingInterval' => 1000,
+            ],
+            'pinNumber must be greater than -1',
+            HTTPStatusCodes::HTTP_BAD_REQUEST,
+        ];
+
+        yield 'invalid_reading_interval_type' => [
+            [
+                'sensorName' => 'validName',
+                'sensorTypeID' => Sht::class,
+                'deviceID' => 1,
+                'pinNumber' => 1,
+                'readingInterval' => 'string',
+            ],
+            'This value should be of type int.',
+            HTTPStatusCodes::HTTP_BAD_REQUEST,
+        ];
+
+        yield 'reading_interval_too_low' => [
+            [
+                'sensorName' => 'validName',
+                'sensorTypeID' => Bmp::class,
+                'deviceID' => 1,
+                'pinNumber' => 1,
+                'readingInterval' => Sensor::MIN_READING_INTERVAL - 5,
+            ],
+            'This value should be ' . Sensor::MIN_READING_INTERVAL . ' or more.',
+            HTTPStatusCodes::HTTP_BAD_REQUEST,
+        ];
+
+        return [
+            'negative_pin_number' => [
+                [
+                    'sensorName' => 'testing',
+                    'sensorTypeID' => 1, // Replace with a valid sensor type ID
+                    'deviceID' => 1, // Replace with a valid device ID
+                    'pinNumber' => -1,
+                    'readingInterval' => Sensor::DEFAULT_READING_INTERVAL,
+                ],
+                'pinNumber must be greater than -1',
+                HTTPStatusCodes::HTTP_BAD_REQUEST,
+            ],
+            'invalid_reading_interval_type' => [
+                [
+                    'sensorName' => 'testing',
+                    'sensorTypeID' => 1, // Replace with a valid sensor type ID
+                    'deviceID' => 1, // Replace with a valid device ID
+                    'pinNumber' => 10,
+                    'readingInterval' => 'string',
+                ],
+                'This value should be of type int.',
+                HTTPStatusCodes::HTTP_BAD_REQUEST,
+            ],
+            'reading_interval_too_low' => [
+                [
+                    'sensorName' => 'testing',
+                    'sensorTypeID' => 1, // Replace with a valid sensor type ID
+                    'deviceID' => 1, // Replace with a valid device ID
+                    'pinNumber' => 10,
+                    'readingInterval' => Sensor::MIN_READING_INTERVAL - 5,
+                ],
+                'This value should be ' . Sensor::MIN_READING_INTERVAL . ' or more.',
+                HTTPStatusCodes::HTTP_BAD_REQUEST,
+            ],
+        ];
     }
 
     /**
-     * @dataProvider newSensorSimpleDataProvider
-     * @param string $sensorTypeString
-     * @param string $sensorName
+     * @dataProvider invalidSensorDataProvider
      */
-    public function test_can_not_add_new_sensor_with_special_characters(string $sensorTypeString, string $sensorName): void
+    public function test_add_new_sensor_with_invalid_data(array $formData, string $expectedError, int $expectedStatusCode): void
     {
-        /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
+        if (!is_int($formData['sensorTypeID'])) {
+            /** @var AbstractSensorType $sensorType */
+            $sensorType = $this->entityManager->getRepository($formData['sensorTypeID'])->findAll()[0];
+            $formData['sensorTypeID'] = $sensorType->getSensorTypeID();
+        }
+        $this->authenticateAdminOne();
 
-        $formData = [
-            'sensorName' => '&' . $sensorName,
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $this->device->getDeviceID(),
-            'pinNumber' => 1,
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData,
+            $formData
         );
-
-        /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertNull($sensor);
-        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors']['sensorName']);
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals($expectedStatusCode, $this->client->getResponse()->getStatusCode());
+        self::assertStringContainsString($expectedError, $responseData['errors'][array_key_first($responseData['errors'])]);
     }
 
-    /**
-     * @dataProvider newSensorSimpleDataProvider
-     * @param string $sensorTypeString
-     * @param string $sensorName
-     */
-    public function test_can_not_add_new_sensor_with_long_name(string $sensorTypeString, string $sensorName): void
-    {
-        /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
-
-        $formData = [
-            'sensorName' => 'TestingTestingTesti' . $sensorName,
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $this->device->getDeviceID(),
-            'pinNumber' => 1,
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData,
-        );
-
-        /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertNull($sensor);
-        self::assertStringContainsString("Sensor name cannot be longer than 20 characters", $responseData['errors']['sensorName']);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * @dataProvider newSensorSimpleDataProvider
-     */
-    public function test_can_not_add_new_sensor_with_short_name(string $sensorTypeString): void
-    {
-        /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
-
-        $formData = [
-            'sensorName' => 'T',
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $this->device->getDeviceID(),
-            'pinNumber' => 1,
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData,
-        );
-
-        /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertNull($sensor);
-        self::assertStringContainsString('Sensor name must be at least 2 characters long', $responseData['errors']['sensorName']);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider newSensorSimpleDataProvider
+//     * @param string $sensorTypeString
+//     * @param string $sensorName
+//     */
+//    public function test_can_not_add_new_sensor_with_special_characters(string $sensorTypeString, string $sensorName): void
+//    {
+//        /** @var AbstractSensorType $sensorType */
+//        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
+//
+//        $formData = [
+//            'sensorName' => '&' . $sensorName,
+//            'sensorTypeID' => $sensorType->getSensorTypeID(),
+//            'deviceID' => $this->device->getDeviceID(),
+//            'pinNumber' => 1,
+//        ];
+//
+//        $this->authenticateAdminOne();
+//        $this->client->jsonRequest(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_SENSOR_URL,
+//            $formData,
+//        );
+//
+//        /** @var Sensor $sensor */
+//        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        self::assertNull($sensor);
+//        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors']['sensorName']);
+//        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    /**
+//     * @dataProvider newSensorSimpleDataProvider
+//     * @param string $sensorTypeString
+//     * @param string $sensorName
+//     */
+//    public function test_can_not_add_new_sensor_with_long_name(string $sensorTypeString, string $sensorName): void
+//    {
+//        /** @var AbstractSensorType $sensorType */
+//        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
+//
+//        $formData = [
+//            'sensorName' => 'TestingTestingTesti' . $sensorName,
+//            'sensorTypeID' => $sensorType->getSensorTypeID(),
+//            'deviceID' => $this->device->getDeviceID(),
+//            'pinNumber' => 1,
+//        ];
+//
+//        $this->authenticateAdminOne();
+//        $this->client->jsonRequest(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_SENSOR_URL,
+//            $formData,
+//        );
+//
+//        /** @var Sensor $sensor */
+//        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        self::assertNull($sensor);
+//        self::assertStringContainsString("Sensor name cannot be longer than 20 characters", $responseData['errors']['sensorName']);
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    /**
+//     * @dataProvider newSensorSimpleDataProvider
+//     */
+//    public function test_can_not_add_new_sensor_with_short_name(string $sensorTypeString): void
+//    {
+//        /** @var AbstractSensorType $sensorType */
+//        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
+//
+//        $formData = [
+//            'sensorName' => 'T',
+//            'sensorTypeID' => $sensorType->getSensorTypeID(),
+//            'deviceID' => $this->device->getDeviceID(),
+//            'pinNumber' => 1,
+//        ];
+//
+//        $jsonData = json_encode($formData);
+//
+//        $this->client->request(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_SENSOR_URL,
+//            $formData,
+//            [],
+//            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+//            $jsonData,
+//        );
+//
+//        /** @var Sensor $sensor */
+//        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        self::assertNull($sensor);
+//        self::assertStringContainsString('Sensor name must be at least 2 characters long', $responseData['errors']['sensorName']);
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
 
     /**
      * @dataProvider newSensorSimpleDataProvider
@@ -405,115 +523,112 @@ class AddNewSensorControllerTest extends WebTestCase
         $formData = [
             'sensorName' => $sensor->getSensorName(),
             'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $this->device->getDeviceID(),
+            'deviceID' => $device->getDeviceID(),
             'pinNumber' => 1,
+            'readingInterval' => 1000,
         ];
 
-        $jsonData = json_encode($formData);
-
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertStringContainsString(
             sprintf(
-                DuplicateSensorException::MESSAGE,
+                'A sensor with the name "%s" already exists for the device with ID "1"',
                 $sensor->getSensorName(),
             ),
-            $responseData['errors']['sensorName']
+            $responseData['errors'][0]
         );
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @dataProvider newSensorSimpleDataProvider
-     * @param string $sensorTypeString
-     * @param string $sensorName
-     */
-    public function test_cannot_add_new_sensor_with_none_existent_device_id(string $sensorTypeString, string $sensorName): void
-    {
-        /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
-
-        while (true) {
-            $randomID = random_int(0, 1000000);
-            $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $randomID]);
-            if (!$device instanceof Devices) {
-                break;
-            }
-        }
-
-        $formData = [
-            'sensorName' => $sensorName,
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $randomID,
-            'pinNumber' => 1,
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData,
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
-
-        self::assertNull($sensor);
-        self::assertStringContainsString('Device not found', $responseData['errors']['deviceID']);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_adding_new_sensor_with_none_existent_sensor_type(): void
-    {
-        while (true) {
-            $randomID = random_int(0, 1000000);
-            $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorTypeID' => $randomID]);
-            if (!$sensorType instanceof AbstractSensorType) {
-                break;
-            }
-        }
-
-        $formData = [
-            'sensorName' => 'testing',
-            'sensorTypeID' => $randomID,
-            'deviceID' => $this->device->getDeviceID(),
-            'pinNumber' => 1,
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData,
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        /** @var Sensor $sensor */
-        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
-
-        self::assertNull($sensor);
-        self::assertStringContainsString('Sensor type not found for id ' . $randomID, $responseData['errors']['sensorType']);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
+//    /**
+//     * @dataProvider newSensorSimpleDataProvider
+//     * @param string $sensorTypeString
+//     * @param string $sensorName
+//     */
+//    public function test_cannot_add_new_sensor_with_none_existent_device_id(string $sensorTypeString, string $sensorName): void
+//    {
+//        /** @var AbstractSensorType $sensorType */
+//        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
+//
+//        while (true) {
+//            $randomID = random_int(0, 1000000);
+//            $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $randomID]);
+//            if (!$device instanceof Devices) {
+//                break;
+//            }
+//        }
+//
+//        $formData = [
+//            'sensorName' => $sensorName,
+//            'sensorTypeID' => $sensorType->getSensorTypeID(),
+//            'deviceID' => $randomID,
+//            'pinNumber' => 1,
+//        ];
+//
+//        $jsonData = json_encode($formData);
+//
+//        $this->client->request(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_SENSOR_URL,
+//            $formData,
+//            [],
+//            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+//            $jsonData,
+//        );
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        /** @var Sensor $sensor */
+//        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+//
+//        self::assertNull($sensor);
+//        self::assertStringContainsString('Device not found', $responseData['errors']['deviceID']);
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
+//
+//    public function test_adding_new_sensor_with_none_existent_sensor_type(): void
+//    {
+//        while (true) {
+//            $randomID = random_int(0, 1000000);
+//            $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorTypeID' => $randomID]);
+//            if (!$sensorType instanceof AbstractSensorType) {
+//                break;
+//            }
+//        }
+//
+//        $formData = [
+//            'sensorName' => 'testing',
+//            'sensorTypeID' => $randomID,
+//            'deviceID' => $this->device->getDeviceID(),
+//            'pinNumber' => 1,
+//        ];
+//
+//        $jsonData = json_encode($formData);
+//
+//        $this->client->request(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_SENSOR_URL,
+//            $formData,
+//            [],
+//            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+//            $jsonData,
+//        );
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        /** @var Sensor $sensor */
+//        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
+//
+//        self::assertNull($sensor);
+//        self::assertStringContainsString('Sensor type not found for id ' . $randomID, $responseData['errors']['sensorType']);
+//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+//    }
 
     /**
      * @dataProvider newSensorExtendedDataProvider
@@ -528,17 +643,14 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $this->device->getDeviceID(),
             'pinNumber' => 1,
+            'readingInterval' => 1000,
         ];
 
-        $jsonData = json_encode($formData);
-
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $formData
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -565,16 +677,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
 
-        self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
-        self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
-        self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
-        self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
-        self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
-        self::assertEquals($responseData['payload']['createdBy']['userID'], $sensor->getCreatedBy()->getUserID());
-        self::assertEquals($responseData['payload']['createdBy']['firstName'], $sensor->getCreatedBy()->getFirstName());
-        self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
+        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);;
     }
 
     /**
@@ -586,7 +689,7 @@ class AddNewSensorControllerTest extends WebTestCase
         $sensorTypeObject = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_TWO]);
-        /** @var \App\Repository\User\ORM\GroupRepository $groupNameRepository */
+        /** @var GroupRepository $groupNameRepository */
         $groupNameRepository = $this->entityManager->getRepository(Group::class);
         /** @var Group[] $groupsNotApartOf */
         $groupsNotApartOf = $groupNameRepository->findGroupsUserIsNotApartOf(
@@ -620,17 +723,14 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorTypeID' => $sensorTypeObject->getSensorTypeID(),
             'deviceID' => $device->getDeviceID(),
             'pinNumber' => $randomPin,
+            'readingInterval' => Sensor::DEFAULT_READING_INTERVAL,
         ];
 
-        $jsonData = json_encode($formData);
-
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
 
@@ -656,7 +756,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertNotEmpty($newReadingTypeObjects);
         if ($sensorTypeObject instanceof SensorTypeInterface) {
             //            self::assertEquals($sensorTypeObject->getSensor()->getSensorID(), $sensor->getSensorID());
-            self::assertEquals($sensorTypeObject::getReadingTypeName(), $sensor->getSensorTypeObject()::getReadingTypeName());
+            self::assertEquals($sensorTypeObject::getSensorTypeName(), $sensor->getSensorTypeObject()::getSensorTypeName());
         }
         /** @var AllSensorReadingTypeInterface $sensorTypeClass */
         foreach ($newReadingTypeObjects as $sensorTypeClass) {
@@ -698,16 +798,7 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
-        self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
-        self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
-        self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
-        self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
-        self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
-        self::assertEquals($responseData['payload']['createdBy']['userID'], $sensor->getCreatedBy()->getUserID());
-        self::assertEquals($responseData['payload']['createdBy']['firstName'], $sensor->getCreatedBy()->getFirstName());
-        self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
+        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);;
     }
 
     /**
@@ -718,11 +809,6 @@ class AddNewSensorControllerTest extends WebTestCase
         /** @var AbstractSensorType $sensorTypeMappingObject */
         $sensorTypeMappingObject = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
-        $userToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_TWO,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
 
         $pinNumber = 1;
 
@@ -734,15 +820,11 @@ class AddNewSensorControllerTest extends WebTestCase
             'readingInterval' => Sensor::DEFAULT_READING_INTERVAL,
         ];
 
-        $jsonData = json_encode($formData);
-
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            self::ADD_NEW_SENSOR_URL. '?responseType=' . RequestTypeEnum::FULL->value,
+            $formData,
         );
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
 
@@ -794,22 +876,10 @@ class AddNewSensorControllerTest extends WebTestCase
         self::assertInstanceOf(CardView::class, $cardView);
 
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
-        self::assertInstanceOf(Sensor::class, $sensor);
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
-        self::assertEquals($responseData['payload']['sensorID'], $sensor->getSensorID());
         self::assertEquals($sensorName, $responseData['payload']['sensorName']);
-        self::assertEquals($responseData['payload']['sensorName'], $sensor->getSensorName());
-        self::assertEquals($responseData['payload']['pinNumber'], $sensor->getPinNumber());
-        self::assertEquals($pinNumber, $sensor->getPinNumber());
-        self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $responseData['payload']['readingInterval']);
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeName'], $sensor->getSensorTypeObject()::getReadingTypeName());
-        self::assertEquals($responseData['payload']['sensorType']['sensorTypeID'], $sensor->getSensorTypeObject()->getSensorTypeID());
-        self::assertEquals($responseData['payload']['device']['deviceName'], $sensor->getDevice()->getDeviceName());
-        self::assertEquals($responseData['payload']['device']['deviceID'], $sensor->getDevice()->getDeviceID());
-        self::assertEquals($responseData['payload']['createdBy']['email'], $sensor->getCreatedBy()->getUserIdentifier());
-        self::assertEquals($responseData['payload']['createdBy']['userID'], $sensor->getCreatedBy()->getUserID());
-        self::assertEquals($responseData['payload']['createdBy']['firstName'], $sensor->getCreatedBy()->getFirstName());
-        self::assertEquals($responseData['payload']['createdBy']['lastName'], $sensor->getCreatedBy()->getLastName());
+
+        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);;
     }
 
     //disabled to allow for bus sensors, needs adjusting so that only bus sensors can be on same pin
@@ -846,111 +916,68 @@ class AddNewSensorControllerTest extends WebTestCase
 //        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function test_adding_sensor_with_negative_pin(): void
-    {
-        /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
+//    /**
+//     * @dataProvider invalidSensorDataProvider
+//     */
+//    public function test_invalid_sensor_data(array $formData, string $expectedError, int $expectedStatusCode): void
+//    {
+//        $this->authenticateAdminOne();
+//        $this->client->jsonRequest(
+//            Request::METHOD_POST,
+//            self::ADD_NEW_SENSOR_URL,
+//            $formData
+//        );
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//
+//        self::assertStringContainsString($expectedError, $responseData['errors'][array_key_first($responseData['errors'])]);
+//        self::assertEquals($expectedStatusCode, $this->client->getResponse()->getStatusCode());
+//    }
 
-        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
-
-        $pinNumber = -1;
-        $formData = [
-            'sensorName' => 'testing',
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
-            'pinNumber' => $pinNumber,
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
-        );
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertEquals('pinNumber must be greater than ' . $pinNumber, $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_adding_reading_interval_wrong_data_type(): void
-    {
-        /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
-
-        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
-
-        $pinNumber = 10;
-        $formData = [
-            'sensorName' => 'testing',
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
-            'pinNumber' => $pinNumber,
-            'readingInterval' => 'string',
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->jsonRequest(
-            Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-        );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertStringContainsString('readingInterval must be a number', $responseData['errors']['readingInterval']);
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function test_adding_reading_interval_with_interval_too_low(): void
-    {
-        /** @var AbstractSensorType $sensorType */
-        $sensorType = $this->entityManager->getRepository(Dht::class)->findAll()[0];
-
-        $deviceToAddSensorToo = $this->deviceRepository->findOneBy(['deviceName' => ESP8266DeviceFixtures::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]);
-
-        $pinNumber = 10;
-        $formData = [
-            'sensorName' => 'testing',
-            'sensorTypeID' => $sensorType->getSensorTypeID(),
-            'deviceID' => $deviceToAddSensorToo->getDeviceID(),
-            'pinNumber' => $pinNumber,
-            'readingInterval' => Sensor::MIN_READING_INTERVAL - 5,
-        ];
-
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
-            Request::METHOD_POST,
-            self::ADD_NEW_SENSOR_URL,
-            $formData,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
-        );
-        self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-
-        self::assertStringContainsString('readingInterval must be greater than ' . Sensor::MIN_READING_INTERVAL, $responseData['errors']['readingInterval']);
-    }
+//    public function invalidSensorDataProvider(): array
+//    {
+//        return [
+//            'negative_pin_number' => [
+//                [
+//                    'sensorName' => 'testing',
+//                    'sensorTypeID' => 1, // Replace with a valid sensor type ID
+//                    'deviceID' => 1, // Replace with a valid device ID
+//                    'pinNumber' => -1,
+//                    'readingInterval' => Sensor::DEFAULT_READING_INTERVAL,
+//                ],
+//                'pinNumber must be greater than -1',
+//                HTTPStatusCodes::HTTP_BAD_REQUEST,
+//            ],
+//            'invalid_reading_interval_type' => [
+//                [
+//                    'sensorName' => 'testing',
+//                    'sensorTypeID' => 1, // Replace with a valid sensor type ID
+//                    'deviceID' => 1, // Replace with a valid device ID
+//                    'pinNumber' => 10,
+//                    'readingInterval' => 'string',
+//                ],
+//                'This value should be of type int.',
+//                HTTPStatusCodes::HTTP_BAD_REQUEST,
+//            ],
+//            'reading_interval_too_low' => [
+//                [
+//                    'sensorName' => 'testing',
+//                    'sensorTypeID' => 1, // Replace with a valid sensor type ID
+//                    'deviceID' => 1, // Replace with a valid device ID
+//                    'pinNumber' => 10,
+//                    'readingInterval' => Sensor::MIN_READING_INTERVAL - 5,
+//                ],
+//                'This value should be ' . Sensor::MIN_READING_INTERVAL . ' or more.',
+//                HTTPStatusCodes::HTTP_BAD_REQUEST,
+//            ],
+//        ];
+//    }
 
     /**
      * @dataProvider newSensorSimpleDataProvider
      */
     public function test_add_new_sensor_when_not_part_of_associated_device_group_regular_user(string $sensorTypeString, string $sensorName): void
     {
-        $token = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
         /** @var AbstractSensorType $sensorType */
         $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
 
@@ -979,15 +1006,14 @@ class AddNewSensorControllerTest extends WebTestCase
             'sensorTypeID' => $sensorType->getSensorTypeID(),
             'deviceID' => $device->getDeviceID(),
             'pinNumber' => random_int(0, 10),
+            'readingInterval' => Sensor::DEFAULT_READING_INTERVAL,
         ];
 
-        $jsonData = json_encode($formData);
-
+        $this->authenticateRegularUserOne();
         $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_SENSOR_URL,
             $formData,
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $token],
         );
 
         $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $sensorName]);

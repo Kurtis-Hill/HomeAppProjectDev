@@ -85,6 +85,8 @@ abstract class AbstractSensorType implements SensorTypeInterface
     ]
     private string $description;
 
+    abstract public static function getSensorTypeName(): string;
+
     public function getSensorTypeID(): int
     {
         return $this->sensorTypeID;

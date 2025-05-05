@@ -104,7 +104,7 @@ class GetSensorTypesControllerTest extends WebTestCase
         foreach ($payload as $sensorType) {
             foreach ($sensorTypes as $sensorTypeFromDB) {
                 if ($sensorType['sensorTypeID'] === $sensorTypeFromDB->getSensorTypeID()) {
-                    self::assertEquals($sensorType['sensorTypeName'], $sensorTypeFromDB::getReadingTypeName());
+                    self::assertEquals($sensorType['sensorTypeName'], $sensorTypeFromDB::getSensorTypeName());
                     self::assertEquals($sensorType['sensorTypeDescription'], $sensorTypeFromDB->getDescription());
                 }
             }

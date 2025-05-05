@@ -103,7 +103,7 @@ class SwitchSensorController extends AbstractController
 
             $sensorDataCurrentReadingUpdateRequestDTO = SensorDataCurrentReadingRequestDTOBuilder::buildSensorDataCurrentReadingUpdateRequestDTO(
                 sensorName: $sensorUpdateData['sensorName'],
-                sensorType: $sensor?->getSensorTypeObject()::getReadingTypeName(),
+                sensorType: $sensor?->getSensorTypeObject()::getSensorTypeName(),
                 currentReadings: $sensorUpdateData['currentReadings'] ?? null,
             );
 

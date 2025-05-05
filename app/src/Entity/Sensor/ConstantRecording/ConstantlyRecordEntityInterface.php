@@ -31,7 +31,7 @@ interface ConstantlyRecordEntityInterface
 
     public function setCreatedAt(): void;
 
-    public function getSensorReadingObject();
+    public function getSensorReadingObject(): BaseSensorReadingType;
 
     public function setSensorReadingObject(BaseSensorReadingType $sensorReadingTypeID): void;
 

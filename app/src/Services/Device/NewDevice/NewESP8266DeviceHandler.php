@@ -54,7 +54,7 @@ class NewESP8266DeviceHandler extends AbstractESPDeviceService implements NewDev
         } catch (DuplicateDeviceException $exception) {
             $userErrors[] = $exception->getMessage();
         } catch (ORMException $e) {
-            $this->logger->error($e->getMessage());
+            $this->elasticLogger->error($e->getMessage());
             $userErrors[] = "device check query failed";
         }
 

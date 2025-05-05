@@ -109,7 +109,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
 
         $device = $firstSensor->getDevice();
         $updateSensorCurrentReadingConsumerDTO =  new UpdateSensorCurrentReadingTransportMessageDTO(
-            sensorType: $sensorType::getReadingTypeName(),
+            sensorType: $sensorType::getSensorTypeName(),
             sensorName: $firstSensor->getSensorName(),
             currentReadings: array_values($currentReadings),
             deviceID: $device->getDeviceID(),

@@ -26,8 +26,8 @@ class ExceptionListener
         }
 
         $errorMessages = [];
-        foreach ($previous->getViolations() as $violation) {
-            $errorMessages[$violation->getPropertyPath()] = $violation->getMessage();
+        foreach ($previous->getViolations() as $key => $violation) {
+            $errorMessages[$violation->getPropertyPath() === "" ? $key : $violation->getPropertyPath()] = $violation->getMessage();
         }
 
         $response = $this->sendBadRequestJsonResponse($errorMessages, APIErrorMessages::VALIDATION_ERRORS);

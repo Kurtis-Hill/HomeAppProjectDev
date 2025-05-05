@@ -7,7 +7,6 @@ use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-
 class ReadingTypeRequestConstraintValidator extends ConstraintValidator
 {
     /**

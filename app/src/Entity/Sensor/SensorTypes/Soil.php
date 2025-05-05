@@ -35,7 +35,7 @@ class Soil extends AbstractSensorType implements StandardSensorTypeInterface, An
         return self::LOW_SOIL_READING_BOUNDARY;
     }
 
-    public static function getReadingTypeName(): string
+    public static function getSensorTypeName(): string
     {
         return self::NAME;
     }
