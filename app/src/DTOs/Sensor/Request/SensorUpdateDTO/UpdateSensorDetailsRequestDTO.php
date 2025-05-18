@@ -39,9 +39,6 @@ class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorN
     private ?int $pinNumber = null;
 
     #[
-        Assert\NotNull(
-            message: "readingInterval cannot be null"
-        ),
         Assert\Type(type: 'integer', message: 'readingInterval must be a number'),
         Assert\Range(
             notInRangeMessage: "readingInterval must be greater than {{ min }}",
