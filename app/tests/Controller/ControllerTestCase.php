@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Controller\Authentication\SecurityController;
 use App\DataFixtures\Core\UserDataFixtures;
+use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Entity\Device\Devices;
 use App\Entity\Sensor\AbstractSensorType;
 use App\Entity\Sensor\Sensor;
@@ -97,6 +98,42 @@ abstract class ControllerTestCase extends WebTestCase
 
         $this->setUserToken($email, $password);
     }
+
+    protected function authenticateTestDevice(): void
+    {
+        $email = ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'];
+        $password = ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password'];
+
+        $this->setDeviceToken($email, $password);
+    }
+
+        private function setDeviceToken(string $email, string $password): void
+        {
+            $this->client->request(
+                Request::METHOD_POST,
+                SecurityController::API_DEVICE_LOGIN,
+                [],
+                [],
+                ['CONTENT_TYPE' => 'application/json'],
+                '{"username":"'. $email .'","password":"'. $password .'"}'
+            );
+
+            self::assertResponseIsSuccessful();
+
+            $requestResponse = $this->client->getResponse();
+            try {
+                $responseData = json_decode(
+                    $requestResponse->getContent(),
+                    true,
+                    512,
+                    JSON_THROW_ON_ERROR
+                );
+            } catch (JsonException $exception) {
+                throw new JsonException('Failed to (json)decode user/device login token request');
+            }
+
+            $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $responseData['token']));
+        }
 
     private function setUserToken(string $email, string $password): void
     {
