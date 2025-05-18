@@ -18,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -49,16 +50,12 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             Request::METHOD_POST,
         ]
     )]
+    #[isGranted(SensorVoter::DEVICE_UPDATE_SENSOR_CURRENT_READING)]
     public function updateSensorsCurrentReading(
         Request $request,
         ValidatorInterface $validator,
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequest,
     ): Response {
-        $isGranted = $this->isGranted(SensorVoter::DEVICE_UPDATE_SENSOR_CURRENT_READING);
-        if (!$isGranted) {
-            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
-        }
-
         $device = $this->getUser();
         if (!$device instanceof Devices) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
