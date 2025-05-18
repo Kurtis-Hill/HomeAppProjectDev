@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\DTOs\Device\Request;
 
 use App\Entity\Device\Devices;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class NewDeviceRequestDTO

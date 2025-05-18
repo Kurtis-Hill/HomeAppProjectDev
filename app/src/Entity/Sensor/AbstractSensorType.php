@@ -12,7 +12,7 @@ use App\Entity\Sensor\SensorTypes\LDR;
 use App\Entity\Sensor\SensorTypes\Sht;
 use App\Entity\Sensor\SensorTypes\Soil;
 use App\Repository\Sensor\Sensors\ORM\SensorTypeRepository;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;

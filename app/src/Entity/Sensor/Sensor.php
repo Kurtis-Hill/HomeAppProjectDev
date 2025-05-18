@@ -5,7 +5,7 @@ namespace App\Entity\Sensor;
 use App\Entity\Device\Devices;
 use App\Entity\User\User;
 use App\Repository\Sensor\Sensors\ORM\SensorRepository;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;

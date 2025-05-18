@@ -4,8 +4,8 @@ namespace App\DTOs\Sensor\Request\SensorUpdateDTO;
 
 use App\DTOs\Sensor\Request\CanAdjustSensorDeviceIDAndSensorNameInterface;
 use App\Entity\Sensor\Sensor;
-use App\Services\CustomValidators\Device\DeviceIDExists;
-use App\Services\CustomValidators\Sensor\UniqueSensorForDevice;
+use App\CustomValidators\Device\DeviceIDExists;
+use App\CustomValidators\Sensor\UniqueSensorForDevice;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueSensorForDevice]
