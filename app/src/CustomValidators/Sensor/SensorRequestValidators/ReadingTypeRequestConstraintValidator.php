@@ -2,7 +2,7 @@
 
 namespace App\CustomValidators\Sensor\SensorRequestValidators;
 
-use App\Entity\Sensor\ReadingTypes\ReadingTypes;
+use App\Entity\Sensor\ReadingTypes\ReadingTypeEnum;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -22,7 +22,7 @@ class ReadingTypeRequestConstraintValidator extends ConstraintValidator
         }
 
         $missingSensorTypes = array_diff(
-            ReadingTypes::ALL_READING_TYPES,
+            ReadingTypeEnum::values(),
             $value
         );
 

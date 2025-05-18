@@ -2,14 +2,14 @@
 
 namespace App\CustomValidators\User;
 
-use App\Repository\User\ORM\UserRepository;
+use App\Repository\User\ORM\GroupRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class UserDoesntExistConstraintValidator extends ConstraintValidator
+class GroupExistsConstraintValidator extends ConstraintValidator
 {
-    public function __construct(private readonly UserRepository $userRepository)
+    public function __construct(private  readonly GroupRepository $groupRepository)
     {
     }
 
@@ -18,17 +18,17 @@ class UserDoesntExistConstraintValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (!$constraint instanceof UserDoesntExistConstraint) {
-            throw new UnexpectedTypeException($value, UserDoesntExistConstraint::class);
+        if (!$constraint instanceof GroupExistsConstraint) {
+            throw new UnexpectedTypeException($value, GroupExistsConstraint::class);
         }
 
-        if (empty($value)) {
+        if ($value === null) {
             return;
         }
 
-        if ($this->userRepository->find($value) === null) {
+        if ($this->groupRepository->find($value) === null) {
             $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ user }}', $value)
+                ->setParameter('{{ group }}', $value)
                 ->addViolation();
         }
     }

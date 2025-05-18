@@ -2,13 +2,17 @@
 
 namespace App\CustomValidators\Sensor\SensorRequestValidators;
 
-use App\Entity\Sensor\AbstractSensorType;
+
+use App\Entity\Sensor\SensorTypes\SensorTypeEnum;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class SensorTypeRequestConstraintValidator extends ConstraintValidator
 {
+    /**
+     * @throws UnexpectedTypeException
+     */
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof SensorTypeRequestConstraint) {
@@ -20,7 +24,7 @@ class SensorTypeRequestConstraintValidator extends ConstraintValidator
         }
 
         $missingSensorTypes = array_diff(
-            AbstractSensorType::ALL_SENSOR_TYPES,
+            SensorTypeEnum::values(),
             $value
         );
 

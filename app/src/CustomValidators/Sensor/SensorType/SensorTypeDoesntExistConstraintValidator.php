@@ -22,6 +22,10 @@ class SensorTypeDoesntExistConstraintValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, SensorTypeDoesntExistConstraint::class);
         }
 
+        if (empty($value)) {
+            return;
+        }
+
         if ($this->sensorTypeRepository->find($value) === null) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ sensorType }}', $value)

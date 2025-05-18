@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Device;
 
 use App\Builders\Device\DeviceResponse\DeviceResponseDTOBuilder;
+use App\DTOs\RequestDTO;
 use App\Entity\Device\Devices;
 use App\Exceptions\Common\ValidatorProcessorException;
 use App\Exceptions\User\GroupExceptions\GroupNotFoundException;
@@ -19,6 +20,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -51,22 +53,16 @@ class DeleteDeviceController extends AbstractController
     ]
     public function deleteDevice(
         Devices $deviceToDelete,
-        Request $request,
         DeleteDeviceServiceInterface $deleteDeviceBuilder,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
     ): JsonResponse {
+        $requestDTO ??= new RequestDTO();
         try {
             $this->denyAccessUnlessGranted(DeviceVoter::DELETE_DEVICE, $deviceToDelete);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        }
-
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $deviceDeletedID = $deviceToDelete->getDeviceID();

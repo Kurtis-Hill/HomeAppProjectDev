@@ -530,10 +530,9 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals('Nothing Found', $responseData['title']);
-        self::assertArrayHasKey('errors', $responseData);
-        self::assertEquals('Room not found for id ' . $noneExistentRoomID, $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+        self::assertEquals('Validation errors occurred', $responseData['title']);
+        self::assertEquals('Room not found for id ' . $noneExistentRoomID, $responseData['errors']['deviceRoom']);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertNull($device);
     }
 
@@ -566,10 +565,10 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals('Nothing Found', $responseData['title']);
+        self::assertEquals('Validation errors occurred', $responseData['title']);
         self::assertArrayHasKey('errors', $responseData);
-        self::assertEquals('Group not found for id ' . $noneExistentGroupID, $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+        self::assertEquals('Group not found for id ' . $noneExistentGroupID, $responseData['errors']['deviceGroup']);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertNull($device);
     }
 
@@ -625,7 +624,6 @@ class AddNewDeviceControllerTest extends ControllerTestCase
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->groupName->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
-            
         ];
 
         $this->authenticateAdminOne();
@@ -636,7 +634,6 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
-
         $createResponseCode = $this->client->getResponse()->getStatusCode();
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $createResponseCode);
 

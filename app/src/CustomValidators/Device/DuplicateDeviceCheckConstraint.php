@@ -9,4 +9,9 @@ use Symfony\Component\Validator\Constraint;
 class DuplicateDeviceCheckConstraint extends Constraint
 {
     public string $message = 'Your group already has a device named {{ value }} that is in room {{ room }}.';
+
+    public function getTargets(): string
+    {
+        return self::CLASS_CONSTRAINT;
+    }
 }

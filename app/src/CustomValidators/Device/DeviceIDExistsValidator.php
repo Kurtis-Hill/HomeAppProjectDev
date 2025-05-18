@@ -23,8 +23,8 @@ class DeviceIDExistsValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, DeviceIDExists::class);
         }
 
-        if (!$value ) {
-            throw new UnexpectedTypeException($value, CanAdjustSensorDeviceIDAndSensorNameInterface::class);
+        if (!$value) {
+            return;
         }
 
 //        $deviceID = $value->getDeviceID();

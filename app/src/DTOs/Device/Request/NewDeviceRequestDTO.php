@@ -3,11 +3,15 @@ declare(strict_types=1);
 
 namespace App\DTOs\Device\Request;
 
+use App\CustomValidators\Device\DuplicateDeviceCheckConstraint;
+use App\CustomValidators\User\GroupExistsConstraint;
+use App\CustomValidators\User\RoomExistsConstraint;
 use App\Entity\Device\Devices;
 use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class NewDeviceRequestDTO
+#[DuplicateDeviceCheckConstraint]
+class NewDeviceRequestDTO implements DeviceUpdateInterface
 {
     #[
         Assert\NotNull(
@@ -29,7 +33,7 @@ class NewDeviceRequestDTO
         NoSpecialCharactersNameConstraint,
 
     ]
-    private string $deviceName;
+    private ?string $deviceName = null;
 
     #[
         Assert\NotNull(
@@ -49,7 +53,7 @@ class NewDeviceRequestDTO
             maxMessage: "Device password cannot be longer than {{ limit }} characters"
         )
     ]
-    private string $devicePassword;
+    private ?string $devicePassword = null;
 
     #[
         Assert\NotNull(
@@ -62,6 +66,7 @@ class NewDeviceRequestDTO
             type: ['integer'],
             message: 'Device group value is {{ value }} and not a valid {{ type }}'
         ),
+        GroupExistsConstraint,
     ]
     private int $deviceGroup;
 
@@ -76,8 +81,9 @@ class NewDeviceRequestDTO
             type: ['integer'],
             message: 'Device room value is {{ value }} and not a valid {{ type }}'
         ),
+        RoomExistsConstraint,
     ]
-    private int $deviceRoom;
+    private ?int $deviceRoom = null;
 
     #[
         Assert\Type(
@@ -87,12 +93,12 @@ class NewDeviceRequestDTO
     ]
     private mixed $deviceIPAddress = null;
 
-    public function getDeviceName(): string
+    public function getDeviceName(): ?string
     {
         return $this->deviceName;
     }
 
-    public function getDevicePassword(): string
+    public function getDevicePassword(): ?string
     {
         return $this->devicePassword;
     }
@@ -102,7 +108,7 @@ class NewDeviceRequestDTO
         return $this->deviceGroup;
     }
 
-    public function getDeviceRoom(): int
+    public function getDeviceRoom(): ?int
     {
         return $this->deviceRoom;
     }

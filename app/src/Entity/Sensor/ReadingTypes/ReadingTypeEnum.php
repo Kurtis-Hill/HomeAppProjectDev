@@ -2,19 +2,30 @@
 
 namespace App\Entity\Sensor\ReadingTypes;
 
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\LEDReadingTypes\WS2812B;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use App\Traits\EnumToArrayTrait;
+
 enum ReadingTypeEnum: string
 {
-    case Temperature = 'Temperature';
+    use EnumToArrayTrait;
 
-    case Humidity = 'Humidity';
+    case Temperature = Temperature::READING_TYPE;
 
-    case Latitude = 'Latitude';
+    case Humidity = Humidity::READING_TYPE;
 
-    case Analog = 'Analog';
+    case Latitude = Latitude::READING_TYPE;
 
-    case Relay = 'RELAY';
+    case Analog = Analog::READING_TYPE;
 
-    case Motion = 'MOTION';
+    case Relay = Relay::READING_TYPE;
 
-    case LED = 'LED';
+    case Motion = Motion::READING_TYPE;
+
+    case WS2812B = WS2812B::READING_TYPE;
 }
