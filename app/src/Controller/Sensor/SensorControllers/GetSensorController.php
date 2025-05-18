@@ -4,6 +4,7 @@ namespace App\Controller\Sensor\SensorControllers;
 
 use App\Builders\Sensor\Request\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\DTOs\RequestDTO;
 use App\DTOs\Sensor\Request\GetSensorRequestDTO\GetSensorRequestDTO;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
@@ -19,6 +20,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -48,19 +51,10 @@ class GetSensorController extends AbstractController
         SensorResponseDTOBuilder $sensorResponseDTOBuilder,
         SensorUserFilter $sensorUserFilter,
         SensorRepositoryInterface $sensorRepository,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
     ): JsonResponse {
-        $responseType = $request->query->get(RequestQueryParameterHandler::RESPONSE_TYPE);
-        $limit = $request->query->get('limit', self::GET_SENSOR_DEFAULT_LIMIT);
-        $page = $request->query->get('page', 1);
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $responseType,
-                $page,
-                $limit,
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
+        $requestDTO ??= new RequestDTO();
         $deviceIDs = $request->query->all()['deviceIDs'] ?? null;
         $deviceNames = $request->query->all()['deviceNames'] ?? null;
         $groupIDs = $request->query->all()['groupIDs'] ?? null;

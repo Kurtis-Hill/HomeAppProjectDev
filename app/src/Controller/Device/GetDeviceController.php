@@ -125,9 +125,8 @@ class GetDeviceController extends AbstractController
     #[isGranted(DeviceVoter::GET_DEVICE, subject: 'devices')]
     public function getDeviceByID(
         Devices $devices,
-        Request $request,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
-        #[MapRequestPayload]
+        #[MapQueryString]
         ?RequestDTO $requestDTO = null,
     ): Response {
         $requestDTO ??= new RequestDTO();

@@ -82,7 +82,7 @@ export default function NavBar(props: {
                 listItemLinks: [
                     {
                         displayName: 'View Triggers',
-                        link: '/HomeApp/WebApp/sensors/triggers'
+                        link: '/WebApp/sensors/triggers'
                     },
                 ]
             }

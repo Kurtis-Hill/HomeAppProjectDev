@@ -12,9 +12,7 @@ use App\Entity\Sensor\Sensor;
 use App\Exceptions\Sensor\ReadingTypeNotFoundException;
 use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Exceptions\Sensor\SensorTypeException;
-use App\Factories\Sensor\SensorType\SensorTypeRepositoryFactory;
 use App\Factories\Sensor\SensorTypeCreationFactory\SensorTypeCreationFactory;
-use App\Services\Sensor\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface;
 use JetBrains\PhpStorm\ArrayShape;
 
 readonly class ReadingTypeCreationFacade implements ReadingTypeCreationInterface

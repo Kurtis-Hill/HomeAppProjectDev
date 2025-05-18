@@ -413,7 +413,7 @@ input:checked + .slider:before {
 
 .standard-modal-height {
     overflow-y: auto;
-    height: 700px;
+    height: 650px;
 }
 
 .snap-modal-height {

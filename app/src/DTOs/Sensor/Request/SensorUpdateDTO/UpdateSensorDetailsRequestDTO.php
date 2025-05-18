@@ -17,7 +17,7 @@ class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorN
             message: "sensor name must be of type {{ type }} you provided {{ value }}"
         )
     ]
-    private mixed $sensorName = null;
+    private ?string $sensorName = null;
 
     #[
         Assert\Type(
@@ -26,7 +26,7 @@ class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorN
         ),
         DeviceIDExists,
     ]
-    private mixed $deviceID = null;
+    private ?int $deviceID = null;
 
     #[
         Assert\Range(
@@ -36,7 +36,7 @@ class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorN
             min: 0,
         ),
     ]
-    private mixed $pinNumber = null;
+    private ?int $pinNumber = null;
 
     #[
         Assert\NotNull(
@@ -49,7 +49,7 @@ class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorN
             min: Sensor::MIN_READING_INTERVAL
         ),
     ]
-    private mixed $readingInterval = null;
+    private ?int $readingInterval = null;
 
     public function setSensorName(mixed $sensorName): void
     {
@@ -61,12 +61,12 @@ class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorN
         $this->deviceID = $deviceID;
     }
 
-    public function getSensorName(): string
+    public function getSensorName(): ?string
     {
         return $this->sensorName;
     }
 
-    public function getDeviceID(): int
+    public function getDeviceID(): ?int
     {
         return $this->deviceID;
     }
@@ -76,7 +76,7 @@ class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorN
         $this->pinNumber = $pinNumber;
     }
 
-    public function getPinNumber(): mixed
+    public function getPinNumber(): ?int
     {
         return $this->pinNumber;
     }
@@ -86,7 +86,7 @@ class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorN
         $this->readingInterval = $readingInterval;
     }
 
-    public function getReadingInterval(): mixed
+    public function getReadingInterval(): ?int
     {
         return $this->readingInterval;
     }

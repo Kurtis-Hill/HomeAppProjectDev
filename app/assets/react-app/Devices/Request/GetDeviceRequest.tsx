@@ -9,7 +9,7 @@ export async function getDeviceRequest(deviceID: number, type: string|null): Pro
     );
 }
 
-export async function getAllDevicesRequest(type: string|null): Promise<AxiosResponse> {
+export async function getAllDevicesRequest(type?: string|null): Promise<AxiosResponse> {
     return await axios.get(
         `${apiURL}user-devices`,
         {params: {responseType: type ?? ResponseTypeEnum.ResponseTypeFull}}

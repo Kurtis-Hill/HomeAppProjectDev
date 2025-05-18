@@ -4,6 +4,7 @@ namespace App\Controller\Sensor\SensorControllers;
 
 use App\Builders\Sensor\Request\SensorUpdateBuilders\SensorUpdateDTOBuilder;
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\DTOs\RequestDTO;
 use App\DTOs\Sensor\Request\SensorUpdateDTO\UpdateSensorDetailsRequestDTO;
 use App\Entity\Sensor\Sensor;
 use App\Exceptions\Common\ValidatorProcessorException;
@@ -23,6 +24,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -54,7 +56,10 @@ class UpdateSensorController extends AbstractController
         UpdateSensorInterface $updateSensorService,
         SensorSavingHandler $sensorSavingHandler,
         SensorUpdateDTOBuilder $sensorUpdateDTOBuilder,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
     ): JsonResponse {
+        $requestDTO ??= new RequestDTO();
         $updateSensorRequestDTO = new UpdateSensorDetailsRequestDTO();
         try {
             $this->deserializeRequest(
@@ -70,14 +75,6 @@ class UpdateSensorController extends AbstractController
 
         if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
-        }
-
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $sensorUpdateDTO = $sensorUpdateDTOBuilder->buildSensorUpdateDTOFromRequestDTO(

@@ -35,7 +35,6 @@ use App\Entity\Sensor\SensorTypes\Soil;
 use App\Entity\User\Group;
 use App\Entity\User\User;
 use App\Entity\UserInterface\Card\CardView;
-use App\Exceptions\Sensor\DuplicateSensorException;
 use App\Repository\Device\ORM\DeviceRepository;
 use App\Repository\User\ORM\GroupRepository;
 use App\Services\API\APIErrorMessages;
@@ -44,7 +43,6 @@ use App\Services\Request\RequestTypeEnum;
 use App\Tests\Controller\ControllerTestCase;
 use Generator;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class AddNewSensorControllerTest extends ControllerTestCase
 {
@@ -546,89 +544,6 @@ class AddNewSensorControllerTest extends ControllerTestCase
         );
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
-
-//    /**
-//     * @dataProvider newSensorSimpleDataProvider
-//     * @param string $sensorTypeString
-//     * @param string $sensorName
-//     */
-//    public function test_cannot_add_new_sensor_with_none_existent_device_id(string $sensorTypeString, string $sensorName): void
-//    {
-//        /** @var AbstractSensorType $sensorType */
-//        $sensorType = $this->entityManager->getRepository($sensorTypeString)->findAll()[0];
-//
-//        while (true) {
-//            $randomID = random_int(0, 1000000);
-//            $device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => $randomID]);
-//            if (!$device instanceof Devices) {
-//                break;
-//            }
-//        }
-//
-//        $formData = [
-//            'sensorName' => $sensorName,
-//            'sensorTypeID' => $sensorType->getSensorTypeID(),
-//            'deviceID' => $randomID,
-//            'pinNumber' => 1,
-//        ];
-//
-//        $jsonData = json_encode($formData);
-//
-//        $this->client->request(
-//            Request::METHOD_POST,
-//            self::ADD_NEW_SENSOR_URL,
-//            $formData,
-//            [],
-//            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-//            $jsonData,
-//        );
-//
-//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//        /** @var Sensor $sensor */
-//        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
-//
-//        self::assertNull($sensor);
-//        self::assertStringContainsString('Device not found', $responseData['errors']['deviceID']);
-//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-//    }
-//
-//    public function test_adding_new_sensor_with_none_existent_sensor_type(): void
-//    {
-//        while (true) {
-//            $randomID = random_int(0, 1000000);
-//            $sensorType = $this->entityManager->getRepository(AbstractSensorType::class)->findOneBy(['sensorTypeID' => $randomID]);
-//            if (!$sensorType instanceof AbstractSensorType) {
-//                break;
-//            }
-//        }
-//
-//        $formData = [
-//            'sensorName' => 'testing',
-//            'sensorTypeID' => $randomID,
-//            'deviceID' => $this->device->getDeviceID(),
-//            'pinNumber' => 1,
-//        ];
-//
-//        $jsonData = json_encode($formData);
-//
-//        $this->client->request(
-//            Request::METHOD_POST,
-//            self::ADD_NEW_SENSOR_URL,
-//            $formData,
-//            [],
-//            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
-//            $jsonData,
-//        );
-//
-//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-//
-//        /** @var Sensor $sensor */
-//        $sensor = $this->entityManager->getRepository(Sensor::class)->findOneBy(['sensorName' => $formData['sensorName']]);
-//
-//        self::assertNull($sensor);
-//        self::assertStringContainsString('Sensor type not found for id ' . $randomID, $responseData['errors']['sensorType']);
-//        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-//    }
 
     /**
      * @dataProvider newSensorExtendedDataProvider

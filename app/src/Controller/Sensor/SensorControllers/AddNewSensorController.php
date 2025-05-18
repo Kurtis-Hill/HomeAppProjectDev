@@ -64,7 +64,7 @@ class AddNewSensorController extends AbstractController
         NewSensorDTOBuilder $newSensorDTOBuilder,
         ValidatorInterface $validator,
         #[MapQueryString]
-         ?RequestDTO $requestDTO = null,
+        ?RequestDTO $requestDTO = null,
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();
 
