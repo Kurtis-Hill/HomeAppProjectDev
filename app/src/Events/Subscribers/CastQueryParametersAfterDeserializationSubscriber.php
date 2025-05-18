@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class CastQueryParametersAfterDeserializationSubscriber implements EventSubscriberInterface
 {
-    private const PAGINATION_QUERY_PARAMS = ['page', 'limit', 'pinNumber'];
+    private const PAGINATION_QUERY_PARAMS = ['page', 'limit'];
 
     private const GET_PARAMS_NEEDING_CASTING = [];
 
