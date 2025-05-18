@@ -4,6 +4,8 @@ namespace App\DTOs\Sensor\Request;
 
 use App\Entity\Sensor\Sensor;
 use App\Services\CustomValidators\Device\DeviceIDExists;
+use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\Services\CustomValidators\Sensor\SensorType\SensorTypeDoesntExistConstraint;
 use App\Services\CustomValidators\Sensor\UniqueSensorForDevice;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,6 +17,7 @@ class AddNewSensorRequestDTO implements CanAdjustSensorDeviceIDAndSensorNameInte
         Assert\NotNull(
             message: "sensorTypeID cannot be null"
         ),
+        SensorTypeDoesntExistConstraint,
     ]
     private int $sensorTypeID;
 
@@ -31,6 +34,13 @@ class AddNewSensorRequestDTO implements CanAdjustSensorDeviceIDAndSensorNameInte
         Assert\Type(type: 'string', message: 'sensorName must be a {{ type }} you have provided {{ value }}'),
         Assert\NotNull(
             message: "sensorName name cannot be null"
+        ),
+        NoSpecialCharactersNameConstraint,
+        Assert\Length(
+            min: Sensor::SENSOR_NAME_MIN_LENGTH,
+            max: Sensor::SENSOR_NAME_MAX_LENGTH,
+            minMessage: "Sensor name must be at least {{ limit }} characters long",
+            maxMessage: "Sensor name cannot be longer than {{ limit }} characters"
         ),
     ]
     private string $sensorName;

@@ -303,7 +303,7 @@ class AddNewSensorControllerTest extends ControllerTestCase
                 'pinNumber' => 1,
                 'readingInterval' => 1000,
             ],
-            'Sensor type not found for id 999999',
+            'Sensor type "999999" does not exist.',
             HTTPStatusCodes::HTTP_BAD_REQUEST,
         ];
 

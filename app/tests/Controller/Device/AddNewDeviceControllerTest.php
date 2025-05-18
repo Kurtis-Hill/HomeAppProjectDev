@@ -43,13 +43,11 @@ class AddNewDeviceControllerTest extends ControllerTestCase
 
     private GroupRepositoryInterface $groupNameRepository;
 
-    private GroupMappingRepository $groupNameMappingRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
-        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupMapping::class);
 
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->groupName = $this->entityManager->getRepository(Group::class)->findOneByName(UserDataFixtures::ADMIN_GROUP_ONE);
