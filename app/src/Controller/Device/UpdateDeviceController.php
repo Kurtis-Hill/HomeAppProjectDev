@@ -8,14 +8,11 @@ use App\DTOs\Device\Request\DeviceUpdateRequestDTO;
 use App\DTOs\RequestDTO;
 use App\Entity\Device\Devices;
 use App\Entity\User\User;
-use App\Exceptions\Common\ValidatorProcessorException;
 use App\Exceptions\User\GroupExceptions\GroupNotFoundException;
 use App\Exceptions\User\RoomsExceptions\RoomNotFoundException;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
 use App\Services\Device\UpdateDevice\UpdateDeviceHandlerInterface;
-use App\Services\Request\RequestQueryParameterHandler;
-use App\Services\Request\RequestTypeEnum;
 use App\Traits\HomeAppAPITrait;
 use App\Traits\ValidatorProcessorTrait;
 use App\Voters\DeviceVoter;
@@ -28,25 +25,12 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/', name: 'update-user-devices')]
 class UpdateDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
-
-    private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
 
     #[
         Route(
@@ -64,6 +48,7 @@ class UpdateDeviceController extends AbstractController
         DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
         #[MapQueryString]
         ?RequestDTO $requestDTO = null,
+        LoggerInterface $logger,
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();
 
@@ -105,7 +90,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
-        $this->logger->info(
+        $logger->info(
             sprintf(
                 'Device %s updated successfully',
                 $deviceToUpdate->getDeviceID()

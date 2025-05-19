@@ -5,20 +5,16 @@ namespace App\Controller\Sensor\ReadingTypeControllers;
 use App\Builders\Sensor\Response\ReadingTypeResponseBuilders\ReadingTypeResponseBuilder;
 use App\DTOs\RequestDTO;
 use App\Entity\Sensor\ReadingTypes\ReadingTypes;
-use App\Exceptions\Common\ValidatorProcessorException;
 use App\Repository\Sensor\SensorReadingType\ReadingTypeRepositoryInterface;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
 use App\Services\Request\PaginationCalculator;
-use App\Services\Request\RequestQueryParameterHandler;
-use App\Services\Request\RequestTypeEnum;
 use App\Traits\HomeAppAPITrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
@@ -30,14 +26,6 @@ class GetReadingTypeController extends AbstractController
     use HomeAppAPITrait;
 
     private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
 
     #[Route('', name: 'all-reading-types', methods: [Request::METHOD_GET])]
     public function getAllReadingTypes(
