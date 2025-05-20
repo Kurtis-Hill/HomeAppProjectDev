@@ -5,6 +5,7 @@ namespace App\Controller\Sensor\SensorControllers;
 use App\Builders\Sensor\Request\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\DTOs\RequestDTO;
+use App\DTOs\Sensor\Internal\Sensor\GetSensorQueryDTO;
 use App\DTOs\Sensor\Request\GetSensorRequestDTO\GetSensorRequestDTO;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
@@ -46,50 +47,21 @@ class GetSensorController extends AbstractController
 
     #[Route('', name: 'get-all-sensors', methods: [Request::METHOD_GET])]
     public function getAllSensors(
-        Request $request,
-        ValidatorInterface $validator,
         SensorResponseDTOBuilder $sensorResponseDTOBuilder,
         SensorUserFilter $sensorUserFilter,
         SensorRepositoryInterface $sensorRepository,
         #[MapQueryString]
+        GetSensorQueryDTO $getSensorQueryDTO,
+        #[MapQueryString]
         ?RequestDTO $requestDTO = null,
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();
-        $deviceIDs = $request->query->all()['deviceIDs'] ?? null;
-        $deviceNames = $request->query->all()['deviceNames'] ?? null;
-        $groupIDs = $request->query->all()['groupIDs'] ?? null;
-        $cardViewIDs = $request->query->all()['cardViewIDs'] ?? null;
-
-        $sensorRequestDTO = new GetSensorRequestDTO();
-        $sensorRequestDTO->setLimit($requestDTO->getLimit());
-        $sensorRequestDTO->setPage($requestDTO->getPage());
-        $sensorRequestDTO->setDeviceIDs($deviceIDs);
-        $sensorRequestDTO->setDeviceNames($deviceNames);
-        $sensorRequestDTO->setGroupIDs($groupIDs);
-        $sensorRequestDTO->setCardViewIDs($cardViewIDs);
-
-        $validationErrors = $validator->validate($sensorRequestDTO);
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-        }
-
-        $offset = PaginationCalculator::calculateOffset($sensorRequestDTO->getLimit(), $sensorRequestDTO->getPage());
-        $getSensorQueryDTO = GetSensorQueryDTOBuilder::buildGetSensorQueryDTO(
-            $sensorRequestDTO->getLimit(),
-            $offset,
-            $sensorRequestDTO->getPage(),
-            $sensorRequestDTO->getDeviceIDs(),
-            $sensorRequestDTO->getDeviceNames(),
-            $sensorRequestDTO->getGroupIDs(),
-            $sensorRequestDTO->getCardViewIDs(),
-        );
 
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
-        $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO);
-
+        $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO, $requestDTO);
         $allowedSensors = $sensorUserFilter->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO);
         foreach ($allowedSensors as $sensor) {
             $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);

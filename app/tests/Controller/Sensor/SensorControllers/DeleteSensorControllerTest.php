@@ -175,22 +175,6 @@ class DeleteSensorControllerTest extends ControllerTestCase
         self::assertEquals(APIErrorMessages::ACCESS_DENIED, $errors[0]);
     }
 
-//    /**
-//     * @dataProvider wrongHttpsMethodDataProvider
-//     */
-//    public function test_using_wrong_http_method(string $httpVerb): void
-//    {
-//        $this->client->request(
-//            $httpVerb,
-//            sprintf(self::DELETE_SENSOR_URL, 1),
-//            [],
-//            [],
-//            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-//        );
-//
-//        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
-//    }
-
     public function wrongHttpsMethodDataProvider(): array
     {
         return [

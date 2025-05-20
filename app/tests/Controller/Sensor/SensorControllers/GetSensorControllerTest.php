@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Sensor\SensorControllers;
 
 use App\Controller\Sensor\SensorControllers\GetSensorController;
+use App\Controller\Sensor\SensorControllers\GetSingleSensorsController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\Entity\Device\Devices;
@@ -33,6 +34,7 @@ use App\Repository\User\ORM\UserRepositoryInterface;
 use App\Repository\UserInterface\ORM\CardRepositories\CardViewRepository;
 use App\Services\Request\RequestQueryParameterHandler;
 use App\Services\Request\RequestTypeEnum;
+use App\Tests\Controller\ControllerTestCase;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -41,15 +43,10 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GetSensorControllerTest extends WebTestCase
+class GetSensorControllerTest extends ControllerTestCase
 {
-    use TestLoginTrait;
 
     private const GET_ALL_SENSORS_URL = '/HomeApp/api/user/sensors';
-
-    private ?EntityManagerInterface $entityManager;
-
-    private KernelBrowser $client;
 
     private ?Devices $device;
 
@@ -65,25 +62,10 @@ class GetSensorControllerTest extends WebTestCase
 
     private CardViewRepository $cardViewRepository;
 
-    private User $adminUser;
-
-    private User $regularUserTwo;
-
-    private ?string $userToken = null;
-
     protected function setUp(): void
     {
-        $this->client = static::createClient();
-
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-
-        $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
-        $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
-
+        parent::setUp();
         $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']]);
-        $this->userToken = $this->setUserToken($this->client);
         $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
@@ -92,24 +74,16 @@ class GetSensorControllerTest extends WebTestCase
         $this->cardViewRepository = $this->entityManager->getRepository(CardView::class);
     }
 
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
-    }
-
     /**
      * @dataProvider sendingIncorrectDataTypesAndChoicesDataProvider
      */
     public function test_sending_incorrect_data_types_and_choices(array $dataToSend, array $errorsMessages): void
     {
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_GET,
             self::GET_ALL_SENSORS_URL,
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -117,7 +91,7 @@ class GetSensorControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertEquals($errorsMessages, $responseData['errors']);
-        self::assertEquals(GetSensorController::BAD_REQUEST_NO_DATA_RETURNED, $responseData['title']);
+        self::assertEquals('Validation errors occurred', $responseData['title']);
     }
 
     public function sendingIncorrectDataTypesAndChoicesDataProvider(): Generator
@@ -127,7 +101,7 @@ class GetSensorControllerTest extends WebTestCase
                 'limit' => 101
             ],
             'errorMessages' => [
-                'limit must be greater than 1 but less than 100'
+                'limit' => 'limit must be greater than 1 but less than 100'
             ],
         ];
 
@@ -136,7 +110,7 @@ class GetSensorControllerTest extends WebTestCase
                 'limit' => 0
             ],
             'errorMessages' => [
-                'limit must be greater than 1 but less than 100'
+                'limit' => 'limit must be greater than 1 but less than 100'
             ],
         ];
 
@@ -145,7 +119,7 @@ class GetSensorControllerTest extends WebTestCase
                 'limit' => -1
             ],
             'errorMessages' => [
-                'limit must be greater than 1 but less than 100'
+                'limit' => 'limit must be greater than 1 but less than 100'
             ],
         ];
 
@@ -154,7 +128,7 @@ class GetSensorControllerTest extends WebTestCase
                 'limit' => 'string'
             ],
             'errorMessages' => [
-                'limit must be an int|null you have provided "string"'
+                'limit' => 'This value should be of type int.'
             ],
         ];
 
@@ -163,7 +137,7 @@ class GetSensorControllerTest extends WebTestCase
                 'page' => 'string'
             ],
             'errorMessages' => [
-                'page must be an int|null you have provided "string"'
+                'page' => 'This value should be of type int.'
             ],
         ];
 
@@ -172,7 +146,7 @@ class GetSensorControllerTest extends WebTestCase
                 'page' => -1
             ],
             'errorMessages' => [
-                'page must be greater than 0'
+                'page' => 'page must be greater than 0'
             ],
         ];
 
@@ -181,7 +155,7 @@ class GetSensorControllerTest extends WebTestCase
                 'deviceIDs' => 'string'
             ],
             'errorMessages' => [
-                'deviceIDs must be a array|null you have provided "string"'
+                'deviceIDs' => 'This value should be of type array.'
             ],
         ];
 
@@ -190,7 +164,7 @@ class GetSensorControllerTest extends WebTestCase
                 'deviceIDs' => 1
             ],
             'errorMessages' => [
-                'deviceIDs must be a array|null you have provided "1"'
+                'deviceIDs' => 'This value should be of type array.'
             ],
         ];
 
@@ -199,7 +173,7 @@ class GetSensorControllerTest extends WebTestCase
                 'deviceNames' => 'string'
             ],
             'errorMessages' => [
-                'deviceNames must be a array|null you have provided "string"'
+                'deviceNames' => 'This value should be of type array.'
             ],
         ];
 
@@ -208,7 +182,7 @@ class GetSensorControllerTest extends WebTestCase
                 'deviceNames' => 1
             ],
             'errorMessages' => [
-                'deviceNames must be a array|null you have provided "1"'
+                'deviceNames' => 'This value should be of type array.'
             ],
         ];
 
@@ -217,7 +191,7 @@ class GetSensorControllerTest extends WebTestCase
                 'groupIDs' => 'string'
             ],
             'errorMessages' => [
-                'groupIDs must be a array|null you have provided "string"'
+                'groupIDs' => 'This value should be of type array.'
             ],
         ];
 
@@ -226,14 +200,14 @@ class GetSensorControllerTest extends WebTestCase
                 'groupIDs' => 1
             ],
             'errorMessages' => [
-                'groupIDs must be a array|null you have provided "1"'
+                'groupIDs' => 'This value should be of type array.'
             ],
         ];
     }
 
     public function test_getting_devicesIDs_not_assinged_to(): void
     {
-        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
+        /** @var Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsNotApartOf]);
@@ -246,13 +220,11 @@ class GetSensorControllerTest extends WebTestCase
             'deviceIDs' => $deviceIDs
         ];
 
-        $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_GET,
             self::GET_ALL_SENSORS_URL,
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -260,7 +232,7 @@ class GetSensorControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         $title = $responseData['title'];
-        self::assertEquals(\App\Controller\Sensor\SensorControllers\GetSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
+        self::assertEquals(GetSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
 
         $errors = $responseData['errors'];
         self::assertCount(count($deviceIDs), $errors);
@@ -268,10 +240,10 @@ class GetSensorControllerTest extends WebTestCase
 
     public function test_getting_device_names_not_assigned_to(): void
     {
-        /** @var \App\Entity\User\Group[] $groupsNotApartOf */
+        /** @var Group[] $groupsNotApartOf */
         $groupsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
-        /** @var \App\Entity\Device\Devices[] $devicesUserIsNotApartOf */
+        /** @var Devices[] $devicesUserIsNotApartOf */
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsNotApartOf]);
 
         $deviceNames = array_map(static function (Devices $device) {
@@ -282,13 +254,11 @@ class GetSensorControllerTest extends WebTestCase
             'deviceNames' => $deviceNames
         ];
 
-        $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_GET,
             self::GET_ALL_SENSORS_URL,
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -304,7 +274,7 @@ class GetSensorControllerTest extends WebTestCase
 
     public function test_getting_groupIDs_not_assigned_to(): void
     {
-        /** @var \App\Entity\User\Group[] $groupsUserNotApartOf */
+        /** @var Group[] $groupsUserNotApartOf */
         $groupsUserNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserTwo);
 
         $groupIDs  = array_map(static fn (Group $group) => $group->getGroupID(), $groupsUserNotApartOf);
@@ -312,13 +282,11 @@ class GetSensorControllerTest extends WebTestCase
             'groupIDs' => $groupIDs
         ];
 
-        $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_GET,
             self::GET_ALL_SENSORS_URL,
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -335,10 +303,10 @@ class GetSensorControllerTest extends WebTestCase
 
     public function test_regular_user_can_get_devices_ids_is_assigned_to(): void
     {
-        /** @var \App\Entity\User\Group[] $groupsUserIsApartOf */
+        /** @var Group[] $groupsUserIsApartOf */
         $groupsUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserTwo);
 
-        /** @var \App\Entity\Device\Devices[] $devicesUserIsApartOf */
+        /** @var Devices[] $devicesUserIsApartOf */
         $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         $deviceIDs = array_map(static function (Devices $device) {
@@ -348,14 +316,12 @@ class GetSensorControllerTest extends WebTestCase
         $dataToSend = [
             'deviceIDs' => $deviceIDs
         ];
-        $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
 
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_ALL_SENSORS_URL,
+            self::GET_ALL_SENSORS_URL . '?limit=100',
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -374,10 +340,10 @@ class GetSensorControllerTest extends WebTestCase
 
     public function test_regular_user_can_get_device_names_is_assigned_to(): void
     {
-        /** @var \App\Entity\User\Group[] $groupsUserIsApartOf */
+        /** @var Group[] $groupsUserIsApartOf */
         $groupsUserIsApartOf = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserTwo);
 
-        /** @var \App\Entity\Device\Devices[] $devicesUserIsApartOf */
+        /** @var Devices[] $devicesUserIsApartOf */
         $devicesUserIsApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsApartOf]);
 
         $deviceNames = array_map(function (Devices $device) {
@@ -388,14 +354,11 @@ class GetSensorControllerTest extends WebTestCase
             'deviceNames' => $deviceNames
         ];
 
-        $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
-
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_ALL_SENSORS_URL,
+            self::GET_ALL_SENSORS_URL . '?limit=100',
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -409,7 +372,7 @@ class GetSensorControllerTest extends WebTestCase
         self::assertCount(count($sensors), $payload);
 
         $title = $responseData['title'];
-        self::assertEquals(\App\Controller\Sensor\SensorControllers\GetSensorController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(GetSensorController::REQUEST_SUCCESSFUL, $title);
     }
 
     public function test_regular_user_can_get_groupIDs_is_assigned_to(): void
@@ -428,14 +391,11 @@ class GetSensorControllerTest extends WebTestCase
             'groupIDs' => $groupIDs
         ];
 
-        $userToken = $this->setUserToken($this->client, $this->regularUserTwo->getEmail(), UserDataFixtures::REGULAR_PASSWORD);
-
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_ALL_SENSORS_URL,
+            self::GET_ALL_SENSORS_URL . '?limit=100',
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $userToken, 'CONTENT_TYPE' => 'application/json'],
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
@@ -453,10 +413,10 @@ class GetSensorControllerTest extends WebTestCase
 
     public function test_admins_can_get_devices_not_assigned_to(): void
     {
-        /** @var \App\Entity\User\Group[] $groupsUserIsNotApartOf */
-        $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
+        /** @var Group[] $groupsUserIsNotApartOf */
+        $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminOne);
 
-        /** @var \App\Entity\Device\Devices[] $devicesUserIsNotApartOf */
+        /** @var Devices[] $devicesUserIsNotApartOf */
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         $deviceIDs = array_map(function (Devices $device) {
@@ -467,12 +427,11 @@ class GetSensorControllerTest extends WebTestCase
             'deviceIDs' => $deviceIDs
         ];
 
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_ALL_SENSORS_URL,
+            self::GET_ALL_SENSORS_URL . '?limit=100',
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -492,9 +451,9 @@ class GetSensorControllerTest extends WebTestCase
     public function test_admins_can_get_device_names_not_assigned_to(): void
     {
         /** @var Group[] $groupsUserIsNotApartOf */
-        $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
+        $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminOne);
 
-        /** @var \App\Entity\Device\Devices[] $devicesUserIsNotApartOf */
+        /** @var Devices[] $devicesUserIsNotApartOf */
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
 
         $deviceNames = array_map(function (Devices $device) {
@@ -505,12 +464,11 @@ class GetSensorControllerTest extends WebTestCase
             'deviceNames' => $deviceNames
         ];
 
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_ALL_SENSORS_URL,
+            self::GET_ALL_SENSORS_URL . '?limit=100',
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -532,7 +490,7 @@ class GetSensorControllerTest extends WebTestCase
     public function test_admins_can_get_groupIDs_not_assigned_to(): void
     {
         /** @var Group[] $groupsUserIsNotApartOf */
-        $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
+        $groupsUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminOne);
 
         /** @var Devices[] $devicesUserIsNotApartOf */
         $devicesUserIsNotApartOf = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotApartOf]);
@@ -545,12 +503,11 @@ class GetSensorControllerTest extends WebTestCase
             'groupIDs' => $groupIDs
         ];
 
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_ALL_SENSORS_URL,
+            self::GET_ALL_SENSORS_URL . '?limit=100',
             $dataToSend,
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -569,12 +526,11 @@ class GetSensorControllerTest extends WebTestCase
 
     public function test_part_response_data_admin(): void
     {
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_ALL_SENSORS_URL,
+            self::GET_ALL_SENSORS_URL . '?limit=100',
             [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::ONLY->value],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -588,13 +544,11 @@ class GetSensorControllerTest extends WebTestCase
         self::assertCount(count($allSensors), $payload);
 
         $title = $responseData['title'];
-        self::assertEquals(\App\Controller\Sensor\SensorControllers\GetSensorController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(GetSensorController::REQUEST_SUCCESSFUL, $title);
 
         foreach ($payload as $sensorData) {
             $sensor = $this->sensorRepository->find($sensorData['sensorID']);
-
-            self::assertEquals($sensor->getSensorID(), $sensorData['sensorID']);
-            self::assertEquals($sensor->getSensorName(), $sensorData['sensorName']);
+            self::assertSensorIsSameAsExpected($sensor, $sensorData);
             self::assertTrue($sensorData['canEdit']);
             self::assertTrue($sensorData['canDelete']);
         }
@@ -602,12 +556,11 @@ class GetSensorControllerTest extends WebTestCase
 
     public function test_full_response_data_admin(): void
     {
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_ALL_SENSORS_URL,
+            self::GET_ALL_SENSORS_URL . '?limit=100',
             [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -621,16 +574,23 @@ class GetSensorControllerTest extends WebTestCase
         self::assertCount(count($allSensors), $payloads);
 
         $title = $responseData['title'];
-        self::assertEquals(\App\Controller\Sensor\SensorControllers\GetSensorController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(GetSensorController::REQUEST_SUCCESSFUL, $title);
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertEquals(\App\Controller\Sensor\SensorControllers\GetSingleSensorsController::REQUEST_SUCCESSFUL, $responseData['title']);
+        self::assertEquals(GetSingleSensorsController::REQUEST_SUCCESSFUL, $responseData['title']);
 
         self::assertNotEmpty($responseData['payload']);
-        $sensorData = $responseData['payload'];
 
+        $sensorData = $responseData['payload'];
         self::assertNotNull($sensorData);
 
         $sensorReadingTypePass = 0;
+        $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
+        $humidityRepository = $this->entityManager->getRepository(Humidity::class);
+        $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
+        $analogRepository = $this->entityManager->getRepository(Analog::class);
+        $motionRepository = $this->entityManager->getRepository(Motion::class);
+        $relayRepository = $this->entityManager->getRepository(Relay::class);
+
         foreach ($sensorData as $singleSensorData) {
             if (empty($singleSensorData['sensorReadingTypes'])) {
                 continue;
@@ -645,8 +605,7 @@ class GetSensorControllerTest extends WebTestCase
                 || $sensorObject->getSensorTypeObject()::getSensorTypeName() === Bmp::NAME
                 || $sensorObject->getSensorTypeObject()::getSensorTypeName() === Sht::NAME
             ) {
-                $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
-                /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature $temperature */
+                /** @var Temperature $temperature */
                 $temperature = $temperatureRepository->find($sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
                 self::assertEquals($temperature->getSensorID(), $sensorReadingTypes[Temperature::READING_TYPE]['temperatureID']);
                 self::assertEquals($temperature->getCurrentReading(), $sensorReadingTypes[Temperature::READING_TYPE]['currentReading']);
@@ -662,7 +621,6 @@ class GetSensorControllerTest extends WebTestCase
                 || $sensorObject->getSensorTypeObject()::getSensorTypeName() === Bmp::NAME
                 || $sensorObject->getSensorTypeObject()::getSensorTypeName() === Sht::NAME
             ) {
-                $humidityRepository = $this->entityManager->getRepository(Humidity::class);
                 /** @var Humidity $humidity */
                 $humidity = $humidityRepository->find($singleSensorData['sensorReadingTypes'][Humidity::READING_TYPE]['humidityID']);
                 self::assertEquals($humidity->getSensorID(), $singleSensorData['sensorReadingTypes'][Humidity::READING_TYPE]['humidityID']);
@@ -676,7 +634,6 @@ class GetSensorControllerTest extends WebTestCase
             }
 
             if ($sensorObject->getSensorTypeObject()::getSensorTypeName() === Bmp::NAME) {
-                $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
                 /** @var Latitude $latitude */
                 $latitude = $latitudeRepository->find($singleSensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
                 self::assertEquals($latitude->getSensorID(), $singleSensorData['sensorReadingTypes'][Latitude::READING_TYPE]['latitudeID']);
@@ -693,8 +650,7 @@ class GetSensorControllerTest extends WebTestCase
                 $sensorObject->getSensorTypeObject()::getSensorTypeName() === Soil::NAME
                 || $sensorObject->getSensorTypeObject()::getSensorTypeName() === LDR::NAME
             ) {
-                $analogRepository = $this->entityManager->getRepository(Analog::class);
-                /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $analog */
+                /** @var Analog $analog */
                 $analog = $analogRepository->find($singleSensorData['sensorReadingTypes'][Analog::READING_TYPE]['analogID']);
                 self::assertEquals($analog->getSensorID(), $singleSensorData['sensorReadingTypes'][Analog::READING_TYPE]['analogID']);
                 self::assertEquals($analog->getCurrentReading(), $singleSensorData['sensorReadingTypes'][Analog::READING_TYPE]['currentReading']);
@@ -707,8 +663,7 @@ class GetSensorControllerTest extends WebTestCase
             }
 
             if ($sensorObject->getSensorTypeObject()::getSensorTypeName() === GenericMotion::NAME) {
-                $motionRepository = $this->entityManager->getRepository(Motion::class);
-                /** @var \App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion $motion */
+                /** @var Motion $motion */
                 $motion = $motionRepository->find($singleSensorData['sensorReadingTypes'][Motion::READING_TYPE]['boolID']);
                 self::assertEquals($motion->getBoolID(), $singleSensorData['sensorReadingTypes'][Motion::READING_TYPE]['boolID']);
                 self::assertEquals($motion->getCurrentReading(), $singleSensorData['sensorReadingTypes'][Motion::READING_TYPE]['currentReading']);
@@ -720,7 +675,6 @@ class GetSensorControllerTest extends WebTestCase
                 self::assertEquals(Motion::READING_TYPE, $sensorReadingTypes[Motion::READING_TYPE]['readingType']);
             }
             if ($sensorObject->getSensorTypeObject()::getSensorTypeName() === GenericRelay::NAME) {
-                $relayRepository = $this->entityManager->getRepository(Relay::class);
                 /** @var Relay $relay */
                 $relay = $relayRepository->find($singleSensorData['sensorReadingTypes'][Relay::READING_TYPE]['boolID']);
                 self::assertEquals($relay->getBoolID(), $singleSensorData['sensorReadingTypes'][Relay::READING_TYPE]['boolID']);
@@ -769,7 +723,7 @@ class GetSensorControllerTest extends WebTestCase
             self::assertEquals($sensorObject->getReadingInterval(), $singleSensorData['readingInterval']);
             $userHasCardView = $this->cardViewRepository->findOneBy(
                 [
-                    'userID' => $this->adminUser->getUserID(),
+                    'userID' => $this->adminOne->getUserID(),
                     'sensor' => $sensorObject->getSensorID()
                 ]
             );
