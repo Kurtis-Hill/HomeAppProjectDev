@@ -27,14 +27,14 @@ class SensorUpdateRequestDTO
         ArrayShape([SensorDataCurrentReadingUpdateRequestDTO::class])
     ]
     /** @var SensorDataCurrentReadingUpdateRequestDTO[] $sensorData */
-    private mixed $sensorData = null;
+    private ?array $sensorData = null;
 
-    public function getSensorData(): array
+    public function getSensorData(): ?array
     {
         return $this->sensorData;
     }
 
-    public function setSensorData(mixed $sensorData): void
+    public function setSensorData(?array $sensorData): void
     {
         $this->sensorData = $sensorData;
     }

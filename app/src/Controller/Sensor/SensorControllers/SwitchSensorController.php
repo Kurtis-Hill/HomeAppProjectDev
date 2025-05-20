@@ -24,10 +24,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
@@ -52,34 +51,35 @@ class SwitchSensorController extends AbstractController
      */
     #[Route('switch-sensor', name: 'switch-sensor', methods: [Request::METHOD_POST])]
     public function switchSensorAction(
-        Request $request,
         ValidatorInterface $validator,
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequestHandler,
         SensorRepositoryInterface $sensorRepository,
         UpdateSensorCurrentReadingTransportDTOBuilder $updateSensorCurrentReadingDTOBuilder,
         EntityManagerInterface $entityManager,
         RelayRepository $relayRepository,
+        #[MapRequestPayload]
+        SensorUpdateRequestDTO $sensorUpdateRequestDTO,
     ): JsonResponse {
-        $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
-        try {
-            $this->deserializeRequest(
-                $request->getContent(),
-                SensorUpdateRequestDTO::class,
-                'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
-//                true,
-            );
-        } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
-        }
+//        $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
+//        try {
+//            $this->deserializeRequest(
+//                $request->getContent(),
+//                SensorUpdateRequestDTO::class,
+//                'json',
+//                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
+////                true,
+//            );
+//        } catch (NotEncodableValueException) {
+//            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
+//        }
 
-        $validationErrors = $validator->validate(
-            value: $sensorUpdateRequestDTO,
-//            groups: CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING
-        );
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-        }
+//        $validationErrors = $validator->validate(
+//            value: $sensorUpdateRequestDTO,
+////            groups: CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING
+//        );
+//        if ($this->checkIfErrorsArePresent($validationErrors)) {
+//            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
+//        }
 
         $individualSensorRequestValidationErrors = [];
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {

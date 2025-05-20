@@ -687,40 +687,11 @@ class GetSensorControllerTest extends ControllerTestCase
                 self::assertEquals(Relay::READING_TYPE, $sensorReadingTypes[Relay::READING_TYPE]['readingType']);
             }
 
-            self::assertEquals($sensorObject->getSensorID(), $singleSensorData['sensorID']);
-            self::assertEquals($sensorObject->getSensorName(), $singleSensorData['sensorName']);
-
-            $sensorTypeObject = $sensorObject->getSensorTypeObject();
-            self::assertEquals($sensorTypeObject->getSensorTypeID(), $singleSensorData['sensorType']['sensorTypeID']);
-            self::assertEquals($sensorTypeObject::getSensorTypeName(), $singleSensorData['sensorType']['sensorTypeName']);
-            self::assertEquals($sensorTypeObject->getDescription(), $singleSensorData['sensorType']['sensorTypeDescription']);
-
-            $deviceObject = $sensorObject->getDevice();
-            self::assertEquals($deviceObject->getDeviceName(), $singleSensorData['device']['deviceName']);
-            self::assertEquals($deviceObject->getDeviceID(), $singleSensorData['device']['deviceID']);
-
-            $deviceRoom = $deviceObject->getRoomObject();
-            self::assertEquals($deviceRoom->getRoomID(), $singleSensorData['device']['room']['roomID']);
-            self::assertEquals($deviceRoom->getRoom(), $singleSensorData['device']['room']['roomName']);
-
-            $deviceGroup = $sensorObject->getDevice()->getGroupObject();
-            self::assertEquals($deviceGroup->getGroupID(), $singleSensorData['device']['group']['groupID']);
-            self::assertEquals($deviceGroup->getGroupName(), $singleSensorData['device']['group']['groupName']);
-
-
-            $user = $sensorObject->getCreatedBy();
-            self::assertEquals($user->getEmail(), $singleSensorData['createdBy']['email']);
-            self::assertEquals($user->getFirstName(), $singleSensorData['createdBy']['firstName']);
-            self::assertEquals($user->getLastName(), $singleSensorData['createdBy']['lastName']);
-            self::assertEquals($user->getUserID(), $singleSensorData['createdBy']['userID']);
-            self::assertArrayNotHasKey('password', $singleSensorData['createdBy']);
-            self::assertArrayNotHasKey('roles', $singleSensorData['createdBy']);
+            self::assertSensorIsSameAsExpected($sensorObject, $singleSensorData);
 
             self::assertTrue($singleSensorData['canEdit']);
             self::assertTrue($singleSensorData['canDelete']);
 
-            self::assertEquals($sensorObject->getPinNumber(), $singleSensorData['pinNumber']);
-            self::assertEquals($sensorObject->getReadingInterval(), $singleSensorData['readingInterval']);
             $userHasCardView = $this->cardViewRepository->findOneBy(
                 [
                     'userID' => $this->adminOne->getUserID(),

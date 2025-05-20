@@ -2,8 +2,6 @@
 
 namespace App\Tests\Controller\Sensor\SensorControllers;
 
-use App\DataFixtures\Core\UserDataFixtures;
-use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\DataFixtures\ESP8266\SensorFixtures;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
@@ -14,11 +12,7 @@ use App\Entity\Sensor\SensorTypes\GenericRelay;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\API\APIErrorMessages;
 use App\Tests\Controller\ControllerTestCase;
-use App\Tests\Traits\TestLoginTrait;
-use Doctrine\ORM\EntityManagerInterface;
 use Generator;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
