@@ -74,7 +74,8 @@
             "App\\": "src/"
         },
         "exclude-from-classmap": [
-            "/src/ORM/Migrations/"
+            "/migrations/",
+            "/src/Traits/"
         ]
     },
     "autoload-dev": {
@@ -82,7 +83,7 @@
             "App\\Tests\\": "tests/"
         },
         "exclude-from-classmap": [
-            "/src/ORM/Migrations/",
+            "/migrations/",
             "/tests/Traits/"
         ]
     },

@@ -246,7 +246,7 @@ final class Version20220303160823 extends AbstractMigration
                 room VARCHAR(20) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_general_ci`,
                 UNIQUE INDEX room (room),
                 PRIMARY KEY(roomID)
-            ) 
+            )
             DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' 
         ');
 
