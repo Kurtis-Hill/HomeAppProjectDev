@@ -183,7 +183,7 @@ struct ShtData {
 };
 ShtData shtData;
 
-const char* deviceSpiffs[3][10] = {"dallas", "dht", "relay", "ldr"};
+const char* deviceSpiffs[3][10] = {"dallas", "dht", "relay", "ldr", "sht"};
 
 // Webpages
 char webpage[] PROGMEM = R"=====(
@@ -2357,7 +2357,7 @@ void handleSwitchSensor() {
   Serial.println(pinNumber);
   Serial.print("requested reading: ");
   Serial.println(requestedReading);
-  if (requestedReading == 0 && passed == true) {
+  if (requestedReading == 0) {
     Serial.println("Going Low");
     digitalWrite(pinNumber, LOW);        
   } else {
