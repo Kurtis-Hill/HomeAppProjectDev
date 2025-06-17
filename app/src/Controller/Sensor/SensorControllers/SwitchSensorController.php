@@ -60,27 +60,6 @@ class SwitchSensorController extends AbstractController
         #[MapRequestPayload]
         SensorUpdateRequestDTO $sensorUpdateRequestDTO,
     ): JsonResponse {
-//        $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
-//        try {
-//            $this->deserializeRequest(
-//                $request->getContent(),
-//                SensorUpdateRequestDTO::class,
-//                'json',
-//                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
-////                true,
-//            );
-//        } catch (NotEncodableValueException) {
-//            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
-//        }
-
-//        $validationErrors = $validator->validate(
-//            value: $sensorUpdateRequestDTO,
-////            groups: CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING
-//        );
-//        if ($this->checkIfErrorsArePresent($validationErrors)) {
-//            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-//        }
-
         $individualSensorRequestValidationErrors = [];
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
             if (!is_array($sensorUpdateData)) {

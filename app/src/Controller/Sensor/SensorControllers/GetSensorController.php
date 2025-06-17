@@ -35,16 +35,6 @@ class GetSensorController extends AbstractController
 
     public const GET_SENSOR_DEFAULT_LIMIT = 100;
 
-    private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
-
     #[Route('', name: 'get-all-sensors', methods: [Request::METHOD_GET])]
     public function getAllSensors(
         SensorResponseDTOBuilder $sensorResponseDTOBuilder,

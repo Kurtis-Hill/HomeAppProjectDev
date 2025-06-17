@@ -19,7 +19,7 @@ class SensorDataCurrentReadingUpdateRequestDTO
             groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING, CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),
     ]
-    private mixed $sensorName;
+    private string $sensorName;
 
     #[
         Assert\Type(
@@ -35,7 +35,7 @@ class SensorDataCurrentReadingUpdateRequestDTO
             groups: [CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),
     ]
-    private mixed $sensorType;
+    private string $sensorType;
 
     #[
         Assert\Type(
@@ -48,7 +48,7 @@ class SensorDataCurrentReadingUpdateRequestDTO
             groups: [CurrentReadingSensorDataRequestHandlerInterface::SEND_UPDATE_CURRENT_READING, CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING]
         ),
     ]
-    private mixed $currentReadings;
+    private array $currentReadings;
 
     public function __construct(mixed $sensorName, mixed $sensorType, mixed $currentReadings)
     {

@@ -44,17 +44,14 @@ class UpdateSensorController extends AbstractController
 
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    public function __construct(LoggerInterface $elasticLogger)
     {
         $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[Route('/{sensorID}', name: 'update-sensor', methods: [Request::METHOD_PUT, Request::METHOD_PATCH])]
     public function updateSensor(
         Sensor $sensor,
-        Request $request,
-        ValidatorInterface $validator,
         UpdateSensorInterface $updateSensorService,
         SensorSavingHandler $sensorSavingHandler,
         SensorUpdateDTOBuilder $sensorUpdateDTOBuilder,
@@ -64,22 +61,6 @@ class UpdateSensorController extends AbstractController
         ?RequestDTO $requestDTO = null,
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();
-//        $updateSensorRequestDTO = new UpdateSensorDetailsRequestDTO();
-//        try {
-//            $this->deserializeRequest(
-//                $request->getContent(),
-//                UpdateSensorDetailsRequestDTO::class,
-//                'json',
-//                [AbstractNormalizer::OBJECT_TO_POPULATE => $updateSensorRequestDTO]
-//            );
-//        } catch (NotEncodableValueException) {
-//            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
-//        }
-//        $requestValidationErrors = $validator->validate($updateSensorRequestDTO);
-//
-//        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-//            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestValidationErrors));
-//        }
 
         $sensorUpdateDTO = $sensorUpdateDTOBuilder->buildSensorUpdateDTOFromRequestDTO(
             $updateSensorRequestDTO,

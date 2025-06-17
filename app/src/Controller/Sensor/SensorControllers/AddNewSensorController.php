@@ -38,10 +38,9 @@ class AddNewSensorController extends AbstractController
 
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    public function __construct(LoggerInterface $elasticLogger)
     {
         $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[Route('', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
@@ -59,7 +58,7 @@ class AddNewSensorController extends AbstractController
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();
 
-         $user = $this->getUser();
+        $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
         }
@@ -82,10 +81,6 @@ class AddNewSensorController extends AbstractController
         $validationErrors = $validator->validate($newSensor);
         if ($this->checkIfErrorsArePresent($validationErrors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-        }
-
-        if (!empty($sensorCreationErrors)) {
-            return $this->sendBadRequestJsonResponse($sensorCreationErrors);
         }
 
         $saveSensor = $newSensorCreationService->saveSensor($newSensor);

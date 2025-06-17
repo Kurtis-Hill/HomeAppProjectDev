@@ -32,12 +32,6 @@ class GetSingleSensorsController extends AbstractController
 
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
-
     #[Route('/{sensorID}', name: 'get-single-sensor', methods: [Request::METHOD_GET])]
     public function getSingleSensor(
         Sensor $sensor,

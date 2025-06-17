@@ -230,7 +230,8 @@ class AddNewSensorControllerTest extends ControllerTestCase
         self::assertEquals($randomPin, $sensor->getPinNumber());
         self::assertEquals($readingInterval, $sensor->getReadingInterval());
 
-        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);;
+        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);
+        ;
     }
 
     public function invalidSensorDataProvider(): Generator
@@ -293,6 +294,7 @@ class AddNewSensorControllerTest extends ControllerTestCase
             ],
             'The device with ID "999999" does not exist.',
             HTTPStatusCodes::HTTP_BAD_REQUEST,
+            true,
         ];
 
         yield 'non_existent_sensor_type' => [
@@ -383,13 +385,18 @@ class AddNewSensorControllerTest extends ControllerTestCase
     /**
      * @dataProvider invalidSensorDataProvider
      */
-    public function test_add_new_sensor_with_invalid_data(array $formData, string $expectedError, int $expectedStatusCode): void
+    public function test_add_new_sensor_with_invalid_data(array $formData, string $expectedError, int $expectedStatusCode, bool $fakeDevice = false): void
     {
         if (!is_int($formData['sensorTypeID'])) {
             /** @var AbstractSensorType $sensorType */
             $sensorType = $this->entityManager->getRepository($formData['sensorTypeID'])->findAll()[0];
             $formData['sensorTypeID'] = $sensorType->getSensorTypeID();
         }
+        if ($fakeDevice === false) {
+            $device = $this->entityManager->getRepository(Devices::class)->findAll()[0];
+            $formData['deviceID'] = $device->getDeviceID();
+        }
+
         $this->authenticateAdminOne();
 
         $this->client->jsonRequest(
@@ -537,8 +544,9 @@ class AddNewSensorControllerTest extends ControllerTestCase
 
         self::assertStringContainsString(
             sprintf(
-                'A sensor with the name "%s" already exists for the device with ID "1"',
+                'A sensor with the name "%s" already exists for the device with ID "%d"',
                 $sensor->getSensorName(),
+                $sensor->getDevice()->getDeviceID(),
             ),
             $responseData['errors'][0]
         );
@@ -592,7 +600,8 @@ class AddNewSensorControllerTest extends ControllerTestCase
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
 
-        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);;
+        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);
+        ;
     }
 
     /**
@@ -713,7 +722,8 @@ class AddNewSensorControllerTest extends ControllerTestCase
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
 
         self::assertEquals(Sensor::DEFAULT_READING_INTERVAL, $sensor->getReadingInterval());
-        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);;
+        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);
+        ;
     }
 
     /**
@@ -794,7 +804,8 @@ class AddNewSensorControllerTest extends ControllerTestCase
         self::assertStringContainsString(AddNewSensorController::REQUEST_ACCEPTED_SUCCESS_CREATED, $responseData['title']);
         self::assertEquals($sensorName, $responseData['payload']['sensorName']);
 
-        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);;
+        self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);
+        ;
     }
 
     //disabled to allow for bus sensors, needs adjusting so that only bus sensors can be on same pin
