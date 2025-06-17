@@ -4,6 +4,7 @@ namespace App\Entity\Sensor\ReadingTypes;
 
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Motion;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
+use App\Entity\Sensor\ReadingTypes\LEDReadingTypes\WS2812B;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
@@ -44,6 +45,10 @@ class ReadingTypes
             'alias' => 'motion',
             'object' => Motion::class,
         ],
+        WS2812B::READING_TYPE => [
+            'alias' => 'ws2812b',
+            'object' => WS2812B::class,
+        ],
     ];
 
     public const ALL_READING_TYPES = [
@@ -53,6 +58,7 @@ class ReadingTypes
         Latitude::READING_TYPE,
         Relay::READING_TYPE,
         Motion::READING_TYPE,
+        WS2812B::READING_TYPE,
     ];
 
     #[

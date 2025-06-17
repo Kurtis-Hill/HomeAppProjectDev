@@ -13,6 +13,21 @@ readonly class DuplicateSensorCheckService
     {
     }
 
+    public function checkSensorForDuplicatesByDeviceIDAndSensorName(
+        string $sensorName,
+        int $deviceID,
+    ): bool {
+        $duplicateSensorCheck = $this->sensorRepository->findSensorObjectByDeviceIdAndSensorName(
+            $deviceID,
+            $sensorName,
+        );
+
+        if ($duplicateSensorCheck instanceof Sensor) {
+            return true;
+        }
+
+        return false;
+    }
     /**
      * @throws DuplicateSensorException
      */
@@ -43,20 +58,7 @@ readonly class DuplicateSensorCheckService
             );
         }
 
-        $currentUserSensorNameCheck = $this->sensorRepository->findDuplicateSensorOnDeviceByGroup($sensor);
-        if (
-            $currentUserSensorNameCheck instanceof Sensor
-            && $currentUserSensorNameCheck->getSensorID() !== $sensorID
-        ) {
-            throw new DuplicateSensorException(
-                sprintf(
-                    DuplicateSensorException::MESSAGE_GROUP,
-                    $sensor->getSensorName(),
-                    $sensor->getDevice()->getGroupObject()->getGroupName()
-                )
-            );
-        }
-
+// had to disable due to analog pins and digital pins using the same pin number
 //        $pinCheck = $this->sensorRepository->findSensorsObjectByDeviceIDAndPinNumber($deviceID, $pinToUpdateTo ?? $sensor->getPinNumber());
 //        if ($pinCheck instanceof Sensor && $pinCheck->getSensorID() !== $sensorID) {
 //            throw new DuplicateSensorException(

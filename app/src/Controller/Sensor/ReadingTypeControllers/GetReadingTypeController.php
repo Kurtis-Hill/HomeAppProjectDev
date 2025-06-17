@@ -3,19 +3,18 @@
 namespace App\Controller\Sensor\ReadingTypeControllers;
 
 use App\Builders\Sensor\Response\ReadingTypeResponseBuilders\ReadingTypeResponseBuilder;
+use App\DTOs\RequestDTO;
 use App\Entity\Sensor\ReadingTypes\ReadingTypes;
-use App\Exceptions\Common\ValidatorProcessorException;
 use App\Repository\Sensor\SensorReadingType\ReadingTypeRepositoryInterface;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
 use App\Services\Request\PaginationCalculator;
-use App\Services\Request\RequestQueryParameterHandler;
-use App\Services\Request\RequestTypeEnum;
 use App\Traits\HomeAppAPITrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
@@ -28,26 +27,14 @@ class GetReadingTypeController extends AbstractController
 
     private LoggerInterface $logger;
 
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
-
     #[Route('', name: 'all-reading-types', methods: [Request::METHOD_GET])]
-    public function getAllReadingTypes(Request $request, ReadingTypeRepositoryInterface $readingTypeRepository): JsonResponse
-    {
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-                $request->get('page'),
-                $request->get('limit', self::MAX_READING_TYPE_RETURN_SIZE),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
+    public function getAllReadingTypes(
+        ReadingTypeRepositoryInterface $readingTypeRepository,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
+    ): JsonResponse {
+        $requestDTO ??= new RequestDTO();
+
         $allReadingTypes = $readingTypeRepository->findAllPaginatedResults(
             $requestDTO->getLimit(),
             PaginationCalculator::calculateOffset(
@@ -77,16 +64,12 @@ class GetReadingTypeController extends AbstractController
     }
 
     #[Route('/{readingTypeID}', name: 'singular-reading-types', methods: [Request::METHOD_GET])]
-    public function getSingleReadingTypes(ReadingTypes $readingType, Request $request): JsonResponse
-    {
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
-
+    public function getSingleReadingTypes(
+        ReadingTypes $readingType,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
+    ): JsonResponse {
+        $requestDTO ??= new RequestDTO();
         $readingTypeResponseDTO = ReadingTypeResponseBuilder::buildReadingTypeResponseDTO($readingType);
 
         try {

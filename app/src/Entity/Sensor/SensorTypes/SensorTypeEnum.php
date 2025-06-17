@@ -2,17 +2,25 @@
 
 namespace App\Entity\Sensor\SensorTypes;
 
-enum SensorTypeEnum
+use App\Traits\EnumToArrayTrait;
+
+enum SensorTypeEnum: string
 {
-    case Soil;
+    use EnumToArrayTrait;
 
-    case Dht;
+    case Soil = Soil::NAME;
 
-    case Dallas;
+    case Dht = Dht::NAME;
 
-    case Bmp;
+    case Dallas = Dallas::NAME;
 
-    case GenericRelay;
+    case Bmp = Bmp::NAME;
 
-    case GenericMotion;
+    case GenericRelay = GenericRelay::NAME;
+
+    case GenericMotion = GenericMotion::NAME;
+
+    case LDR = LDR::NAME;
+
+    case SHT = Sht::NAME;
 }

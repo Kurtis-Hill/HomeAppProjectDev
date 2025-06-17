@@ -30,7 +30,6 @@ class ResetDeviceController extends AbstractController
     public function resetDevice(Devices $device, DeviceResetRequestHandler $deviceResetRequestHandler): JsonResponse
     {
         $userAllowedToReset = $this->isGranted(DeviceVoter::RESET_DEVICE, $device);
-
         if ($userAllowedToReset === false) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
         }

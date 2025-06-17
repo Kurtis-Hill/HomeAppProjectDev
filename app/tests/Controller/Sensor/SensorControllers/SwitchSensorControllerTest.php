@@ -2,8 +2,6 @@
 
 namespace App\Tests\Controller\Sensor\SensorControllers;
 
-use App\DataFixtures\Core\UserDataFixtures;
-use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
 use App\DataFixtures\ESP8266\SensorFixtures;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\Relay;
@@ -13,50 +11,22 @@ use App\Entity\Sensor\SensorTypes\Bmp;
 use App\Entity\Sensor\SensorTypes\GenericRelay;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\API\APIErrorMessages;
-use App\Tests\Traits\TestLoginTrait;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Tests\Controller\ControllerTestCase;
 use Generator;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SwitchSensorControllerTest extends WebTestCase
+class SwitchSensorControllerTest extends ControllerTestCase
 {
-    use TestLoginTrait;
-
     private const SWITCH_CONTROLLER = '/HomeApp/api/device/switch-sensor';
-
-    private KernelBrowser $client;
-
-    private ?EntityManagerInterface $entityManager;
 
     private SensorRepositoryInterface $sensorRepository;
 
-    private ?string $adminToken = null;
-
     protected function setUp(): void
     {
-        $this->client = static::createClient();
-
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
+        parent::setUp();
 
         $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
-
-        $this->adminToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::ADMIN_USER_EMAIL_ONE,
-            UserDataFixtures::ADMIN_PASSWORD,
-        );
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
     }
 
     /**
@@ -68,7 +38,7 @@ class SwitchSensorControllerTest extends WebTestCase
         array $currentReadings,
         string $readingType,
     ): void {
-        /** @var \App\Entity\Sensor\Sensor $sensor */
+        /** @var Sensor $sensor */
         $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorName]);
 
         $requestData = [
@@ -80,16 +50,12 @@ class SwitchSensorControllerTest extends WebTestCase
                 ],
             ],
         ];
-        $this->client->request(
+
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::SWITCH_CONTROLLER,
-            [],
-            [],
-            [
-                'HTTP_AUTHORIZATION' => 'Bearer ' . $this->adminToken,
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            json_encode($requestData)
+            $requestData,
         );
         self::assertResponseIsSuccessful();
 
@@ -121,14 +87,8 @@ class SwitchSensorControllerTest extends WebTestCase
         array $currentReadings,
         string $readingType,
     ): void {
-        /** @var \App\Entity\Sensor\Sensor $sensor */
+        /** @var Sensor $sensor */
         $sensor = $this->sensorRepository->findOneBy(['sensorName' => $sensorName]);
-
-        $deviceToken = $this->setDeviceToken(
-            $this->client,
-            ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'],
-            ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password'],
-        );
 
         $requestData = [
             'sensorData' => [
@@ -139,16 +99,11 @@ class SwitchSensorControllerTest extends WebTestCase
                 ],
             ],
         ];
-        $this->client->request(
+        $this->authenticateTestDevice();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::SWITCH_CONTROLLER,
-            [],
-            [],
-            [
-                'HTTP_AUTHORIZATION' => 'Bearer ' . $deviceToken,
-                'CONTENT_TYPE' => 'application/json',
-            ],
-            json_encode($requestData)
+            $requestData,
         );
         self::assertResponseIsSuccessful();
 
@@ -193,15 +148,12 @@ class SwitchSensorControllerTest extends WebTestCase
         array $errors,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
 
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::SWITCH_CONTROLLER,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
@@ -255,15 +207,12 @@ class SwitchSensorControllerTest extends WebTestCase
         array $errors,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
 
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::SWITCH_CONTROLLER,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData
         );
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
@@ -311,15 +260,12 @@ class SwitchSensorControllerTest extends WebTestCase
         array $errors,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
 
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::SWITCH_CONTROLLER,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData,
         );
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 

@@ -3,7 +3,7 @@
 namespace App\Entity\UserInterface\Card;
 
 use App\Repository\UserInterface\ORM\CardRepositories\CardColourRepository;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;

@@ -49,7 +49,7 @@ class Sht extends AbstractSensorType implements StandardSensorTypeInterface, Tem
         return Humidity::LOW_READING;
     }
 
-    public static function getReadingTypeName(): string
+    public static function getSensorTypeName(): string
     {
         return self::NAME;
     }

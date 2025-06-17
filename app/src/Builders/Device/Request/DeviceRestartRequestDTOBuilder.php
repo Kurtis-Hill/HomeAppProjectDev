@@ -8,6 +8,6 @@ class DeviceRestartRequestDTOBuilder
 {
     public function buildRestartRequestDTO(): DeviceRestartRequestDTO
     {
-        return new DeviceRestartRequestDTO();
+        return new DeviceRestartReqtuestDTO();
     }
 }

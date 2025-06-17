@@ -7,4 +7,6 @@ use Exception;
 class GroupNotFoundException extends Exception
 {
     public const MESSAGE = 'Group not found for id %d';
+
+    public const MESSAGE_CONSTRAINT = 'Group not found for id ';
 }

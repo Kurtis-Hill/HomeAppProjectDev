@@ -21,7 +21,7 @@ class GenericRelay extends AbstractSensorType implements RelayReadingTypeInterfa
         Relay::READING_TYPE,
     ];
 
-    public static function getReadingTypeName(): string
+    public static function getSensorTypeName(): string
     {
         return self::NAME;
     }

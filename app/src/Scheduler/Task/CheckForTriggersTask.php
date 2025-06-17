@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Scheduler\Task;
+
 use App\Repository\Sensor\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
 use App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository;
 use App\Services\Sensor\Trigger\SensorTriggerProcessor\ReadingTriggerHandler;
@@ -9,13 +10,13 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
 #[AsCronTask('* * * * *')]
-class CheckForTriggersTask
+readonly class CheckForTriggersTask
 {
     public function __construct(
-        private readonly ReadingTriggerHandler $readingTriggerHandler,
-        private readonly StandardReadingTypeRepository $standardReadingTypeRepository,
-        private readonly BoolReadingBaseSensorRepository $boolReadingBaseSensorRepository,
-        private readonly LoggerInterface $logger,
+        private ReadingTriggerHandler $readingTriggerHandler,
+        private StandardReadingTypeRepository $standardReadingTypeRepository,
+        private BoolReadingBaseSensorRepository $boolReadingBaseSensorRepository,
+        private LoggerInterface $logger,
     ) {
     }
 

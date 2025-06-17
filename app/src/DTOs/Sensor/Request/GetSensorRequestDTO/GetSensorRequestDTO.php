@@ -2,106 +2,58 @@
 
 namespace App\DTOs\Sensor\Request\GetSensorRequestDTO;
 
-use App\Controller\Sensor\SensorControllers\GetSensorController;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class GetSensorRequestDTO
 {
-    #[
-        Assert\Range(
-            notInRangeMessage: 'limit must be greater than {{ min }} but less than {{ max }}',
-            invalidMessage: 'limit must be an int|null you have provided {{ value }}',
-            min: 1,
-            max: GetSensorController::GET_SENSOR_DEFAULT_LIMIT
-        ),
-    ]
-    private mixed $limit;
+    #[Assert\Type(type: ['array', "null"], message: 'deviceIDs must be a {{ type }} you have provided {{ value }}'), ]
+    private ?array $deviceIDs;
 
-    #[
-        Assert\Range(
-            minMessage: 'page must be greater than {{ value }}',
-            invalidMessage: 'page must be an int|null you have provided {{ value }}',
-            min: 0,
-        ),
-    ]
-    private mixed $page;
+    #[Assert\Type(type: ['array', "null"], message: 'deviceNames must be a {{ type }} you have provided {{ value }}'), ]
+    private ?array $deviceNames;
 
-    #[
-        Assert\Type(type: ['array', "null"], message: 'deviceIDs must be a {{ type }} you have provided {{ value }}'),
-    ]
-    private mixed $deviceIDs;
+    #[Assert\Type(type: ['array', "null"], message: 'groupIDs must be a {{ type }} you have provided {{ value }}'), ]
+    private ?array $groupIDs;
 
-    #[
-        Assert\Type(type: ['array', "null"], message: 'deviceNames must be a {{ type }} you have provided {{ value }}'),
-    ]
-    private mixed $deviceNames;
+    #[Assert\Type(type: ['array', "null"], message: 'responseType must be a {{ type }} you have provided {{ value }}'), ]
+    private ?array $cardViewIDs;
 
-    #[
-        Assert\Type(type: ['array', "null"], message: 'groupIDs must be a {{ type }} you have provided {{ value }}'),
-    ]
-    private mixed $groupIDs;
-
-    #[
-        Assert\Type(type: ['array', "null"], message: 'responseType must be a {{ type }} you have provided {{ value }}'),
-    ]
-    private mixed $cardViewIDs;
-
-    public function getLimit(): mixed
-    {
-        return $this->limit;
-    }
-
-    public function setLimit(mixed $limit): void
-    {
-        $this->limit = $limit;
-    }
-
-    public function getDeviceIDs(): mixed
+    public function getDeviceIDs(): ?array
     {
         return $this->deviceIDs;
     }
 
-    public function setDeviceIDs(mixed $deviceIDs): void
+    public function setDeviceIDs(?array $deviceIDs): void
     {
         $this->deviceIDs = $deviceIDs;
     }
 
-    public function getDeviceNames(): mixed
+    public function getDeviceNames(): ?array
     {
         return $this->deviceNames;
     }
 
-    public function setDeviceNames(mixed $deviceNames): void
+    public function setDeviceNames(?array $deviceNames): void
     {
         $this->deviceNames = $deviceNames;
     }
 
-    public function getGroupIDs(): mixed
+    public function getGroupIDs(): ?array
     {
         return $this->groupIDs;
     }
 
-    public function setGroupIDs(mixed $groupIDs): void
+    public function setGroupIDs(?array $groupIDs): void
     {
         $this->groupIDs = $groupIDs;
     }
 
-    public function getPage(): mixed
-    {
-        return $this->page;
-    }
-
-    public function setPage(mixed $page): void
-    {
-        $this->page = $page;
-    }
-
-    public function getCardViewIDs(): mixed
+    public function getCardViewIDs(): ?array
     {
         return $this->cardViewIDs;
     }
 
-    public function setCardViewIDs(mixed $cardViewIDs): void
+    public function setCardViewIDs(?array $cardViewIDs): void
     {
         $this->cardViewIDs = $cardViewIDs;
     }

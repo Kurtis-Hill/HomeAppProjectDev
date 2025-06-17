@@ -11,7 +11,7 @@ class SensorTypeResponseDTOBuilder
     {
         return new SensorTypeResponseDTO(
             $sensorType->getSensorTypeID(),
-            $sensorType::getReadingTypeName(),
+            $sensorType::getSensorTypeName(),
             $sensorType->getDescription()
         );
     }
@@ -20,7 +20,7 @@ class SensorTypeResponseDTOBuilder
     {
         return new SensorTypeResponseDTO(
             $sensorType->getSensorTypeID(),
-            $sensorType::getReadingTypeName(),
+            $sensorType::getSensorTypeName(),
             $sensorType->getDescription()
         );
     }

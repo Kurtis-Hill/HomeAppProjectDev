@@ -2,6 +2,7 @@
 
 namespace App\Repository\Sensor\Sensors;
 
+use App\DTOs\RequestDTO;
 use App\DTOs\Sensor\Internal\Sensor\GetSensorQueryDTO;
 use App\DTOs\UserInterface\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\Entity\Sensor\Sensor;
@@ -50,7 +51,7 @@ interface SensorRepositoryInterface
     public function findSensorObjectsByDeviceID(int $deviceId): array;
 
     #[ArrayShape([Sensor::class])]
-    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO): array;
+    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO, RequestDTO $requestDTO): array;
 
     #[ArrayShape([Sensor::class])]
     public function findSensorsObjectByDeviceIDAndPinNumber(int $deviceID, int $pinNumber): array;

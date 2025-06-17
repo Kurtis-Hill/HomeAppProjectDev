@@ -3,7 +3,7 @@
 namespace App\Entity\User;
 
 use App\Repository\User\ORM\RoomRepository;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 

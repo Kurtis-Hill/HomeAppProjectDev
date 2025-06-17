@@ -5,8 +5,8 @@ namespace App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
 use App\Entity\Sensor\SensorTypes\LDR;
 use App\Entity\Sensor\SensorTypes\Soil;
-use App\Services\CustomValidators\Sensor\SensorDataValidators\LDRConstraint;
-use App\Services\CustomValidators\Sensor\SensorDataValidators\SoilConstraint;
+use App\CustomValidators\Sensor\SensorDataValidators\LDRConstraint;
+use App\CustomValidators\Sensor\SensorDataValidators\SoilConstraint;
 use JetBrains\PhpStorm\Immutable;
 
 #[Immutable]

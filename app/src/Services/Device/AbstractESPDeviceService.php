@@ -22,44 +22,18 @@ abstract class AbstractESPDeviceService
 {
     use ValidatorProcessorTrait;
 
-    protected ValidatorInterface $validator;
-
-    protected DeviceRepositoryInterface $deviceRepository;
-
-    protected DevicePasswordEncoderInterface $devicePasswordEncoder;
-
-    protected GroupRepositoryInterface $groupRepository;
-
-    protected RoomRepositoryInterface $roomRepository;
-
-    private DeviceSettingsUpdateDTOBuilder $deviceSettingsUpdateEventDTOBuilder;
-
-    private IPLogRepository $ipLogRepository;
-
-    protected EventDispatcherInterface $eventDispatcher;
-
-    protected LoggerInterface $logger;
-
     public function __construct(
-        DeviceRepositoryInterface $deviceRepository,
-        ValidatorInterface $validator,
-        DevicePasswordEncoderInterface $devicePasswordEncoder,
-        GroupRepositoryInterface $groupNameRepository,
-        RoomRepositoryInterface $roomRepository,
-        DeviceSettingsUpdateDTOBuilder $deviceSettingsUpdateEventDTOBuilder,
-        IPLogRepository $ipLogRepository,
-        EventDispatcherInterface $eventDispatcher,
-        LoggerInterface $elasticLogger,
+        protected DeviceRepositoryInterface $deviceRepository,
+        protected ValidatorInterface $validator,
+        protected DevicePasswordEncoderInterface $devicePasswordEncoder,
+        protected GroupRepositoryInterface $groupRepository,
+        protected RoomRepositoryInterface $roomRepository,
+        protected DeviceSettingsUpdateDTOBuilder $deviceSettingsUpdateEventDTOBuilder,
+        protected IPLogRepository $ipLogRepository,
+        protected DuplicateDeviceChecker $duplicateDeviceChecker,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected LoggerInterface $elasticLogger,
     ) {
-        $this->validator = $validator;
-        $this->deviceRepository = $deviceRepository;
-        $this->devicePasswordEncoder = $devicePasswordEncoder;
-        $this->groupRepository = $groupNameRepository;
-        $this->roomRepository = $roomRepository;
-        $this->deviceSettingsUpdateEventDTOBuilder = $deviceSettingsUpdateEventDTOBuilder;
-        $this->ipLogRepository = $ipLogRepository;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->logger = $elasticLogger;
     }
 
     /**
@@ -68,7 +42,7 @@ abstract class AbstractESPDeviceService
      */
     protected function duplicateDeviceCheck(string $deviceName, int $roomID): void
     {
-        $currentUserDeviceCheck = $this->deviceRepository->findDuplicateDeviceNewDeviceCheck(
+        $currentUserDeviceCheck = $this->duplicateDeviceChecker->duplicateDeviceCheck(
             $deviceName,
             $roomID,
         );

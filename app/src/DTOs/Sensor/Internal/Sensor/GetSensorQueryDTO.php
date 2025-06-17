@@ -4,57 +4,35 @@ namespace App\DTOs\Sensor\Internal\Sensor;
 
 use App\Entity\Sensor\Sensor;
 use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class GetSensorQueryDTO
 {
-    private ?int $limit;
+    #[Assert\Type(type: ['array', "null"], message: 'deviceIDs must be a {{ type }} you have provided {{ value }}'), ]
+    private ?array $deviceIDs;
 
-    private ?int $offset;
+    #[Assert\Type(type: ['array', "null"], message: 'deviceNames must be a {{ type }} you have provided {{ value }}'), ]
+    private ?array $deviceNames;
 
-    private ?int $page;
+    #[Assert\Type(type: ['array', "null"], message: 'groupIDs must be a {{ type }} you have provided {{ value }}'), ]
+    private ?array $groupIDs;
 
-    private ?array  $deviceIDs;
-
-    private ?array  $deviceNames;
-
-    private ?array  $groupIDs;
-
-    private ?array  $cardViewIDs;
+    #[Assert\Type(type: ['array', "null"], message: 'responseType must be a {{ type }} you have provided {{ value }}'), ]
+    private ?array $cardViewIDs;
 
     #[ArrayShape([Sensor::class])]
     private array $sensorResult = [];
 
     public function __construct(
-        ?int $limit = null,
-        ?int $offset = null,
-        ?int $page = null,
         ?array $deviceIDs = null,
         ?array $deviceNames = null,
         ?array $groupIDs = null,
         ?array $cardViewIDs = null
     ) {
-        $this->limit = $limit;
-        $this->offset = $offset;
-        $this->page = $page;
         $this->deviceIDs = $deviceIDs;
         $this->deviceNames = $deviceNames;
         $this->groupIDs = $groupIDs;
         $this->cardViewIDs = $cardViewIDs;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function getOffset(): ?int
-    {
-        return $this->offset;
-    }
-
-    public function getPage(): ?int
-    {
-        return $this->page;
     }
 
     public function getDeviceIDs(): ?array

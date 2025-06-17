@@ -169,7 +169,7 @@ class SensorVoter extends Voter
         return true;
     }
 
-    private function canAddNewSensor(UserInterface $user, NewSensorDTO $newSensorDTO): bool
+    private function canAddNewSensor(UserInterface $user, Sensor $newSensor): bool
     {
         if (!$user instanceof User) {
             return false;
@@ -181,7 +181,7 @@ class SensorVoter extends Voter
 
         if (
             !in_array(
-                $newSensorDTO->getDevice()->getGroupObject()->getGroupID(),
+                $newSensor->getDevice()->getGroupObject()->getGroupID(),
                 $user->getAssociatedGroupIDs(), true
             )
         ) {

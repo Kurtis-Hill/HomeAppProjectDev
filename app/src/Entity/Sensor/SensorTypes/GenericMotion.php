@@ -22,7 +22,7 @@ class GenericMotion extends AbstractSensorType implements MotionSensorReadingTyp
         Motion::READING_TYPE,
     ];
 
-    public static function getReadingTypeName(): string
+    public static function getSensorTypeName(): string
     {
         return self::NAME;
     }

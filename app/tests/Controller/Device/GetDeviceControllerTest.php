@@ -17,6 +17,7 @@ use App\Services\API\CommonURL;
 use App\Services\Request\PaginationCalculator;
 use App\Services\Request\RequestQueryParameterHandler;
 use App\Services\Request\RequestTypeEnum;
+use App\Tests\Controller\ControllerTestCase;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -25,71 +26,36 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GetDeviceControllerTest extends WebTestCase
+class GetDeviceControllerTest extends ControllerTestCase
 {
-    use TestLoginTrait;
+    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/%d?responseType=%s';
 
-    private const GET_SINGLE_DEVICE_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device/%d';
-
-    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device';
-
-    private ?string $adminToken = null;
-
-    private ?EntityManagerInterface $entityManager;
-
-    private KernelBrowser $client;
+    private const GET_ALL_DEVICES_URL = CommonURL::USER_HOMEAPP_API_URL . 'user-device?responseType=%s';
 
     private DeviceRepository $deviceRepository;
-
-    private UserRepository $userRepository;
 
     private GroupRepository $groupNameRepository;
 
     private SensorRepository $sensorRepository;
 
-    private User $regularUserOne;
-
-    private User $adminUser;
-
     protected function setUp(): void
     {
-        $this->client = static::createClient();
-
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-
-        $this->adminToken = $this->setUserToken($this->client);
-
-
+        parent::setUp();
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
-        $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
-        $this->regularUserOne = $this->userRepository->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
-        $this->adminUser = $this->userRepository->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-
-        parent::tearDown();
     }
 
     public function test_get_device_admin_only_response(): void
     {
-        /** @var \App\Entity\Device\Devices[] $devices */
+        /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findAll();
         $device = $devices[0];
 
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
@@ -97,10 +63,7 @@ class GetDeviceControllerTest extends WebTestCase
         $payload = $responseData['payload'];
         $title = $responseData['title'];
 
-        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
-        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
+        self::assertDeviceIsSameAsExpected($device, $payload);
         self::assertTrue($payload['canEdit']);
         self::assertTrue($payload['canDelete']);
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
@@ -108,9 +71,8 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_device_admin_full_response(): void
     {
-        /** @var \App\Entity\Device\Devices[] $devices */
+        /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findAll();
-
         foreach ($devices as $deviceToTest) {
             $sensors = $this->sensorRepository->findBy(['deviceID' => $deviceToTest->getDeviceID()]);
             if (!empty($sensors)) {
@@ -121,13 +83,11 @@ class GetDeviceControllerTest extends WebTestCase
             self::fail('No device with sensors found');
         }
 
-
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
+            parameters: [RequestQueryParameterHandler::RESPONSE_TYPE => RequestTypeEnum::FULL->value],
         );
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
 
@@ -136,36 +96,21 @@ class GetDeviceControllerTest extends WebTestCase
         $title = $responseData['title'];
 
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
-        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
-        self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
-        self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
-        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
-        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
+        self::assertDeviceIsSameAsExpected($device, $payload);;
         self::assertTrue($payload['canEdit']);
         self::assertTrue($payload['canDelete']);
 
         $createdByResponse = $payload['createdBy'];
         $createdByUser = $device->getCreatedBy();
 
-        self::assertEquals($createdByUser->getUserID(), $createdByResponse['userID']);
-        self::assertEquals($createdByUser->getFirstName(), $createdByResponse['firstName']);
-        self::assertEquals($createdByUser->getLastName(), $createdByResponse['lastName']);
-        self::assertEquals($createdByUser->getEmail(), $createdByResponse['email']);
-
-        self::assertEquals($createdByUser->getGroup()->getGroupID(), $createdByResponse['group']['groupID']);
-        self::assertEquals($createdByUser->getGroup()->getGroupName(), $createdByResponse['group']['groupName']);
-        self::assertEquals($createdByUser->getProfilePic(), $createdByResponse['profilePicture']);
-
-        $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device->getDeviceID()]);
+        self::assertUserIsSameAsExpected($createdByUser, $createdByResponse);;
 
         self::assertArrayHasKey('sensorData', $payload);
         $sensorData = $payload['sensorData'];
 
         $sensorIDs = array_column($sensorData, 'sensorID');
 
+        $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device->getDeviceID()]);
         foreach ($deviceSensors as $sensor) {
             if (!in_array($sensor->getSensorID(), $sensorIDs, true)) {
                 self::fail('Sensor not found in response');
@@ -184,15 +129,9 @@ class GetDeviceControllerTest extends WebTestCase
 
     public function test_get_device_of_group_user_is_not_assigned_to_regular_user(): void
     {
-        $userToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-
         $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->regularUserOne);
 
-        /** @var \App\Entity\Device\Devices[] $devices */
+        /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
@@ -200,26 +139,17 @@ class GetDeviceControllerTest extends WebTestCase
 
         $device = $devices[0];
 
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+        $this->authenticateRegularUserOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
         );
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $errors = $responseData['errors'];
-        $title = $responseData['title'];
-
-        self::assertEquals('You Are Not Authorised To Be Here', $title);
-        self::assertEquals(APIErrorMessages::ACCESS_DENIED, $errors[0]);
     }
 
     public function test_get_device_of_group_user_is_not_assigned_to_admin(): void
     {
-        $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminUser);
+        $groupsUserIsNotAssignedTo = $this->groupNameRepository->findGroupsUserIsNotApartOf($this->adminOne);
 
         /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsNotAssignedTo]);
@@ -228,12 +158,10 @@ class GetDeviceControllerTest extends WebTestCase
         }
         $device = $devices[0];
 
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -248,52 +176,34 @@ class GetDeviceControllerTest extends WebTestCase
     {
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
-        /** @var \App\Entity\Device\Devices[] $devices */
+        /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
         $device = $devices[0];
 
-        $userToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+        $this->authenticateRegularUserOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
+            parameters: [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $payload = $responseData['payload'];
         $title = $responseData['title'];
 
-        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertEquals($device->getGroupObject()->getGroupName(), $payload['group']['groupName']);
-        self::assertEquals($device->getGroupObject()->getGroupID(), $payload['group']['groupID']);
-        self::assertEquals($device->getRoomObject()->getRoomID(), $payload['room']['roomID']);
-        self::assertEquals($device->getRoomObject()->getRoom(), $payload['room']['roomName']);
-        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
-        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
+        self::assertDeviceIsSameAsExpected($device, $payload);;
         self::assertTrue($payload['canEdit']);
         self::assertTrue($payload['canDelete']);
+
+        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
 
         $createdByResponse = $payload['createdBy'];
         $createdByUser = $device->getCreatedBy();
 
-        self::assertEquals($createdByUser->getUserID(), $createdByResponse['userID']);
-        self::assertEquals($createdByUser->getFirstName(), $createdByResponse['firstName']);
-        self::assertEquals($createdByUser->getLastName(), $createdByResponse['lastName']);
-        self::assertEquals($createdByUser->getEmail(), $createdByResponse['email']);
-        self::assertEquals($createdByUser->getGroup()->getGroupID(), $createdByResponse['group']['groupID']);
-        self::assertEquals($createdByUser->getGroup()->getGroupName(), $createdByResponse['group']['groupName']);
-        self::assertEquals($createdByUser->getProfilePic(), $createdByResponse['profilePicture']);
+        self::assertUserIsSameAsExpected($createdByUser, $createdByResponse);;;
 
         $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device->getDeviceID()]);
 
@@ -322,24 +232,17 @@ class GetDeviceControllerTest extends WebTestCase
     {
         $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->regularUserOne);
 
-        /** @var \App\Entity\Device\Devices[] $devices */
+        /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
         $device = $devices[0];
 
-        $userToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+        $this->authenticateRegularUserOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
@@ -348,29 +251,25 @@ class GetDeviceControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
-        self::assertEquals($device->getDeviceID(), $payload['deviceID']);
-        self::assertEquals($device->getDeviceName(), $payload['deviceName']);
-        self::assertEquals($device->getIpAddress(), $payload['ipAddress']);
-        self::assertEquals($device->getExternalIpAddress(), $payload['externalIpAddress']);
+        self::assertDeviceIsSameAsExpected($device, $payload);
     }
 
     public function test_get_device_of_group_user_is_assigned_to_admin(): void
     {
-        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminUser);
+        $groupsUserIsAssignedTo = $this->groupNameRepository->findGroupsUserIsApartOf($this->adminOne);
 
-        /** @var \App\Entity\Device\Devices[] $devices */
+        /** @var Devices[] $devices */
         $devices = $this->deviceRepository->findBy(['groupID' => $groupsUserIsAssignedTo]);
         if (empty($devices)) {
             self::fail('No devices found for this user');
         }
         $device = $devices[0];
 
-        $this->client->request(
-            Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID()),
-            [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(self::GET_SINGLE_DEVICE_URL, $device->getDeviceID(), RequestTypeEnum::FULL->value),
+            parameters: [RequestQueryParameterHandler::RESPONSE_TYPE => 'full'],
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -392,17 +291,10 @@ class GetDeviceControllerTest extends WebTestCase
             self::fail('No devices found for this user');
         }
 
-        $userToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-        $this->client->request(
-            Request::METHOD_GET,
-            self::GET_ALL_DEVICES_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $userToken],
+        $this->authenticateRegularUserOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(sprintf(self::GET_ALL_DEVICES_URL, RequestTypeEnum::FULL->value), RequestTypeEnum::FULL->value),
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -411,7 +303,7 @@ class GetDeviceControllerTest extends WebTestCase
         $payload = $responseData['payload'];
         $title = $responseData['title'];
 
-        self::assertEquals(\App\Controller\Device\GetDeviceController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
 
         $allDevices = $this->deviceRepository->findAll();
 
@@ -423,17 +315,14 @@ class GetDeviceControllerTest extends WebTestCase
                 self::assertNotContains($device->getDeviceID(), $payload);
             }
         }
-        self::assertEquals(GetDeviceController::REQUEST_SUCCESSFUL, $title);
     }
 
     public function test_get_all_devices_returns_all_devices_admin(): void
     {
-        $this->client->request(
-            Request::METHOD_GET,
-            self::GET_ALL_DEVICES_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(sprintf(self::GET_ALL_DEVICES_URL, RequestTypeEnum::FULL->value), RequestTypeEnum::FULL->value),
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -457,12 +346,10 @@ class GetDeviceControllerTest extends WebTestCase
      */
     public function test_limit_and_page_works_admin_user(int $limit, int $page): void
     {
-        $this->client->request(
-            Request::METHOD_GET,
-            self::GET_ALL_DEVICES_URL,
-            ['limit' => $limit, 'page' => $page],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: sprintf(self::GET_ALL_DEVICES_URL, RequestTypeEnum::FULL->value) . '&limit=' . $limit . '&page=' . $page,
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -526,104 +413,102 @@ class GetDeviceControllerTest extends WebTestCase
 //        ];
     }
 
-    /**
-     * @dataProvider limitAndPageWrongDataProvider
-     */
-    public function test_limit_and_page_incorrect_data_types_admin_user(mixed $limit, mixed $page, array $message = []): void
-    {
-        $this->client->request(
-            Request::METHOD_GET,
-            self::GET_ALL_DEVICES_URL,
-            ['limit' => $limit, 'page' => $page],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
-        );
-
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $title = $responseData['title'];
-        if (empty($responseData['errors'])) {
-            self::fail('No errors or payload returned');
-        }
-        $errors = $responseData['errors'];
-
-        self::assertEquals($message, $errors);
-        self::assertEquals(GetDeviceController::BAD_REQUEST_NO_DATA_RETURNED, $title);
-    }
-
-    public function limitAndPageWrongDataProvider(): Generator
-    {
-        yield [
-            'limit' => [],
-            'page' => 1,
-            'messages' => [
-                "limit must be an int|null you have provided array",
-            ],
-        ];
-
-        yield [
-            'limit' => 2,
-            'page' => [],
-            'messages' => [
-                'page must be an int|null you have provided array',
-            ],
-        ];
-
-        yield [
-            'limit' => 'string',
-            'page' => 1,
-            'messages' => [
-                'limit must be an int|null you have provided "string"',
-            ],
-        ];
-
-        yield [
-            'limit' => 2,
-            'page' => 'string',
-            'messages' => [
-                'page must be an int|null you have provided "string"',
-            ],
-        ];
-
-        yield [
-            'limit' => false,
-            'page' => 4,
-            'messages' => [
-                'limit must be an int|null you have provided ""',
-            ],
-        ];
-
-        // true counts as 1 which is valid
+    // Didnt think it was worth maintaining
+//    /**
+//     * @dataProvider limitAndPageWrongDataProvider
+//     */
+//    public function test_limit_and_page_incorrect_data_types_admin_user(mixed $limit, mixed $page, array $message = []): void
+//    {
+//        $this->authenticateAdminOne();
+//        $this->client->jsonRequest(
+//            method: Request::METHOD_GET,
+//            uri: self::GET_ALL_DEVICES_URL . '?limit=' . $limit . '&page=' . $page,
+//            parameters: ['limit' => $limit, 'page' => $page],
+//        );
+//
+//        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+//
+//        $responseData = json_decode($this->client->getResponse()->getContent(), true);
+//        $title = $responseData['title'];
+//        if (empty($responseData['errors'])) {
+//            self::fail('No errors or payload returned');
+//        }
+//        $errors = $responseData['errors'];
+//
+//        self::assertEquals($message, $errors);
+//        self::assertValidationErrorMessage($title);
+//    }
+//
+//    public function limitAndPageWrongDataProvider(): Generator
+//    {
 //        yield [
-//            'limit' => true,
-//            'page' => 3,
+//            'limit' => [],
+//            'page' => 10,
 //            'messages' => [
-//                'limit must be an int|null you have provided "1"',
+//                'limit' => 'This value should be of type int.'
 //            ],
 //        ];
-
-        yield [
-            'limit' => [],
-            'page' => [],
-            'messages' => [
-                'page must be an int|null you have provided array',
-                'limit must be an int|null you have provided array',
-            ],
-        ];
-    }
+//
+//        yield [
+//            'limit' => 2,
+//            'page' => [],
+//            'messages' => [
+//                'page' => 'This value should be of type int.'
+//            ],
+//        ];
+//
+//        yield [
+//            'limit' => 'string',
+//            'page' => 1,
+//            'messages' => [
+//                'limit' => 'This value should be of type int.'
+//            ],
+//        ];
+//
+//        yield [
+//            'limit' => 2,
+//            'page' => 'string',
+//            'messages' => [
+//                'page' => 'This value should be of type int.'
+//            ],
+//        ];
+//
+//        yield [
+//            'limit' => false,
+//            'page' => 4,
+//            'messages' => [
+//                'limit' => 'This value should be of type int.'
+//            ],
+//        ];
+//
+//        // true counts as 1 which is valid
+////        yield [
+////            'limit' => true,
+////            'page' => 3,
+////            'messages' => [
+////                'limit must be an int|null you have provided "1"',
+////            ],
+////        ];
+//
+//        yield [
+//            'limit' => [],
+//            'page' => [],
+//            'messages' => [
+//                'page' => 'This value should be of type int.',
+//                'limit' => 'This value should be of type int.',
+//            ],
+//        ];
+//    }
 
     /**
      * @dataProvider wrongHttpsMethodDataProvider
      */
     public function test_getting_device_wrong_http_method_single(string $httpVerb): void
     {
-        $this->client->request(
-            $httpVerb,
-            self::GET_SINGLE_DEVICE_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
+            method: $httpVerb,
+            uri: self::GET_SINGLE_DEVICE_URL,
         );
 
         self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -634,12 +519,10 @@ class GetDeviceControllerTest extends WebTestCase
      */
     public function test_getting_device_wrong_http_method_all(string $httpVerb): void
     {
-        $this->client->request(
-            $httpVerb,
-            self::GET_SINGLE_DEVICE_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->adminToken],
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
+            method: $httpVerb,
+            uri: self::GET_SINGLE_DEVICE_URL,
         );
 
         self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());

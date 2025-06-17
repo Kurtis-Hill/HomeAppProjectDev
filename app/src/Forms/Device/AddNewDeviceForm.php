@@ -6,7 +6,7 @@ use App\Entity\Device\Devices;
 use App\Entity\User\Group;
 use App\Entity\User\Room;
 use App\Services\API\APIErrorMessages;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

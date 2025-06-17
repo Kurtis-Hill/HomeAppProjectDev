@@ -3,8 +3,8 @@
 namespace App\Forms\User;
 
 use App\Entity\User\User;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
-use App\Services\CustomValidators\NotNumericConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NotNumericConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;

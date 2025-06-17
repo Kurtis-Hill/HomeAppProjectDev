@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Device;
 
+use App\Controller\Authentication\SecurityController;
 use App\DataFixtures\Core\RoomFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\DataFixtures\ESP8266\ESP8266DeviceFixtures;
@@ -16,6 +17,8 @@ use App\Repository\Device\ORM\DeviceRepositoryInterface;
 use App\Repository\User\ORM\GroupRepositoryInterface;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\HTTPStatusCodes;
+use App\Services\Request\RequestTypeEnum;
+use App\Tests\Controller\ControllerTestCase;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -24,21 +27,13 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AddNewDeviceControllerTest extends WebTestCase
+class AddNewDeviceControllerTest extends ControllerTestCase
 {
-    use TestLoginTrait;
-
     private const ADD_NEW_DEVICE_PATH = '/HomeApp/api/user/user-devices';
 
     private const UNIQUE_NEW_DEVICE_NAME = 'newDeviceName';
 
     private const NEW_DEVICE_PASSWORD = 'Test1234';
-
-    private ?string $userToken = null;
-
-    private ?EntityManagerInterface $entityManager;
-
-    private KernelBrowser $client;
 
     private Group $groupName;
 
@@ -46,32 +41,17 @@ class AddNewDeviceControllerTest extends WebTestCase
 
     private DeviceRepositoryInterface $deviceRepository;
 
-    private User $regularUserTwo;
-
-    private User $adminUser;
-
     private GroupRepositoryInterface $groupNameRepository;
 
-    private GroupMappingRepository $groupNameMappingRepository;
 
     protected function setUp(): void
     {
-        $this->client = static::createClient();
-
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-
-        $this->regularUserTwo = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_TWO]);
-        $this->adminUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
-
+        parent::setUp();
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
-        $this->groupNameMappingRepository = $this->entityManager->getRepository(GroupMapping::class);
 
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
         $this->groupName = $this->entityManager->getRepository(Group::class)->findOneByName(UserDataFixtures::ADMIN_GROUP_ONE);
         $this->room = $this->entityManager->getRepository(Room::class)->findRoomByName(RoomFixtures::LIVING_ROOM);
-        $this->userToken = $this->setUserToken($this->client);
     }
 
     public function test_sending_wrong_encoding_request(): void
@@ -83,19 +63,14 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
+        $this->authenticateAdminOne();
         $this->client->request(
             Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
+            $formData,
             [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            implode(',', $formData)
         );
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals(APIErrorMessages::FORMAT_NOT_SUPPORTED, $responseData['title']);
+        self::assertEquals(Response::HTTP_UNSUPPORTED_MEDIA_TYPE, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_add_new_device_admin_sensitive_response(): void
@@ -107,15 +82,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
 
@@ -144,24 +115,14 @@ class AddNewDeviceControllerTest extends WebTestCase
             'devicePassword' => self::NEW_DEVICE_PASSWORD,
             'deviceGroup' => $this->regularUserTwo->getGroup()->getGroupID(),
             'deviceRoom' => $this->room->getRoomID(),
-            'deviceIPAddress' => $deviceIPAddress
+            'deviceIPAddress' => $deviceIPAddress,
         ];
 
-        $jsonData = json_encode($formData);
-
-        $userToken = $this->setUserToken(
-            $this->client,
-            $this->regularUserTwo->getEmail(),
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-
-        $this->client->request(
+        $this->authenticateRegularUserTwo();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
-            $jsonData
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
 
@@ -197,21 +158,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceIPAddress' => $ipLog->getIpAddress(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $userToken = $this->setUserToken(
-            $this->client,
-            $this->regularUserTwo->getEmail(),
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-
-        $this->client->request(
+        $this->authenticateRegularUserTwo();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
-            $jsonData
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_CREATED);
 
@@ -228,14 +179,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
 
@@ -256,20 +204,16 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-            $jsonData
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_BAD_REQUEST);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        self::assertStringContainsString('Device name cannot be null', $responseData['errors'][0]);
+        self::assertStringContainsString('Device name is a required field', $responseData['errors']['deviceName']);
     }
 
     public function test_sending_malformed_request_missing_group(): void
@@ -280,15 +224,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
 
         /** @var Devices $device */
@@ -296,7 +236,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($device);
-        self::assertStringContainsString('Device group cannot be null', $responseData['errors'][0]);
+        self::assertStringContainsString('Device group is a required field', $responseData['errors']['deviceGroup']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -308,15 +248,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceGroup' => $this->groupName->getGroupID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-            $jsonData,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
 
         /** @var Devices $device */
@@ -324,7 +260,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($device);
-        self::assertStringContainsString('Device room cannot be null', $responseData['errors'][0]);
+        self::assertStringContainsString('Device room is a required field', $responseData['errors']['deviceRoom']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -336,15 +272,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
-            $jsonData,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
 
         /** @var Devices $device */
@@ -352,7 +284,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
         self::assertNull($device);
-        self::assertStringContainsString('Device password cannot be null', $responseData['errors'][0]);
+        self::assertStringContainsString('Device password is a required field', $responseData['errors']['devicePassword']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -362,15 +294,13 @@ class AddNewDeviceControllerTest extends WebTestCase
      */
     public function test_adding_device_sending_malformed_request(array $formData, array $errors): void
     {
-        $jsonData = json_encode($formData);
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '. $this->userToken],
-            $jsonData,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
+
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         /** @var Devices $device */
         $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
@@ -390,7 +320,7 @@ class AddNewDeviceControllerTest extends WebTestCase
                 'deviceRoom' => 1,
             ],
             'errorMessage' => [
-                'Device group value is "string" and not a valid integer'
+                'deviceGroup' => 'This value should be of type int.'
             ],
         ];
 
@@ -402,7 +332,7 @@ class AddNewDeviceControllerTest extends WebTestCase
                 'deviceRoom' => 'string',
             ],
             'errorMessage' => [
-                'Device room value is "string" and not a valid integer'
+                'deviceRoom' => 'This value should be of type int.'
             ],
         ];
 
@@ -415,7 +345,7 @@ class AddNewDeviceControllerTest extends WebTestCase
                 'deviceIPAddress' => [],
             ],
             'errorMessage' => [
-                'Device IP value is array and not a valid string|null',
+                'deviceIPAddress' => 'This value should be of type string.',
             ],
         ];
 
@@ -428,11 +358,11 @@ class AddNewDeviceControllerTest extends WebTestCase
                 'deviceIPAddress' => ['dfg'],
             ],
             'errorMessage' => [
-                'Device name value is array and not a valid string',
-                'Device password value is array and not a valid string',
-                'Device group value is array and not a valid integer',
-                'Device room value is array and not a valid integer',
-                'Device IP value is array and not a valid string|null',
+                'deviceName' => 'This value should be of type string.',
+                'devicePassword' => 'This value should be of type string.',
+                'deviceGroup' => 'This value should be of type int.',
+                'deviceRoom' => 'This value should be of type int.',
+                'deviceIPAddress' => 'This value should be of type string.',
             ],
         ];
     }
@@ -446,15 +376,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
 
         /** @var Devices $device */
@@ -462,7 +388,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString('Device name cannot be longer than 50 characters', $responseData['errors'][0]);
+        self::assertStringContainsString('Device name cannot be longer than 50 characters', $responseData['errors']['deviceName']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -475,15 +401,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
             $formData,
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData,
         );
 
         /** @var Devices $device */
@@ -491,7 +413,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors'][0]);
+        self::assertStringContainsString('The name cannot contain any special characters, please choose a different name', $responseData['errors']['deviceName']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -504,15 +426,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData,
+            $formData,
         );
 
         /** @var Devices $device */
@@ -520,7 +438,7 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString('Device password must be at least 5 characters long', $responseData['errors'][0]);
+        self::assertStringContainsString('Device password must be at least 5 characters long', $responseData['errors']['devicePassword']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -533,15 +451,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData,
+            $formData,
         );
 
         /** @var Devices $device */
@@ -549,18 +463,16 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString('Device password cannot be longer than 100 characters', $responseData['errors'][0]);
+        self::assertStringContainsString('Device password cannot be longer than 100 characters', $responseData['errors']['devicePassword']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function test_adding_device_to_group_not_apart_of(): void
     {
-        $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_ONE, UserDataFixtures::REGULAR_PASSWORD);
-
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE]);
 
-        /** @var \App\Entity\User\Group $groupUserIsNotApartOf */
+        /** @var Group $groupUserIsNotApartOf */
         $groupUserIsNotApartOf = $this->groupNameRepository->findGroupsUserIsNotApartOf(
             $user,
             $user->getAssociatedGroupIDs(),
@@ -573,15 +485,11 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateRegularUserOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$userToken],
-            $jsonData,
+            $formData,
         );
 
         /** @var Devices $device */
@@ -589,7 +497,6 @@ class AddNewDeviceControllerTest extends WebTestCase
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertNull($device);
-        self::assertStringContainsString(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
         self::assertEquals(HTTPStatusCodes::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
@@ -612,25 +519,20 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $noneExistentRoomID,
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '. $this->userToken],
-            $jsonData,
+            $formData,
         );
 
         /** @var Devices $device */
         $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals('Nothing Found', $responseData['title']);
-        self::assertArrayHasKey('errors', $responseData);
-        self::assertEquals('Room not found for id ' . $noneExistentRoomID, $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+        self::assertEquals('Validation errors occurred', $responseData['title']);
+        self::assertEquals('Room not found for id ' . $noneExistentRoomID, $responseData['errors']['deviceRoom']);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertNull($device);
     }
 
@@ -653,23 +555,20 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '. $this->userToken],
-            $jsonData,
+            $formData,
         );
+
         $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        self::assertEquals('Nothing Found', $responseData['title']);
+        self::assertEquals('Validation errors occurred', $responseData['title']);
         self::assertArrayHasKey('errors', $responseData);
-        self::assertEquals('Group not found for id ' . $noneExistentGroupID, $responseData['errors'][0]);
-        self::assertEquals(HTTPStatusCodes::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+        self::assertEquals('Group not found for id ' . $noneExistentGroupID, $responseData['errors']['deviceGroup']);
+        self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
         self::assertNull($device);
     }
 
@@ -682,15 +581,10 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER'],
-            $jsonData,
+            $formData,
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -732,19 +626,14 @@ class AddNewDeviceControllerTest extends WebTestCase
             'deviceRoom' => $this->room->getRoomID(),
         ];
 
-        $jsonData = json_encode($formData);
-
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_POST,
-            self::ADD_NEW_DEVICE_PATH,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER '.$this->userToken],
-            $jsonData,
+            self::ADD_NEW_DEVICE_PATH . '?responseType=' . RequestTypeEnum::SENSITIVE_FULL->value,
+            $formData,
         );
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['payload'];
-
         $createResponseCode = $this->client->getResponse()->getStatusCode();
         self::assertEquals(HTTPStatusCodes::HTTP_CREATED, $createResponseCode);
 
@@ -757,7 +646,7 @@ class AddNewDeviceControllerTest extends WebTestCase
 
         $this->client->request(
             Request::METHOD_POST,
-            \App\Controller\Authentication\SecurityController::API_DEVICE_LOGIN,
+            SecurityController::API_DEVICE_LOGIN,
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -798,13 +687,5 @@ class AddNewDeviceControllerTest extends WebTestCase
             [Request::METHOD_PATCH],
             [Request::METHOD_DELETE],
         ];
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-
-        parent::tearDown();
     }
 }

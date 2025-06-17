@@ -60,3 +60,6 @@ Rooms can be added by anybody but only devices registered to that users groups w
 
 <h2>Admin account<h2>
 Admin account email has to be changed first to a proper email address after that you are free to update any of the other user settings
+
+name of last good master commit:
+84223fd3f0a9639440cac0504db1017e79261dcc

@@ -2,10 +2,14 @@
 
 namespace App\DTOs\Sensor\Request\SensorUpdateDTO;
 
+use App\DTOs\Sensor\Request\CanAdjustSensorDeviceIDAndSensorNameInterface;
 use App\Entity\Sensor\Sensor;
+use App\CustomValidators\Device\DeviceIDExists;
+use App\CustomValidators\Sensor\UniqueSensorForDevice;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UpdateSensorDetailsRequestDTO
+#[UniqueSensorForDevice]
+class UpdateSensorDetailsRequestDTO implements CanAdjustSensorDeviceIDAndSensorNameInterface
 {
     #[
         Assert\Type(
@@ -13,15 +17,16 @@ class UpdateSensorDetailsRequestDTO
             message: "sensor name must be of type {{ type }} you provided {{ value }}"
         )
     ]
-    private mixed $sensorName = null;
+    private ?string $sensorName = null;
 
     #[
         Assert\Type(
             type: ['int', "null"],
             message: "device must be of type {{ type }} you provided {{ value }}"
-        )
+        ),
+        DeviceIDExists,
     ]
-    private mixed $deviceID = null;
+    private ?int $deviceID = null;
 
     #[
         Assert\Range(
@@ -31,17 +36,17 @@ class UpdateSensorDetailsRequestDTO
             min: 0,
         ),
     ]
-    private mixed $pinNumber = null;
+    private ?int $pinNumber = null;
 
     #[
+        Assert\Type(type: 'integer', message: 'readingInterval must be a number'),
         Assert\Range(
             notInRangeMessage: "readingInterval must be greater than {{ min }}",
-            minMessage: "readingInterval must be greater than " . Sensor::MIN_READING_INTERVAL,
             invalidMessage: "readingInterval must be a number",
-            min: Sensor::MIN_READING_INTERVAL,
+            min: Sensor::MIN_READING_INTERVAL
         ),
     ]
-    private mixed $readingInterval = null;
+    private ?int $readingInterval = null;
 
     public function setSensorName(mixed $sensorName): void
     {
@@ -53,12 +58,12 @@ class UpdateSensorDetailsRequestDTO
         $this->deviceID = $deviceID;
     }
 
-    public function getSensorName(): mixed
+    public function getSensorName(): ?string
     {
         return $this->sensorName;
     }
 
-    public function getDeviceID(): mixed
+    public function getDeviceID(): ?int
     {
         return $this->deviceID;
     }
@@ -68,7 +73,7 @@ class UpdateSensorDetailsRequestDTO
         $this->pinNumber = $pinNumber;
     }
 
-    public function getPinNumber(): mixed
+    public function getPinNumber(): ?int
     {
         return $this->pinNumber;
     }
@@ -78,7 +83,7 @@ class UpdateSensorDetailsRequestDTO
         $this->readingInterval = $readingInterval;
     }
 
-    public function getReadingInterval(): mixed
+    public function getReadingInterval(): ?int
     {
         return $this->readingInterval;
     }

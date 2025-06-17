@@ -3,7 +3,7 @@
 namespace App\Entity\Sensor\ConstantRecording;
 
 use App\Repository\Sensor\ConstRecord\ORM\ConstantlyRecordHumidRepository;
-use App\Services\CustomValidators\Sensor\SensorDataValidators\HumidityConstraint;
+use App\CustomValidators\Sensor\SensorDataValidators\HumidityConstraint;
 use Doctrine\ORM\Mapping as ORM;
 
 #[

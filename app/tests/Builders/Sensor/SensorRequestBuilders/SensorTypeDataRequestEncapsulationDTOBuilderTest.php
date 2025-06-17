@@ -75,42 +75,42 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
         }
 
         $singleSensor = $sensorsToUser[0];
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === GenericRelay::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === GenericRelay::NAME) {
             $result = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 relay: $singleSensorUpdateRequestDTOs,
             );
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === GenericMotion::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === GenericMotion::NAME) {
             $result = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 motion: $singleSensorUpdateRequestDTOs,
             );
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Dht::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Dht::NAME) {
             $result = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 dht: $singleSensorUpdateRequestDTOs,
             );
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Soil::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Soil::NAME) {
             $result = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 soil: $singleSensorUpdateRequestDTOs,
             );
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Dallas::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Dallas::NAME) {
             $result = SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 dallas: $singleSensorUpdateRequestDTOs,
             );
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Bmp::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Bmp::NAME) {
             $result = \App\Builders\Sensor\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 bmp: $singleSensorUpdateRequestDTOs,
             );
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === LDR::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === LDR::NAME) {
             $result = \App\Builders\Sensor\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 ldr: $singleSensorUpdateRequestDTOs,
             );
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Sht::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Sht::NAME) {
             $result = \App\Builders\Sensor\Request\SensorRequestBuilders\SensorTypeDataRequestEncapsulationDTOBuilder::buildSensorTypeDataRequestDTO(
                 sht: $singleSensorUpdateRequestDTOs,
             );
@@ -137,35 +137,35 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
             $context
         );
 
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === GenericRelay::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === GenericRelay::NAME) {
             $response = $normalizedResponse['relay'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === GenericMotion::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === GenericMotion::NAME) {
             $response = $normalizedResponse['motion'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Dht::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Dht::NAME) {
             $response = $normalizedResponse['dht'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Soil::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Soil::NAME) {
             $response = $normalizedResponse['soil'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Dallas::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Dallas::NAME) {
             $response = $normalizedResponse['dallas'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Bmp::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Bmp::NAME) {
             $response = $normalizedResponse['bmp'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === LDR::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === LDR::NAME) {
             $response = $normalizedResponse['ldr'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);
         }
-        if ($singleSensor->getSensorTypeObject()::getReadingTypeName() === Sht::NAME) {
+        if ($singleSensor->getSensorTypeObject()::getSensorTypeName() === Sht::NAME) {
             $response = $normalizedResponse['sht'];
             self::assertCount(count($singleSensorUpdateRequestDTOs), $response);
         }

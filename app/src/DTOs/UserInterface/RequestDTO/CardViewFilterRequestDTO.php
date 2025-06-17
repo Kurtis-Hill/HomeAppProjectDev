@@ -2,8 +2,8 @@
 
 namespace App\DTOs\UserInterface\RequestDTO;
 
-use App\Services\CustomValidators\Sensor\SensorRequestValidators\ReadingTypeRequestConstraint;
-use App\Services\CustomValidators\Sensor\SensorRequestValidators\SensorTypeRequestConstraint;
+use App\CustomValidators\Sensor\SensorRequestValidators\ReadingTypeRequestConstraint;
+use App\CustomValidators\Sensor\SensorRequestValidators\SensorTypeRequestConstraint;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CardViewFilterRequestDTO

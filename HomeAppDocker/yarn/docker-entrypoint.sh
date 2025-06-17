@@ -13,7 +13,6 @@ yarn config set network-timeout 1200000 -g
 if [ "${APP_ENV}" = 'prod' ]; then
   echo "production environment installing..."
   yarn install --production --check-files
-  yarn update-browserslist-db@latest
   # yarn add @symfony/webpack-encore
   echo "building assets..."
   yarn build
@@ -31,5 +30,6 @@ if [ "${APP_ENV}" = 'dev' ]; then
 #    yarn encore dev-server --hot  --disable-host-check --port ${HTTPS_APP_PORT}
   echo "... encore dev server began"
 fi
+npx update-browserslist-db@latest
 
 exec "$@"

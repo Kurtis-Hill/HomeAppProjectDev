@@ -66,15 +66,15 @@ class SensorFilter
         $allSensorTypes = $this->sensorTypeRepository->findAll();
         foreach ($allSensorTypes as $sensorType) {
             try {
-                $queryTypeBuilder = $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder($sensorType::getReadingTypeName());
-                if (in_array($sensorType::getReadingTypeName(), $sensorTypesToFilterOut, true)) {
+                $queryTypeBuilder = $this->sensorTypeQueryFactory->getSensorTypeQueryDTOBuilder($sensorType::getSensorTypeName());
+                if (in_array($sensorType::getSensorTypeName(), $sensorTypesToFilterOut, true)) {
                     $sensorTypesNotToQuery[] = $queryTypeBuilder->buildSensorTypeQueryExcludeDTO($sensorType->getSensorTypeID());
                 } else {
                     $sensorTypesToQuery[] = $queryTypeBuilder->buildSensorTypeQueryJoinDTO();
                 }
             } catch (SensorTypeBuilderFailureException) {
                 $this->logger->error(
-                    'failed to retrieve query dto builder for' . $sensorType::getReadingTypeName()
+                    'failed to retrieve query dto builder for' . $sensorType::getSensorTypeName()
                 );
             }
         }

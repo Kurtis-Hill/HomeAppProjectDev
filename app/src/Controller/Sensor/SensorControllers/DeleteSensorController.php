@@ -38,8 +38,11 @@ class DeleteSensorController extends AbstractController
     }
 
     #[Route('/{sensorID}', name: 'delete-sensor', methods: [Request::METHOD_DELETE])]
-    public function deleteSensor(Sensor $sensor, Request $request, SensorDeletionInterface $sensorDeletionHandler): Response
-    {
+    public function deleteSensor(
+        Sensor $sensor,
+        Request $request,
+        SensorDeletionInterface $sensorDeletionHandler
+    ): Response {
         try {
             $this->denyAccessUnlessGranted(SensorVoter::DELETE_SENSOR, $sensor);
         } catch (AccessDeniedException) {

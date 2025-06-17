@@ -61,7 +61,7 @@ class Bmp extends AbstractSensorType implements StandardSensorTypeInterface, Tem
         return Latitude::LOW_READING;
     }
 
-    public static function getReadingTypeName(): string
+    public static function getSensorTypeName(): string
     {
         return self::NAME;
     }

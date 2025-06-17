@@ -1,10 +1,11 @@
 import axios, {AxiosResponse} from 'axios';
 
 import {apiURL} from "../../../Common/URLs/CommonURLs";
+import {ResponseTypeEnum} from "../../../Common/Response/APIResponseEnum";
 
 export async function addNewSensorRequest(newSensorData: NewSensorInterface): Promise<AxiosResponse> {
     return await axios.post(
-        `${apiURL}sensor`,
+        `${apiURL}sensor?responseType=${ResponseTypeEnum.ResponseTypeFull}`,
         newSensorData,
     );
 }

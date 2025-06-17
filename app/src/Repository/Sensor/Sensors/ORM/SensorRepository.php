@@ -2,6 +2,7 @@
 
 namespace App\Repository\Sensor\Sensors\ORM;
 
+use App\DTOs\RequestDTO;
 use App\DTOs\Sensor\Internal\Sensor\GetSensorQueryDTO;
 use App\DTOs\UserInterface\Internal\CardDataQueryDTO\JoinQueryDTO;
 use App\Entity\Device\Devices;
@@ -18,6 +19,7 @@ use App\Entity\Sensor\SensorTypes\Interfaces\SensorTypeInterface;
 use App\Entity\Sensor\SensorTypes\Soil;
 use App\Entity\UserInterface\Card\CardView;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Services\Request\PaginationCalculator;
 use App\Traits\QueryJoinBuilderTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -215,7 +217,7 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
     }
 
     #[ArrayShape([Sensor::class])]
-    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO): array
+    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO, RequestDTO $requestDTO): array
     {
         $qb = $this->createQueryBuilder(Sensor::ALIAS);
 
@@ -270,8 +272,14 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 );
         }
 
-        $qb->setFirstResult($getSensorQueryDTO->getOffset())
-            ->setMaxResults($getSensorQueryDTO->getLimit());
+        $qb
+            ->setFirstResult(
+                PaginationCalculator::calculateOffset(
+                    $requestDTO->getLimit(),
+                    $requestDTO->getPage()
+                )
+            )
+            ->setMaxResults($requestDTO->getLimit());
         return $qb->getQuery()->getResult();
     }
 

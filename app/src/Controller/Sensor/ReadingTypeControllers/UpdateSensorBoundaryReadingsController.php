@@ -29,8 +29,9 @@ use Doctrine\ORM\OptimisticLockException;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -59,6 +60,8 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
 
     #[Route('{id}/boundary-update', name: 'boundary-update', methods: [Request::METHOD_PUT])]
     public function updateSensorReadingBoundary(
+        #[MapRequestPayload]
+        UpdateSensorReadingBoundaryRequestDTO $updateBoundaryReadingRequestDTO,
         Sensor $sensorObject,
         Request $request,
         ValidatorInterface $validator,
@@ -66,24 +69,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         SensorRepositoryInterface $sensorRepository,
         SensorReadingUpdateFactory $sensorUpdateFactory,
         ReadingTypeResponseBuilderFactory $readingTypeResponseBuilderFactory,
-    ): Response {
-        $updateBoundaryReadingRequestDTO = new UpdateSensorReadingBoundaryRequestDTO();
-        try {
-            $this->deserializeRequest(
-                $request->getContent(),
-                UpdateSensorReadingBoundaryRequestDTO::class,
-                'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $updateBoundaryReadingRequestDTO]
-            );
-        } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
-        }
-
-        $requestDTOValidationErrors = $validator->validate($updateBoundaryReadingRequestDTO);
-        if ($this->checkIfErrorsArePresent($requestDTOValidationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($requestDTOValidationErrors));
-        }
-
+    ): JsonResponse {
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
                 $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),
@@ -142,7 +128,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 $validationError = $updateSensorBoundaryReadingsService->processBoundaryDataDTO(
                     $updateBoundaryDataDTO,
                     $sensorReadingTypeObject,
-                    $sensorObject->getSensorTypeObject()::getReadingTypeName(),
+                    $sensorObject->getSensorTypeObject()::getSensorTypeName(),
                 );
             } catch (SensorReadingUpdateFactoryException|ReadingTypeNotExpectedException|ReadingTypeNotSupportedException $exception) {
                 $sensorProcessingErrors[] = $exception->getMessage();

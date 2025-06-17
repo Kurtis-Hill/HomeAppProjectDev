@@ -11,7 +11,7 @@ class ConstRecordPersistenceDTOBuilder
     public static function buildConstRecordElasticPersistenceDTO(ConstantlyRecordEntityInterface $outOfBoundsEntity): ConstRecordElasticPersistenceDTO
     {
         return new ConstRecordElasticPersistenceDTO(
-            $outOfBoundsEntity->getSensorReadingObject()->getSensorID(),
+            $outOfBoundsEntity->getSensorReadingObject()->getSensor()->getSensorID(),
             $outOfBoundsEntity->getSensorReading(),
             $outOfBoundsEntity->getCreatedAt(),
         );

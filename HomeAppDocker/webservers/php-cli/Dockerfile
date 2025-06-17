@@ -6,7 +6,7 @@ RUN apt-get update -y && apt-get install -y \
 git \
 unzip \
 zip \
-supervisor \
+supervisor
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -18,7 +18,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache pcntl-7.4 sockets http apcu
+RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache sockets http apcu
 
 COPY ./auth/auth.json /root/.composer/auth.json
 
