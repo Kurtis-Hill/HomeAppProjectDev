@@ -14,7 +14,7 @@ RUN update-ca-certificates
 RUN pecl install xdebug
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache pcntl-7.4 sockets http apcu
+RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache sockets http apcu
 
 COPY ./apache/conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
