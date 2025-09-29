@@ -75,7 +75,7 @@ class RequestDTO
 
     public function getLimit(): int
     {
-        return $this->limit;
+        return $this->limit ?? 10;
     }
 
     public function setLimit(mixed $limit): void
