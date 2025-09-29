@@ -29,9 +29,12 @@ class ElasticLogIndexCommand extends Command
     ])]
     private array $indexMappings;
 
-    public function __construct(string $name = null, array $indexMappings = [])
+    private bool $elasticOverwrite;
+
+    public function __construct(string $name = null, array $indexMappings = [], bool $elasticOverwrite = false)
     {
         $this->indexMappings = $indexMappings;
+        $this->elasticOverwrite = $elasticOverwrite;
 
         parent::__construct($name);
     }
@@ -50,6 +53,11 @@ class ElasticLogIndexCommand extends Command
             'Creating index...'
         ]);
 
+        if ($this->elasticOverwrite === false) {
+            $output->writeln('<info>Index overwrite is disabled in configuration. Exiting.</info>');
+
+            return Command::SUCCESS;
+        }
         $force = $input->getArgument('force') === 'f' || $input->getArgument('force') === 'y';
         foreach ($this->indexMappings as $mappingProperties) {
             /** @var Index $index */

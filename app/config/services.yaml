@@ -11,6 +11,7 @@ services:
         bind:
           string $projectDir: '%kernel.project_dir%'
           string $env: '%env(string:APP_ENV)%'
+          bool $elasticOverwrite: '%env(bool:HEAVY_WRITES_ELASTIC_ONLY)%'
 
     Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
       arguments:
