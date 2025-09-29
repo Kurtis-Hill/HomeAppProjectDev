@@ -1,25 +1,25 @@
-version: '2.2'
-
 services:
   create_certs:
-    container_name: create_certs
-    # @TODO new elastic versions use different directories could sort 
-    # image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
-    env_file:
-      -  '../../.env'
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    user: "0"
     command: >
       bash -c '
+        if [[ ! -f /certs/ca.p12 ]]; then
+          bin/elasticsearch-certutil ca --out /certs/ca.p12 --pass "${CA_PASSWORD}";
+        fi
         if [[ ! -f /certs/bundle.zip ]]; then
-          bin/elasticsearch-certutil cert --silent --pem --in config/certificates/instances.yml -out /certs/bundle.zip;
+          bin/elasticsearch-certutil cert --silent --in config/certificates/instances.yml --ca /certs/ca.p12 --ca-pass "${CA_PASSWORD}" -out /certs/bundle.zip;
           unzip /certs/bundle.zip -d /certs;
-        else 
-          echo  "Bundle exists"
-        fi;
+        fi
         chown -R 1000:0 /certs
       '
-    user: "0"
-    working_dir: /usr/share/elasticsearch
-    volumes: ['certs:/certs', '.:/usr/share/elasticsearch/config/certificates']
 
-volumes: {"certs"}
+    environment:
+      CA_PASSWORD: ''
+
+    volumes:
+      - certs:/certs
+      - .:/usr/share/elasticsearch/config/certificates
+
+volumes:
+    certs:

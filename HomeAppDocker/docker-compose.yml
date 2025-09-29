@@ -147,14 +147,13 @@ services:
     environment:
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
-    volumes:
-        - /etc/localtime:/etc/localtime:ro
     command:
-        - /bin/sh
-        - -c
-        - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}" && sysctl vm.overcommit_memory=1
-        - /etc/localtime:/etc/localtime:ro
-        - /etc/timezone:/etc/timezone:ro
+      - /bin/sh
+      - -c
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
@@ -166,24 +165,29 @@ services:
       - ${ELASTICSEARCH_EXTERNAL_PORT}:9200
     environment:
       - node.name=es01
-      - discovery.seed_hosts=es01,es02
+      - discovery.seed_hosts=es02
       - cluster.initial_master_nodes=es01,es02
-      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD 
-      - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
-      - xpack.license.self_generated.type=basic 
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=$CERTS_DIR/es01/es01.key
-      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.http.ssl.certificate=$CERTS_DIR/es01/es01.crt
+      - cluster.name=docker-cluster
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g -Dcom.sun.management.jmxremote=false -XX:+UseContainerSupport"
+      - xpack.license.self_generated.type=basic
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
       - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.verification_mode=certificate
-      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es01/es01.crt
-      - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
-    volumes: ['data01:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
+      - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/certs/es01/es01.p12
+      - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/certs/es01/es01.p12
+      - xpack.security.transport.ssl.keystore.password=''
+      - xpack.security.transport.ssl.truststore.password=''
+    volumes:
+      - 'data01:/usr/share/elasticsearch/data'
+      - 'certs:/usr/share/elasticsearch/config/certs:ro'
+
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     healthcheck:
-      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200/_cluster/health?wait_for_status=green&timeout=50s >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      test: curl -s -u "elastic:$ELASTIC_PASSWORD" http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s || exit 1
       interval: 15s
       timeout: 10s
       retries: 5
@@ -196,27 +200,41 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
       - node.name=es02
-      - discovery.seed_hosts=es01,es02
+      - cluster.name=docker-cluster
+      - discovery.seed_hosts=es01
       - cluster.initial_master_nodes=es01,es02
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
-      - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g -Dcom.sun.management.jmxremote=false -XX:+UseContainerSupport"
       - xpack.license.self_generated.type=basic
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=$CERTS_DIR/es02/es02.key
-      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.http.ssl.certificate=$CERTS_DIR/es02/es02.crt
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
       - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.verification_mode=certificate
-      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es02/es02.crt
-      - xpack.security.transport.ssl.key=$CERTS_DIR/es02/es02.key
-    volumes: ['data02:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
+      - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/certs/es02/es02.p12
+      - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/certs/es02/es02.p12
+      - xpack.security.transport.ssl.keystore.password=''
+      - xpack.security.transport.ssl.truststore.password=''
+    volumes:
+      - 'data02:/usr/share/elasticsearch/data'
+      - 'certs:/usr/share/elasticsearch/config/certs:ro'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: curl -s -u "elastic:$ELASTIC_PASSWORD" http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      - es01
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
 
-volumes: {"data01", "data02", "certs"}
+volumes:
+  data01:
+  data02:
+  certs:
 
 networks:
   HomeAppProjectNetwork:
