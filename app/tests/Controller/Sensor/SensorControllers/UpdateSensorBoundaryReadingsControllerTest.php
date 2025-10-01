@@ -1499,7 +1499,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     /**
      * @dataProvider sendingMissingDataSetsDataProvider
      */
-//    #[DataProvider('sendingMissingDataSetsDataProvider')]
     public function test_sending_empty_sensor_data(array $sensorDataToSend): void
     {
         $sensorTypeRepository = $this->entityManager->getRepository(Dht::class);
@@ -1529,7 +1528,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //        );
 
 //        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $this->client->getResponse()->getStatusCode());
 //        self::assertEquals('sensorData cannot be empty', $responseData['errors'][0]);
     }
 
