@@ -6,6 +6,7 @@ use App\Builders\Sensor\Internal\AMPQMessages\CurrentReadingDTOBuilders\BoolCurr
 use App\Builders\Sensor\Internal\AMPQMessages\CurrentReadingDTOBuilders\UpdateSensorCurrentReadingTransportDTOBuilder;
 use App\Builders\Sensor\Request\SensorDataDTOBuilders\SensorDataCurrentReadingRequestDTOBuilder;
 use App\DTOs\Sensor\Request\CurrentReadingRequest\ReadingTypes\BoolCurrentReadingUpdateRequestDTO;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateRequestDTO;
 use App\DTOs\Sensor\Request\SensorUpdateRequestDTO;
 use App\Entity\Sensor\SensorTypes\Interfaces\RelayReadingTypeInterface;
 use App\Exceptions\Sensor\ReadingTypeNotFoundException;
@@ -24,10 +25,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
@@ -52,38 +52,18 @@ class SwitchSensorController extends AbstractController
      */
     #[Route('switch-sensor', name: 'switch-sensor', methods: [Request::METHOD_POST])]
     public function switchSensorAction(
-        Request $request,
         ValidatorInterface $validator,
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequestHandler,
         SensorRepositoryInterface $sensorRepository,
         UpdateSensorCurrentReadingTransportDTOBuilder $updateSensorCurrentReadingDTOBuilder,
         EntityManagerInterface $entityManager,
         RelayRepository $relayRepository,
+        #[MapRequestPayload]
+        SensorUpdateRequestDTO $sensorUpdateRequestDTO,
     ): JsonResponse {
-        $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
-        try {
-            $this->deserializeRequest(
-                $request->getContent(),
-                SensorUpdateRequestDTO::class,
-                'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
-//                true,
-            );
-        } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
-        }
-
-        $validationErrors = $validator->validate(
-            value: $sensorUpdateRequestDTO,
-//            groups: CurrentReadingSensorDataRequestHandlerInterface::UPDATE_CURRENT_READING
-        );
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-        }
-
         $individualSensorRequestValidationErrors = [];
         foreach ($sensorUpdateRequestDTO->getSensorData() as $sensorUpdateData) {
-            if (!is_array($sensorUpdateData)) {
+            if (!$sensorUpdateData instanceof SensorDataCurrentReadingUpdateRequestDTO ) {
                 $individualSensorRequestValidationErrors = [
                     SensorDataCurrentReadingUpdateBuilderException::NOT_ARRAY_ERROR_MESSAGE,
                     ...$individualSensorRequestValidationErrors,
@@ -91,7 +71,7 @@ class SwitchSensorController extends AbstractController
                 continue;
             }
 
-            if ($sensorUpdateData['sensorName'] === null) {
+            if ($sensorUpdateData->getSensorName() === null) {
                 $individualSensorRequestValidationErrors = [
                     sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'sensorName'),
                     ...$individualSensorRequestValidationErrors,
@@ -99,12 +79,12 @@ class SwitchSensorController extends AbstractController
                 continue;
             }
 
-            $sensor = $sensorRepository->findOneBy(['sensorName' => $sensorUpdateData['sensorName']]);
+            $sensor = $sensorRepository->findOneBy(['sensorName' => $sensorUpdateData->getSensorName()]);
 
             $sensorDataCurrentReadingUpdateRequestDTO = SensorDataCurrentReadingRequestDTOBuilder::buildSensorDataCurrentReadingUpdateRequestDTO(
-                sensorName: $sensorUpdateData['sensorName'],
-                sensorType: $sensor?->getSensorTypeObject()::getReadingTypeName(),
-                currentReadings: $sensorUpdateData['currentReadings'] ?? null,
+                sensorName: $sensorUpdateData->getSensorName(),
+                sensorType: $sensor?->getSensorTypeObject()::getSensorTypeName(),
+                currentReadings: $sensorUpdateData->getCurrentReadings() ?? null,
             );
 
             $sensorDataPassedValidationErrors = $validator->validate(

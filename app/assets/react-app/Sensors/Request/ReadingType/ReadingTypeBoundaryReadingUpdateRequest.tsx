@@ -1,17 +1,19 @@
-import axios, { AxiosResponse } from 'axios';
-import { apiURL } from '../../../Common/URLs/CommonURLs';
-import { StandardSensorConstRecord, StandardSensorReadingValue } from '../../Types/StandardSensor/SensorReadingResponseTypes';
+import axios, {AxiosResponse} from 'axios';
+import {apiURL} from '../../../Common/URLs/CommonURLs';
+import {
+    StandardSensorConstRecord,
+    StandardSensorReadingValue
+} from '../../Types/StandardSensor/SensorReadingResponseTypes';
+import {ResponseTypeEnum} from "../../../Common/Response/APIResponseEnum";
 
 export async function readingTypeBoundaryReadingUpdateRequest(
     sensorID: number,
     sensorBoundaryUpdates: StandardSensorBoundaryReadingUpdateInputInterface[]
 ): Promise<AxiosResponse> {
-    const sensorReadingUpdateRequestResponse: AxiosResponse = await axios.put(
-        `${apiURL}sensor/${sensorID}/boundary-update`,
-        {'sensorData' : sensorBoundaryUpdates},
+    return await axios.put(
+        `${apiURL}sensor/${sensorID}/boundary-update?responseType=${ResponseTypeEnum.ResponseTypeFull}`,
+        {'sensorData': sensorBoundaryUpdates},
     );
-
-    return sensorReadingUpdateRequestResponse;
 }
 
 export interface StandardSensorBoundaryReadingUpdateInputInterface {

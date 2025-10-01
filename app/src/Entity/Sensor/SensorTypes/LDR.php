@@ -40,7 +40,7 @@ class LDR extends AbstractSensorType implements StandardSensorTypeInterface, Ana
         return self::LOW_READING;
     }
 
-    public static function getReadingTypeName(): string
+    public static function getSensorTypeName(): string
     {
         return self::NAME;
     }

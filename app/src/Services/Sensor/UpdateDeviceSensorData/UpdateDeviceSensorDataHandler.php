@@ -51,7 +51,7 @@ readonly class UpdateDeviceSensorDataHandler
                 throw new SensorNotFoundException(sprintf('Error processing sensor data to upload sensor not found, sensor name: %s', $sensorUpdateRequestDTO->getSensorName()));
             }
 
-            $sensorTypeName = $sensor->getSensorTypeObject()::getReadingTypeName();
+            $sensorTypeName = $sensor->getSensorTypeObject()::getSensorTypeName();
 
             $sensorData[$sensorTypeName][] = $sensorUpdateRequestDTO;
         }

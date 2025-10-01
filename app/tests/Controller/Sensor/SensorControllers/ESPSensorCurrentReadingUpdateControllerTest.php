@@ -21,6 +21,7 @@ use App\Entity\Sensor\SensorTypes\Soil;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\HTTPStatusCodes;
 use App\Services\Sensor\SensorReadingUpdate\CurrentReading\CurrentReadingSensorDataRequestHandler;
+use App\Tests\Controller\ControllerTestCase;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -29,39 +30,26 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
+class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
 {
-    use TestLoginTrait;
-
     private const ESP_SENSOR_UPDATE = '/HomeApp/api/device/esp/update/current-reading';
-
-    private KernelBrowser $client;
-
-    private ?EntityManagerInterface $entityManager;
-
-    private ?string $deviceToken = null;
 
     protected function setUp(): void
     {
-        $this->client = static::createClient();
-
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-
-        $this->deviceToken = $this->setDeviceToken(
-            $this->client,
-            ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'],
-            ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password']
-        );
+        parent::setUp();
+//        $this->deviceToken = $this->setDeviceToken(
+//            $this->client,
+//            ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['referenceName'],
+//            ESP8266DeviceFixtures::ADMIN_TEST_DEVICE['password']
+//        );
     }
 
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
-    }
+//    protected function tearDown(): void
+//    {
+//        $this->entityManager->close();
+//        $this->entityManager = null;
+//        parent::tearDown();
+//    }
 
     /**
      * @dataProvider successfulUpdateRequestDataProvider
@@ -71,15 +59,12 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         array $message,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData);
 
-        $this->client->request(
+        $this->authenticateTestDevice();
+        $this->client->jsonRequest(
             Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData
         );
 
         $requestResponse = $this->client->getResponse();
@@ -352,15 +337,12 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         array $errors,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
 
-        $this->client->request(
+        $this->authenticateTestDevice();
+        $this->client->jsonRequest(
             Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData
         );
 
         $requestResponse = $this->client->getResponse();
@@ -416,15 +398,12 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         array $payload,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
 
-        $this->client->request(
+        $this->authenticateTestDevice();
+        $this->client->jsonRequest(
             Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData
         );
 
         $requestResponse = $this->client->getResponse();
@@ -627,15 +606,12 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         array $errors,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
 
-        $this->client->request(
+        $this->authenticateTestDevice();
+        $this->client->jsonRequest(
             Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData
         );
 
         $requestResponse = $this->client->getResponse();
@@ -818,15 +794,12 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         int $responseCode,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
 
-        $this->client->request(
+        $this->authenticateTestDevice();
+        $this->client->jsonRequest(
             Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData
         );
 
         $requestResponse = $this->client->getResponse();
@@ -946,15 +919,12 @@ class ESPSensorCurrentReadingUpdateControllerTest extends WebTestCase
         array $errors,
     ): void {
         $sendData['sensorData'] = $sensorData;
-        $jsonData = json_encode($sendData, JSON_THROW_ON_ERROR);
 
-        $this->client->request(
+        $this->authenticateTestDevice();
+        $this->client->jsonRequest(
             Request::METHOD_PUT,
             self::ESP_SENSOR_UPDATE,
-            [],
-            [],
-            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->deviceToken, 'CONTENT_TYPE' => 'application/json'],
-            $jsonData
+            $sendData
         );
 
         $requestResponse = $this->client->getResponse();

@@ -4,6 +4,8 @@ namespace App\Controller\Sensor\SensorControllers;
 
 use App\Builders\Sensor\Request\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\DTOs\RequestDTO;
+use App\DTOs\Sensor\Internal\Sensor\GetSensorQueryDTO;
 use App\DTOs\Sensor\Request\GetSensorRequestDTO\GetSensorRequestDTO;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
@@ -19,6 +21,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -31,71 +35,23 @@ class GetSensorController extends AbstractController
 
     public const GET_SENSOR_DEFAULT_LIMIT = 100;
 
-    private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
-
     #[Route('', name: 'get-all-sensors', methods: [Request::METHOD_GET])]
     public function getAllSensors(
-        Request $request,
-        ValidatorInterface $validator,
         SensorResponseDTOBuilder $sensorResponseDTOBuilder,
         SensorUserFilter $sensorUserFilter,
         SensorRepositoryInterface $sensorRepository,
+        #[MapQueryString]
+        GetSensorQueryDTO $getSensorQueryDTO,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
     ): JsonResponse {
-        $responseType = $request->query->get(RequestQueryParameterHandler::RESPONSE_TYPE);
-        $limit = $request->query->get('limit', self::GET_SENSOR_DEFAULT_LIMIT);
-        $page = $request->query->get('page', 1);
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $responseType,
-                $page,
-                $limit,
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
-        $deviceIDs = $request->query->all()['deviceIDs'] ?? null;
-        $deviceNames = $request->query->all()['deviceNames'] ?? null;
-        $groupIDs = $request->query->all()['groupIDs'] ?? null;
-        $cardViewIDs = $request->query->all()['cardViewIDs'] ?? null;
-
-        $sensorRequestDTO = new GetSensorRequestDTO();
-        $sensorRequestDTO->setLimit($requestDTO->getLimit());
-        $sensorRequestDTO->setPage($requestDTO->getPage());
-        $sensorRequestDTO->setDeviceIDs($deviceIDs);
-        $sensorRequestDTO->setDeviceNames($deviceNames);
-        $sensorRequestDTO->setGroupIDs($groupIDs);
-        $sensorRequestDTO->setCardViewIDs($cardViewIDs);
-
-        $validationErrors = $validator->validate($sensorRequestDTO);
-        if ($this->checkIfErrorsArePresent($validationErrors)) {
-            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
-        }
-
-        $offset = PaginationCalculator::calculateOffset($sensorRequestDTO->getLimit(), $sensorRequestDTO->getPage());
-        $getSensorQueryDTO = GetSensorQueryDTOBuilder::buildGetSensorQueryDTO(
-            $sensorRequestDTO->getLimit(),
-            $offset,
-            $sensorRequestDTO->getPage(),
-            $sensorRequestDTO->getDeviceIDs(),
-            $sensorRequestDTO->getDeviceNames(),
-            $sensorRequestDTO->getGroupIDs(),
-            $sensorRequestDTO->getCardViewIDs(),
-        );
+        $requestDTO ??= new RequestDTO();
 
         $user = $this->getUser();
         if (!$user instanceof User) {
             return $this->sendBadRequestJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
-        $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO);
-
+        $sensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryDTO, $requestDTO);
         $allowedSensors = $sensorUserFilter->filterSensorsAllowedForUser($sensors, $getSensorQueryDTO);
         foreach ($allowedSensors as $sensor) {
             $sensorDTOs[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [$requestDTO->getResponseType()]);

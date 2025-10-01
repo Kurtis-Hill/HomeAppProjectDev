@@ -4,7 +4,7 @@ namespace App\Entity\Sensor\ReadingTypes\StandardReadingTypes;
 
 use App\Entity\Sensor\SensorTypes\Interfaces\ReadingSymbolInterface;
 use App\Repository\Sensor\ReadingType\ORM\LatitudeRepository;
-use App\Services\CustomValidators\Sensor\SensorDataValidators\LatitudeConstraint;
+use App\CustomValidators\Sensor\SensorDataValidators\LatitudeConstraint;
 use Doctrine\ORM\Mapping as ORM;
 
 #[

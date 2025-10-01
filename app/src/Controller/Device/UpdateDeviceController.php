@@ -5,16 +5,14 @@ namespace App\Controller\Device;
 use App\Builders\Device\DeviceResponse\DeviceResponseDTOBuilder;
 use App\Builders\Device\DeviceUpdate\DeviceDTOBuilder;
 use App\DTOs\Device\Request\DeviceUpdateRequestDTO;
+use App\DTOs\RequestDTO;
 use App\Entity\Device\Devices;
 use App\Entity\User\User;
-use App\Exceptions\Common\ValidatorProcessorException;
 use App\Exceptions\User\GroupExceptions\GroupNotFoundException;
 use App\Exceptions\User\RoomsExceptions\RoomNotFoundException;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
 use App\Services\Device\UpdateDevice\UpdateDeviceHandlerInterface;
-use App\Services\Request\RequestQueryParameterHandler;
-use App\Services\Request\RequestTypeEnum;
 use App\Traits\HomeAppAPITrait;
 use App\Traits\ValidatorProcessorTrait;
 use App\Voters\DeviceVoter;
@@ -22,28 +20,17 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices/', name: 'update-user-devices')]
 class UpdateDeviceController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
-
-    private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
 
     #[
         Route(
@@ -54,40 +41,16 @@ class UpdateDeviceController extends AbstractController
     ]
     public function updateDevice(
         Devices $deviceToUpdate,
-        Request $request,
-        ValidatorInterface $validator,
         UpdateDeviceHandlerInterface $updateDeviceHandler,
         DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
         DeviceDTOBuilder $deviceDTOBuilder,
+        #[MapRequestPayload]
+        DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
+        LoggerInterface $logger,
     ): JsonResponse {
-        $deviceUpdateRequestDTO = new DeviceUpdateRequestDTO();
-
-        try {
-            $this->deserializeRequest(
-                $request->getContent(),
-                DeviceUpdateRequestDTO::class,
-                'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $deviceUpdateRequestDTO],
-            );
-        } catch (NotEncodableValueException) {
-            return $this->sendBadRequestJsonResponse([], APIErrorMessages::FORMAT_NOT_SUPPORTED);
-        }
-
-        $requestValidationErrors = $validator->validate($deviceUpdateRequestDTO);
-        if ($this->checkIfErrorsArePresent($requestValidationErrors)) {
-            return $this->sendBadRequestJsonResponse(
-                $this->getValidationErrorAsArray($requestValidationErrors),
-                APIErrorMessages::VALIDATION_ERRORS
-            );
-        }
-
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::SENSITIVE_FULL->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
+        $requestDTO ??= new RequestDTO();
 
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -127,7 +90,7 @@ class UpdateDeviceController extends AbstractController
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::SERIALIZATION_FAILURE, 'device update success response DTO')]);
         }
 
-        $this->logger->info(
+        $logger->info(
             sprintf(
                 'Device %s updated successfully',
                 $deviceToUpdate->getDeviceID()

@@ -4,6 +4,7 @@ namespace App\Services\Sensor\NewSensor;
 
 use App\DTOs\Sensor\Internal\Sensor\NewSensorDTO;
 use App\Entity\Sensor\Sensor;
+use App\Entity\User\User;
 use App\Exceptions\Sensor\UserNotAllowedException;
 use JetBrains\PhpStorm\ArrayShape;
 

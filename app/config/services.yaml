@@ -418,7 +418,6 @@ services:
     App\Services\Device\Request\DeviceRequestHandlerInterface:
       alias: 'App\Services\Device\Request\DeviceRequestHandler'
 
-
     App\Services\Sensor\OutOfBounds\OutOfBoundsAlertHandler:
         arguments:
             $redisClient: '@app.my_custom_redis_provider'
@@ -428,3 +427,11 @@ services:
             $redisClient: '@app.my_custom_redis_provider'
         tags:
             - { name: 'console.command' }
+
+    App\Events\EventListeners\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
+    App\Events\Subscribers\CastQueryParametersAfterDeserializationSubscriber:
+        tags:
+            - { name: 'kernel.event_subscriber' }

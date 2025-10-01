@@ -4,6 +4,7 @@ namespace App\Tests\Controller\Device;
 
 use App\Entity\Common\IPLog;
 use App\Repository\Common\ORM\IPLogRepository;
+use App\Tests\Controller\ControllerTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -11,44 +12,27 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RegisterNewDeviceControllerTest extends WebTestCase
+class RegisterNewDeviceControllerTest extends ControllerTestCase
 {
     private const REGISTER_NEW_DEVICE_URL = 'HomeApp/api/device/register';
-
-    private KernelBrowser $client;
-
-    private ?EntityManagerInterface $entityManager;
 
     private IPLogRepository $ipLogRepository;
 
     protected function setUp(): void
     {
-        $this->client = static::createClient();
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
+        parent::setUp();
 
         $this->ipLogRepository = $this->entityManager->getRepository(IPLog::class);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
     }
 
     public function test_correct_request_returns_success(): void
     {
         $ipAddress = '192.168.115';
 
-        $this->client->request(
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::REGISTER_NEW_DEVICE_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['ipAddress' => $ipAddress])
+            ['ipAddress' => $ipAddress]
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -64,13 +48,10 @@ class RegisterNewDeviceControllerTest extends WebTestCase
      */
     public function test_wrong_data_types_returns_error(mixed $ipaddress): void
     {
-        $this->client->request(
+        $this->client->jsonRequest(
             Request::METHOD_POST,
             self::REGISTER_NEW_DEVICE_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            json_encode(['ipAddress' => $ipaddress])
+            ['ipAddress' => $ipaddress]
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);

@@ -81,7 +81,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
                 $group->getGroupName(),
                 sprintf(
                     '%s%s/%d',
-                    CommonURL::HOMEAPP_WEBAPP_URL_BASE,
+                    '/WebApp/',
                     'group',
                     $group->getGroupID(),
                 )
@@ -104,7 +104,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
                 $device->getDeviceName(),
                 sprintf(
                     '%s%s/%d',
-                    CommonURL::HOMEAPP_WEBAPP_URL_BASE,
+                    '/WebApp/',
                     'devices',
                     $device->getDeviceID()
                 )
@@ -127,7 +127,7 @@ class NavBarDataProvider implements NavBarDataProviderInterface
                 $room->getRoom(),
                 sprintf(
                     '%s%s/%d',
-                    CommonURL::HOMEAPP_WEBAPP_URL_BASE,
+                    '/WebApp/',
                     'room',
                     $room->getRoomID(),
                 )

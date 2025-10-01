@@ -10,6 +10,8 @@ use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Entity\Sensor\Sensor;
 use App\Repository\Sensor\SensorReadingType\ORM\ReadingTypeRepository;
+use App\Services\Request\RequestTypeEnum;
+use App\Tests\Controller\ControllerTestCase;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
@@ -18,50 +20,27 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GetReadingTypeControllerTest extends WebTestCase
+class GetReadingTypeControllerTest extends ControllerTestCase
 {
-    use TestLoginTrait;
-
     private const GET_READING_TYPES_URL = '/HomeApp/api/user/reading-types';
 
     private const GET_SINGLE_READING_TYPE_URL = '/HomeApp/api/user/reading-types/%d';
 
-    private ?EntityManagerInterface $entityManager;
-
     private ReadingTypeRepository $readingTypeRepository;
-
-    private KernelBrowser $client;
-
-    private ?string $userToken = null;
 
     protected function setUp(): void
     {
-        $this->client = static::createClient();
-
-        $this->entityManager = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
+        parent::setUp();
 
         $this->readingTypeRepository = $this->entityManager->getRepository(ReadingTypes::class);
-
-        $this->userToken = $this->setUserToken($this->client);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-        parent::tearDown();
     }
 
     public function test_getting_all_reading_types_invalid_token(): void
     {
-        $this->client->request(
-            Request::METHOD_GET,
-            self::GET_READING_TYPES_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '. $this->userToken . '1']
+        $this->client->jsonRequest(
+            method: Request::METHOD_GET,
+            uri: self::GET_READING_TYPES_URL,
+            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer safdgsaffsfdgsdfgfs']
         );
 
         $requestResponse = $this->client->getResponse();
@@ -73,12 +52,10 @@ class GetReadingTypeControllerTest extends WebTestCase
 
     public function test_getting_all_reading_types(): void
     {
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_GET,
-            self::GET_READING_TYPES_URL,
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '. $this->userToken]
+            self::GET_READING_TYPES_URL . '?responseType=' . RequestTypeEnum::FULL->value,
         );
 
         $requestResponse = $this->client->getResponse();
@@ -89,7 +66,7 @@ class GetReadingTypeControllerTest extends WebTestCase
         /** @var ReadingTypes[] $allReadingTypes */
         $allReadingTypes = $readingTypeRepository->findAll();
 
-        self::assertEquals(200, $this->client->getResponse()->getStatusCode());
+        self::assertResponseIsSuccessful();
         self::assertCount(count($allReadingTypes), $responseData['payload']);
 
         foreach ($responseData['payload'] as $readingType) {
@@ -108,12 +85,10 @@ class GetReadingTypeControllerTest extends WebTestCase
             ['readingType' => $readingTypeName]
         );
 
-        $this->client->request(
+        $this->authenticateAdminOne();
+        $this->client->jsonRequest(
             Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_READING_TYPE_URL, $readingTypeToTest->getReadingTypeID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '. $this->userToken]
+            sprintf(self::GET_SINGLE_READING_TYPE_URL, $readingTypeToTest->getReadingTypeID()) . '?responseType=' . RequestTypeEnum::FULL->value,
         );
 
         $requestResponse = $this->client->getResponse();
@@ -139,18 +114,10 @@ class GetReadingTypeControllerTest extends WebTestCase
             ['readingType' => $readingTypeName]
         );
 
-        $userToken = $this->setUserToken(
-            $this->client,
-            UserDataFixtures::REGULAR_USER_EMAIL_ONE,
-            UserDataFixtures::REGULAR_PASSWORD
-        );
-
-        $this->client->request(
+        $this->authenticateRegularUserOne();
+        $this->client->jsonRequest(
             Request::METHOD_GET,
-            sprintf(self::GET_SINGLE_READING_TYPE_URL, $readingTypeToTest->getReadingTypeID()),
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'Bearer '. $userToken]
+            sprintf(self::GET_SINGLE_READING_TYPE_URL, $readingTypeToTest->getReadingTypeID()) . '?responseType=' . RequestTypeEnum::FULL->value,
         );
 
         $requestResponse = $this->client->getResponse();
@@ -158,7 +125,7 @@ class GetReadingTypeControllerTest extends WebTestCase
 
         $readingTypeRepository = $this->entityManager->getRepository(ReadingTypes::class);
 
-        /** @var \App\Entity\Sensor\ReadingTypes\ReadingTypes $readingType */
+        /** @var ReadingTypes $readingType */
         $readingType = $readingTypeRepository->find($readingTypeToTest->getReadingTypeID());
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);

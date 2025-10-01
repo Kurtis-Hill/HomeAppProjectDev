@@ -14,6 +14,8 @@ export type NewSensor = {
     sensorName: string,
     deviceID: number,
     sensorTypeID: number,
+    pinNumber: number,
+    readingInterval: number,
 }
 
 export function AddNewSensorForm(props: {deviceID: number, refreshData?: () => void; setShowModal?: (showModal: boolean) => void;}) {
@@ -37,7 +39,7 @@ export function AddNewSensorForm(props: {deviceID: number, refreshData?: () => v
         
         let value: any;
         
-        if (name === 'sensorTypeID') {
+        if (name === 'sensorTypeID' || name === 'pinNumber' || name === 'readingInterval') {
             value = parseInt(valueInput);
         } else {
             value = valueInput;

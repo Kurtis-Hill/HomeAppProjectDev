@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Device;
 
 use App\DTOs\IPLog\Request\IPLogRequestDTO;
+use App\DTOs\RequestDTO;
 use App\Entity\Common\IPLog;
 use App\Repository\Common\ORM\IPLogRepository;
 use App\Repository\Device\ORM\DeviceRepositoryInterface;
@@ -14,6 +15,7 @@ use App\Traits\ValidatorProcessorTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;

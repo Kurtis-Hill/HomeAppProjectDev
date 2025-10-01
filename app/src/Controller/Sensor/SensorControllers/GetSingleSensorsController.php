@@ -3,8 +3,8 @@
 namespace App\Controller\Sensor\SensorControllers;
 
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\DTOs\RequestDTO;
 use App\Entity\Sensor\Sensor;
-use App\Exceptions\Common\ValidatorProcessorException;
 use App\Exceptions\Sensor\ReadingTypeNotExpectedException;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
@@ -17,6 +17,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -31,27 +32,18 @@ class GetSingleSensorsController extends AbstractController
 
     private RequestQueryParameterHandler $requestQueryParameterHandler;
 
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
-    {
-        $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
-    }
-
     #[Route('/{sensorID}', name: 'get-single-sensor', methods: [Request::METHOD_GET])]
-    public function getSingleSensor(Sensor $sensor, Request $request, SensorResponseDTOBuilder $sensorResponseDTOBuilder): JsonResponse
-    {
+    public function getSingleSensor(
+        Sensor $sensor,
+        SensorResponseDTOBuilder $sensorResponseDTOBuilder,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
+    ): JsonResponse {
+        $requestDTO ??= new RequestDTO();
         try {
             $this->denyAccessUnlessGranted(SensorVoter::GET_SENSOR, $sensor);
         } catch (AccessDeniedException) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        }
-
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::SENSITIVE_ONLY->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         try {

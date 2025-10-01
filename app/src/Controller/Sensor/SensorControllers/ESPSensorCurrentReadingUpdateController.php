@@ -17,7 +17,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -49,34 +51,18 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
             Request::METHOD_POST,
         ]
     )]
+    #[isGranted(SensorVoter::DEVICE_UPDATE_SENSOR_CURRENT_READING)]
     public function updateSensorsCurrentReading(
-        Request $request,
         ValidatorInterface $validator,
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequest,
+        #[MapRequestPayload]
+        SensorUpdateRequestDTO $sensorUpdateRequestDTO
     ): Response {
-        $isGranted = $this->isGranted(SensorVoter::DEVICE_UPDATE_SENSOR_CURRENT_READING);
-        if (!$isGranted) {
-            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
-        }
-
         $device = $this->getUser();
         if (!$device instanceof Devices) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
         $deviceID = $device->getDeviceID();
-
-        $sensorUpdateRequestDTO = new SensorUpdateRequestDTO();
-        try {
-            $this->deserializeRequest(
-                $request->getContent(),
-                SensorUpdateRequestDTO::class,
-                'json',
-                [AbstractNormalizer::OBJECT_TO_POPULATE => $sensorUpdateRequestDTO],
-                true,
-            );
-        } catch (NotEncodableValueException|TypeError|UnexpectedValueException) {
-            return $this->sendBadRequestJsonResponse([APIErrorMessages::FORMAT_NOT_SUPPORTED]);
-        }
         $errors = $validator->validate(value: $sensorUpdateRequestDTO);
         if ($this->checkIfErrorsArePresent($errors)) {
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($errors));

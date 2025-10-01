@@ -8,8 +8,10 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
+
+    // .setPublicPath('/HomeApp/build')
+    // .setManifestKeyPrefix('build/')
     // only needed for CDN's or sub-directory deploy
-    //.setManifestKeyPrefix('build/')
 
     .enableReactPreset()
     .addEntry('react-app', './assets/react-app/main/index.tsx')

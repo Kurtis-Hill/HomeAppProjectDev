@@ -7,7 +7,7 @@ use App\Entity\User\Group;
 use App\Entity\User\Room;
 use App\Entity\User\User;
 use App\Repository\Device\ORM\DeviceRepository;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -26,9 +26,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 ]
 class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    private const DEVICE_NAME_MIN_LENGTH = 2;
+    public const DEVICE_NAME_MIN_LENGTH = 2;
 
-    private const DEVICE_NAME_MAX_LENGTH = 50;
+    public const DEVICE_NAME_MAX_LENGTH = 50;
 
     public const ROLE = 'ROLE_DEVICE';
 

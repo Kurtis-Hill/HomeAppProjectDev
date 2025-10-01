@@ -5,7 +5,7 @@ namespace App\Entity\Sensor;
 use App\Entity\Device\Devices;
 use App\Entity\User\User;
 use App\Repository\Sensor\Sensors\ORM\SensorRepository;
-use App\Services\CustomValidators\NoSpecialCharactersNameConstraint;
+use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,9 +26,9 @@ class Sensor
 
     public const ALIAS  = 'sensors';
 
-    private const SENSOR_NAME_MAX_LENGTH = 20;
+    public const SENSOR_NAME_MAX_LENGTH = 20;
 
-    private const SENSOR_NAME_MIN_LENGTH = 2;
+    public const SENSOR_NAME_MIN_LENGTH = 2;
 
     public const MIN_READING_INTERVAL = 500;
 

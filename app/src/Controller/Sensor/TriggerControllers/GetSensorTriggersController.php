@@ -60,10 +60,9 @@ class GetSensorTriggersController extends AbstractController
         }
 
         $getSensorQueryParams = GetSensorQueryDTOBuilder::buildGetSensorQueryDTO(
-            limit: 1000,
             groupIDs: $userGroupsFinder->getGroupIDs($user),
         );
-        $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams);
+        $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams, $requestDTO);
 
         $baseReadingTypeIDs = $sensorReadingTypeFetcher->fetchBaseReadingTypeIDsFromSensors($usersSensors);
 

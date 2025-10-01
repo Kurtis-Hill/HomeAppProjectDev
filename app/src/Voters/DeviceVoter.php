@@ -80,11 +80,11 @@ class DeviceVoter extends Voter
     }
 
 
-    private function canAddNewDevice(UserInterface $user, NewDeviceDTO $newDeviceCheckDTO): bool
+    private function canAddNewDevice(UserInterface $user, Devices $newDeviceCheckDTO): bool
     {
         $checkCommon = $this->checkCommon(
             $user,
-            $newDeviceCheckDTO->getGroupNameObject(),
+            $newDeviceCheckDTO->getGroupObject(),
         );
 
         return $checkCommon ?? true;
