@@ -6,7 +6,7 @@ framework:
       max_host_connections: '%env(int:HTTP_MAX_CONNECTIONS)%'
       scoped_clients:
         elastica.client:
-          base_uri: 'https://%env(ELASTIC_SEARCH_HOST)%:%env(ELASTIC_SEARCH_PORT)%'
+          base_uri: '%env(ELASTIC_TRANSPORT)%://%env(ELASTIC_SEARCH_HOST)%:%env(ELASTIC_SEARCH_PORT)%'
           auth_basic: "%env(string:ELASTIC_SEARCH_HTTP_AUTH_USERNAME)%:%env(string:ELASTIC_SEARCH_HTTP_AUTH_PASSWORD)%"
           verify_host: false
           verify_peer: false

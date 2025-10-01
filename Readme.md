@@ -23,7 +23,7 @@ first we need to create; jwt public & private pem certificates, client & server 
     <li>ca-cert.pem</li>
     <li>client-cert.pem</li>
     <li>server-cert.pem</li>    
-</ul>
+</ul>te
 you will notice that there is a cacert.pem in the SSL directory - leave it be this is used for downloading packages from github. Now drop the generated <i>public.pem</i> and <i>private.pem</i> jwt certs in the HomeAppProjectDev/app/config/private.pem. Remember if you set a passphrase for these files to update the <code>pass_phrase</code> in the <i>app/config/packages/lexik_jwt_authentication.yaml</i> file (default: HomeApp).
 
 <h3>Elasticsearch</h3>

@@ -2,7 +2,7 @@
 
 if [ "${APP_ENV}" = 'dev' ]; then
     echo "dev container build"
-    echo "Creating test Database and test user..."
+    echo "Creating test Database "$MARIADB_TEST_DATABASE" and test user..."
     mysql -u root -p"$MYSQL_ROOT_PASSWORD" --execute \
     "CREATE DATABASE IF NOT EXISTS $MARIADB_TEST_DATABASE;
     CREATE USER IF NOT EXISTS $MARIADB_TEST_USER IDENTIFIED BY '$MARIADB_TEST_PASSWORD';

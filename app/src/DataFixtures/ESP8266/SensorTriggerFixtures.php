@@ -5,7 +5,11 @@ namespace App\DataFixtures\ESP8266;
 use App\DataFixtures\Core\OperatorsFixtures;
 use App\DataFixtures\Core\TriggerTypeFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Common\Operator;
+use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
 use App\Entity\Sensor\SensorTrigger;
+use App\Entity\Sensor\TriggerType;
+use App\Entity\User\User;
 use App\Services\Sensor\Trigger\SensorTriggerUserInputToStringConvertor;
 use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -238,13 +242,13 @@ class SensorTriggerFixtures extends Fixture implements OrderedFixtureInterface
     {
         foreach (self::SENSOR_TRIGGERS as $sensorTrigger) {
             $sensorTriggerEntity = new SensorTrigger();
-            $sensorTriggerEntity->setBaseReadingTypeThatTriggers($sensorTrigger['baseReadingTypeThatTriggers'] !== null ? $this->getReference($sensorTrigger['baseReadingTypeThatTriggers']) : null);
-            $sensorTriggerEntity->setBaseReadingTypeToTrigger($this->getReference($sensorTrigger['baseReadingTypeToTriggerID']));
-            $sensorTriggerEntity->setTriggerType($this->getReference($sensorTrigger['triggerType']));
+            $sensorTriggerEntity->setBaseReadingTypeThatTriggers($sensorTrigger['baseReadingTypeThatTriggers'] !== null ? $this->getReference($sensorTrigger['baseReadingTypeThatTriggers'], BaseSensorReadingType::class) : null);
+            $sensorTriggerEntity->setBaseReadingTypeToTrigger($this->getReference($sensorTrigger['baseReadingTypeToTriggerID'], BaseSensorReadingType::class));
+            $sensorTriggerEntity->setTriggerType($this->getReference($sensorTrigger['triggerType'], TriggerType::class));
             $sensorTriggerEntity->setValueThatTriggers(SensorTriggerUserInputToStringConvertor::convertMixedToString($sensorTrigger['valueThatTriggers']));
-            $sensorTriggerEntity->setOperator($this->getReference($sensorTrigger['operatorID']));
-            $sensorTriggerEntity->setCreatedBy($this->getReference($sensorTrigger['createdBy']));
-            $sensorTriggerEntity->setStartTime($sensorTrigger['startTime']);
+            $sensorTriggerEntity->setOperator($this->getReference($sensorTrigger['operatorID'], Operator::class));
+            $sensorTriggerEntity->setCreatedBy($this->getReference($sensorTrigger['createdBy'], User::class));
+            $sensorTriggerEntity->setStartTime($sensorTrigger['startTime'],);
             $sensorTriggerEntity->setEndTime($sensorTrigger['endTime']);
             $sensorTriggerEntity->setMonday($sensorTrigger['days']['monday']);
             $sensorTriggerEntity->setTuesday($sensorTrigger['days']['tuesday']);

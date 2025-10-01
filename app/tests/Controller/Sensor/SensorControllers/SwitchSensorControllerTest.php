@@ -182,7 +182,7 @@ class SwitchSensorControllerTest extends ControllerTestCase
 
         yield [
             'sensorData' => [],
-            'title' => 'Bad Request No Data Returned',
+            'title' => 'Validation errors occurred',
             'errors' => ['sensorData must contain at least 1 elements'],
         ];
 

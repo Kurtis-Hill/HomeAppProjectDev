@@ -5,6 +5,9 @@ namespace App\DataFixtures\ESP8266;
 use App\DataFixtures\Core\RoomFixtures;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Device\Devices;
+use App\Entity\User\Group;
+use App\Entity\User\Room;
+use App\Entity\User\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -100,9 +103,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         //these devices are for permission checks one device for each scenario
         //Create a Admin Owned Device Admin Group
         $adminUserAdminGroupOne = new Devices();
-        $adminUserAdminGroupOne->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
-        $adminUserAdminGroupOne->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE));
-        $adminUserAdminGroupOne->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM));
+        $adminUserAdminGroupOne->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE, User::class));
+        $adminUserAdminGroupOne->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE, Group::class));
+        $adminUserAdminGroupOne->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM, Room::class));
         $adminUserAdminGroupOne->setDeviceName(self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]['referenceName']);
         $adminUserAdminGroupOne->setPassword($this->passwordEncoder->hashPassword($adminUserAdminGroupOne, self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_ONE_DEVICE_ADMIN_GROUP_ONE]['password']));
         $adminUserAdminGroupOne->setRoles([Devices::ROLE]);
@@ -114,9 +117,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
         //Create Admin One Owned Device Regular Group Two
         $adminOneRegularGroupTwo = new Devices();
-        $adminOneRegularGroupTwo->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
-        $adminOneRegularGroupTwo->setGroupObject($this->getReference(UserDataFixtures::REGULAR_GROUP_TWO));
-        $adminOneRegularGroupTwo->setRoomObject($this->getReference(RoomFixtures::BEDROOM_ONE));
+        $adminOneRegularGroupTwo->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE, User::class));
+        $adminOneRegularGroupTwo->setGroupObject($this->getReference(UserDataFixtures::REGULAR_GROUP_TWO, Group::class));
+        $adminOneRegularGroupTwo->setRoomObject($this->getReference(RoomFixtures::BEDROOM_ONE, Room::class));
         $adminOneRegularGroupTwo->setDeviceName(self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO]['referenceName']);
         $adminOneRegularGroupTwo->setPassword($this->passwordEncoder->hashPassword($adminOneRegularGroupTwo, self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_ONE_DEVICE_REGULAR_GROUP_TWO]['password']));
         $adminOneRegularGroupTwo->setRoles([Devices::ROLE]);
@@ -127,9 +130,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
         //Create Admin Two Owned Device Admin Group One
         $adminTwoDeviceAdminGroupOne = new Devices();
-        $adminTwoDeviceAdminGroupOne->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_TWO));
-        $adminTwoDeviceAdminGroupOne->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE));
-        $adminTwoDeviceAdminGroupOne->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM));
+        $adminTwoDeviceAdminGroupOne->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_TWO, User::class));
+        $adminTwoDeviceAdminGroupOne->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE, Group::class));
+        $adminTwoDeviceAdminGroupOne->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM, Room::class));
         $adminTwoDeviceAdminGroupOne->setDeviceName(self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_ONE]['referenceName']);
         $adminTwoDeviceAdminGroupOne->setPassword($this->passwordEncoder->hashPassword($adminTwoDeviceAdminGroupOne, self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_ONE]['password']));
         $adminTwoDeviceAdminGroupOne->setRoles([Devices::ROLE]);
@@ -140,9 +143,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
         //Create Admin Two Owned Device Admin Group Two
         $adminTwoDeviceAdminGroupTwo = new Devices();
-        $adminTwoDeviceAdminGroupTwo->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_TWO));
-        $adminTwoDeviceAdminGroupTwo->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_TWO));
-        $adminTwoDeviceAdminGroupTwo->setRoomObject($this->getReference(RoomFixtures::BEDROOM_ONE));
+        $adminTwoDeviceAdminGroupTwo->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_TWO, User::class));
+        $adminTwoDeviceAdminGroupTwo->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_TWO, Group::class));
+        $adminTwoDeviceAdminGroupTwo->setRoomObject($this->getReference(RoomFixtures::BEDROOM_ONE, Room::class));
         $adminTwoDeviceAdminGroupTwo->setDeviceName(self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO]['referenceName']);
         $adminTwoDeviceAdminGroupTwo->setPassword($this->passwordEncoder->hashPassword($adminTwoDeviceAdminGroupTwo, self::PERMISSION_CHECK_DEVICES[self::ADMIN_USER_TWO_DEVICE_ADMIN_GROUP_TWO]['password']));
         $adminTwoDeviceAdminGroupTwo->setRoles([Devices::ROLE]);
@@ -155,9 +158,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         // Regular user one owned device regular group one
         $regularOwnedDeviceRegularGroupOne = new Devices();
 
-        $regularOwnedDeviceRegularGroupOne->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER_EMAIL_ONE));
-        $regularOwnedDeviceRegularGroupOne->setGroupObject($this->getReference(UserDataFixtures::REGULAR_GROUP_ONE));
-        $regularOwnedDeviceRegularGroupOne->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM));
+        $regularOwnedDeviceRegularGroupOne->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER_EMAIL_ONE, User::class));
+        $regularOwnedDeviceRegularGroupOne->setGroupObject($this->getReference(UserDataFixtures::REGULAR_GROUP_ONE, Group::class));
+        $regularOwnedDeviceRegularGroupOne->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM, Room::class));
         $regularOwnedDeviceRegularGroupOne->setDeviceName(self::PERMISSION_CHECK_DEVICES[self::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE]['referenceName']);
         $regularOwnedDeviceRegularGroupOne->setPassword($this->passwordEncoder->hashPassword($regularOwnedDeviceRegularGroupOne, self::PERMISSION_CHECK_DEVICES[self::REGULAR_USER_ONE_DEVICE_REGULAR_GROUP_ONE]['password']));
         $regularOwnedDeviceRegularGroupOne->setRoles([Devices::ROLE]);
@@ -170,9 +173,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
         // Regular Owned Device Regular Group
         $regularTwoRegularGroupTwo = new Devices();
 
-        $regularTwoRegularGroupTwo->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER_EMAIL_TWO));
-        $regularTwoRegularGroupTwo->setGroupObject($this->getReference(UserDataFixtures::REGULAR_GROUP_TWO));
-        $regularTwoRegularGroupTwo->setRoomObject($this->getReference(RoomFixtures::BEDROOM_ONE));
+        $regularTwoRegularGroupTwo->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER_EMAIL_TWO, User::class));
+        $regularTwoRegularGroupTwo->setGroupObject($this->getReference(UserDataFixtures::REGULAR_GROUP_TWO, Group::class));
+        $regularTwoRegularGroupTwo->setRoomObject($this->getReference(RoomFixtures::BEDROOM_ONE, Room::class));
         $regularTwoRegularGroupTwo->setDeviceName(self::PERMISSION_CHECK_DEVICES[self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO]['referenceName']);
         $regularTwoRegularGroupTwo->setPassword($this->passwordEncoder->hashPassword($regularTwoRegularGroupTwo, self::PERMISSION_CHECK_DEVICES[self::REGULAR_USER_TWO_DEVICE_REGULAR_GROUP_TWO]['password']));
         $regularTwoRegularGroupTwo->setRoles([Devices::ROLE]);
@@ -184,9 +187,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 //        Regular User Two Admin Group one
         $regularRegularAdmin = new Devices();
 
-        $regularRegularAdmin->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER_EMAIL_TWO));
-        $regularRegularAdmin->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE));
-        $regularRegularAdmin->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM));
+        $regularRegularAdmin->setCreatedBy($this->getReference(UserDataFixtures::REGULAR_USER_EMAIL_TWO, User::class));
+        $regularRegularAdmin->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE, Group::class));
+        $regularRegularAdmin->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM, Room::class));
         $regularRegularAdmin->setDeviceName(self::PERMISSION_CHECK_DEVICES[self::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE]['referenceName']);
         $regularRegularAdmin->setPassword($this->passwordEncoder->hashPassword($regularRegularAdmin, self::PERMISSION_CHECK_DEVICES[self::REGULAR_USER_TWO_DEVICE_ADMIN_GROUP_ONE]['password']));
         $regularRegularAdmin->setRoles([Devices::ROLE]);
@@ -198,9 +201,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 //        //For Admin Duplicate Check
         $duplicateCheck = new Devices();
 
-        $duplicateCheck->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
-        $duplicateCheck->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE));
-        $duplicateCheck->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM));
+        $duplicateCheck->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE, User::class));
+        $duplicateCheck->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE, Group::class));
+        $duplicateCheck->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM, Room::class));
         $duplicateCheck->setDeviceName(self::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']);
         $duplicateCheck->setPassword($this->passwordEncoder->hashPassword($duplicateCheck, self::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['password']));
         $duplicateCheck->setRoles([Devices::ROLE]);
@@ -210,9 +213,9 @@ class ESP8266DeviceFixtures extends Fixture implements OrderedFixtureInterface
 
         // Admin General Test Device
         $adminDevice = new Devices();
-        $adminDevice->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
-        $adminDevice->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE));
-        $adminDevice->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM));
+        $adminDevice->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE, User::class));
+        $adminDevice->setGroupObject($this->getReference(UserDataFixtures::ADMIN_GROUP_ONE, Group::class));
+        $adminDevice->setRoomObject($this->getReference(RoomFixtures::LIVING_ROOM, Room::class));
         $adminDevice->setDeviceName(self::ADMIN_TEST_DEVICE['referenceName']);
         $adminDevice->setPassword($this->passwordEncoder->hashPassword($adminDevice, self::ADMIN_TEST_DEVICE['password']));
         $adminDevice->setRoles([Devices::ROLE]);

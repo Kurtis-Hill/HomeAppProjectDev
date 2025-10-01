@@ -3,6 +3,8 @@
 namespace App\DataFixtures\ESP8266;
 
 use App\DataFixtures\Core\UserDataFixtures;
+use App\Entity\Device\Devices;
+use App\Entity\Sensor\AbstractSensorType;
 use App\Entity\Sensor\ReadingTypes\BaseReadingTypeInterface;
 use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
@@ -29,6 +31,7 @@ use App\Entity\Sensor\SensorTypes\LDR;
 use App\Entity\Sensor\SensorTypes\Sht;
 use App\Entity\Sensor\SensorTypes\Soil;
 use App\Entity\Sensor\SensorTypes\StandardSensorTypeInterface;
+use App\Entity\User\User;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -709,10 +712,11 @@ class SensorFixtures extends Fixture implements OrderedFixtureInterface
             $minuteInterval = random_int(0, 59);
             $createdAt = (new DateTime('now'))->add(new DateInterval('PT' . $minuteInterval . 'M'));
             $sensor = new Sensor();
-            $sensor->setDevice($this->getReference($sensorDetails['device']['referenceName']));
+//            dd($sensorDetails['sensors']['object']);
+            $sensor->setDevice($this->getReference($sensorDetails['device']['referenceName'], Devices::class));
             $sensor->setSensorName($sensorDetails['sensorName']);
-            $sensor->setSensorTypeID($this->getReference($sensorDetails['sensors']['alias']));
-            $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE));
+            $sensor->setSensorTypeID($this->getReference($sensorDetails['sensors']['alias'], $sensorDetails['sensors']['object']));
+            $sensor->setCreatedBy($this->getReference(UserDataFixtures::ADMIN_USER_EMAIL_ONE, User::class));
             $sensor->setPinNumber($sensorDetails['pinNumber']);
             $this->addReference($sensorDetails['sensorName'], $sensor);
             $manager->persist($sensor);

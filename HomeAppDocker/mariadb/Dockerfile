@@ -12,14 +12,13 @@ RUN chmod 0444 -R /etc/mysql/mariadb.conf.d/
 COPY ./my.cnf /etc/mysql/conf.d/my.cnf 
 RUN chmod 0444 -R /etc/mysql/conf.d/
 
-# Add a custom entrypoint script
-COPY setup-backup.sh /docker-entrypoint-initdb.d/
-
-# Make sure it's executable
-RUN chmod +x /docker-entrypoint-initdb.d/setup-backup.sh
-
 RUN mkdir -p /backups
 
 COPY ./docker-entrypoint.sh /docker-entrypoint-initdb.d/entrypoint.sh
+
+RUN echo "0 3 * * * root mysqldump -u root -p\$MYSQL_ROOT_PASSWORD --all-databases | gzip > /backup/backup-\$(date +\%Y\%m\%d).sql.gz" > /etc/cron.d/mysql-backup \
+    && chmod 0644 /etc/cron.d/mysql-backup
+
+RUN apt-get update && apt-get -y install cron
 
 CMD ["mysqld"]

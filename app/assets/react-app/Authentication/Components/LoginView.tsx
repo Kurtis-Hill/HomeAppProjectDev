@@ -151,12 +151,14 @@ export default function LoginView() {
                                             onChangeFunction={handleInput}
                                             extraClasses={"login-form-field"}
                                             autoFocus={true}
+                                            autoComplete={"email"}
                                         />
                                         <Input
                                             name="password"
                                             type="password"
                                             onChangeFunction={handleInput}
                                             extraClasses={"login-form-field"}
+                                            autoComplete={"password"}
                                         />
                                         <div>
                                             {loading === true

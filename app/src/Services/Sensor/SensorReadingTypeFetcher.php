@@ -3,6 +3,9 @@
 namespace App\Services\Sensor;
 
 use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\AbstractBoolReadingBaseSensor;
+use App\Entity\Sensor\ReadingTypes\BoolReadingTypes\BoolReadingSensorInterface;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\AbstractStandardReadingType;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
 use App\Entity\Sensor\Sensor;
 use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Repository\Sensor\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
@@ -24,9 +27,9 @@ class SensorReadingTypeFetcher
     }
 
     /**
-     * @return AbstractBoolReadingBaseSensor[]|StandardReadingTypeRepository[]
+     * @return BoolReadingSensorInterface[]|AbstractStandardReadingType[]
      */
-    #[ArrayShape([AbstractBoolReadingBaseSensor::class|StandardReadingTypeRepository::class])]
+    #[ArrayShape([AbstractBoolReadingBaseSensor::class|StandardReadingSensorInterface::class])]
     public function fetchAllSensorReadingTypesBySensor(Sensor $sensor): array
     {
         $boolTypeSensors = $this->boolReadingBaseSensorRepository->findBySensorID($sensor->getSensorID());
