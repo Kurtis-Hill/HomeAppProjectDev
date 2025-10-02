@@ -5,8 +5,8 @@ set -e
 if [ "${APP_ENV}" = 'prod' ]; then
   echo "production container build"
   echo "installing composer packages..."
-  git clean -f
-  git pull origin master
+  #git clean -f
+  #git pull origin master
   composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
   echo "Executing database migrations production..."
   bin/console doctrine:migrations:migrate -n
@@ -46,13 +46,14 @@ fi
   php bin/console lexik:jwt:generate-keypair --overwrite
 #fi
 
-echo "Starting supervisor..."
-supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf &
-echo "Supervisor Started..."
-
 echo "Starting symfony transport..."
-bin/console messenger:consume scheduler_default -vv &
+bin/console messenger:consume scheduler_default -vv&
 echo "transport started..."
 
-wait
+echo "Starting supervisor..."
+supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf
+echo "Supervisor Started..."
+
+bin/console cache:clear
+
 exec "$@"
