@@ -4,7 +4,7 @@ namespace App\Services\API;
 
 class CommonURL
 {
-    public const MAIN_BASE_URL = '/HomeApp/';
+    public const MAIN_BASE_URL = '/';
 
     public const APT_V1 = 'api/';
 
