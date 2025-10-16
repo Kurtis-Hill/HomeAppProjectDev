@@ -28,7 +28,7 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
     ) {}
 
     // @ADD new current reading type dtos to allowed_classes array
-    public function execute(AMQPMessage $msg): bool
+    public function execute(AMQPMessage $msg): int
     {
         try {
             /** @var UpdateSensorCurrentReadingTransportMessageDTO $sensorData */
@@ -48,17 +48,17 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
         } catch (Exception $exception) {
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
-            return true;
+            return self::MSG_REJECT;
         }
         try {
             $device = $this->deviceRepository->find($sensorData->getDeviceID());
         } catch (ORMException $exception) {
             $this->elasticLogger->error('expection message: ' . $exception->getMessage());
-            return false;
+            return self::MSG_REJECT;
         } catch (Exception $e) {
             $this->elasticLogger->error('expection message: ' . $e->getMessage());
 
-            return true;
+            return self::MSG_REJECT;
         }
 
         if ($device instanceof Devices) {
@@ -72,14 +72,14 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
             } catch (ORMException|OptimisticLockException $e) {
                 $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 
-                return false;
+                return self::MSG_REJECT_REQUEUE;
             } catch (Exception $e) {
                 $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 
-                return true;
+                return self::MSG_REJECT;
             }
         }
 
-        return true;
+        return self::MSG_ACK;
     }
 }

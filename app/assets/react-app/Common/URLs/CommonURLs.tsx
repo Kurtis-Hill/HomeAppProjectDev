@@ -1,4 +1,4 @@
-export const webappURL = '/WebApp/';
+export const webappURL = '/HomeApp/WebApp/';
 
 export const apiURL = '/HomeApp/api/user/'
 

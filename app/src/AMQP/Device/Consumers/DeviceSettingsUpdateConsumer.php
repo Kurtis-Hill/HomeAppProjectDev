@@ -18,7 +18,7 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
         private LoggerInterface $elasticLogger,
     ) {}
 
-    public function execute(AMQPMessage $msg): bool
+    public function execute(AMQPMessage $msg): int
     {
         try {
             /** @var DeviceSettingsUpdateDTO $deviceUpdateRequestDTO */
@@ -33,7 +33,7 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
         } catch (Exception $exception) {
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
-            return true;
+            return self::MSG_ACK;
         }
         try {
             $result = $this->deviceSettingsUpdateRequestHandler->handleDeviceSettingsUpdateRequest($deviceUpdateRequestDTO);
@@ -47,11 +47,11 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
         } catch (DeviceNotFoundException) {
             $this->elasticLogger->error('Device settings update request failed, device not found');
 
-            return false;
+            return self::MSG_REJECT;
         } catch (Exception $exception) {
             $this->elasticLogger->error('Device settings update request failed with unexpected error, exception message: ' . $exception->getMessage());
 
-            return false;
+            return self::MSG_REJECT;
         }
     }
 }

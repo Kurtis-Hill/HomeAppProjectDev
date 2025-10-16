@@ -24,7 +24,7 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
         private SensorUpdateCurrentReadingRequestHandlerInterface $requestSensorCurrentReadingHandler,
     ) {}
 
-    public function execute(AMQPMessage $msg): bool
+    public function execute(AMQPMessage $msg): int
     {
         try {
             /** @var RequestSensorCurrentReadingUpdateTransportMessageDTO $sensorData */
@@ -40,7 +40,7 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
         } catch (Exception $exception) {
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
-            return true;
+            return self::MSG_REJECT;
         }
 
         try {
@@ -50,19 +50,20 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
             } else {
                 $this->elasticLogger->error(sprintf('Sensor update request failed for sensor: %d', $sensorData->getSensorId()));
             }
-            return $result;
+
+            return self::MSG_ACK;
         } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface | SensorReadingTypeRepositoryFactoryException $exception) {
             $this->elasticLogger->error('Sensor update request failed: ' . $exception->getMessage());
 
-            return true;
+            return self::MSG_REJECT;
         } catch (HttpException $exception) {
             $this->elasticLogger->error('Sensor update request failed with http exception, exception message: ' . $exception->getMessage());
 
-            return true;
+            return self::MSG_REJECT;
         } catch (Exception $exception) {
             $this->elasticLogger->error('Sensor update request failed with unexpected error, exception message: ' . $exception->getMessage());
 
-            return true;
+            return self::MSG_REJECT;
         }
     }
 }

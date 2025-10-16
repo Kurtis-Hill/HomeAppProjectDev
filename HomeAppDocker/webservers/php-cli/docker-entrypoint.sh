@@ -47,7 +47,7 @@ fi
 #fi
 
 echo "Starting symfony transport..."
-bin/console messenger:consume scheduler_default -vv&
+bin/console messenger:consume scheduler_default -vv --failure-limit=3 &
 echo "transport started..."
 
 echo "Starting supervisor..."

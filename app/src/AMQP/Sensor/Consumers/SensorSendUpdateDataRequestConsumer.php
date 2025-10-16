@@ -20,7 +20,7 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
         private LoggerInterface $logger,
     ) {}
 
-    public function execute(AMQPMessage $msg): bool
+    public function execute(AMQPMessage $msg): int
     {
         try {
             /** @var SensorUpdateEventDTO $sensorUpdateEventDTO */
@@ -36,7 +36,7 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
         } catch (Exception $exception) {
             $this->logger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
-            return true;
+            return self::MSG_ACK;
         }
         try {
             $updateRequestResult = $this->updateDeviceSensorDataHandler->handleSensorsUpdateRequest($sensorUpdateEventDTO->getSensorUpdateRequestDTOs());
@@ -45,15 +45,18 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
             } else {
                 $this->logger->info('Sensor data update handled successfully, sensor name: ' . $sensorUpdateEventDTO->getSensorUpdateRequestDTOs()[0]->getSensorName());
             }
-            return $updateRequestResult;
+
+            return $updateRequestResult === true
+                ? self::MSG_ACK
+                : self::MSG_REJECT;
         } catch (SensorRequestException $e) {
             $this->logger->error('Sensor request exception, exception message: ' . $e->getMessage());
 
-            return false;
+            return self::MSG_REJECT;
         } catch (SensorNotFoundException $e) {
             $this->logger->error($e->getMessage());
         }
 
-        return true;
+        return self::MSG_ACK;
     }
 }
