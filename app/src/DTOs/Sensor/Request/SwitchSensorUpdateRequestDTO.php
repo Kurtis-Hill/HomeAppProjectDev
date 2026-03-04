@@ -2,23 +2,12 @@
 
 namespace App\DTOs\Sensor\Request;
 
-use App\DTOs\Sensor\Request\CurrentReadingRequest\SensorDataCurrentReadingUpdateRequestDTO;
-use JetBrains\PhpStorm\ArrayShape;
+use App\DTOs\Sensor\Request\CurrentReadingRequest\SwitchSensorDataCurrentReadingUpdateRequestDTO;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SensorUpdateRequestDTO
+class SwitchSensorUpdateRequestDTO
 {
     #[
-//        SerializedPath('SensorDataCurrentReadingUpdateDTO[]'),
-//        SerializedName('[SensorDataCurrentReadingUpdateDTO]'),
-        Assert\All([
-            new Assert\Type(
-                type: SensorDataCurrentReadingUpdateRequestDTO::class,
-                message: 'Each element of sensorData must be an instance of {{ type }} you have provided {{ value }}'
-            ),
-//            new Assert\Valid()
-        ]),
-        Assert\Valid,
         Assert\Type(
             type: ['array'],
             message: 'sensorData must be a {{ type }} you have provided {{ value }}'
@@ -32,9 +21,8 @@ class SensorUpdateRequestDTO
             minMessage: "sensorData must contain at least {{ limit }} elements",
             maxMessage: "sensorData cannot contain more than {{ limit }} elements"
         ),
-        ArrayShape([SensorDataCurrentReadingUpdateRequestDTO::class])
     ]
-    /** @var SensorDataCurrentReadingUpdateRequestDTO[] $sensorData */
+    /** @var SwitchSensorDataCurrentReadingUpdateRequestDTO[] $sensorData */
     private ?array $sensorData = null;
 
     public function getSensorData(): ?array

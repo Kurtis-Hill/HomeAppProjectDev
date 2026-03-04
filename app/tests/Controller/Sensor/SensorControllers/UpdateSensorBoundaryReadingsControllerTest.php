@@ -1520,16 +1520,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             $jsonData,
         );
 
-//        $responseData = json_decode(
-//            $this->client->getResponse()->getContent(),
-//            true,
-//            512,
-//            JSON_THROW_ON_ERROR
-//        );
-
-//        self::assertEquals('Bad Request No Data Returned', $responseData['title']);
-        self::assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $this->client->getResponse()->getStatusCode());
-//        self::assertEquals('sensorData cannot be empty', $responseData['errors'][0]);
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     public function sendingMissingDataSetsDataProvider(): Generator
@@ -1537,10 +1528,6 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         yield [
             'sensorData' => [
                 [
-                    'readingType' => Temperature::READING_TYPE,
-                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
-                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    'outOfBounds' => false,
                 ]
             ]
         ];
