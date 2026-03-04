@@ -11,6 +11,14 @@ class SensorUpdateRequestDTO
     #[
 //        SerializedPath('SensorDataCurrentReadingUpdateDTO[]'),
 //        SerializedName('[SensorDataCurrentReadingUpdateDTO]'),
+        Assert\All([
+            new Assert\Type(
+                type: SensorDataCurrentReadingUpdateRequestDTO::class,
+                message: 'Each element of sensorData must be an instance of {{ type }} you have provided {{ value }}'
+            ),
+//            new Assert\Valid()
+        ]),
+        Assert\Valid,
         Assert\Type(
             type: ['array'],
             message: 'sensorData must be a {{ type }} you have provided {{ value }}'

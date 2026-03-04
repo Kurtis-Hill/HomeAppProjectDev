@@ -46,9 +46,9 @@ class UpdateDeviceController extends AbstractController
         DeviceDTOBuilder $deviceDTOBuilder,
         #[MapRequestPayload]
         DeviceUpdateRequestDTO $deviceUpdateRequestDTO,
+        LoggerInterface $logger,
         #[MapQueryString]
         ?RequestDTO $requestDTO = null,
-        LoggerInterface $logger,
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();
 

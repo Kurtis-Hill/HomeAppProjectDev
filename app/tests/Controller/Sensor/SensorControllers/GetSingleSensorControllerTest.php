@@ -291,7 +291,7 @@ class GetSingleSensorControllerTest extends ControllerTestCase
         $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device]);
         $deviceSensor = $deviceSensors[0];
 
-        $this->authenticateRegularUserOne();
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGULAR_SENSOR_URL, $deviceSensor->getSensorID()),
@@ -322,7 +322,7 @@ class GetSingleSensorControllerTest extends ControllerTestCase
         $deviceSensors = $this->sensorRepository->findBy(['deviceID' => $device]);
         $deviceSensor = $deviceSensors[0];
 
-        $this->authenticateRegularUserOne();
+        $this->authenticateRegularUserTwo();
         $this->client->request(
             Request::METHOD_GET,
             sprintf(self::GET_SINGULAR_SENSOR_URL, $deviceSensor->getSensorID()),

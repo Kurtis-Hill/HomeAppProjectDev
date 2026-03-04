@@ -9,6 +9,7 @@ use App\Repository\Device\ORM\DeviceRepositoryInterface;
 use App\Services\Device\Request\DeviceRequestHandler;
 use App\Services\Device\Request\DeviceSettingsUpdateRequestHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -82,7 +83,7 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
 
         $result = $this->sut->execute($amqpMess);
 
-        self::assertFalse($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
     }
 
     public function test_http_code_200_returns_true(): void
@@ -122,6 +123,6 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
 
         $result = $this->sut->execute($amqpMess);
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
     }
 }

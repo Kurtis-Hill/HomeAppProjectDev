@@ -13,6 +13,7 @@ use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\Device\Request\DeviceRequestHandler;
 use App\Services\Sensor\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -86,7 +87,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
 
         $result = $this->sut->execute($amqpMess);
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
     }
 
     public function test_unsuccessful_request_returns_false(): void
@@ -130,7 +131,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
 
         $result = $this->sut->execute($amqpMess);
 
-        self::assertFalse($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
     }
 
     public function test_sending_sensor_id_that_doesnt_exist_returns_true(): void
@@ -181,6 +182,6 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
 
         $result = $this->sut->execute($amqpMess);
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
     }
 }

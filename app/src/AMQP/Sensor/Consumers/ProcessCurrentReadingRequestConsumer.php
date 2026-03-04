@@ -72,7 +72,9 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
             } catch (ORMException|OptimisticLockException $e) {
                 $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 
-                return self::MSG_REJECT_REQUEUE;
+                return empty($validationErrors)
+                    ? self::MSG_ACK
+                    : self::MSG_REJECT;
             } catch (Exception $e) {
                 $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 

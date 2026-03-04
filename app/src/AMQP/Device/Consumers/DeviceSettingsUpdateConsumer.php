@@ -43,7 +43,7 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
                 $this->elasticLogger->error(sprintf('Device settings update request failed for device %s', $deviceUpdateRequestDTO->getDeviceId()));
             }
 
-            return $result;
+            return $result === false ? self::MSG_REJECT : self::MSG_ACK;
         } catch (DeviceNotFoundException) {
             $this->elasticLogger->error('Device settings update request failed, device not found');
 

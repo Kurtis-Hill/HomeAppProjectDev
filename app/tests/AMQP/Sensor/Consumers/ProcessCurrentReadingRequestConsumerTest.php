@@ -28,6 +28,7 @@ use App\Entity\Sensor\SensorTypes\Sht;
 use App\Entity\Sensor\SensorTypes\Soil;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -69,13 +70,14 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         parent::tearDown();
     }
 
-    public function test_serialization_exception_returns_true(): void
+    public function test_serialization_exception_returns_failure(): void
     {
         $amqpMessage = $this->createMock(AMQPMessage::class);
         $amqpMessage->method('getBody')->willThrowException(new Exception());
 
         $result = $this->sut->execute($amqpMessage);
-        self::assertTrue($result);
+
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
     }
 
     public function test_unknown_device_returns_true(): void
@@ -103,7 +105,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage->method('getBody')->willReturn(serialize($updateCurrentReadingMessageDTO));
 
         $result = $this->sut->execute($amqpMessage);
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
     }
 
     // Soil
@@ -122,11 +124,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
+        /** @var Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $soilSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $analogCurrentReadingUpdateMessage->getCurrentReading(),
             $soilSensor->getCurrentReading(),
@@ -149,11 +151,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
+        /** @var Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $soilSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
         self::assertNotEquals(
             $soilSensor->getCurrentReading(),
             $humidCurrentReadingUpdateMessage->getCurrentReading()
@@ -176,11 +178,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
+        /** @var Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $ldrSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $analogCurrentReadingUpdateMessage->getCurrentReading(),
             $ldrSensor->getCurrentReading(),
@@ -203,11 +205,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog $soilSensor */
+        /** @var Analog $soilSensor */
         $standardReadingTypeRepository = $this->entityManager->getRepository(Analog::class);
         $ldrSensor = $standardReadingTypeRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
         self::assertNotEquals(
             $ldrSensor->getCurrentReading(),
             $humidCurrentReadingUpdateMessage->getCurrentReading()
@@ -236,7 +238,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
         $dhtSensor = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $dhtSensor->getCurrentReading(),
             $humidCurrentReadingUpdateMessage->getCurrentReading()
@@ -269,7 +271,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
         $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $humidity->getCurrentReading(),
             $humidCurrentReadingUpdateMessage->getCurrentReading()
@@ -304,7 +306,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
         $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
         self::assertNotEquals(
             $humidity->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
@@ -336,7 +338,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $humidityRepository = $this->entityManager->getRepository(Humidity::class);
         $humidity = $humidityRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $humidity->getCurrentReading(),
             $humidCurrentReadingUpdateMessage->getCurrentReading()
@@ -370,7 +372,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
         $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $humidity->getCurrentReading(),
             $humidCurrentReadingUpdateMessage->getCurrentReading()
@@ -406,7 +408,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
         $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
         self::assertNotEquals(
             $humidity->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
@@ -439,7 +441,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
         $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $temperature->getCurrentReading(),
             $tempCurrentReadingUpdateMessage->getCurrentReading()
@@ -466,7 +468,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $temperatureRepository = $this->entityManager->getRepository(Temperature::class);
         $temperature = $temperatureRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
         self::assertNotEquals(
             $temperature->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
@@ -489,11 +491,11 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $amqpMessage = new AMQPMessage(serialize($updateCurrentReadingMessageDTO));
         $result = $this->sut->execute($amqpMessage);
 
-        /** @var \App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude $latitude */
+        /** @var Latitude $latitude */
         $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
         $latitude = $latitudeRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $latitude->getCurrentReading(),
             $latitudeCurrentReadingUpdateMessage->getCurrentReading()
@@ -530,7 +532,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
         $latitude = $latitudeRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $humidity->getCurrentReading(),
             $humidCurrentReadingUpdateMessage->getCurrentReading()
@@ -572,7 +574,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
         $latitudeRepository = $this->entityManager->getRepository(Latitude::class);
         $latitude = $latitudeRepository->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
         self::assertNotEquals(
             $humidity->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
@@ -604,7 +606,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         $motion = $this->entityManager->getRepository(Motion::class)->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $motion->getCurrentReading(),
             $motionCurrentReadingUpdateMessage->getCurrentReading()
@@ -628,7 +630,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         $motion = $this->entityManager->getRepository(Motion::class)->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
         self::assertNotSame(
             $motion->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
@@ -653,7 +655,7 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         $relay = $this->entityManager->getRepository(Relay::class)->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
         self::assertEquals(
             $relay->getCurrentReading(),
             $relayCurrentReadingUpdateMessage->getCurrentReading()
@@ -677,11 +679,10 @@ class ProcessCurrentReadingRequestConsumerTest extends KernelTestCase
 
         $relay = $this->entityManager->getRepository(Relay::class)->findBySensorID($sensor->getSensorID())[0];
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
         self::assertNotSame(
             $relay->getCurrentReading(),
             $analogCurrentReadingUpdateMessage->getCurrentReading()
         );
     }
-
 }

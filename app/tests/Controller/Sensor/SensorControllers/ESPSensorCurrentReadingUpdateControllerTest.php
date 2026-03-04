@@ -372,8 +372,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
 
         yield [
             'sensorData' => [],
-            'title' => 'Bad Request No Data Returned',
-            'errors' => ['sensorData must contain at least 1 elements'],
+            'title' => 'Validation errors occurred',
+            'errors' => ['sensorData' => 'sensorData must contain at least 1 elements'],
         ];
 
         yield [

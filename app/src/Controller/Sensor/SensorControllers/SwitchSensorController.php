@@ -81,10 +81,18 @@ class SwitchSensorController extends AbstractController
 
             $sensor = $sensorRepository->findOneBy(['sensorName' => $sensorUpdateData->getSensorName()]);
 
+            if ($sensor === null) {
+                $individualSensorRequestValidationErrors = [
+                    sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'Sensor'),
+                    ...$individualSensorRequestValidationErrors,
+                ];
+                continue;
+            }
+
             $sensorDataCurrentReadingUpdateRequestDTO = SensorDataCurrentReadingRequestDTOBuilder::buildSensorDataCurrentReadingUpdateRequestDTO(
                 sensorName: $sensorUpdateData->getSensorName(),
-                sensorType: $sensor?->getSensorTypeObject()::getSensorTypeName(),
-                currentReadings: $sensorUpdateData->getCurrentReadings() ?? null,
+                sensorType: $sensor->getSensorTypeObject()::getSensorTypeName(),
+                currentReadings: $sensorUpdateData->getCurrentReadings() ?? [],
             );
 
             $sensorDataPassedValidationErrors = $validator->validate(
@@ -94,9 +102,7 @@ class SwitchSensorController extends AbstractController
             if ($this->checkIfErrorsArePresent($sensorDataPassedValidationErrors)) {
                 foreach ($sensorDataPassedValidationErrors as $error) {
                     $individualSensorRequestValidationErrors = [
-                        $this->getValidationErrorsAsStrings(
-                            $error
-                        ),
+                        $this->getValidationErrorsAsStrings($error),
                         ...$individualSensorRequestValidationErrors,
                     ];
                 }

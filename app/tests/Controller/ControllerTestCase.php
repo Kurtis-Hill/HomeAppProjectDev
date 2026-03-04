@@ -59,7 +59,7 @@ abstract class ControllerTestCase extends WebTestCase
         parent::tearDown();
     }
 
-    protected static function assertValidationErrorMessage(string $title)
+    protected static function assertValidationErrorMessage(string $title): void
     {
         self::assertEquals('Validation errors occurred', $title);
     }
