@@ -48,7 +48,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 {
     use TestLoginTrait;
 
-    private const UPDATE_SENSOR_BOUNDARY_READING_URL = '/HomeApp/api/user/sensor/%d/boundary-update';
+    private const UPDATE_SENSOR_BOUNDARY_READING_URL = '/HomeApp/api/user/sensor/%d/reading-types';
 
     private KernelBrowser $client;
 

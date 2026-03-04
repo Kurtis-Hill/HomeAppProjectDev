@@ -43,14 +43,12 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-//    public const REQUEST_SUCCESSFUL = 'Request Successful';
-
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly RequestQueryParameterHandler $requestQueryParameterHandler,
     ) {}
 
-    #[Route('{id}/boundary-update', name: 'boundary-update', methods: [Request::METHOD_PUT])]
+    #[Route('{id}/reading-types', name: 'boundary-update', methods: [Request::METHOD_PUT])]
     public function updateSensorReadingBoundary(
         #[MapRequestPayload]
         UpdateSensorReadingBoundaryRequestDTO $updateBoundaryReadingRequestDTO,
