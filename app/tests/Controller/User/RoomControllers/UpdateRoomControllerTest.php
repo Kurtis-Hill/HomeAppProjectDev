@@ -121,7 +121,7 @@ class UpdateRoomControllerTest extends WebTestCase
             $jsonData
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     public function test_success_response(): void

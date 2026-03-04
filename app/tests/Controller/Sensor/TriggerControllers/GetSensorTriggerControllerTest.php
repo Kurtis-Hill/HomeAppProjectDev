@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Sensor\TriggerControllers;
 
+use App\Controller\Sensor\TriggerControllers\GetSensorTriggersController;
 use App\DataFixtures\Core\UserDataFixtures;
 use App\Entity\Device\Devices;
 use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
@@ -113,7 +114,7 @@ class GetSensorTriggerControllerTest extends WebTestCase
         self::assertNotEmpty($response);
 
         $title = $response['title'];
-        self::assertEquals(\App\Controller\Sensor\TriggerControllers\GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
 
         $payload = $response['payload'];
         self::assertNotEmpty($payload);
@@ -168,7 +169,7 @@ class GetSensorTriggerControllerTest extends WebTestCase
         self::assertNotEmpty($response);
 
         $title = $response['title'];
-        self::assertEquals(\App\Controller\Sensor\TriggerControllers\GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
 
         $payload = $response['payload'];
         self::assertNotEmpty($payload);
@@ -243,7 +244,7 @@ class GetSensorTriggerControllerTest extends WebTestCase
         self::assertNotEmpty($response);
 
         $title = $response['title'];
-        self::assertEquals(\App\Controller\Sensor\TriggerControllers\GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
 
         $payload = $response['payload'];
         self::assertNotEmpty($payload);
@@ -267,7 +268,7 @@ class GetSensorTriggerControllerTest extends WebTestCase
         self::assertNotEmpty($response);
 
         $title = $response['title'];
-        self::assertEquals(\App\Controller\Sensor\TriggerControllers\GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
+        self::assertEquals(GetSensorTriggersController::REQUEST_SUCCESSFUL, $title);
 
         $payload = $response['payload'];
         self::assertNotEmpty($payload);

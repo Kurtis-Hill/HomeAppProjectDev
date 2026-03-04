@@ -4,6 +4,14 @@ services:
       public: true
       autowire: true
 
+  App\Services\Sensor\ConstantlyRecord\ConstRecordReadingTypeFacadeHandler:
+    arguments:
+      $constRecordRepositoryFactory: '@App\Factories\Sensor\ConstRecord\ConstRecordORMFactory'
+
+  App\Services\Sensor\OutOfBounds\OutOfBoundsReadingTypeFacade:
+    arguments:
+      $outOfBoundsFactory: '@App\Factories\Sensor\OufOfBounds\OutOfBoundsORMFactory'
+
 #  Symfony\Contracts\HttpClient\HttpClientInterface: ~
 #  Symfony\Contracts\HttpClient\HttpClientInterface:
 #    class: '@Symfony\Contracts\HttpClient\HttpClientInterface'
