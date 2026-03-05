@@ -57,12 +57,8 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
                 $expr->eq('devices.deviceName', ':deviceName'),
                 $expr->eq('room.roomID', ':roomID')
             )
-            ->setParameters(
-                [
-                    'deviceName' => $deviceName,
-                    'roomID' => $roomId
-                ]
-            );
+            ->setParameter('deviceName', $deviceName)
+            ->setParameter('roomID', $roomId);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -77,7 +73,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             $qb->expr()->in('dv.groupID', ':groupID')
         )
             ->orderBy('dv.deviceName', 'ASC')
-            ->setParameters(['groupID' => $groupIDs]);
+            ->setParameter('groupID', $groupIDs);
 
         return $qb->getQuery()->getResult($hydration);
     }
@@ -100,7 +96,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             $qb->expr()->in('dv.groupID', ':groupID')
         )
             ->orderBy('dv.deviceName', 'ASC')
-            ->setParameters(['groupID' => $groupIDs])
+            ->setParameter('groupID', $groupIDs)
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
@@ -120,7 +116,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             $expr->in('dv.groupID', ':groupID')
         )
             ->orderBy('dv.deviceName', 'ASC')
-            ->setParameters(['groupID' => $groupIDs]);
+            ->setParameter('groupID', $groupIDs);
 
         return $qb->getQuery()->getResult($hydration);
     }
@@ -136,7 +132,7 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
             ->where(
                 $expr->eq('dv.deviceID', ':deviceID')
             )
-            ->setParameters(['deviceID' => $deviceID]);
+            ->setParameter('deviceID', $deviceID);
 
         return $qb->getQuery()->getSingleColumnResult();
     }

@@ -68,7 +68,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
-    public function malformedRequestDataProvider(): Generator
+    public static function malformedRequestDataProvider(): Generator
     {
         yield [
             'requestData' => [
@@ -174,7 +174,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-    public function userCannotEditOtherUsersCardsDataProvider(): Generator
+    public static function userCannotEditOtherUsersCardsDataProvider(): Generator
     {
         yield [
             'username' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
@@ -294,7 +294,7 @@ class UpdateCardViewControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function sendingWrongCardDataRequestDataProvider(): Generator
+    public static function sendingWrongCardDataRequestDataProvider(): Generator
     {
         yield [
             'wrongColour' => true,
@@ -404,7 +404,7 @@ class UpdateCardViewControllerTest extends WebTestCase
 //        }
     }
 
-    public function sendingNullCardViewDataProvider(): Generator
+    public static function sendingNullCardViewDataProvider(): Generator
     {
         yield [
             'nullCardColour' => true,

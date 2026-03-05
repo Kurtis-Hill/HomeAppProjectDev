@@ -60,7 +60,7 @@ class AddNewSensorControllerTest extends ControllerTestCase
         $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']]);
     }
 
-    public function newSensorSimpleDataProvider(): Generator
+    public static function newSensorSimpleDataProvider(): Generator
     {
         yield [
             'sensor' => Dht::class,
@@ -103,7 +103,7 @@ class AddNewSensorControllerTest extends ControllerTestCase
         ];
     }
 
-    public function newSensorExtendedDataProvider(): Generator
+    public static function newSensorExtendedDataProvider(): Generator
     {
         yield [
             'sensor' => Dht::class,
@@ -231,10 +231,9 @@ class AddNewSensorControllerTest extends ControllerTestCase
         self::assertEquals($readingInterval, $sensor->getReadingInterval());
 
         self::assertSensorIsSameAsExpected($sensor, $responseData['payload']);
-        ;
     }
 
-    public function invalidSensorDataProvider(): Generator
+    public static function invalidSensorDataProvider(): Generator
     {
         yield 'special_characters_in_name' => [
             [
@@ -966,7 +965,7 @@ class AddNewSensorControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

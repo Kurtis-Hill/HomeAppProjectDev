@@ -163,7 +163,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
     }
 
-    public function multiUpdateOneCorrectOneIncorrectDataProvider(): Generator
+    public static function multiUpdateOneCorrectOneIncorrectDataProvider(): Generator
     {
 //        DHT
         yield [
@@ -493,7 +493,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     }
 
 
-    public function correctUpdateDataDataProvider(): Generator
+    public static function correctUpdateDataDataProvider(): Generator
     {
         yield [
             'sensorType' => Dht::class,
@@ -1199,7 +1199,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
     }
 
-    public function sendingEntireWrongReadingPayloadDataProvider(): Generator
+    public static function sendingEntireWrongReadingPayloadDataProvider(): Generator
     {
 //        DHT
         yield [
@@ -1523,7 +1523,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function sendingMissingDataSetsDataProvider(): Generator
+    public static function sendingMissingDataSetsDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -1736,7 +1736,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

@@ -57,7 +57,7 @@ class RegisterNewDeviceControllerTest extends ControllerTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
-    public function wrongDataTypesDataProvider(): Generator
+    public static function wrongDataTypesDataProvider(): Generator
     {
         yield [
             'ipAddress' => 123,

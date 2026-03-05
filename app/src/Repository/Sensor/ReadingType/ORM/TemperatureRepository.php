@@ -8,6 +8,7 @@ use App\Entity\Sensor\Sensor;
 use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Repository\Sensor\ReadingType\ReadingTypeRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use JetBrains\PhpStorm\ArrayShape;
@@ -49,13 +50,9 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
 
         $qb->select(Temperature::getReadingTypeName())
             ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Temperature::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')            ->where(
-                $expr->eq(
-                    Sensor::ALIAS.'.sensorName',
-                    ':sensorName'
-                )
-            )
-            ->setParameters(['sensorName' => $name]);
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->where($expr->eq(Sensor::ALIAS.'.sensorName', ':sensorName'))
+            ->setParameter('sensorName', $name);
 
         return $qb->getQuery()->getResult() ?? [];
     }
@@ -67,13 +64,9 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
 
         $qb->select(Temperature::getReadingTypeName())
             ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Temperature::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')            ->where(
-                $expr->eq(
-                    Sensor::ALIAS.'.sensorID',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorNameID]);
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->where($expr->eq(Sensor::ALIAS.'.sensorID', ':sensor'))
+            ->setParameter('sensor', $sensorNameID);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -85,13 +78,9 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
 
         $qb->select(Temperature::getReadingTypeName())
             ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Temperature::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
-            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')            ->where(
-                $expr->eq(
-                    Sensor::ALIAS.'.sensorName',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorName]);
+            ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
+            ->where($expr->eq(Sensor::ALIAS.'.sensorName', ':sensor'))
+            ->setParameter('sensor', $sensorName);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -112,13 +101,8 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
 
         $qb->select('readingType')
             ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
-            ->where(
-                $expr->eq(
-                    'baseReadingType.sensor',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorID]);
+            ->where($expr->eq('baseReadingType.sensor', ':sensor'))
+            ->setParameter('sensor', $sensorID);
 
         return $qb->getQuery()->getResult();
     }

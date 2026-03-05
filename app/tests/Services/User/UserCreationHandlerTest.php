@@ -162,7 +162,7 @@ class UserCreationHandlerTest extends KernelTestCase
     }
 
 
-    public function invalidUserDataProvider(): Generator
+    public static function invalidUserDataProvider(): Generator
     {
         yield [
                 'firstName' => '',
@@ -236,7 +236,7 @@ class UserCreationHandlerTest extends KernelTestCase
         );
     }
 
-    public function invalidGroupNameDataProvider(): Generator
+    public static function invalidGroupNameDataProvider(): Generator
     {
         yield [
             'groupName' => '',

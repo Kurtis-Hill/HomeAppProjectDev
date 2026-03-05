@@ -291,7 +291,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         self::assertCount(0, $result);
     }
 
-    public function correctTriggersDataProvider(): Generator
+    public static function correctTriggersDataProvider(): Generator
     {
         yield [
             SensorTriggerFixtures::SENSOR_TRIGGER_1,
@@ -330,7 +330,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         ];
     }
 
-    public function overrideDataProvider(): Generator
+    public static function overrideDataProvider(): Generator
     {
         yield [
             SensorTriggerFixtures::SENSOR_TRIGGER_7,

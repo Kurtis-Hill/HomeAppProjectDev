@@ -78,7 +78,7 @@ class GetGroupNameMappingsControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): Generator
+    public static function wrongHttpsMethodDataProvider(): Generator
     {
         yield [Request::METHOD_POST];
         yield [Request::METHOD_PATCH];

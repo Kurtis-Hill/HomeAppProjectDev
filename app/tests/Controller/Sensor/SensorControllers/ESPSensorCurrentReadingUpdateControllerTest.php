@@ -75,7 +75,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
         self::assertEquals('All sensor readings handled successfully', $responseData['title']);
     }
 
-    public function successfulUpdateRequestDataProvider(): Generator
+    public static function successfulUpdateRequestDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -353,7 +353,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
         self::assertEquals($errors, $responseData['errors']);
     }
 
-    public function malformedSensorUpdateDataProvider(): Generator
+    public static function malformedSensorUpdateDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -415,7 +415,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
         self::assertEquals($errors, $responseData['errors']);
     }
 
-    public function mixedGoodBadRequestDataProvider(): Generator
+    public static function mixedGoodBadRequestDataProvider(): Generator
     {
         // taken out due to doc extractor array sensor name is a type exception
 //        yield [
@@ -622,7 +622,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
         self::assertEquals($errors, $responseData['errors']);
     }
 
-    public function sendingWrongDataTypesInCurrentReadingRequestDataProvider(): Generator
+    public static function sendingWrongDataTypesInCurrentReadingRequestDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -811,7 +811,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
         self::assertEquals($payload, $responseData['payload']);
     }
 
-    public function sendingRequestWithWrongReadingTypesForSensorDataProvider(): Generator
+    public static function sendingRequestWithWrongReadingTypesForSensorDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -935,7 +935,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
         self::assertEquals($errors, $responseData['errors']);
     }
 
-    public function sendingOutOfRangeDataProvider(): Generator
+    public static function sendingOutOfRangeDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -1110,7 +1110,7 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

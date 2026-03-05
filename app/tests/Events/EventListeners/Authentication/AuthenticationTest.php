@@ -189,7 +189,7 @@ class AuthenticationTest extends WebTestCase
         self::assertEquals(200, $requestResponse->getStatusCode());
     }
 
-    public function deviceCredentialsDataProvider(): Generator
+    public static function deviceCredentialsDataProvider(): Generator
     {
         yield [
             'username' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name'],
@@ -199,7 +199,7 @@ class AuthenticationTest extends WebTestCase
         ];
     }
 
-    public function userCredentialsDataProvider(): Generator
+    public static function userCredentialsDataProvider(): Generator
     {
         yield [
             'username' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,
@@ -250,7 +250,7 @@ class AuthenticationTest extends WebTestCase
         self::assertEquals(401, $requestResponse->getStatusCode());
     }
 
-    public function userWrongCredentialsDataProvider(): Generator
+    public static function userWrongCredentialsDataProvider(): Generator
     {
         yield [
             'username' => UserDataFixtures::ADMIN_USER_EMAIL_TWO,
@@ -292,7 +292,7 @@ class AuthenticationTest extends WebTestCase
         self::assertEquals(401, $requestResponse->getStatusCode());
     }
 
-    public function deviceWrongCredentialsDataProvider(): Generator
+    public static function deviceWrongCredentialsDataProvider(): Generator
     {
         yield [
             'username' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name'],

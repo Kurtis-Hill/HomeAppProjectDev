@@ -127,7 +127,7 @@ class SwitchSensorControllerTest extends ControllerTestCase
         self::assertEquals($currentReadings['relay'], $sensorReadingType->getRequestedReading());
     }
 
-    public function successfulSwitchDataProvider(): Generator
+    public static function successfulSwitchDataProvider(): Generator
     {
         yield [
             'sensorType' => GenericRelay::class,
@@ -164,7 +164,7 @@ class SwitchSensorControllerTest extends ControllerTestCase
         self::assertEquals($errors, $responseData['errors']);
     }
 
-    public function malformedSensorUpdateDataProvider(): Generator
+    public static function malformedSensorUpdateDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -223,7 +223,7 @@ class SwitchSensorControllerTest extends ControllerTestCase
         self::assertEquals($errors, $responseData['errors']);
     }
 
-    public function sendingWrongDataTypesInCurrentReadingRequestDataProvider(): Generator
+    public static function sendingWrongDataTypesInCurrentReadingRequestDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -276,7 +276,7 @@ class SwitchSensorControllerTest extends ControllerTestCase
         self::assertEquals($errors, $responseData['errors']);
     }
 
-    public function sendingRequestWithWrongReadingTypesForSensorDataProvider(): Generator
+    public static function sendingRequestWithWrongReadingTypesForSensorDataProvider(): Generator
     {
         yield [
             'sensorData' => [
@@ -310,7 +310,7 @@ class SwitchSensorControllerTest extends ControllerTestCase
 //        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

@@ -138,7 +138,7 @@ class GetCardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function getCardViewFormDataProvider(): Generator
+    public static function getCardViewFormDataProvider(): Generator
     {
         yield [Dht::class];
 
@@ -173,7 +173,7 @@ class GetCardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
-    public function getCardViewFormIncorrectCardViewIDDataProvider(): Generator
+    public static function getCardViewFormIncorrectCardViewIDDataProvider(): Generator
     {
         yield [
             'notAInt',
@@ -235,7 +235,7 @@ class GetCardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-    public function userCannotEditOtherUsersCardsDataProvider(): Generator
+    public static function userCannotEditOtherUsersCardsDataProvider(): Generator
     {
         yield [
             'username' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,

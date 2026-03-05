@@ -137,7 +137,7 @@ class AddNewRoomControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function addNewRoomMissingDataProvider(): Generator
+    public static function addNewRoomMissingDataProvider(): Generator
     {
         yield [
             'roomName' => null,
@@ -245,7 +245,7 @@ class AddNewRoomControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

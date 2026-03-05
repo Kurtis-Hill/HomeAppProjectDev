@@ -119,7 +119,7 @@ class UpdateSensorControllerTest extends ControllerTestCase
         self::assertEquals($sensor->getDevice(), $sensorAfterUpdate->getDevice());
     }
 
-    public function incorrectDataTypesDataProvider(): Generator
+    public static function incorrectDataTypesDataProvider(): Generator
     {
         yield [
             'sensorName' => [123],
@@ -715,7 +715,7 @@ class UpdateSensorControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): Generator
+    public static function wrongHttpsMethodDataProvider(): Generator
     {
         yield [Request::METHOD_GET];
         yield [Request::METHOD_POST];

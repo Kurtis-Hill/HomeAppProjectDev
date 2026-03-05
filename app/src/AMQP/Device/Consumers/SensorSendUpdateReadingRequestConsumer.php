@@ -46,8 +46,10 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
         try {
             $result = $this->requestSensorCurrentReadingHandler->handleUpdateSensorReadingRequest($sensorData);
             if ($result) {
+                dd(1, $result);
                 $this->elasticLogger->info(sprintf('Sensor update request succeeded for sensor: %d', $sensorData->getSensorId()));
             } else {
+                dd(2, $result);
                 $this->elasticLogger->error(sprintf('Sensor update request failed for sensor: %d', $sensorData->getSensorId()));
             }
 
@@ -55,14 +57,17 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
                 ? self::MSG_REJECT
                 : self::MSG_ACK;
         } catch (SensorNotFoundException | DeviceIPNotSetException | SensorTypeException | ExceptionInterface | SensorReadingTypeRepositoryFactoryException $exception) {
+                dd(1, $result);
             $this->elasticLogger->error('Sensor update request failed: ' . $exception->getMessage());
 
             return self::MSG_REJECT;
         } catch (HttpException $exception) {
+                dd(2, $result);
             $this->elasticLogger->error('Sensor update request failed with http exception, exception message: ' . $exception->getMessage());
 
             return self::MSG_REJECT;
         } catch (Exception $exception) {
+                dd(3, $exception);
             $this->elasticLogger->error('Sensor update request failed with unexpected error, exception message: ' . $exception->getMessage());
 
             return self::MSG_REJECT;

@@ -140,7 +140,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         }
     }
 
-    public function wrongCurrentReadingDataProvider(): Generator
+    public static function wrongCurrentReadingDataProvider(): Generator
     {
         yield [
             'sensorType' => Dht::NAME,
@@ -423,7 +423,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         }
     }
 
-    public function correctCurrentReadingDataProvider(): Generator
+    public static function correctCurrentReadingDataProvider(): Generator
     {
         yield [
             'sensorType' => Dht::NAME,

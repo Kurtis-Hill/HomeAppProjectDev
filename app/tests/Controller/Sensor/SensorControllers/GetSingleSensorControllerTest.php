@@ -79,7 +79,7 @@ class GetSingleSensorControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_POST],
@@ -176,7 +176,7 @@ class GetSingleSensorControllerTest extends ControllerTestCase
         }
     }
 
-    public function allSensorTypesDataProvider(): Generator
+    public static function allSensorTypesDataProvider(): Generator
     {
         yield [
             'sensorType' => Dht::class,
@@ -407,7 +407,7 @@ class GetSingleSensorControllerTest extends ControllerTestCase
         }
     }
 
-    public function filterResponseSensorDataProvider(): Generator
+    public static function filterResponseSensorDataProvider(): Generator
     {
         yield [
             'sensorType' => Dht::class,

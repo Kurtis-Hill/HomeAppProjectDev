@@ -90,7 +90,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         self::assertEquals($analogSensor->getCurrentReading(), $constRecordings->getSensorReading());
     }
 
-    public function analogOutOfBoundsSensorDataProvider(): Generator
+    public static function analogOutOfBoundsSensorDataProvider(): Generator
     {
         yield [
             'sensorName' => 'AdminUserOneDeviceAdminGroupOneSoil',
@@ -149,7 +149,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         self::assertEquals($temperature->getCurrentReading(), $constRecordings->getSensorReading());
     }
 
-    public function temperatureOutOfBoundsSensorDataProvider(): Generator
+    public static function temperatureOutOfBoundsSensorDataProvider(): Generator
     {
         yield [
             'sensorName' => "AdminUserOneDeviceAdminGroupOneBmp",
@@ -220,7 +220,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         self::assertEquals($humidObject->getCurrentReading(), $constRecordings->getSensorReading());
     }
 
-    public function humidityOutOfBoundsSensorDataProvider(): Generator
+    public static function humidityOutOfBoundsSensorDataProvider(): Generator
     {
         yield [
             'sensorName' => "AdminUserOneDeviceAdminGroupOneBmp",
@@ -286,7 +286,7 @@ class SensorReadingTypeOutOfBoundsServiceTest extends KernelTestCase
         self::assertEquals($latitudeObject->getCurrentReading(), $constRecordings->getSensorReading());
     }
 
-    public function latitudeOutOfBoundsSensorDataProvider(): Generator
+    public static function latitudeOutOfBoundsSensorDataProvider(): Generator
     {
         yield [
             'sensorName' => "AdminUserOneDeviceAdminGroupOneBmp",

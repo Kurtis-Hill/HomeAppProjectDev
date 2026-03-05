@@ -126,7 +126,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         self::assertEquals($errorMessage, $payload['errors']);
     }
 
-    public function invalidRequestDataProvider(): Generator
+    public static function invalidRequestDataProvider(): Generator
     {
         yield [
             'operator' => 'invalid operator',
@@ -472,7 +472,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         self::assertEquals($baseReadingTypeThatIsTriggeredResponse['baseReadingTypeID'], $baseReadingTypeThatIsTriggered->getBaseReadingTypeID());
     }
 
-    public function operatorAndTriggerTypeProvider(): Generator
+    public static function operatorAndTriggerTypeProvider(): Generator
     {
         yield [
             'operatorName' => Operator::OPERATOR_EQUAL,

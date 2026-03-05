@@ -133,7 +133,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
         self::assertEquals($errorMessage, $errors);
     }
 
-    public function updatingWithWrongDataTypesDataProvider(): Generator
+    public static function updatingWithWrongDataTypesDataProvider(): Generator
     {
         yield [
             'operator' => 'string',
@@ -581,7 +581,7 @@ class UpdateSensorTriggerControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

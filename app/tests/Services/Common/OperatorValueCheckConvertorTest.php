@@ -38,7 +38,7 @@ class OperatorValueCheckConvertorTest extends TestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    public function stringBooleanDataProvider(): Generator
+    public static function stringBooleanDataProvider(): Generator
     {
         yield [
             'value' => 'true',
@@ -86,7 +86,7 @@ class OperatorValueCheckConvertorTest extends TestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    public function stringAndNumbersDataProvider(): Generator
+    public static function stringAndNumbersDataProvider(): Generator
     {
         yield [
             'value' => '1234',

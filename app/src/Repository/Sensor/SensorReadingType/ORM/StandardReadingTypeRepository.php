@@ -38,11 +38,11 @@ class StandardReadingTypeRepository extends ServiceEntityRepository
             ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
             ->where(
                 $expr->eq(
-                    'baseReadingType.sensor',
+                    'IDENTITY(baseReadingType.sensor)',
                     ':sensor'
                 )
             )
-            ->setParameters(['sensor' => $sensorID]);
+            ->setParameter('sensor', $sensorID);
 
         return $qb->getQuery()->getResult();
     }

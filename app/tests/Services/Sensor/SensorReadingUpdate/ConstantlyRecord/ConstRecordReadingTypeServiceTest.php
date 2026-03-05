@@ -91,7 +91,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         self::assertNull($constRecordings);
     }
 
-    public function analogConstRecordSensorDataProvider(): Generator
+    public static function analogConstRecordSensorDataProvider(): Generator
     {
         yield [
             'sensorName' => 'RegularUserOneDeviceRegularGroupOneSoil',
@@ -147,7 +147,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         self::assertNull($constRecordings);
     }
 
-    public function tempConstRecordSensorDataProvider(): Generator
+    public static function tempConstRecordSensorDataProvider(): Generator
     {
         yield [
             'sensorName' => 'AdminUserOneDeviceAdminGroupOneBmp',
@@ -214,7 +214,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         self::assertNull($constRecordings);
     }
 
-    public function humidConstRecordSensorDataProvider(): Generator
+    public static function humidConstRecordSensorDataProvider(): Generator
     {
         yield [
             'sensorName' => 'AdminUserOneDeviceAdminGroupOneBmp',
@@ -274,7 +274,7 @@ class ConstRecordReadingTypeServiceTest extends KernelTestCase
         self::assertNull($constRecordings);
     }
 
-    public function latitudeConstRecordSensorDataProvider(): Generator
+    public static function latitudeConstRecordSensorDataProvider(): Generator
     {
         yield [
             'sensorName' => 'AdminUserOneDeviceAdminGroupOneBmp',

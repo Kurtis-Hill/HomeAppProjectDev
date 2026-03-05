@@ -51,13 +51,8 @@ class MotionRepository extends ServiceEntityRepository implements ReadingTypeRep
         $qb->select(Motion::READING_TYPE)
             ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Motion::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
             ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
-            ->where(
-                $expr->eq(
-                    Sensor::ALIAS.'.sensorID',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorNameID]);
+            ->where($expr->eq(Sensor::ALIAS.'.sensorID', ':sensor'))
+            ->setParameter('sensor', $sensorNameID);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -70,13 +65,8 @@ class MotionRepository extends ServiceEntityRepository implements ReadingTypeRep
         $qb->select(Motion::READING_TYPE)
             ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Motion::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
             ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
-            ->where(
-                $expr->eq(
-                    Sensor::ALIAS.'.sensorName',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorName]);
+            ->where($expr->eq(Sensor::ALIAS.'.sensorName', ':sensor'))
+            ->setParameter('sensor', $sensorName);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -97,13 +87,8 @@ class MotionRepository extends ServiceEntityRepository implements ReadingTypeRep
 
         $qb->select('readingType')
             ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
-            ->where(
-                $expr->eq(
-                    'baseReadingType.sensor',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorID]);
+            ->where($expr->eq('baseReadingType.sensor', ':sensor'))
+            ->setParameter('sensor', $sensorID);
 
         return $qb->getQuery()->getResult();
     }

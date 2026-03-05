@@ -520,7 +520,7 @@ class GetCardViewControllerTest extends WebTestCase
         }
     }
 
-    public function noReadingTypeReturnedDataProvider(): Generator
+    public static function noReadingTypeReturnedDataProvider(): Generator
     {
         yield [
             [

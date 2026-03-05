@@ -94,7 +94,7 @@ class GetSensorControllerTest extends ControllerTestCase
         self::assertEquals('Validation errors occurred', $responseData['title']);
     }
 
-    public function sendingIncorrectDataTypesAndChoicesDataProvider(): Generator
+    public static function sendingIncorrectDataTypesAndChoicesDataProvider(): Generator
     {
         yield [
             'dataToSend' => [
@@ -733,7 +733,7 @@ class GetSensorControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): Generator
+    public static function wrongHttpsMethodDataProvider(): Generator
     {
         yield [Request::METHOD_POST];
         yield [Request::METHOD_PUT];

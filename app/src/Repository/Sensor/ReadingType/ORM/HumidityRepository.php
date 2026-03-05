@@ -57,7 +57,7 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
                     ':sensor'
                 )
             )
-            ->setParameters(['sensor' => $sensorNameID]);
+            ->setParameter('sensor', $sensorNameID);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -76,7 +76,7 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
                     ':sensor'
                 )
             )
-            ->setParameters(['sensor' => $sensorName]);
+            ->setParameter('sensor', $sensorName);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -108,7 +108,7 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
                     ':sensor'
                 )
             )
-            ->setParameters(['sensor' => $sensorID]);
+            ->setParameter('sensor', $sensorID);
 
         return $qb->getQuery()->getResult();
     }
