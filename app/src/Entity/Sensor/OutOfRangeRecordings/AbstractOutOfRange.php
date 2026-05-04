@@ -43,7 +43,7 @@ abstract class AbstractOutOfRange implements OutOfBoundsEntityInterface
     private int $outOfRangeID;
 
     #[ORM\Column(name: "sensorReading", type: "float", precision: 10, scale: 0, nullable: false, options: ["default" => "NULL"]),]
-    private float $sensorReading;
+    protected float $sensorReading;
 
     #[ORM\Column(name: "createdAt", type: "datetime", nullable: false, options: ["default" => "current_timestamp()"])]
     #[Assert\NotBlank(message: 'Out of range humidity date time should not be blank')]

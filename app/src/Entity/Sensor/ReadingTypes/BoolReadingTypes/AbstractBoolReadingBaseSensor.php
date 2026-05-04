@@ -7,7 +7,7 @@ use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
 use App\Entity\Sensor\Sensor;
 use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Repository\Sensor\SensorReadingType\ORM\BoolReadingBaseSensorRepository;
-use DateTimeImmutable;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping\InheritanceType;
     ORM\Index(columns: ["currentReading"], name: "currentReading"),
     ORM\Index(columns: ["constRecord"], name: "constRecord"),
     ORM\Index(columns: ["updatedAt"], name: "updatedAt"),
-    ORM\Index(columns: ["standardReadingType"], name: "standardreadingtypeIndex"),
+    ORM\Index(name: "standardreadingtypeIndex", columns: ["standardReadingType"]),
     ORM\Index(columns: ["sensorID"], name: "sensorID"),
     ORM\Index(columns: ["createdAt"], name: "createdAt"),
     DiscriminatorColumn(name: 'boolReadingType', type: 'string'),
@@ -145,7 +145,7 @@ abstract class AbstractBoolReadingBaseSensor implements BaseReadingTypeInterface
     public function setCreatedAt(?DateTimeInterface $createdAt = null): void
     {
         if ($createdAt === null) {
-            $createdAt = new DateTimeImmutable('now');
+            $createdAt = new DateTime('now');
         }
         $this->getBaseReadingType()->setCreatedAt($createdAt);
     }

@@ -4,6 +4,7 @@ namespace App\Entity\Sensor\ReadingTypes;
 
 use App\Entity\Sensor\Sensor;
 use App\Repository\Sensor\ReadingType\ORM\BaseSensorReadingTypeRepository;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -49,7 +50,7 @@ class BaseSensorReadingType
 
     public function __construct()
     {
-        $this->updatedAt = new DateTimeImmutable('now');
+        $this->updatedAt = new DateTime('now');
     }
 
     public function getBaseReadingTypeID(): int
@@ -84,7 +85,7 @@ class BaseSensorReadingType
 
     public function setUpdatedAt(): void
     {
-        $this->updatedAt = new DateTimeImmutable('now');
+        $this->updatedAt = new DateTime('now');
     }
 
     public function getCreatedAt(): DateTimeInterface
@@ -95,7 +96,7 @@ class BaseSensorReadingType
     public function setCreatedAt(?DateTimeInterface $createdAt = null): void
     {
         if ($createdAt === null) {
-            $createdAt = new DateTimeImmutable('now');
+            $createdAt = new DateTime('now');
         }
         $this->createdAt = $createdAt;
     }

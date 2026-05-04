@@ -275,11 +275,14 @@ class SensorVoter extends Voter
             return true;
         }
 
+//        dd(            $sensor->getDevice()->getGroupObject()->getGroupID(),
+//            $user->getAssociatedGroupIDs(),);
         if (!in_array(
             $sensor->getDevice()->getGroupObject()->getGroupID(),
             $user->getAssociatedGroupIDs(),
             true
         )) {
+//            dd('here');
             return false;
         }
 

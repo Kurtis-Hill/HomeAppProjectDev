@@ -103,7 +103,7 @@ class AddUserControllerTest extends WebTestCase
         self::assertEquals(\App\Controller\User\UserControllers\AddUserController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
-    public function wrongDataTypesDataProvider(): Generator
+    public static function wrongDataTypesDataProvider(): Generator
     {
         yield [
             'data' => [
@@ -351,7 +351,7 @@ class AddUserControllerTest extends WebTestCase
         self::assertEquals(\App\Controller\User\UserControllers\AddUserController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
-    public function outOfRangeDataProvider(): Generator
+    public static function outOfRangeDataProvider(): Generator
     {
         yield [
             'data' => [

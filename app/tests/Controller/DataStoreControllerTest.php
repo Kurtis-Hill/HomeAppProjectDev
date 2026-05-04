@@ -37,14 +37,6 @@ class DataStoreControllerTest extends WebTestCase
         $this->userRepository = $this->entityManager->getRepository(User::class);
     }
 
-    protected function tearDown(): void
-    {
-        $this->entityManager->close();
-        $this->entityManager = null;
-
-        parent::tearDown();
-    }
-
     public function test_successful_elastic_indicies_request(): void
     {
         $this->client->request(
@@ -57,6 +49,6 @@ class DataStoreControllerTest extends WebTestCase
         $data = json_decode($response->getContent(), true);
         $payload = $data['payload'];
 
-        self::assertCount(10, $payload);
+        self::assertCount(12, $payload);
     }
 }

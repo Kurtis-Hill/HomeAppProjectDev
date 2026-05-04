@@ -10,7 +10,7 @@ class ConstRecordLatitudeRepository extends AbstractConstRecordRepository implem
 {
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function find(): ?ConstLatitude

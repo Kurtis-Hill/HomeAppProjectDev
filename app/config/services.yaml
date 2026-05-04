@@ -15,7 +15,7 @@ services:
 
     Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
       arguments:
-        $endpoint:  '%env(ELASTIC_SEARCH_HOST)%:%env(ELASTIC_SEARCH_PORT)%'
+        $endpoint:  '%env(ELASTIC_TRANSPORT)%://%env(ELASTIC_SEARCH_HOST)%:%env(ELASTIC_SEARCH_PORT)%'
         $index: '%env(ELASTIC_INDEX_LOG)%'
         $client: "@elastica.client"
         $level: !php/const Monolog\Logger::ERROR
@@ -78,13 +78,13 @@ services:
           {
             index: '@elastica.log_index',
             mapping: {
-              host: 'keyword',
-              message: 'text',
-              type: 'bucket',
-              channel: 'keyword',
-              level: 'text',
-              monolog_level: 'number',
-              context: 'array',
+              host: { type: 'keyword' },
+              message: { type: 'text' },
+              type: { type: 'keyword' },
+              channel: { type: 'keyword' },
+              level: { type: 'keyword' },
+              monolog_level: { type: 'integer' },
+              context: { type: 'object', enabled: false },
             }
           }
         ]

@@ -108,7 +108,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         self::assertEquals(AddGroupMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
-    public function sendingWrongDataTypesDataProvider(): Generator
+    public static function sendingWrongDataTypesDataProvider(): Generator
     {
         yield [
             'dataToSend' => [
@@ -170,7 +170,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         self::assertEquals(AddGroupMappingController::BAD_REQUEST_NO_DATA_RETURNED, $title);
     }
 
-    public function missingDataDataProvider(): Generator
+    public static function missingDataDataProvider(): Generator
     {
         yield [
             'dataToSend' => [
@@ -436,7 +436,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): Generator
+    public static function wrongHttpsMethodDataProvider(): Generator
     {
         yield [Request::METHOD_GET];
         yield [Request::METHOD_PUT];

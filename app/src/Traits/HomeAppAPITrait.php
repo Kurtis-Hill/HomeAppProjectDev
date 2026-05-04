@@ -4,7 +4,6 @@
 namespace App\Traits;
 
 use App\Services\API\HTTPStatusCodes;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
@@ -344,9 +343,7 @@ trait HomeAppAPITrait
 
         if (!empty($groups)) {
             $annotationClassMetadataFactory = new ClassMetadataFactory(
-                new AttributeLoader(
-                    new AnnotationReader()
-                )
+                new AttributeLoader()
             );
 
             $context['groups'] = $groups;

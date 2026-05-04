@@ -1,6 +1,7 @@
 framework:
     validation:
         email_validation_mode: html5
+        enable_attributes: true
 
 #App\UserExceptions\Entity\UserExceptions:
 #    properties:

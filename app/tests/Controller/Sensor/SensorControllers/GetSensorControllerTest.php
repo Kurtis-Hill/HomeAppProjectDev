@@ -77,7 +77,7 @@ class GetSensorControllerTest extends ControllerTestCase
     /**
      * @dataProvider sendingIncorrectDataTypesAndChoicesDataProvider
      */
-    public function test_sending_incorrect_data_types_and_choices(array $dataToSend, array $errorsMessages): void
+    public function test_sending_incorrect_data_types_and_choices(array $dataToSend, array $errorMessages): void
     {
         $this->authenticateAdminOne();
         $this->client->request(
@@ -90,11 +90,11 @@ class GetSensorControllerTest extends ControllerTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertEquals($errorsMessages, $responseData['errors']);
+        self::assertEquals($errorMessages, $responseData['errors']);
         self::assertEquals('Validation errors occurred', $responseData['title']);
     }
 
-    public function sendingIncorrectDataTypesAndChoicesDataProvider(): Generator
+    public static function sendingIncorrectDataTypesAndChoicesDataProvider(): Generator
     {
         yield [
             'dataToSend' => [
@@ -128,7 +128,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'limit' => 'string'
             ],
             'errorMessages' => [
-                'limit' => 'This value should be of type int.'
+                'limit' => 'This value should be of type ?int.'
             ],
         ];
 
@@ -137,7 +137,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'page' => 'string'
             ],
             'errorMessages' => [
-                'page' => 'This value should be of type int.'
+                'page' => 'This value should be of type ?int.'
             ],
         ];
 
@@ -733,7 +733,7 @@ class GetSensorControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): Generator
+    public static function wrongHttpsMethodDataProvider(): Generator
     {
         yield [Request::METHOD_POST];
         yield [Request::METHOD_PUT];

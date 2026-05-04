@@ -18,7 +18,6 @@ use Doctrine\ORM\Mapping as ORM;
 ]
 class OutOfRangeTemp extends AbstractOutOfRange
 {
-    #[ORM\Column(name: "sensorReading", type: "float", precision: 10, scale: 0, nullable: false),]
     #[
         DallasTemperatureConstraint(
             groups: [Dallas::NAME]

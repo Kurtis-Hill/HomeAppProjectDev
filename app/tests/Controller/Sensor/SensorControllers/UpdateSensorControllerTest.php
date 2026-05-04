@@ -83,6 +83,9 @@ class UpdateSensorControllerTest extends ControllerTestCase
 
         $sensor = $sensors[0];
 
+        if ($deviceID === null) {
+            $deviceID = $sensor->getDevice()->getDeviceID();
+        }
         $content = [
             'sensorName' => $sensorName,
             'deviceID' => $deviceID,
@@ -119,14 +122,14 @@ class UpdateSensorControllerTest extends ControllerTestCase
         self::assertEquals($sensor->getDevice(), $sensorAfterUpdate->getDevice());
     }
 
-    public function incorrectDataTypesDataProvider(): Generator
+    public static function incorrectDataTypesDataProvider(): Generator
     {
         yield [
             'sensorName' => [123],
-            'deviceID' => 123,
+            'deviceID' => null,
             'pinNumber' => 1,
             'readingInterval' => 500,
-            'errorMessage' => ['sensorName' => 'This value should be of type string.'],
+            'errorMessage' => ['sensorName' => 'This value should be of type ?string.'],
         ];
 
         yield [
@@ -134,15 +137,7 @@ class UpdateSensorControllerTest extends ControllerTestCase
             'deviceID' => [123],
             'pinNumber' => 1,
             'readingInterval' => 500,
-            'errorMessage' => ['deviceID' => 'This value should be of type int.'],
-        ];
-
-        yield [
-            'sensorName' => 123,
-            'deviceID' => 123,
-            'pinNumber' => 1,
-            'readingInterval' => 500,
-            'errorMessage' => ['sensorName' => 'This value should be of type string.'],
+            'errorMessage' => ['deviceID' => 'This value should be of type ?int.'],
         ];
 
         yield [
@@ -151,57 +146,40 @@ class UpdateSensorControllerTest extends ControllerTestCase
             'pinNumber' => 1,
             'readingInterval' => 500,
             'errorMessage' => [
-                'deviceID' => 'This value should be of type int.',
-                'sensorName' => 'This value should be of type string.',
+                'sensorName' => 'This value should be of type ?string.'
             ],
         ];
 
         yield [
             'sensorName' => 'sensorname',
-            'deviceID' => 123,
-            'pinNumber' => false,
-            'readingInterval' => 500,
-            'errorMessage' => ['pinNumber' => 'This value should be of type int.'],
-        ];
-
-        yield [
-            'sensorName' => 'sensorname',
-            'deviceID' => 123,
+            'deviceID' => null,
             'pinNumber' => ['1'],
-            'readingInterval' => 500,
-            'errorMessage' => ['pinNumber' => 'This value should be of type int.'],
+            'readingInterval' => 5000,
+            'errorMessage' => ['pinNumber' => 'This value should be of type ?int.'],
         ];
 
         yield [
             'sensorName' => 'sensorname',
-            'deviceID' => 123,
+            'deviceID' => null,
             'pinNumber' => 'string',
             'readingInterval' => 500,
-            'errorMessage' => ['pinNumber' => 'This value should be of type int.'],
+            'errorMessage' => ['pinNumber' => 'This value should be of type ?int.'],
         ];
 
         yield [
             'sensorName' => 'sensorname',
-            'deviceID' => 123,
+            'deviceID' => null,
             'pinNumber' => 1,
             'readingInterval' => 'string',
-            'errorMessage' => ['readingInterval' => 'This value should be of type int.'],
+            'errorMessage' => ['readingInterval' => 'This value should be of type ?int.'],
         ];
 
         yield [
             'sensorName' => 'sensorname',
-            'deviceID' => 123,
+            'deviceID' => null,
             'pinNumber' => 1,
             'readingInterval' => ['string'],
-            'errorMessage' => ['readingInterval' => 'This value should be of type int.'],
-        ];
-
-        yield [
-            'sensorName' => 'sensorname',
-            'deviceID' => 123,
-            'pinNumber' => 1,
-            'readingInterval' => false,
-            'errorMessage' => ['readingInterval' => 'This value should be of type int.'],
+            'errorMessage' => ['readingInterval' => 'This value should be of type ?int.'],
         ];
     }
 
@@ -715,7 +693,7 @@ class UpdateSensorControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): Generator
+    public static function wrongHttpsMethodDataProvider(): Generator
     {
         yield [Request::METHOD_GET];
         yield [Request::METHOD_POST];

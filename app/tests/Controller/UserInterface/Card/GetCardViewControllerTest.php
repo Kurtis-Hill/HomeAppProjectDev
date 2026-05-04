@@ -92,7 +92,7 @@ class GetCardViewControllerTest extends WebTestCase
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 
-        $cardViewRepository = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\CardView::class);
+        $cardViewRepository = $this->entityManager->getRepository(CardView::class);
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
         $temperature = false;
@@ -104,7 +104,7 @@ class GetCardViewControllerTest extends WebTestCase
 
 //        dd($responseData['payload']);
         foreach ($responseData['payload'] as $payload) {
-            /** @var \App\Entity\UserInterface\Card\CardView $cardViewObject */
+            /** @var CardView $cardViewObject */
             $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
@@ -255,11 +255,11 @@ class GetCardViewControllerTest extends WebTestCase
         self::assertIsArray($responseData['payload']);
         self::assertGreaterThan(1, count($responseData['payload']));
 
-        $cardViewRepository = $this->entityManager->getRepository(\App\Entity\UserInterface\Card\CardView::class);
+        $cardViewRepository = $this->entityManager->getRepository(CardView::class);
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
         foreach ($responseData['payload'] as $payload) {
-            /** @var \App\Entity\UserInterface\Card\CardView $cardViewObject */
+            /** @var CardView $cardViewObject */
             $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
@@ -427,7 +427,7 @@ class GetCardViewControllerTest extends WebTestCase
         $sensorRepository = $this->entityManager->getRepository(Sensor::class);
 
         foreach ($responseData['payload'] as $payload) {
-            /** @var \App\Entity\UserInterface\Card\CardView $cardViewObject */
+            /** @var CardView $cardViewObject */
             $cardViewObject = $cardViewRepository->findOneBy(['cardViewID' => $payload['cardViewID']]);
 
             self::assertEquals($cardViewObject->getCardViewID(), $payload['cardViewID']);
@@ -520,7 +520,7 @@ class GetCardViewControllerTest extends WebTestCase
         }
     }
 
-    public function noReadingTypeReturnedDataProvider(): Generator
+    public static function noReadingTypeReturnedDataProvider(): Generator
     {
         yield [
             [

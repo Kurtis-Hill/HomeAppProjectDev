@@ -19,6 +19,7 @@ use App\Repository\Sensor\SensorType\ORM\GenericRelayRepository;
 use App\Services\Device\Request\DeviceRequestHandler;
 use App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -83,8 +84,8 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $httpClient = new MockHttpClient($response);
 
         $mockLogger = $this->createMock(LoggerInterface::class);
-        $mockLogger->expects(self::never())->method('error');
-        $mockLogger->expects(self::once())->method('info');
+        $mockLogger->expects($this->never())->method('error');
+        $mockLogger->expects($this->once())->method('info');
 
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
@@ -99,8 +100,8 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
 
         $logger = $this->createMock(LoggerInterface::class);
 
-        $logger->expects(self::never())->method('error');
-        $logger->expects(self::once())->method('info');
+        $logger->expects($this->never())->method('error');
+        $logger->expects($this->once())->method('info');
 
         $this->sut = new SensorSendUpdateReadingRequestConsumer(
             $logger,
@@ -109,7 +110,7 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
 
         $result = $this->sut->execute($amqpMess);
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_ACK, $result);
     }
 
     public function test_unsuccessful_http_response_returns_false(): void
@@ -163,10 +164,10 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
 
         $result = $this->sut->execute($amqpMess);
 
-        self::assertFalse($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
     }
 
-    public function test_sending_sensor_type_not_allowed_returns_true(): void
+    public function test_sending_sensor_type_not_allowed_returns_failure(): void
     {
         $boolCurrentReadingUpdateDTO = new BoolCurrentReadingUpdateDTO(
             GenericMotion::NAME,
@@ -214,6 +215,6 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
 
         $result = $this->sut->execute($amqpMess);
 
-        self::assertTrue($result);
+        self::assertEquals(ConsumerInterface::MSG_REJECT, $result);
     }
 }

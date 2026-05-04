@@ -11,7 +11,7 @@ export async function readingTypeBoundaryReadingUpdateRequest(
     sensorBoundaryUpdates: StandardSensorBoundaryReadingUpdateInputInterface[]
 ): Promise<AxiosResponse> {
     return await axios.put(
-        `${apiURL}sensor/${sensorID}/boundary-update?responseType=${ResponseTypeEnum.ResponseTypeFull}`,
+        `${apiURL}sensor/${sensorID}/reading-types?responseType=${ResponseTypeEnum.ResponseTypeFull}`,
         {'sensorData': sensorBoundaryUpdates},
     );
 }

@@ -40,9 +40,14 @@ abstract class ControllerTestCase extends WebTestCase
 
     protected User $regularUserTwo;
 
+    private int $exceptionHandlerCount = 0;
+
     protected function setUp(): void
     {
+        $this->exceptionHandlerCount = $this->countExceptionHandlers();
+
         $this->client = self::createClient();
+
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
 
         $this->adminOne = $this->entityManager->getRepository(User::class)->findOneBy(['email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE]);
@@ -56,10 +61,38 @@ abstract class ControllerTestCase extends WebTestCase
         $this->entityManager->clear();
         $this->entityManager->close();
         $this->entityManager = null;
+
+        // Restore exception handlers back to the count recorded before the test ran.
+        while ($this->countExceptionHandlers() > $this->exceptionHandlerCount) {
+            restore_exception_handler();
+        }
+
         parent::tearDown();
     }
 
-    protected static function assertValidationErrorMessage(string $title)
+    private function countExceptionHandlers(): int
+    {
+        $count = 0;
+        $handlers = [];
+        while (true) {
+            $handler = set_exception_handler(null);
+            restore_exception_handler();
+            if ($handler === null) {
+                break;
+            }
+            $handlers[] = $handler;
+            $count++;
+            // temporarily remove to count the next one
+            restore_exception_handler();
+        }
+        // restore all we temporarily removed
+        foreach (array_reverse($handlers) as $h) {
+            set_exception_handler($h);
+        }
+        return $count;
+    }
+
+    protected static function assertValidationErrorMessage(string $title): void
     {
         self::assertEquals('Validation errors occurred', $title);
     }

@@ -175,7 +175,7 @@ class DeleteSensorControllerTest extends ControllerTestCase
         self::assertEquals(APIErrorMessages::ACCESS_DENIED, $errors[0]);
     }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

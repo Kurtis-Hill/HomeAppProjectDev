@@ -121,7 +121,7 @@ class AddCardControllerTest extends WebTestCase
         self::assertEquals($errorMessages, $responseErrors);
     }
 
-    public function sendingIncorrectDataTypesProvider(): Generator
+    public static function sendingIncorrectDataTypesProvider(): Generator
     {
         yield [
             'sensorID' => [],
@@ -438,7 +438,7 @@ class AddCardControllerTest extends WebTestCase
         }
     }
 
-    public function missingRequestPartsProvider(): Generator
+    public static function missingRequestPartsProvider(): Generator
     {
         yield [
             'cardIcon' => false,
@@ -541,7 +541,7 @@ class AddCardControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

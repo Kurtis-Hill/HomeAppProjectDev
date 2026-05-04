@@ -106,7 +106,7 @@ class AddGroupControllerTest extends WebTestCase
         self::assertEquals(AddGroupController::BAD_REQUEST_NO_DATA_RETURNED, $response['title']);
     }
 
-    public function invalidDataTypesDataProvider(): Generator
+    public static function invalidDataTypesDataProvider(): Generator
     {
         yield [
             'groupName' => [],
@@ -290,7 +290,7 @@ class AddGroupControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): Generator
+    public static function wrongHttpsMethodDataProvider(): Generator
     {
         yield [Request::METHOD_GET];
         yield [Request::METHOD_PUT];

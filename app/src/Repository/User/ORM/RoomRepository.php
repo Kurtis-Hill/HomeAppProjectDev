@@ -32,10 +32,8 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
         $qb->select('room')
             ->where(
                 $expr->eq('room.room', ':roomName'),
-            );
-        $qb->setParameters([
-            'roomName' => $roomName,
-        ]);
+            )
+            ->setParameter('roomName', $roomName);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -80,11 +78,9 @@ class RoomRepository extends ServiceEntityRepository implements RoomRepositoryIn
             ->where(
                 $expr->eq('room.room', ':roomName'),
                 $expr->eq('room.groupID', ':groupID')
-            );
-        $qb->setParameters([
-            'roomName' => $roomName,
-            'groupID' => $groupID
-        ]);
+            )
+            ->setParameter('roomName', $roomName)
+            ->setParameter('groupID', $groupID);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

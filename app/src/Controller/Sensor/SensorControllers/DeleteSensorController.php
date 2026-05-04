@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor', name: 'new-sensor')]
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor', name: 'delete-sensor')]
 class DeleteSensorController extends AbstractController
 {
     use HomeAppAPITrait;

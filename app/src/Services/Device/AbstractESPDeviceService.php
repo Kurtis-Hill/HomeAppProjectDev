@@ -62,6 +62,7 @@ abstract class AbstractESPDeviceService
     {
         try {
             $this->deviceRepository->persist($device);
+//            dd('jer');
             $this->deviceRepository->flush();
 
             if ($device->getIpAddress()) {
@@ -73,6 +74,7 @@ abstract class AbstractESPDeviceService
             }
             return true;
         } catch (ORMException) {
+            dd('jer');
             return false;
         }
     }

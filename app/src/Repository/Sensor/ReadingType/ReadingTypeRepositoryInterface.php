@@ -45,9 +45,9 @@ interface ReadingTypeRepositoryInterface
     public function refresh(AllSensorReadingTypeInterface $readingTypeObject): void;
 
     /**
-     * @param int $sensorID
+     * @param int $sensorIDs
      *
      * @return BaseReadingTypeInterface[]
      */
-    public function findBySensorID(int $sensorID): array;
+    public function findBySensorID(int $sensorIDs): array;
 }

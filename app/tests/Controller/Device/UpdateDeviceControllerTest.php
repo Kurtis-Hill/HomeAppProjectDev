@@ -106,7 +106,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         self::assertEquals(APIErrorMessages::VALIDATION_ERRORS, $responseData['title']);
     }
 
-    public function sendingWrongDataTypesToUpdateDataProvider(): Generator
+    public static function sendingWrongDataTypesToUpdateDataProvider(): Generator
     {
         yield [
             'deviceName' => [],
@@ -114,7 +114,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 1,
             'errorMessage' => [
-                'deviceName' => 'This value should be of type string.'
+                'deviceName' => 'This value should be of type null|string.'
             ],
         ];
 
@@ -124,7 +124,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 1,
             'errorMessage' => [
-                'password' => 'This value should be of type string.'
+                'password' => 'This value should be of type null|string.'
             ],
         ];
 
@@ -134,7 +134,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 'deviceGroup',
             'deviceRoom' => 1,
             'errorMessage' => [
-                'deviceGroup' => 'This value should be of type int.'
+                'deviceGroup' => 'This value should be of type int|null.'
             ],
         ];
 
@@ -144,7 +144,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 'deviceRoom',
             'errorMessage' => [
-                'deviceRoom' => 'This value should be of type int.'
+                'deviceRoom' => 'This value should be of type int|null.'
             ],
         ];
 
@@ -154,10 +154,10 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => [1],
             'deviceRoom' => 'deviceRoom',
             'errorMessage' => [
-                'deviceName' => 'This value should be of type string.',
-                'deviceGroup' => 'This value should be of type int.',
-                'deviceRoom' => 'This value should be of type int.',
-                'password' => 'This value should be of type string.',
+                'deviceName' => 'This value should be of type null|string.',
+                'deviceGroup' => 'This value should be of type int|null.',
+                'deviceRoom' => 'This value should be of type int|null.',
+                'password' => 'This value should be of type null|string.',
 
             ],
         ];
@@ -475,7 +475,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function invalidDeviceUpdateRequestDataProvider(): Generator
+    public static function invalidDeviceUpdateRequestDataProvider(): Generator
     {
         yield [
             'deviceName' => 'newDeviceNamenewDeviceNamenewDeviceNamenewDeviceNamenewDeviceNamenewDeviceName',
@@ -894,7 +894,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
         self::assertEquals(Devices::ROLE, $responseData['payload']['roles'][0]);
     }
 
-    public function sendingPatchRequestDataProvider(): Generator
+    public static function sendingPatchRequestDataProvider(): Generator
     {
         yield [
             'deviceName',
@@ -929,7 +929,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

@@ -5,7 +5,6 @@ namespace App\Services\Normalizers\Device;
 
 use App\DTOs\Device\Response\DeviceResponseDTO;
 use App\Services\Request\RequestTypeEnum;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -14,13 +13,11 @@ use Symfony\Component\Serializer\Serializer;
 
 class DeviceResponseNormalizer implements NormalizerInterface
 {
-    public function normalize(mixed $device, string $format = null, array $context = []): mixed
+    public function normalize(mixed $device, string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         if (!empty($context['groups'])) {
             $classMetadataFactory = new ClassMetadataFactory(
-                new AttributeLoader(
-                    new AnnotationReader()
-                )
+                new AttributeLoader()
             );
 
             $context = ['groups' => $context['groups']];
@@ -38,7 +35,7 @@ class DeviceResponseNormalizer implements NormalizerInterface
         return $data;
     }
 
-    public function supportsNormalization($data, string $format = null, /*array $context*/): bool
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $data instanceof DeviceResponseDTO;
     }

@@ -40,13 +40,8 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
         $qb->select(Analog::READING_TYPE)
             ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Analog::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
             ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
-            ->where(
-                $expr->eq(
-                    Sensor::ALIAS.'.sensorID',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorNameID]);
+            ->where($expr->eq(Sensor::ALIAS.'.sensorID', ':sensor'))
+            ->setParameter('sensor', $sensorNameID);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -59,13 +54,8 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
         $qb->select(Analog::READING_TYPE)
             ->innerJoin(BaseSensorReadingType::class, BaseSensorReadingType::ALIAS, Join::WITH, Analog::READING_TYPE.'.baseReadingType = '.BaseSensorReadingType::ALIAS.'.baseReadingTypeID')
             ->innerJoin(Sensor::class, Sensor::ALIAS, Join::WITH, BaseSensorReadingType::ALIAS.'.sensor = '.Sensor::ALIAS.'.sensorID')
-            ->where(
-                $expr->eq(
-                    Sensor::ALIAS.'.sensorName',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorName]);
+            ->where($expr->eq(Sensor::ALIAS.'.sensorName', ':sensor'))
+            ->setParameter('sensor', $sensorName);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -94,20 +84,15 @@ class AnalogRepository extends ServiceEntityRepository implements ReadingTypeRep
      * @return Analog[]
      */
     #[ArrayShape([Analog::class])]
-    public function findBySensorID(int $sensorID): array
+    public function findBySensorID(int $sensorIDs): array
     {
         $qb = $this->createQueryBuilder('readingType');
         $expr = $qb->expr();
 
         $qb->select('readingType')
             ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
-            ->where(
-                $expr->eq(
-                    'baseReadingType.sensor',
-                    ':sensor'
-                )
-            )
-            ->setParameters(['sensor' => $sensorID]);
+            ->where($expr->eq('baseReadingType.sensor', ':sensor'))
+            ->setParameter('sensor', $sensorIDs);
 
         return $qb->getQuery()->getResult();
     }

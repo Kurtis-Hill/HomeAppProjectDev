@@ -325,7 +325,7 @@ class UpdateUserControllerTest extends WebTestCase
         self::assertNotEquals($groupID, $updatedUser->getGroup()->getGroupID());
     }
 
-    public function userOutOfRangeDataProvider(): Generator
+    public static function userOutOfRangeDataProvider(): Generator
     {
         yield [
             'firstName' => [],
@@ -474,7 +474,7 @@ class UpdateUserControllerTest extends WebTestCase
         self::assertEquals($errorMessage, $response['errors']);
     }
 
-    public function userValidationDataProvider(): Generator
+    public static function userValidationDataProvider(): Generator
     {
 
         yield [

@@ -379,7 +379,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         }
     }
 
-    public function limitAndPageDataProvider(): Generator
+    public static function limitAndPageDataProvider(): Generator
     {
         yield [
             'limit' => 1,
@@ -528,7 +528,7 @@ class GetDeviceControllerTest extends ControllerTestCase
         self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_DELETE],

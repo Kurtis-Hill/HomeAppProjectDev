@@ -12,5 +12,5 @@ use Doctrine\ORM\Mapping as ORM;
 class OutOfRangeLatitude extends AbstractOutOfRange
 {
     #[LatitudeConstraint]
-    protected int|float $sensorReading;
+    protected float $sensorReading;
 }

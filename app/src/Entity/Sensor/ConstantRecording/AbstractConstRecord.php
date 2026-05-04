@@ -7,6 +7,7 @@ use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -88,7 +89,7 @@ abstract class AbstractConstRecord implements ConstantlyRecordEntityInterface
 
     public function setCreatedAt(): void
     {
-        $this->createdAt = new DateTimeImmutable('now');
+        $this->createdAt = new DateTime('now');
     }
 
     public function getSensorReadingObject(): BaseSensorReadingType

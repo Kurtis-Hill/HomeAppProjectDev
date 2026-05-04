@@ -26,12 +26,12 @@ class SensorTriggerRepository extends ServiceEntityRepository
 
     public function persist(SensorTrigger $sensorTrigger): void
     {
-        $this->_em->persist($sensorTrigger);
+        $this->getEntityManager()->persist($sensorTrigger);
     }
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function findAllSensorTriggersForBaseReadingIDs(array $baseReadingTypeIDs): array
@@ -44,11 +44,7 @@ class SensorTriggerRepository extends ServiceEntityRepository
                 $expr->in('st.baseReadingTypeThatTriggers', ':baseReadingTypeThatTriggers'),
                 $expr->in('st.baseReadingTypeToTriggers', ':baseReadingTypeThatTriggers'),
             )
-        )->setParameters(
-            [
-                'baseReadingTypeThatTriggers' => $baseReadingTypeIDs,
-            ]
-        );
+        )->setParameter('baseReadingTypeThatTriggers', $baseReadingTypeIDs);
 
         return $qb->getQuery()->getResult();
     }
@@ -90,14 +86,11 @@ class SensorTriggerRepository extends ServiceEntityRepository
                     ),
                 ),
             )
-        )->setParameters(
-            [
-                'baseReadingTypeThatTriggers' => $sensorReadingType->getBaseReadingType()->getBaseReadingTypeID(),
-                'currentTime' => $currentTime,
-                'currentDay' => true,
-                'override' => false,
-            ]
-        );
+        )
+        ->setParameter('baseReadingTypeThatTriggers', $sensorReadingType->getBaseReadingType()->getBaseReadingTypeID())
+        ->setParameter('currentTime', $currentTime)
+        ->setParameter('currentDay', true)
+        ->setParameter('override', false);
 
         return $qb->getQuery()->getResult();
     }
@@ -137,19 +130,16 @@ class SensorTriggerRepository extends ServiceEntityRepository
                     ),
                 ),
             )
-        )->setParameters(
-            [
-                'currentTime' => $currentTime,
-                'currentDay' => true,
-                'override' => false,
-            ]
-        );
+        )
+        ->setParameter('currentTime', $currentTime)
+        ->setParameter('currentDay', true)
+        ->setParameter('override', false);
 
         return $qb->getQuery()->getResult();
     }
 
     public function remove(SensorTrigger $sensorTrigger): void
     {
-        $this->_em->remove($sensorTrigger);
+        $this->getEntityManager()->remove($sensorTrigger);
     }
 }
