@@ -18,8 +18,6 @@ class DuplicateDeviceCheckConstraintValidator extends ConstraintValidator
 
     public function validate($value, $constraint)
     {
-//        dd('eee');
-//        dd('here');
         if (!$constraint instanceof DuplicateDeviceCheckConstraint) {
             throw new UnexpectedTypeException($constraint, DuplicateDeviceCheckConstraint::class);
         }

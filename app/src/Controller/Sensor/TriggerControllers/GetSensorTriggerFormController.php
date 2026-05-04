@@ -65,7 +65,6 @@ class GetSensorTriggerFormController extends AbstractController
             groupIDs: $userGroupsFinder->getGroupIDs($user),
         );
         $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams, $requestDTO);
-//        dd(count($usersSensors));
         $sensorsToChooseFrom = [];
         foreach ($usersSensors as $sensor) {
             $sensorsToChooseFrom[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [RequestTypeEnum::FULL->value]);
