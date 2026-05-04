@@ -26,12 +26,12 @@ class SensorTriggerRepository extends ServiceEntityRepository
 
     public function persist(SensorTrigger $sensorTrigger): void
     {
-        $this->_em->persist($sensorTrigger);
+        $this->getEntityManager()->persist($sensorTrigger);
     }
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function findAllSensorTriggersForBaseReadingIDs(array $baseReadingTypeIDs): array

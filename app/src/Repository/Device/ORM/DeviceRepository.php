@@ -52,10 +52,9 @@ class DeviceRepository extends ServiceEntityRepository implements DeviceReposito
         $expr = $qb->expr();
 
         $qb->select('devices')
-            ->innerJoin(Room::class, 'room')
             ->where(
                 $expr->eq('devices.deviceName', ':deviceName'),
-                $expr->eq('room.roomID', ':roomID')
+                $expr->eq('devices.roomID', ':roomID')
             )
             ->setParameter('deviceName', $deviceName)
             ->setParameter('roomID', $roomId);

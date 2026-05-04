@@ -23,20 +23,20 @@ class IPLogRepository extends ServiceEntityRepository
 
     public function persist(IPLog $ipLog): void
     {
-        $this->_em->persist($ipLog);
+        $this->getEntityManager()->persist($ipLog);
     }
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function removeIPLogByIPAddress(string $ipAddress): void
     {
         $ipLog = $this->findOneBy(['ipAddress' => $ipAddress]);
         if ($ipLog !== null) {
-            $this->_em->remove($ipLog);
-            $this->_em->flush();
+            $this->getEntityManager()->remove($ipLog);
+            $this->getEntityManager()->flush();
         }
     }
 }

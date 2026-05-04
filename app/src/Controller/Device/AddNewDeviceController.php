@@ -69,7 +69,7 @@ class AddNewDeviceController extends AbstractController
         if (!$user instanceof User) {
             return $this->sendForbiddenAccessJsonResponse();
         }
-
+//dd('dd');
         $device = $deviceBuilder->buildDevice(
             deviceName: $newDeviceRequestDTO->getDeviceName(),
             createdBy: $user->getUserID(),

@@ -23,11 +23,11 @@ class TriggerTypeRepository extends ServiceEntityRepository
 
     public function persist(TriggerType $triggerType): void
     {
-        $this->_em->persist($triggerType);
+        $this->getEntityManager()->persist($triggerType);
     }
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 }

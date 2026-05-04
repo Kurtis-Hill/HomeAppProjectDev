@@ -15,7 +15,7 @@ services:
 
     Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
       arguments:
-        $endpoint:  '%env(ELASTIC_SEARCH_HOST)%:%env(ELASTIC_SEARCH_PORT)%'
+        $endpoint:  '%env(ELASTIC_TRANSPORT)%://%env(ELASTIC_SEARCH_HOST)%:%env(ELASTIC_SEARCH_PORT)%'
         $index: '%env(ELASTIC_INDEX_LOG)%'
         $client: "@elastica.client"
         $level: !php/const Monolog\Logger::ERROR

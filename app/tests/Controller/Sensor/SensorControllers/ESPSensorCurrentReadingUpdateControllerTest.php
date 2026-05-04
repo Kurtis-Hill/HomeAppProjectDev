@@ -646,8 +646,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
                 'The submitted value is not a number array',
                 'The submitted value is not a number string',
             ],
-            'payload' => [],
-            'responseCode' => Response::HTTP_BAD_REQUEST
         ];
 
         yield [
@@ -672,8 +670,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
                 'The submitted value is not a number array',
                 'The submitted value is not a number string',
             ],
-            'payload' => [],
-            'responseCode' => Response::HTTP_BAD_REQUEST
         ];
 
         // Generic Motion
@@ -698,8 +694,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
             'errors' => [
                 'Bool readings can only be true or false',
             ],
-            'payload' => [],
-            'responseCode' => Response::HTTP_BAD_REQUEST
         ];
 
         // Generic Relay
@@ -724,8 +718,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
             'errors' => [
                 'Bool readings can only be true or false',
             ],
-            'payload' => [],
-            'responseCode' => Response::HTTP_BAD_REQUEST
         ];
 
         //LDR
@@ -751,8 +743,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
                 'The submitted value is not a number array',
                 'The submitted value is not a number string',
             ],
-            'payload' => [],
-            'responseCode' => Response::HTTP_BAD_REQUEST
         ];
 
         // SHT
@@ -778,8 +768,6 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
                 'The submitted value is not a number "array"',
                 'The submitted value is not a number "string"',
             ],
-            'payload' => [],
-            'responseCode' => Response::HTTP_BAD_REQUEST
         ];
     }
 

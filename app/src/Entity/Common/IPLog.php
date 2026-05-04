@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\Common;
 
 use App\Repository\Common\ORM\IPLogRepository;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -45,7 +46,7 @@ class IPLog
 
     public function __construct()
     {
-        $this->createdAt = new DateTimeImmutable('now');
+        $this->createdAt = new DateTime('now');
     }
 
     public function getIpLogID(): int

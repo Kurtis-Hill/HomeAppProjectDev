@@ -4,6 +4,7 @@ namespace App\Builders\User\User;
 
 use App\Entity\User\Group;
 use App\Entity\User\User;
+use DateTime;
 use DateTimeImmutable;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -31,7 +32,7 @@ class NewUserBuilder
         $user->setEmail($email);
         $user->setRoles($roles);
         $user->setGroup($groupNameObject);
-        $user->setCreatedAt(new DateTimeImmutable('now'));
+        $user->setCreatedAt(new DateTime('now'));
 
         if ($profilePic !== null) {
             $user->setProfilePic($profilePic);

@@ -292,7 +292,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
     /**
      * @dataProvider addingDeviceSendingMalformedRequestDataProvider
      */
-    public function test_adding_device_sending_malformed_request(array $formData, array $errors): void
+    public function test_adding_device_sending_malformed_request(array $formData, array $errorMessage): void
     {
         $this->authenticateAdminOne();
         $this->client->jsonRequest(
@@ -306,7 +306,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
         $device = $this->deviceRepository->findOneBy(['deviceName' => $formData['deviceName']]);
 
         self::assertNull($device);
-        self::assertEquals($errors, $responseData['errors']);
+        self::assertEquals($errorMessage, $responseData['errors']);
         self::assertEquals(HTTPStatusCodes::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
@@ -345,7 +345,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
                 'deviceIPAddress' => [],
             ],
             'errorMessage' => [
-                'deviceIPAddress' => 'This value should be of type string.',
+                'deviceIPAddress' => 'This value should be of type null|string.'
             ],
         ];
 
@@ -362,7 +362,7 @@ class AddNewDeviceControllerTest extends ControllerTestCase
                 'devicePassword' => 'This value should be of type string.',
                 'deviceGroup' => 'This value should be of type int.',
                 'deviceRoom' => 'This value should be of type int.',
-                'deviceIPAddress' => 'This value should be of type string.',
+                'deviceIPAddress' => 'This value should be of type null|string.'
             ],
         ];
     }

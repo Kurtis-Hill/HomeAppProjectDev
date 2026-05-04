@@ -46,12 +46,12 @@ class RegisterNewDeviceControllerTest extends ControllerTestCase
     /**
      * @dataProvider wrongDataTypesDataProvider
      */
-    public function test_wrong_data_types_returns_error(mixed $ipaddress): void
+    public function test_wrong_data_types_returns_error(mixed $ipAddress): void
     {
         $this->client->jsonRequest(
             Request::METHOD_POST,
             self::REGISTER_NEW_DEVICE_URL,
-            ['ipAddress' => $ipaddress]
+            ['ipAddress' => $ipAddress]
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);

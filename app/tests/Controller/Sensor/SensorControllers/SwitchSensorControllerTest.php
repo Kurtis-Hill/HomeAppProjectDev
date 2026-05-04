@@ -205,6 +205,7 @@ class SwitchSensorControllerTest extends ControllerTestCase
         array $sensorData,
         string $title,
         array $errors,
+        int $responseCode,
     ): void {
         $sendData['sensorData'] = $sensorData;
 
@@ -246,7 +247,6 @@ class SwitchSensorControllerTest extends ControllerTestCase
             'errors' => [
                 'Bool readings can only be true or false',
             ],
-            'payload' => [],
             'responseCode' => Response::HTTP_BAD_REQUEST
         ];
     }

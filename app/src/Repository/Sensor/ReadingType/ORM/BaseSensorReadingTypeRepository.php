@@ -28,7 +28,7 @@ class BaseSensorReadingTypeRepository extends ServiceEntityRepository
      */
     public function persist(BaseSensorReadingType $baseSensorReadingType): void
     {
-        $this->_em->persist($baseSensorReadingType);
+        $this->getEntityManager()->persist($baseSensorReadingType);
     }
 
     /**
@@ -36,6 +36,6 @@ class BaseSensorReadingTypeRepository extends ServiceEntityRepository
      */
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 }

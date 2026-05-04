@@ -6,7 +6,7 @@ use App\Entity\Device\Devices;
 use App\Entity\User\User;
 use App\Repository\Sensor\Sensors\ORM\SensorRepository;
 use App\CustomValidators\NoSpecialCharactersNameConstraint;
-use DateTimeImmutable;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -101,7 +101,7 @@ class Sensor
 
     public function __construct()
     {
-        $this->createdAt = new DateTimeImmutable();
+        $this->createdAt = new DateTime();
     }
 
     public function getSensorID(): int
@@ -182,7 +182,7 @@ class Sensor
     public function setCreatedAt(?DateTimeInterface $createdAt): void
     {
         if ($createdAt === null) {
-            $createdAt = new DateTimeImmutable('now');
+            $createdAt = new DateTime('now');
         }
         $this->createdAt = $createdAt;
     }

@@ -114,7 +114,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 1,
             'errorMessage' => [
-                'deviceName' => 'This value should be of type string.'
+                'deviceName' => 'This value should be of type null|string.'
             ],
         ];
 
@@ -124,7 +124,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 1,
             'errorMessage' => [
-                'password' => 'This value should be of type string.'
+                'password' => 'This value should be of type null|string.'
             ],
         ];
 
@@ -134,7 +134,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 'deviceGroup',
             'deviceRoom' => 1,
             'errorMessage' => [
-                'deviceGroup' => 'This value should be of type int.'
+                'deviceGroup' => 'This value should be of type int|null.'
             ],
         ];
 
@@ -144,7 +144,7 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => 1,
             'deviceRoom' => 'deviceRoom',
             'errorMessage' => [
-                'deviceRoom' => 'This value should be of type int.'
+                'deviceRoom' => 'This value should be of type int|null.'
             ],
         ];
 
@@ -154,10 +154,10 @@ class UpdateDeviceControllerTest extends ControllerTestCase
             'deviceGroup' => [1],
             'deviceRoom' => 'deviceRoom',
             'errorMessage' => [
-                'deviceName' => 'This value should be of type string.',
-                'deviceGroup' => 'This value should be of type int.',
-                'deviceRoom' => 'This value should be of type int.',
-                'password' => 'This value should be of type string.',
+                'deviceName' => 'This value should be of type null|string.',
+                'deviceGroup' => 'This value should be of type int|null.',
+                'deviceRoom' => 'This value should be of type int|null.',
+                'password' => 'This value should be of type null|string.',
 
             ],
         ];

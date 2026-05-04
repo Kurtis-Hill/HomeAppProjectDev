@@ -10,7 +10,7 @@ class ConstRecordTemperatureRepository extends AbstractConstRecordRepository imp
 {
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function find(): ?ConstTemp

@@ -77,7 +77,7 @@ class GetSensorControllerTest extends ControllerTestCase
     /**
      * @dataProvider sendingIncorrectDataTypesAndChoicesDataProvider
      */
-    public function test_sending_incorrect_data_types_and_choices(array $dataToSend, array $errorsMessages): void
+    public function test_sending_incorrect_data_types_and_choices(array $dataToSend, array $errorMessages): void
     {
         $this->authenticateAdminOne();
         $this->client->request(
@@ -90,7 +90,7 @@ class GetSensorControllerTest extends ControllerTestCase
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        self::assertEquals($errorsMessages, $responseData['errors']);
+        self::assertEquals($errorMessages, $responseData['errors']);
         self::assertEquals('Validation errors occurred', $responseData['title']);
     }
 
@@ -128,7 +128,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'limit' => 'string'
             ],
             'errorMessages' => [
-                'limit' => 'This value should be of type int.'
+                'limit' => 'This value should be of type ?int.'
             ],
         ];
 
@@ -137,7 +137,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'page' => 'string'
             ],
             'errorMessages' => [
-                'page' => 'This value should be of type int.'
+                'page' => 'This value should be of type ?int.'
             ],
         ];
 
