@@ -78,6 +78,19 @@ class RelayRepository extends ServiceEntityRepository implements ReadingTypeRepo
 
     // ...existing code...
 
+    public function findBySensorIDs(array $sensorIDs): array
+    {
+        $qb = $this->createQueryBuilder('readingType');
+        $expr = $qb->expr();
+
+        $qb->select('readingType')
+            ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
+            ->where($expr->in('baseReadingType.sensor', ':sensor'))
+            ->setParameter('sensor', $sensorIDs);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function findBySensorID(int $sensorID): array
     {
         $qb = $this->createQueryBuilder('readingType');

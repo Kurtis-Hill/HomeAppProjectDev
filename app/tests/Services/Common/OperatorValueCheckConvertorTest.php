@@ -71,14 +71,14 @@ class OperatorValueCheckConvertorTest extends TestCase
     public function test_number_strings_and_numbers_can_be_compared(
         mixed $value,
         mixed $valueThatTriggers,
-        string $operatorSymbol,
+        string $operator,
         bool $expectedResult,
     ): void {
-        $operator = new Operator();
-        $operator->setOperatorSymbol($operatorSymbol);
+        $operatorObject = new Operator();
+        $operatorObject->setOperatorSymbol($operator);
 
         $result = $this->sut::checkValuesAgainstOperator(
-            $operator,
+            $operatorObject,
             $value,
             $valueThatTriggers,
         );

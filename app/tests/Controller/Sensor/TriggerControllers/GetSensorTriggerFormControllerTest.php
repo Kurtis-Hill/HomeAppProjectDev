@@ -152,7 +152,7 @@ class GetSensorTriggerFormControllerTest extends WebTestCase
     {
         $this->client->request(
             Request::METHOD_GET,
-            self::GET_SENSOR_TRIGGER_FORM_URL,
+            self::GET_SENSOR_TRIGGER_FORM_URL . '?limit=100',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken],
@@ -200,6 +200,27 @@ class GetSensorTriggerFormControllerTest extends WebTestCase
 
         self::assertCount(count(Operator::ALL_OPERATORS), $operators);
         self::assertCount(count(TriggerType::ALL_TRIGGER_TYPES), $triggerTypes);
+
+        $allOperators = $this->entityManager->getRepository(Operator::class)->findAll();
+        self::assertCount(count($operators), $allOperators);
+
+        $allTriggerTypes = $this->entityManager->getRepository(TriggerType::class)->findAll();
+        self::assertCount(count($triggerTypes), $allTriggerTypes);
+
+        $allSensors = $this->entityManager->getRepository(Sensor::class)->findAll();
+        self::assertCount(count($sensors), $allSensors);
+
+        $allRelays = $this->entityManager->getRepository(Relay::class)->findAll();
+        self::assertCount(count($relays), $allRelays);
+        // Verify the sensors and relays returned to admin have the expected structure
+        foreach ($sensors as $sensor) {
+            self::assertArrayHasKey('sensorID', $sensor);
+            self::assertIsInt($sensor['sensorID']);
+        }
+        foreach ($relays as $relay) {
+            self::assertArrayHasKey('baseReadingTypeID', $relay);
+            self::assertIsInt($relay['baseReadingTypeID']);
+        }
     }
 
 //    /**

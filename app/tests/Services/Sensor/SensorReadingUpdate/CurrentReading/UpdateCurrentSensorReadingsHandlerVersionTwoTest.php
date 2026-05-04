@@ -355,7 +355,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         string $sensorType,
         string $sensorTypeClass,
         array $currentReadings,
-        ?bool $processOutOfBounds = true,
+        ?bool $outOfBounds = true,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorTypeClass);
 
@@ -385,9 +385,13 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
         self::assertNotEmpty($sensorReadingTypes);
         $sensorReadingTypesCount = count($sensorReadingTypes);
 
-        if ($processOutOfBounds === true) {
+//        if ($processOutOfBounds === true) {
+        if ($outOfBounds === true) {
             $outOfBoundsService->expects(self::exactly($sensorReadingTypesCount))->method('processOutOfBounds');
+        } else {
+            $outOfBoundsService->expects(self::never())->method('processOutOfBounds');
         }
+//        }
         $constRecordService->expects(self::exactly($sensorReadingTypesCount))->method('processConstRecord');
 
         $triggerHandler->expects(self::exactly($sensorReadingTypesCount))->method('handleTrigger');

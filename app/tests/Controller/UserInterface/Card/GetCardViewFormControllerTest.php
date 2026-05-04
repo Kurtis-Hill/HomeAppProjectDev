@@ -209,12 +209,12 @@ class GetCardViewFormControllerTest extends WebTestCase
     /**
      * @dataProvider userCannotEditOtherUsersCardsDataProvider
      */
-    public function test_user_cannot_edit_other_users_cards(string $username, string $password, $usersCardToAlter): void
+    public function test_user_cannot_edit_other_users_cards(string $username, string $password, $alter): void
     {
         $userToken = $this->setUserToken($this->client, $username, $password);
 
         /** @var \App\Entity\User\User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $alter]);
 
         /** @var CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];

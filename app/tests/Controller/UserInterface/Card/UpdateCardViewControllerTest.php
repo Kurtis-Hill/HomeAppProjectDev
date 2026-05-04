@@ -137,12 +137,12 @@ class UpdateCardViewControllerTest extends WebTestCase
     /**
      * @dataProvider userCannotEditOtherUsersCardsDataProvider
      */
-    public function testInvalidUserCannotUpdateCardView(string $username, string $password, $usersCardToAlter): void
+    public function testInvalidUserCannotUpdateCardView(string $username, string $password, $alter): void
     {
         $userToken = $this->setUserToken($this->client, $username, $password);
 
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $alter]);
         /** @var \App\Entity\UserInterface\Card\CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
 

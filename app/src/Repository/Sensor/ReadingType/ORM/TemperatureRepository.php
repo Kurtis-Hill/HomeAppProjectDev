@@ -94,7 +94,7 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
      * @return Temperature[]
      */
     #[ArrayShape([Temperature::class])]
-    public function findBySensorID(int $sensorID): array
+    public function findBySensorID(int $sensorIDs): array
     {
         $qb = $this->createQueryBuilder('readingType');
         $expr = $qb->expr();
@@ -102,7 +102,7 @@ class TemperatureRepository extends ServiceEntityRepository implements ReadingTy
         $qb->select('readingType')
             ->innerJoin(BaseSensorReadingType::class, 'baseReadingType', Join::WITH, 'readingType.baseReadingType = baseReadingType.baseReadingTypeID')
             ->where($expr->eq('baseReadingType.sensor', ':sensor'))
-            ->setParameter('sensor', $sensorID);
+            ->setParameter('sensor', $sensorIDs);
 
         return $qb->getQuery()->getResult();
     }

@@ -90,7 +90,7 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
      * @return Humidity[]
      */
     #[ArrayShape([Humidity::class])]
-    public function findBySensorID(int $sensorID): array
+    public function findBySensorID(int $sensorIDs): array
     {
         $qb = $this->createQueryBuilder('readingType');
         $expr = $qb->expr();
@@ -108,7 +108,7 @@ class HumidityRepository extends ServiceEntityRepository implements ReadingTypeR
                     ':sensor'
                 )
             )
-            ->setParameter('sensor', $sensorID);
+            ->setParameter('sensor', $sensorIDs);
 
         return $qb->getQuery()->getResult();
     }
