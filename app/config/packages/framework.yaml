@@ -10,7 +10,6 @@ framework:
         - x-forwarded-host
         - x-forwarded-proto
         - x-forwarded-port
-        - x-forwarded-prefix
     csrf_protection: true
     http_client:
       max_host_connections: '%env(int:HTTP_MAX_CONNECTIONS)%'
