@@ -25,6 +25,7 @@ services:
       ELASTIC_VERSION: ${ELASTIC_VERSION}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
     volumes:
       - ../app:/var/www/html:cached
       - ../SSL:/etc/ssl:ro
@@ -137,10 +138,14 @@ services:
         - /etc/localtime:/etc/localtime:ro
         - /etc/timezone:/etc/timezone:ro
     healthcheck:
-      test: rabbitmq-diagnostics -q ping
-      interval: 30s
+      # check_port_connectivity verifies all listeners including AMQP 5672 are
+      # actually accepting connections — unlike "ping" which only checks the
+      # Erlang node is alive (port 5672 may not be ready yet at that point).
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 15s
       timeout: 30s
-      retries: 3
+      retries: 5
+      start_period: 60s
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
