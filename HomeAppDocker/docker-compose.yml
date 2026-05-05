@@ -113,6 +113,7 @@ services:
     container_name: '${APP_NAME}-yarn'
     environment:
       APP_ENV: ${APP_ENV}
+      WEBPACK_PUBLIC_PATH: ${WEBPACK_PUBLIC_PATH:-/build}
     volumes:
       - ../app:/home/node/app/src:cached
     networks:
