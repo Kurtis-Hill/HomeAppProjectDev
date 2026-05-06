@@ -2,6 +2,8 @@
 
 namespace App\DTOs\Sensor\Request;
 
+use App\DTOs\Sensor\Request\SensorUpdateDTO\BoolSensorUpdateBoundaryDataDTO;
+use App\DTOs\Sensor\Request\SensorUpdateDTO\StandardSensorUpdateBoundaryDataDTO;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateSensorReadingBoundaryRequestDTO
@@ -14,6 +16,9 @@ class UpdateSensorReadingBoundaryRequestDTO
     ]
     private mixed $sensorData = null;
 
+    /**
+     * @return StandardSensorUpdateBoundaryDataDTO[]|BoolSensorUpdateBoundaryDataDTO[]
+     */
     public function getSensorData(): mixed
     {
         return $this->sensorData;
