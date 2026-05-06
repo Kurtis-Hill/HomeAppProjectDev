@@ -50,7 +50,7 @@ class DeleteSensorCommand extends Command
         }
         $this->sensorRepository->flush();
 
-        $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorID, $sensorObject->getDevice()->getDeviceID());
+        $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorObject->getSensorTypeObject()::getSensorTypeName(), $sensorObject->getDevice()->getDeviceID());
 
         return Command::SUCCESS;
     }

@@ -9,7 +9,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
 
-readonly class SensorDeletionHandler implements SensorDeletionInterface
+readonly class SensorDeletionHandler
 {
     public function __construct(
         private SensorRepositoryInterface $sensorRepository,
@@ -19,7 +19,7 @@ readonly class SensorDeletionHandler implements SensorDeletionInterface
     ) {
     }
 
-    public function deleteSensor(Sensor $sensor): bool
+    public function deleteSensor(Sensor $sensor, bool $triggerESPUpdate = true): bool
     {
         try {
             $deviceID = $sensor->getDevice()->getDeviceID();
@@ -33,10 +33,10 @@ readonly class SensorDeletionHandler implements SensorDeletionInterface
                 $deviceID,
                 $sensorTypeID,
             );
-            if (!empty($sameSensorsOnDevice)) {
-                $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sameSensorsOnDevice);
+            if (!empty($sameSensorsOnDevice) && $triggerESPUpdate === true) {
+                $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sensor);
             }
-            else {
+            elseif ($triggerESPUpdate === true) {
                 $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorType, $deviceID);
             }
         } catch (ORMException|OptimisticLockException $e) {

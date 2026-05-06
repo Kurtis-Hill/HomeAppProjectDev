@@ -12,7 +12,7 @@ use App\Services\API\CommonURL;
 use App\Services\Request\RequestQueryParameterHandler;
 use App\Services\Sensor\NewReadingType\ReadingTypeCreationInterface;
 use App\Services\Sensor\NewSensor\NewSensorCreationInterface;
-use App\Services\Sensor\SensorDeletion\SensorDeletionInterface;
+use App\Services\Sensor\SensorDeletion\SensorDeletionHandler;
 use App\Services\UserInterface\Cards\CardCreation\CardCreationHandlerInterface;
 use App\Traits\HomeAppAPITrait;
 use App\Traits\ValidatorProcessorTrait;
@@ -50,7 +50,7 @@ class AddNewSensorController extends AbstractController
         NewSensorCreationInterface $newSensorCreationService,
         CardCreationHandlerInterface $cardCreationService,
         ReadingTypeCreationInterface $readingTypeCreation,
-        SensorDeletionInterface $deleteSensorService,
+        SensorDeletionHandler $deleteSensorService,
         ValidatorInterface $validator,
         SensorBuilder $sensorBuilder,
         #[MapQueryString]
@@ -94,7 +94,7 @@ class AddNewSensorController extends AbstractController
         foreach ($sensorReadingTypesCreated as $sensorReadingType) {
             $readingTypeValidationErrors = $validator->validate(value: $sensorReadingType, groups: [$newSensor->getSensorTypeObject()::getSensorTypeName()]);
             if ($this->checkIfErrorsArePresent($readingTypeValidationErrors)) {
-                $deleteSensorService->deleteSensor($newSensor);
+                $deleteSensorService->deleteSensor(sensor: $newSensor, triggerESPUpdate: false);
 
                 return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($readingTypeValidationErrors));
             }

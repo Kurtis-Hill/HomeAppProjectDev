@@ -15,45 +15,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 readonly class SensorUpdateEventHandler
 {
     public function __construct(
-        private SensorRepositoryInterface $sensorRepository,
         private SensorEventUpdateDTOBuilder $sensorEventUpdateDTOBuilder,
         private EventDispatcherInterface $eventDispatcher,
-        private SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder,
-        private SensorDeletionEventHandler $sensorDeletionEventHandler,
-        private LoggerInterface $elasticLogger,
     ) {}
 
-    /**
-     * @param Sensor[] $sensors
-     * @return void
-     * @throws SensorNotFoundException
-     */
-    public function handleSensorUpdateEvent(array $sensors): void
+    public function handleSensorUpdateEvent(Sensor $sensor): void
     {
-        $sensorsToUpdate = [];
-        foreach ($sensors as $sensor) {
-            /** @var Sensor[] $sensorsToUpdate */
-            $sensorsToUpdate = array_merge(
-                $this->sensorRepository->findSameSensorTypesOnSameDevice(
-                    $sensor->getDevice()->getDeviceID(),
-                    $sensor->getSensorTypeObject()->getSensorTypeID(),
-                ),
-                $sensorsToUpdate
-            );
-        }
-        if (empty($sensorsToUpdate)) {
-            $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensors[0]);
-        }
-
-        $sensorUpdateRequestDTOsByDeviceID = [];
-        foreach ($sensorsToUpdate as $sensorToUpdate) {
-            $sensorUpdateRequestDTOsByDeviceID[$sensorToUpdate->getDevice()->getDeviceID()][] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
-        }
-
-        foreach ($sensorUpdateRequestDTOsByDeviceID as $sensorUpdateRequestDTOs) {
-            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorUpdateEventDTO($sensorUpdateRequestDTOs);
-            $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
-            $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
-        }
+        $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorUpdateEventDTO($sensor->getSensorID());
+        $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
+        $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
     }
 }

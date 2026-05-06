@@ -21,7 +21,7 @@ readonly class SensorSavingHandler
             $this->sensorRepository->persist($sensor);
             $this->sensorRepository->flush();
 
-            $this->sensorUpdateEventHandler->handleSensorUpdateEvent([$sensor]);
+            $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sensor);
             return true;
         } catch (ORMException|OptimisticLockException) {
             return false;
