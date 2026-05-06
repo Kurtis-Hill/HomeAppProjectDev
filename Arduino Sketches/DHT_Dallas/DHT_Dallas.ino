@@ -1355,7 +1355,7 @@ void resetDevice() {
 
 void restartDevice() {
   server.send(200, "application/json", "{\"status\":\"ok\"}");
-  ESP.restart();
+  ESP.restart();  
 }
 
 void sendAllActiveSensorData(bool force = false) {
@@ -1374,6 +1374,48 @@ void sendAllActiveSensorData(bool force = false) {
   if (shtData.activeSensor == true) {
     sendShtUpdateRequest(force);
   }
+}
+
+void handleDeleteSensor() {
+  String body = server.arg("plain");
+  JsonDocument doc = getDeserializedJson(body, 256);
+
+  if (doc["sensorType"].isNull()) {
+    server.send(400, "application/json", "{\"status\":\"sensorType required\"}");
+    return;
+  }
+
+  const char* sensorType = doc["sensorType"].as<const char*>();
+
+  struct {
+    const char* name;
+    const char* path;
+    bool* settingsJsonExists;
+    bool* valuesAreSet;
+    bool* activeSensor;
+    int*  sensorCount;
+  } sensorEntries[] = {
+    {"dallas", "/dallas.json", &dallasTempData.settingsJsonExists, &dallasTempData.valuesAreSet, &dallasTempData.activeSensor, &dallasTempData.sensorCount},
+    {"dht",    "/dht.json",    &dhtSensor.settingsJsonExists,      &dhtSensor.valuesAreSet,      &dhtSensor.activeSensor,      &dhtSensor.sensorCount},
+    {"relay",  "/relay.json",  &relayData.settingsJsonExists,      &relayData.valuesAreSet,      &relayData.activeSensor,      &relayData.sensorCount},
+    {"ldr",    "/ldr.json",    &ldrData.settingsJsonExists,        &ldrData.valuesAreSet,        &ldrData.activeSensor,        &ldrData.sensorCount},
+    {"sht",    "/sht.json",    &shtData.settingsJsonExists,        &shtData.valuesAreSet,        &shtData.activeSensor,        &shtData.sensorCount},
+  };
+
+  for (auto& s : sensorEntries) {
+    if (strcmp(sensorType, s.name) == 0) {
+      SPIFFS.remove(s.path);
+      *s.settingsJsonExists = false;
+      *s.valuesAreSet = false;
+      *s.activeSensor = false;
+      *s.sensorCount = 0;
+      Serial.printf("Deleted sensor: %s\n", sensorType);
+      server.send(200, "application/json", "{\"status\":\"ok\"}");
+      return;
+    }
+  }
+
+  server.send(400, "application/json", "{\"status\":\"unknown sensorType\"}");
 }
 
 void sendAllSensorData() {
@@ -1513,6 +1555,7 @@ void setup() {
   
   server.on("/reset-device", HTTP_GET, resetDevice);
   server.on("/restart-device", HTTP_GET, restartDevice);
+  server.on("/delete-sensor", HTTP_POST, handleDeleteSensor);
   server.begin();
   Serial.println("Servers Begun");
 
