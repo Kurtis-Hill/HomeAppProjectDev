@@ -1,20 +1,9 @@
-#include <Arduino.h>
+﻿#include <Arduino.h>
 #include <Adafruit_Sensor.h>
-#include <SPIFFSReadServer.h>
-#include <SPIFFSIniFile.h>
-#include <EEPROM.h>
 #include <FS.h>
 
 #include <ESP8266WiFi.h>
-#include <ESP8266WiFiAP.h>
-#include <ESP8266WiFiGeneric.h>
-#include <ESP8266WiFiMulti.h>
-#include <ESP8266WiFiScan.h>
-#include <ESP8266WiFiSTA.h>
-#include <ESP8266WiFiType.h>
 #include <WiFiClient.h>
-#include <WiFiServer.h>
-#include <WiFiServerSecure.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WebServer.h>
 
@@ -23,7 +12,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-#include <DHT.h>;
+#include <DHT.h>
 
 #include <Wire.h>
 
@@ -56,15 +45,15 @@
 
 const char fingerprint[] PROGMEM = "60ee151bee994d6ca826a69abce1e724173721ca";
 
-String ipAddress;
-String publicIpAddress;
+char ipAddress[16];
+char publicIpAddress[16] = "";
 int publicIpAddressRequestAttempts = 0;
-String token;
-String refreshToken;
+char token[512];
+char refreshToken[512];
 bool deviceRegistered = false;
 
-int wifiRetryTimer = 0;
-int wifiRetryCounter = 0;
+unsigned long wifiRetryTimer = 0;
+unsigned long ipAddressNextUpdate = 0;
 
 bool deviceLoggedIn = false;
 
@@ -72,14 +61,13 @@ bool deviceLoggedIn = false;
 #define ACCESSPOINT_SSID "HomeApp-D-A-D-AP"
 #define ACCESSPOINT_PASSWORD "HomeApp1234"
 
-ESP8266WiFiMulti WiFiMulti;
 ESP8266WebServer server;
 IPAddress local_ip(192, 168, 1, 254);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress netmask(255, 255, 255, 0);
 
 //LEDS
-#define DEVICE_ON_LED_PIN 16
+#define DEVICE_ON_LED_PIN 0
 #define WIFI_OFF_LED_PIN 0 
 
 #define DEVICE_LED_PIN_SANCTIONED 2
@@ -99,8 +87,8 @@ struct DhtSensor {
 //  char*[DHTS_ASSINGED_TO_DEVICE] sensorName;
   float tempReading[DHTS_ASSINGED_TO_DEVICE];
   float humidReading[DHTS_ASSINGED_TO_DEVICE];
-  int interval[DHTS_ASSINGED_TO_DEVICE];
-  int sendNextReadingAt[DHTS_ASSINGED_TO_DEVICE];
+  unsigned long interval[DHTS_ASSINGED_TO_DEVICE];
+  unsigned long sendNextReadingAt[DHTS_ASSINGED_TO_DEVICE];
   int pinNumber[DHTS_ASSINGED_TO_DEVICE];
   int sensorCount = 0;
   bool activeSensor = false;
@@ -121,8 +109,8 @@ struct DallasTempData {
   char sensorName[MAX_DALLAS_SENSORS][SENSOR_NAME_MAX_LENGTH];
 //  char sensorName;
   float tempReading[MAX_DALLAS_SENSORS];
-  int sendNextReadingAt[MAX_DALLAS_SENSORS];
-  int interval[MAX_DALLAS_SENSORS];
+  unsigned long sendNextReadingAt[MAX_DALLAS_SENSORS];
+  unsigned long interval[MAX_DALLAS_SENSORS];
   int sensorCount = 0;
   int pinNumber;
   bool activeSensor = false;
@@ -139,8 +127,8 @@ struct RelayData {
 //  char*[MAX_RELAYS] sensorName;
   bool currentReading[MAX_RELAYS];
   int pinNumber[MAX_RELAYS];
-  int sendNextReadingAt[MAX_RELAYS];
-  int interval[MAX_RELAYS];
+  unsigned long sendNextReadingAt[MAX_RELAYS];
+  unsigned long interval[MAX_RELAYS];
   int sensorCount = 0;
   bool activeSensor = false;
   bool valuesAreSet = false;
@@ -155,8 +143,8 @@ struct LdrData {
   char sensorName[MAX_LDRS][SENSOR_NAME_MAX_LENGTH];
 //  char*[MAX_LDRS] sensorName;
   int currentReading[MAX_LDRS];
-  int sendNextReadingAt[MAX_LDRS];
-  int interval[MAX_LDRS];
+  unsigned long sendNextReadingAt[MAX_LDRS];
+  unsigned long interval[MAX_LDRS];
   int pinNumber[MAX_LDRS];
   int sensorCount = 0;
   bool activeSensor = false;
@@ -173,8 +161,8 @@ struct ShtData {
   char sensorName[MAX_SHTS][SENSOR_NAME_MAX_LENGTH];
   float tempReading[MAX_SHTS];
   float humidReading[MAX_SHTS];
-  int sendNextReadingAt[MAX_SHTS];
-  int interval[MAX_SHTS];
+  unsigned long sendNextReadingAt[MAX_SHTS];
+  unsigned long interval[MAX_SHTS];
   int sensorCount = 0;
   int pinNumber[MAX_SHTS];
   bool activeSensor = false;
@@ -183,679 +171,9 @@ struct ShtData {
 };
 ShtData shtData;
 
-const char* deviceSpiffs[3][10] = {"dallas", "dht", "relay", "ldr", "sht"};
+const char* deviceSpiffs[] = {"dallas", "dht", "relay", "ldr", "sht"};
 
-// Webpages
-char webpage[] PROGMEM = R"=====(
-<html>
-  <body>
-    <div id="background-wrap">
-        <div class="bubble x1"></div>
-        <div class="bubble x2"></div>
-        <div class="bubble x3"></div>
-        <div class="bubble x4"></div>
-        <div class="bubble x5"></div>
-        <div class="bubble x6"></div>
-        <div class="bubble x7"></div>
-        <div class="bubble x8"></div>
-        <div class="bubble x9"></div>
-        <div class="bubble x10"></div>
-    </div>
-    <form>
-      <div class="Form-style">
-        <h3>Enter Your Wifi Credentials Remeber To Use a 2.4GHZ Signal</h3>
-        <a style="font-size:0.65em;" href=""id="help">Help</a>
-        <br>
-        <br>
-        <label for="ssid">SSID/Network Name</label>
-        <br>
-        <input type="text" value="" id="ssid" placeholder= "Enter Network SSID"/>
-      </div>
-        <div class="Form-style">
-          <label for="password">Password</label>
-          <br>
-          <input value="" type="password" id="password" placeholder="Enter Network Password"/>
-        </div>
-        <div class="Form-style" style="display: none">
-          <h3>Enter Device Information</h3>
-          <label for="groupName">Device Name</label>
-          <br>
-          <input value="" type="text" id="deviceName" placeholder="Enter Your Account GroupName"/>
-        </div>
 
-        <div class="Form-style" style="display: none">
-          <label for="sensorName">Device Password</label>
-          <br>
-            <input value="" type="password" id="deviceSecret" placeholder="Enter The Secret Given To You By The App"/>
-        </div>
-        <br>
-        <div class="Form-style" style="display: none">
-          <h2>Enter Sensor Information</h2>
-          <label class="heading">Temperature and Humidity Sensor</label>
-          <br>
-          <input type="radio" class="checkmark" name="tempHumidRadio" value="Yes" onchange="hiddenDisplay('tempDisplay')">Yes<br></input>
-          <input type="radio" class="checkmark" name="tempHumidRadio" value="No" onchange="hiddenDisplay('tempDisplay')" checked>No<br></input>
-        </div>
-        <div class="Form-style" id="tempDisplay" style="display: none;">
-          <input value="" type="number"  id="dhtSensorInterval" placeholder="Enter The interval for the reading to be taken in seconds"/>
-          <br><br>
-          <input value="" type="text" id="dhtSensor" placeholder="Enter The Name of the Sensor"/>
-          <br>
-        </div>
-
-
-        <div class="Form-style" style="display: none">
-          <label class="heading">Temperature Bus Sensor</label>
-          <br>
-            <input type="radio" class="checkmark" name="busTempRadio" value="Yes" onchange="hiddenDisplay('other')">Yes</input><br>
-            <input type="radio" class="checkmark" name="busTempRadio" value="No" onchange="hiddenDisplay('other')" checked>No</input>
-        </div>
-        <div class="Form-style" id="other" style="display: none;">
-          <input value="" type="number"  id="busTempPinNumber" placeholder="Enter The Pin number for the sensor"/>
-          <br><br>
-          <input value="" type="number"  id="busTempInterval" placeholder="Enter The interval for the reading to be taken in seconds"/>
-          <br><br>
-          <input value="" type="text"  id="busTemp1" placeholder="Enter The First Sensor Name"/>
-          <br><br>
-          <input value="" type="text"  id="busTemp2" placeholder="Enter The Second Sensor Name"/>
-          <br><br>
-          <input value="" type="text" id="busTemp3" placeholder="Enter The Third Sensor Name"/>
-          <br><br>
-          <input value="" type="text"  id="busTemp4" placeholder="Enter The Fourth Sensor Name"/>
-          <br><br>
-          <input value="" type="text"  id="busTemp5" placeholder="Enter The Fith Sensor Name"/>
-          <br><br>
-          <input value="" type="text"  id="busTemp6" placeholder="Enter The Sixth Second Name"/>
-          <br><br>
-          <input value="" type="text"  id="busTemp7" placeholder="Enter The Seventh Sensor Name"/>
-          <br><br>
-          <input value="" type="text"  id="busTemp8" placeholder="Enter The Eith Sensor Name"/>
-          <br><br>
-        </div>
-
-        <div class="Form-style" style="display: none">
-          <label for="Analog">Analog Sensor</label>
-          <br>
-            <input type="radio" class="checkmark" name="AnalogCheck" value="Yes" onchange="hiddenDisplay('Analog')">Yes<br>
-            <input type="radio" class="checkmark" name="AnalogCheck" value="No" checked onchange="hiddenDisplay('Analog')">No<br>
-        </div>
-        <div class="Form-style" id="Analog" style="display: none;">
-          <label for="AnalogSensorNames" class="heading">Analog Sensors Names</label>
-          <br>
-          <input value="" type="number"  id="analogPinNumber" placeholder="Enter The Pin number for the analog"/>
-          <br><br>
-          <input value="" type="number"  id="analogInterval" placeholder="Enter The interval for the reading to be taken in seconds"/>
-          <br><br>
-          <input value="" type="text" id="AnalogName1" placeholder="Enter The First Sensor Name"/>
-          <br><br>
-          <input value="" type="text" id="AnalogName2" placeholder="Enter The Second Sensor Name"/>
-          <br><br>
-          <input value="" type="text" id="AnalogName3" placeholder="Enter The Third Sensor Name"/>
-          <br><br>
-          <input value="" type="text" id="AnalogName4" placeholder="Enter The Forth Sensor Name"/>
-          <br><br>
-        </div>
-
-        <div class="Form-style" style="display: none">
-            <label for="Relay">Relay Sensor</label>
-            <br>
-              <input type="radio" class="checkmark" name="AnalogCheck" value="Yes" onchange="hiddenDisplay('Relay')">Yes<br>
-              <input type="radio" class="checkmark" name="AnalogCheck" value="No" checked onchange="hiddenDisplay('Relay')">No<br>
-        </div>
-        <div class="Form-style" id="Relay" style="display: none;">
-            <label for="RelaySensorNames" class="heading">Relay Sensors Names</label>
-            <br>
-            <input value="" type="text" id="RelayName1" placeholder="Enter The First Sensor Name"/>
-            <input value="" type="number"  id="RelayName1PinNumber" placeholder="Enter The Pin number for the sensor"/>
-            <br><br>
-            <input value="" type="text" id="RelayName2" placeholder="Enter The Second Sensor Name"/>
-            <input value="" type="number"  id="RelayName2PinNumber" placeholder="Enter The Pin number for the sensor"/>
-            <br><br>
-            <input value="" type="text" id="RelayName3" placeholder="Enter The Third Sensor Name"/>
-            <input value="" type="number"  id="RelayName3PinNumber" placeholder="Enter The Pin number for the sensor"/>
-            <br><br>
-            <input value="" type="text" id="RelayName4" placeholder="Enter The Forth Sensor Name"/>
-            <input value="" type="number"  id="RelayName4PinNumber" placeholder="Enter The Pin number for the sensor"/>
-            <br><br>
-        </div>
-
-        <div class="button-holder">
-          <button class="button" onclick="saveDataToSpiff()"> Save </button>
-       </div>
-    </form>
-    <div class="button-holder">
-      <button class="button-reset" href="/reset-device"> Reset Device </button>
-    </div>
-    <h4 class="h4">Created by Kurtis Hill</h4>
-  </body>
-  <script name="config" src="config"></script>
-  <script>
-    function hiddenDisplay(name) {
-        var displayItem = document.getElementById(name);
-        if (displayItem.style.display === "none") {
-          displayItem.style.display = "block";
-        } else {
-          displayItem.style.display = "none";
-        }
-    }
-    
-    function saveDataToSpiff() {
-      console.log("save button was clicked");
-        //Vital Info
-      var ssid = document.getElementById("ssid").value;
-      var password = document.getElementById("password").value;
-      var deviceName = document.getElementById("deviceName").value;
-      var deviceSecret = document.getElementById("deviceSecret").value;
-      var jsonData = {};
-      
-      if (ssid) {
-        jsonData.wifi = {'ssid': ssid, 'password': password};
-      }
-      var sensorData = {};
-      function buildBusSensorObject(sensorCount, sensorNames, pinNumber, readingInterval) {
-        return {
-          'sensorCount': sensorCount,
-          'sensorNames': sensorNames,
-          'pinNumber': pinNumber,
-          'readingInterval': readingInterval
-        };
-      }
-
-      function buildRegularSensorObject(sensorName, readingInterval) {
-        return {
-          'sensorName': sensorName,
-          'readingInterval': readingInterval
-        };
-      }
-
-      function prepareMultiSensorObject(sensorNames, pinNumbers) {
-        return {
-          'sensorNames': sensorNames,
-          'pinNumbers': pinNumbers
-        };
-      }
-      
-      var busTempPinNumber = parseInt(document.getElementById("busTempPinNumber").value);
-
-      if (busTempPinNumber) {
-          //Dallas Bus Sensor Names
-          var busTemp1 =  document.getElementById("busTemp1").value;
-          var busTemp2 =  document.getElementById("busTemp2").value;
-          var busTemp3 =  document.getElementById("busTemp3").value;
-          var busTemp4 =  document.getElementById("busTemp4").value;
-          var busTemp5 =  document.getElementById("busTemp5").value;
-          var busTemp6 =  document.getElementById("busTemp6").value;
-          var busTemp7 =  document.getElementById("busTemp7").value;
-          var busTemp8 =  document.getElementById("busTemp8").value;
-    
-          var busTempNames = [busTemp1, busTemp2, busTemp3, busTemp4, busTemp5, busTemp6, busTemp7, busTemp8],        
-          busTempNameArray = busTempNames.filter(Boolean);
-    
-          var busTempCount = busTempNameArray.length;
-    
-          var busTempInterval = document.getElementById("busTempInterval").value ? parseInt(document.getElementById("busTempInterval").value) : 60;
-          busTempInterval = busTempInterval * 1000;
-
-          sensorData.dallas = buildBusSensorObject(busTempCount, busTempNameArray, busTempPinNumber, busTempInterval);
-      }
-
-      // var data = {'dallas': {sensorCount: busTempCount, sensorNames: busTempNameArray, pinNumber: busTempPinNumber, readingInterval: busTempInterval}};
-
-      var analogPinNumber = parseInt(document.getElementById("analogPinNumber").value);
-      if (analogPinNumber) {
-        // ADC Sensor Names
-        var analogName1 =  document.getElementById("AnalogName1").value;
-        var analogName2 =  document.getElementById("AnalogName2").value;
-        var analogName3 =  document.getElementById("AnalogName3").value;
-        var analogName4 =  document.getElementById("AnalogName4").value;
-        var analogNames = [analogName1, analogName2, analogName3, analogName4];
-  
-        analogNamesArray = analogNames.filter(Boolean);
-        var analogCount = analogNamesArray.length;
-  
-        var analogInterval = document.getElementById("analogInterval").value ? parseInt(document.getElementById("analogInterval").value) : 60;
-        analogInterval = analogInterval * 1000;
-  
-        // sensorData.analog = {'analogNames': analogNamesArray, 'analogCount': analogCount, 'analogPinNumber': analogPinNumber, 'analogInterval': analogInterval};
-        sensorData.soil = buildBusSensorObject(analogCount, analogNamesArray, analogPinNumber, analogInterval);
-      }
-
-      
-
-      // DHT Sensor
-      var dhtSensor = document.getElementById("dhtSensor").value;
-      if (dhtSensor) {
-        var dhtSensorInterval = document.getElementById("dhtSensorInterval").value ? parseInt(document.getElementById("dhtSensorInterval").value) : 60;
-        dhtSensorInterval = dhtSensorInterval * 1000;
-        // data.dhtSensor = {'sensorName' : dhtSensor, 'interval': dhtSensorInterval};
-        sensorData.dht = buildRegularSensorObject(dhtSensor, dhtSensorInterval);
-      }
-
-      var relaySensorPinNumber1 = parseInt(document.getElementById("RelayName1PinNumber").value);
-      if (relaySensorPinNumber1) {    
-        var relaySensorName1 = document.getElementById("RelayName1").value;
-        var relaySensorName2 = document.getElementById("RelayName2").value;
-        var relaySensorName3 = document.getElementById("RelayName3").value;
-        var relaySensorName4 = document.getElementById("RelayName4").value;
-        var relaySensorNames = [relaySensorName1, relaySensorName2, relaySensorName3, relaySensorName4];
-        
-        var relaySensorPinNumber2 = parseInt(document.getElementById("RelayName2PinNumber").value);
-        var relaySensorPinNumber3 = parseInt(document.getElementById("RelayName3PinNumber").value);
-        var relaySensorPinNumber4 = parseInt(document.getElementById("RelayName4PinNumber").value);
-        var relaySensorPinNumbers = [relaySensorPinNumber1, relaySensorPinNumber2, relaySensorPinNumber3, relaySensorPinNumber4],
-        
-        relaySensorNamesArray = relaySensorNames.filter(Boolean);
-        relaySensorPinNumbersArray = relaySensorPinNumbers.filter(Boolean);
-        var relayCount = relaySensorNamesArray.length;
-
-        sensorData.relay = [];
-        for (var i = 0; i < relayCount; i++) {
-          sensorData.relay.push(buildRegularSensorObject(relaySensorNamesArray[i], relaySensorPinNumbersArray[i]));
-        }
-      }
-
-      if (sensorData.soil || sensorData.dallas || sensorData.dht || sensorData.relay) {
-        jsonData.sensorData = sensorData;
-      }
-
-      // var jsonData = {'wifi': wifi, 'sensorData': sensorData, 'deviceCredentials': deviceCredentials};
-
-      var xhr = new XMLHttpRequest();
-      var url = "/settings";
-
-      xhr.onreadystatechange = function() {
-        if (this.onreadyState == 4 && this.status == 200) {
-          alert('Saved device settings')
-            console.log(xhr.responseText);
-        }
-      }
-
-      console.log(JSON.stringify(jsonData));
-
-      xhr.open("POST", url, true);
-      xhr.send(JSON.stringify(jsonData));
-    }
-
-  </script>
-  <style>
-  background-position: 97% center;
-  background-repeat: no-repeat;
-  border: 1px solid #AAA;
-  color: #555;
-  font-size: inherit;
-  margin: 20px;
-  overflow: hidden;
-  padding: 5px 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 300px;
-
-
-  select#room-color {
-    color: #fff;
-    background-color: #779126;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    border-radius: 20px;
-    padding-left: 15px;
-  }
-  .Form-style{
-    font-size: 1.5em;
-    text-align: center;
-    box-sizing: border-box;
-    position: relative;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-  }
-
-  .checkmark {
-    top: 0;
-    left: 0;
-    height: 2%;
-    width: 2%;
-    background-color: #eee;
-  }
-
-  input {
-    width: 60%;
-    padding: 20px 20px;
-    margin: 10px 0;
-    box-sizing: border-box;
-    font-size: 0.4em;
-  }
-  .button {
-    text-align: center;
-  }
-  .button-reset {
-    text-align: center;
-  }
-  input[type=text] {
-    width: 60%;
-    padding: 20px 20px;
-    margin: 10px 0;
-    box-sizing: border-box;
-    font-size: 0.4em;
-  }
-  .button {
-    background-color: white;
-    color: black;
-    border-radius: 10px;
-    padding: 20px 256px;
-    text-align: center;
-  }
-  .button-reset {
-    background-color: white;
-    color: black;
-    border-radius: 10px;
-    padding: 20px 256px;
-    text-align: center;
-  }
-
-  .button:hover {
-    background-color: #1cc88a;
-    color: white;
-
-    background-color: #1cc88a;
-    border: none;
-    color: white;
-    padding: 26px 268px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    cursor: pointer;
-  }
-
-  .button-reset:hover {
-    background-color: #1cc88a;
-    color: white;
-
-    background-color: #e93313;
-    border: none;
-    color: white;
-    padding: 26px 268px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    cursor: pointer;
-  }
-  .button-holder {
-    text-align: center;
-  }
-
-  body {
-  background: #00b4ff;
-  color: #333;
-  font: 100% Lato, Arial, Sans Serif;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-
-    height: 100%;
-    font-family: Trebuchet MS;
-  }
-
-  .container {
-  background-color: white;
-    border-radius: 25px;
-  border: 1px solid black;
-  padding: 20px;
-    width: 60%;
-  margin-left: 20%;
-  margin-right: 20%;
-  }
-
-  #background-wrap {
-      bottom: 0;
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: -1;
-  }
-
-  /* KEYFRAMES */
-
-  @-webkit-keyframes animateBubble {
-      0% {
-          margin-top: 1000px;
-      }
-      100% {
-          margin-top: -100%;
-      }
-  }
-
-  @-moz-keyframes animateBubble {
-      0% {
-          margin-top: 1000px;
-      }
-      100% {
-          margin-top: -100%;
-      }
-  }
-
-  @keyframes animateBubble {
-      0% {
-          margin-top: 1000px;
-      }
-      100% {
-          margin-top: -100%;
-      }
-  }
-
-  @-webkit-keyframes sideWays {
-      0% {
-          margin-left:0px;
-      }
-      100% {
-          margin-left:50px;
-      }
-  }
-
-  @-moz-keyframes sideWays {
-      0% {
-          margin-left:0px;
-      }
-      100% {
-          margin-left:50px;
-      }
-  }
-
-  @keyframes sideWays {
-      0% {
-          margin-left:0px;
-      }
-      100% {
-          margin-left:50px;
-      }
-  }
-
-  .x1 {
-      -webkit-animation: animateBubble 25s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 25s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      animation: animateBubble 25s linear infinite, sideWays 2s ease-in-out infinite alternate;
-
-      left: -5%;
-      top: 5%;
-
-      -webkit-transform: scale(0.6);
-      -moz-transform: scale(0.6);
-      transform: scale(0.6);
-  }
-
-  .x2 {
-      -webkit-animation: animateBubble 20s linear infinite, sideWays 4s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 20s linear infinite, sideWays 4s ease-in-out infinite alternate;
-      animation: animateBubble 20s linear infinite, sideWays 4s ease-in-out infinite alternate;
-
-      left: 5%;
-      top: 80%;
-
-      -webkit-transform: scale(0.4);
-      -moz-transform: scale(0.4);
-      transform: scale(0.4);
-  }
-
-  .x3 {
-      -webkit-animation: animateBubble 28s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 28s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      animation: animateBubble 28s linear infinite, sideWays 2s ease-in-out infinite alternate;
-
-      left: 10%;
-      top: 40%;
-
-      -webkit-transform: scale(0.7);
-      -moz-transform: scale(0.7);
-      transform: scale(0.7);
-  }
-
-  .x4 {
-      -webkit-animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
-      animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
-
-      left: 20%;
-      top: 0;
-
-      -webkit-transform: scale(0.3);
-      -moz-transform: scale(0.3);
-      transform: scale(0.3);
-  }
-
-  .x5 {
-      -webkit-animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
-      animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
-
-      left: 30%;
-      top: 50%;
-
-      -webkit-transform: scale(0.5);
-      -moz-transform: scale(0.5);
-      transform: scale(0.5);
-  }
-
-  .x6 {
-      -webkit-animation: animateBubble 21s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 21s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      animation: animateBubble 21s linear infinite, sideWays 2s ease-in-out infinite alternate;
-
-      left: 50%;
-      top: 0;
-
-      -webkit-transform: scale(0.8);
-      -moz-transform: scale(0.8);
-      transform: scale(0.8);
-  }
-
-  .x7 {
-      -webkit-animation: animateBubble 20s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 20s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      animation: animateBubble 20s linear infinite, sideWays 2s ease-in-out infinite alternate;
-
-      left: 65%;
-      top: 70%;
-
-      -webkit-transform: scale(0.4);
-      -moz-transform: scale(0.4);
-      transform: scale(0.4);
-  }
-
-  .x8 {
-      -webkit-animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
-      animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
-
-      left: 80%;
-      top: 10%;
-
-      -webkit-transform: scale(0.3);
-      -moz-transform: scale(0.3);
-      transform: scale(0.3);
-  }
-
-  .x9 {
-      -webkit-animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
-      animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
-
-      left: 90%;
-      top: 50%;
-
-      -webkit-transform: scale(0.6);
-      -moz-transform: scale(0.6);
-      transform: scale(0.6);
-  }
-
-  .x10 {
-      -webkit-animation: animateBubble 26s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      -moz-animation: animateBubble 26s linear infinite, sideWays 2s ease-in-out infinite alternate;
-      animation: animateBubble 26s linear infinite, sideWays 2s ease-in-out infinite alternate;
-
-      left: 80%;
-      top: 80%;
-
-      -webkit-transform: scale(0.3);
-      -moz-transform: scale(0.3);
-      transform: scale(0.3);
-  }
-
-
-
-  .bubble {
-      -webkit-border-radius: 50%;
-      -moz-border-radius: 50%;
-      border-radius: 50%;
-
-          -webkit-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
-      -moz-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
-      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
-
-          height: 200px;
-      position: absolute;
-      width: 200px;
-  }
-
-  .bubble:after {
-      background: -moz-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
-      background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(255,255,255,0.5)), color-stop(70%,rgba(255,255,255,0)));
-      background: -webkit-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-      background: -o-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-      background: -ms-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-      background: radial-gradient(ellipse at center,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%);
-      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ffffff', endColorstr='#00ffffff',GradientType=1 );
-
-      -webkit-border-radius: 50%;
-      -moz-border-radius: 50%;
-      border-radius: 50%;
-
-      -webkit-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
-      -moz-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
-      box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
-
-      content: "";
-      height: 180px;
-      left: 10px;
-      position: absolute;
-      width: 180px;
-  }
-  </style>
-</html>
-
-
-)=====";
 
 bool setupNetworkConnection() {
   Serial.println("Wifi connecting");
@@ -908,34 +226,32 @@ bool connectToNetwork() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
 
-  int timeout = millis() + 35000;
-  Serial.printf("Connecting to wifi with a %d millisecond timeout\n", timeout);
+  unsigned long timeout = millis() + 35000;
+  Serial.printf("Connecting to wifi with a %lu millisecond timeout\n", timeout);
   while(WiFi.status() != WL_CONNECTED){
-    int currentTime = millis();
+    unsigned long currentTime = millis();
     // leave serial in when taken out exceptions get throws, whos knows
     Serial.print(".");
-    if (timeout - currentTime < 0) {
+    if (currentTime > timeout) {
       Serial.println("Failed to connect to wifi network");
       break;
     }
-    if (WiFi.status() == WL_CONNECTED){
-      Serial.println("Wifi connection made");
-      WiFi.printDiag(Serial);
-      Serial.print("Network IP Address: ");
-      Serial.println(WiFi.localIP());
-      Serial.println("saved ip address");
-      ipAddress = ipToString(WiFi.localIP());
-      Serial.println(ipAddress);
-      
-      digitalWrite(WIFI_OFF_LED_PIN, LOW);      
-           
-      return true;
-    }
   }
-  Serial.print("wasnt able to connect");
 
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("Wifi connection made");
+    WiFi.printDiag(Serial);
+    Serial.print("Network IP Address: ");
+    Serial.println(WiFi.localIP());
+    Serial.println("saved ip address");
+    strncpy(ipAddress, ipToString(WiFi.localIP()).c_str(), sizeof(ipAddress) - 1);
+    Serial.println(ipAddress);
+    digitalWrite(WIFI_OFF_LED_PIN, LOW);
+    return true;
+  }
+
+  Serial.print("wasnt able to connect");
   digitalWrite(WIFI_OFF_LED_PIN, HIGH);
-  
   
   return false;
 }
@@ -944,8 +260,8 @@ void handleWifiReconnectionAttempt() {
   if (!SPIFFS.exists("/wifi.json")) {
     return;
   }
-  int currentTime = millis();
-  if (wifiRetryTimer - currentTime <= 0) {
+  unsigned long currentTime = millis();
+  if (currentTime >= wifiRetryTimer) {
     Serial.println("handling wifi re connection");
     bool connectionSuccess = setupNetworkConnection();
 
@@ -1120,87 +436,35 @@ bool saveSensorDataToSpiff(JsonVariant doc) {
   return true;
 }
 
-bool saveLdrSensorData(JsonVariant ldrDoc) {
-  for (int i = 0; i <= MAX_LDRS; ++i) {
-    if (ldrDoc[i]["sensorName"].isNull()) {
-
-      if (i == 0) {
-        Serial.print("Sensor data for ldr was not recieved correctly sensor name is not set");  
-        return false;
-      }
-      continue;
-    }
-    Serial.printf(
-      "LDR sensor data recieved sensor name: %s \n", 
-      ldrDoc[i]["sensorName"].as<String>()
-    );
-  }
-
-  if (SPIFFS.exists("/ldr.json")) {
-    Serial.println("LDR spiff exists removing before creating");
-    SPIFFS.remove("/ldr.json");
-  }
-
-  Serial.println("Opening ldr SPIFF for writing");
-  File ldrSPIFF = SPIFFS.open("/ldr.json", "w");
-
-  JsonDocument ldrJsonData;
-  ldrJsonData = ldrDoc;
-  if(serializeJson(ldrJsonData, ldrSPIFF)) {    
-    Serial.println("LDR serialization save success");
-    ldrData.valuesAreSet = false;
-  } else {
-    ldrSPIFF.close();
-    Serial.println("LDR Serialization failure");
-    
+bool saveJsonToSpiff(const char* path, JsonVariant data) {
+  if (SPIFFS.exists(path)) SPIFFS.remove(path);
+  File f = SPIFFS.open(path, "w");
+  if (!serializeJson(data, f)) {
+    f.close();
+    Serial.printf("Failed to serialize to %s\n", path);
     return false;
   }
-  
-  ldrSPIFF.close();
-  Serial.println("LDR SPIFF close, sucess");
+  f.close();
+  Serial.printf("Saved %s\n", path);
+  return true;
+}
 
-  return true;  
+bool saveLdrSensorData(JsonVariant ldrDoc) {
+  if (ldrDoc[0]["sensorName"].isNull()) {
+    Serial.println("LDR: sensor name not set");
+    return false;
+  }
+  ldrData.valuesAreSet = false;
+  return saveJsonToSpiff("/ldr.json", ldrDoc);
 }
 
 bool saveRelaySensorData(JsonVariant relayDoc) {
-  for (int i = 0; i <= MAX_RELAYS; ++i) {
-    if (relayDoc[i]["sensorName"].isNull()) {
-      if (i == 0) {
-        Serial.print("Sensor data for relay was not recieved correctly sensor name is not set");  
-        return false;
-      }
-      continue;
-    }
-    Serial.printf(
-      "Relay sensor data recieved sensor name: %s \n",
-      relayDoc[i]["sensorName"].as<String>()
-    );
-  }
-  if (SPIFFS.exists("/relay.json")) {
-    Serial.print("Relay spiff exists removing before creating");
-    SPIFFS.remove("/relay.json");
-  }
-
-  Serial.println("Opening relay SPIFF for writing");
-  File relaySPIFF = SPIFFS.open("/relay.json", "w");
-
-  JsonDocument relayJsonData;
-  relayJsonData = relayDoc;
-  
-  if(serializeJson(relayJsonData, relaySPIFF)) {    
-    Serial.println("Relay serialization save success");
-    relayData.valuesAreSet = false;
-  } else {
-    relaySPIFF.close();
-    Serial.println("Relay Serialization failure");
-    
+  if (relayDoc[0]["sensorName"].isNull()) {
+    Serial.println("Relay: sensor name not set");
     return false;
   }
-  
-  relaySPIFF.close();
-  Serial.println("Relay SPIFF close, sucess");
-
-  return true;
+  relayData.valuesAreSet = false;
+  return saveJsonToSpiff("/relay.json", relayDoc);
 }
 
 bool setRelayValues() {
@@ -1256,116 +520,30 @@ bool setRelayValues() {
 }
 
 bool saveDhtSensorData(JsonVariant dhtData) {
-  for (int i = 0; i <= MAX_DALLAS_SENSORS; ++i) {
-  if (dhtData[i]["sensorName"].isNull()) {                   
-      if (i == 0) {
-        Serial.println("Sensor data for dht was not recieved sensor name is not set");  
-        return false;
-      }
-      continue;
-    }
-    Serial.printf(
-      "Dht sensor data recieved sensor name: %s \n",
-      dhtData[i]["sensorName"].as<String>()
-    );
-  }
-  if (SPIFFS.exists("/dht.json")) {
-    Serial.print("Dht spiff exists removing before building new entry");  
-    SPIFFS.remove("/dht.json");
-  }
-  
-  Serial.println("Opening dht SPIFF for writing");
-  File dhtSPIFF = SPIFFS.open("/dht.json", "w");
-
-  JsonDocument dhtJsonData;
-  dhtJsonData = dhtData;
-  if(serializeJson(dhtJsonData, dhtSPIFF)) {
-    Serial.println("Dht serialization save success");
-    dhtSensor.valuesAreSet = false;
-  } else {
-    dhtSPIFF.close();
-    Serial.println("Dht Serialization failure");
+  if (dhtData[0]["sensorName"].isNull()) {
+    Serial.println("DHT: sensor name not set");
     return false;
   }
-  
-  dhtSPIFF.close();
-  Serial.println("Dht SPIFF close, sucess");
-
-  return true;
+  dhtSensor.valuesAreSet = false;
+  return saveJsonToSpiff("/dht.json", dhtData);
 }
 
 bool saveDallasSensorData(JsonVariant dallasData) {
- for (int i = 0; i <= MAX_DALLAS_SENSORS; ++i) {
-   if (dallasData[i]["sensorName"].isNull()) {
-     if (i == 0) {
-       Serial.print("Sensor data for dallas was not recieved correctly sensor name is not set");  
-       return false;
-     }
-     continue;
-   }    
-   Serial.printf("Dallas sensor with the name %s found \n", dallasData[i]["sensorName"].as<String>());
- }
-
- if (SPIFFS.exists("/dallas.json")) {
-   Serial.print("Dallas spiff exists removing before building new entry");  
-   SPIFFS.remove("/dallas.json");
- }
-
- Serial.println("dallas sensor data being set");
- File dallasSPIFF = SPIFFS.open("/dallas.json", "w");
-
- JsonDocument dallasJson;
- dallasJson = dallasData;
- if(serializeJson(dallasData, dallasSPIFF)) {
-   Serial.println("Dallas serialization save success");
-   dallasTempData.valuesAreSet = false;
- } else {
-   dallasSPIFF.close();
-   Serial.println("Dallas Serialization failure");
-   return false;
- }
-   
- dallasSPIFF.close();
- Serial.println("Dallas SPIFF close, sucess");
-
- return true;    
+  if (dallasData[0]["sensorName"].isNull()) {
+    Serial.println("Dallas: sensor name not set");
+    return false;
+  }
+  dallasTempData.valuesAreSet = false;
+  return saveJsonToSpiff("/dallas.json", dallasData);
 }
 
 bool saveShtSensorData(JsonVariant shtDoc) {
-  for (int i = 0; i <= MAX_SHTS; ++i) {
-    if (shtDoc[i].isNull()) {
-      if (i == 0) {
-        Serial.print("Sensor data for sht was not recieved correctly sensor name is not set");  
-        return false;
-      }
-      continue;
-    }
-    Serial.printf("Sht sensor with the name %s found \n", shtDoc[i]["sensorName"].as<String>());
-  }
-
-  if (SPIFFS.exists("/sht.json")) {
-    Serial.print("Sht spiff exists removing before building new entry");  
-    SPIFFS.remove("/sht.json");
-  }
-  
-  Serial.println("Sht sensor data being set");
-  File shtSPIFF = SPIFFS.open("/sht.json", "w");
-
-  JsonDocument shtJsonData;
-  shtJsonData = shtDoc;
-  if(serializeJson(shtDoc, shtSPIFF)) {
-    Serial.println("Sht serialization save success");
-    shtData.valuesAreSet = false;
-  } else {
-    shtSPIFF.close();
-    Serial.println("Sht Serialization failure");
+  if (shtDoc[0].isNull()) {
+    Serial.println("SHT: sensor data not set");
     return false;
   }
-    
-  shtSPIFF.close();
-  Serial.println("Sht SPIFF close, sucess");
-
-  return true;      
+  shtData.valuesAreSet = false;
+  return saveJsonToSpiff("/sht.json", shtDoc);
 }
 // End of saving sensor data
 
@@ -1406,7 +584,8 @@ void getExternalIP() {
         Serial.println("Attempting to deserialize externalIP");
         JsonDocument externalIP = getDeserializedJson(payload, 512);
 
-        publicIpAddress = externalIP["ip"].as<String>();
+        const char* extIp = externalIP["ip"].as<const char*>();
+        strncpy(publicIpAddress, extIp ? extIp : "", sizeof(publicIpAddress) - 1);
       } else {
         Serial.println("Not expecting response code for getting external IP");
         delay(1000);
@@ -1458,7 +637,9 @@ String sendHomeAppHttpsRequest(
 
   if (addAuthHeader == true) {
     Serial.println("adding auth header with token");
-    https.addHeader("Authorization", "Bearer "+token);
+    char authHeader[520];
+    snprintf(authHeader, sizeof(authHeader), "Bearer %s", token);
+    https.addHeader("Authorization", authHeader);
   }
 
   Serial.println("[HTTP] POST...");
@@ -1547,7 +728,7 @@ bool deviceLogin() {
   
   loginDoc["ipAddress"] = ipAddress;
 
-  if(publicIpAddress != NULL && publicIpAddress != "" && !publicIpAddress) {
+  if (publicIpAddress[0] != '\0') {
     Serial.printf("addinng external ip to request: %s \n", publicIpAddress);
     loginDoc["externalIpAddress"] = publicIpAddress;
   }
@@ -1567,7 +748,7 @@ bool deviceLogin() {
 }
 
  bool handleRefreshTokens() {
-  if (refreshToken.length() > 1 || !refreshToken || refreshToken == NULL ) {    
+  if (refreshToken[0] == '\0') {
     Serial.println("refresh token was empty not attempting to refresh");
     return false;
   }
@@ -1604,12 +785,14 @@ bool saveTokensFromLogin(String payload) {
 
   JsonDocument responseTokens = getDeserializedJson(payload, 2048);
   Serial.println("token json"); // @DEV
-  Serial.println(responseTokens["token"].as<String>());
+  Serial.println(responseTokens["token"].as<const char*>());
   
-  token = responseTokens["token"].as<String>();
-  refreshToken = responseTokens["refreshToken"].as<String>();
+  const char* tkn = responseTokens["token"].as<const char*>();
+  const char* rtkn = responseTokens["refreshToken"].as<const char*>();
+  strncpy(token, tkn ? tkn : "", sizeof(token) - 1);
+  strncpy(refreshToken, rtkn ? rtkn : "", sizeof(refreshToken) - 1);
 
-  if (token == "null" || token == "" || refreshToken == "null" || refreshToken == "") {
+  if (strcmp(token, "null") == 0 || token[0] == '\0' || strcmp(refreshToken, "null") == 0 || refreshToken[0] == '\0') {
     return false;
   }
   Serial.println("Token: "); //@DEBUG
@@ -1687,7 +870,7 @@ bool setLdrValues() {
       ldrData.interval[i] = 6000;
     }
 
-    strncpy(ldrData.sensorName[i], ldrDoc[i]["sensorName"].as<const char*>(), sizeof(ldrData.sensorName));  
+    strncpy(ldrData.sensorName[i], ldrDoc[i]["sensorName"].as<const char*>(), sizeof(ldrData.sensorName[i]));
     Serial.print("ldr sensor name ");
     Serial.println(ldrData.sensorName[i]);      
 
@@ -1850,11 +1033,11 @@ String buildLdrReadingsSensorUpdateRequest(bool force = false) {
   Serial.println("Building Ldr request");  
   JsonDocument sensorUpdateRequest;
 
-  int currentTime = millis();
+  unsigned long currentTime = millis();
   int jsonPositionTracker = 0;
   for (int i = 0; i < ldrData.sensorCount; ++i) {
-    Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (ldrData.sendNextReadingAt[i] - currentTime));
-    if ((ldrData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+    Serial.printf("next reading due in %lu ms\n", currentTime >= ldrData.sendNextReadingAt[i] ? 0UL : ldrData.sendNextReadingAt[i] - currentTime);
+    if (currentTime >= ldrData.sendNextReadingAt[i] || force == true) {
       ldrData.currentReading[i] = analogRead(ldrData.pinNumber[i]);
       Serial.println("LDR reading is: ");
       Serial.print(ldrData.currentReading[i]);
@@ -1882,11 +1065,11 @@ String buildLdrReadingsSensorUpdateRequest(bool force = false) {
 String buildDhtReadingSensorUpdateRequest(bool force = false) {
   Serial.println("Building dht request");  
   JsonDocument sensorUpdateRequest;
-  int currentTime = millis();
+  unsigned long currentTime = millis();
   int jsonPositionTracker = 0;
   for (int i = 0; i < dhtSensor.sensorCount; ++i) {
-    Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (dhtSensor.sendNextReadingAt[i] - currentTime));
-    if ((dhtSensor.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+    Serial.printf("next reading due in %lu ms\n", currentTime >= dhtSensor.sendNextReadingAt[i] ? 0UL : dhtSensor.sendNextReadingAt[i] - currentTime);
+    if (currentTime >= dhtSensor.sendNextReadingAt[i] || force == true) {
       dhtSensor.tempReading[i] = dhtSensors[i]->readTemperature();
       dhtSensor.humidReading[i] = dhtSensors[i]->readHumidity();
       Serial.print("Temp is:");
@@ -1917,45 +1100,34 @@ String buildDhtReadingSensorUpdateRequest(bool force = false) {
   return jsonData;  
 }
 
-bool sendDhtUpdateRequest(bool force = false) {
-  String payload = buildDhtReadingSensorUpdateRequest(force);
-  if (payload == "null") {
-    Serial.println("Aborting DHT request payload empty");
+bool sendSensorUpdateRequest(const String& payload, const char* label) {
+  if (payload == "null" || payload.length() == 0) {
+    Serial.printf("Aborting %s request, payload empty\n", label);
     return false;
   }
   String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
-
   String response = sendHomeAppHttpsRequest(url, payload, true);
-  Serial.println("response");
-  Serial.println(response);
-  
+  Serial.printf("%s response: %s\n", label, response.c_str());
   return true;
 }
 
+bool sendDhtUpdateRequest(bool force = false) {
+  return sendSensorUpdateRequest(buildDhtReadingSensorUpdateRequest(force), "DHT");
+}
+
 bool sendLdrUpdateRequest(bool force = false) {
-  String payload = buildLdrReadingsSensorUpdateRequest(force);
-  if (payload == "null") {
-    Serial.println("Aborting LDR request payload empty");
-
-    return false;
-  }
-  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
-
-  String response = sendHomeAppHttpsRequest(url, payload, true);
-  Serial.println("response");
-  Serial.println(response);
-  return true;
+  return sendSensorUpdateRequest(buildLdrReadingsSensorUpdateRequest(force), "LDR");
 }
 
 String buildShtUpdateRequest(bool force = false) {
   Serial.println("Building Sht request");  
   JsonDocument sensorUpdateRequest;
 
-  int currentTime = millis();
+  unsigned long currentTime = millis();
   int jsonPositionTracker = 0;
   for (int i = 0; i < shtData.sensorCount; ++i) {
-    Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (shtData.sendNextReadingAt[i] - currentTime));
-    if ((shtData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+    Serial.printf("next reading due in %lu ms\n", currentTime >= shtData.sendNextReadingAt[i] ? 0UL : shtData.sendNextReadingAt[i] - currentTime);
+    if (currentTime >= shtData.sendNextReadingAt[i] || force == true) {
       shtData.tempReading[i] = sht31[i]->readTemperature();
       shtData.humidReading[i] = sht31[i]->readHumidity();
       Serial.print("Sht Temperature readings is: ");
@@ -1986,19 +1158,7 @@ String buildShtUpdateRequest(bool force = false) {
 }
 
 bool sendShtUpdateRequest(bool force = false) {
-  String payload = buildShtUpdateRequest(force);
-  if (payload == "null") {
-    Serial.println("Aborting Sht request payload empty");
-    
-    return false;
-  }
-  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
-
-  String response = sendHomeAppHttpsRequest(url, payload, true);
-  Serial.println("response");
-  Serial.println(response);
-  
-  return true;
+  return sendSensorUpdateRequest(buildShtUpdateRequest(force), "SHT");
 }
 
 /////<!---END OF NETWORK METHODS---!>//////
@@ -2037,12 +1197,6 @@ bool setDallasValues() {
     Serial.printf("Dallas sensor name check %s", dallasTempData.sensorName[i]);
     int readingInterval = dallasDoc[i]["readingInterval"].as<int>();
     dallasTempData.interval[i] = readingInterval ? readingInterval : 6000;
-    if (readingInterval) {
-     dallasTempData.interval[i] = readingInterval;  
-    } else {
-     dallasTempData.interval[i] = 6000;
-    }
-    
     Serial.printf("bus temp temperature send interval: %d\n", dallasTempData.interval[i]);
   }
 
@@ -2057,18 +1211,13 @@ bool setDallasValues() {
 }
 
 bool findDallasSensor() {
-  bool sensorSuccess = false;
-  for (uint8_t pin = dallasTempData.pinNumber; pin <= dallasTempData.pinNumber ; pin++) {    
-    Serial.print("pin ");
-    Serial.println(pin);
-//    pinMode(pin, INPUT_PULLUP);
-    sensorSuccess = searchPinForOneWire(pin);
-    if(sensorSuccess == true) {
-      Serial.println("Dallas sensor found creating reference");
-      DallasTemperature sensors(&oneWire);      
-      return true;
-    }
-  }      
+  Serial.print("pin ");
+  Serial.println(dallasTempData.pinNumber);
+  if (searchPinForOneWire(dallasTempData.pinNumber)) {
+    Serial.println("Dallas sensor found creating reference");
+    DallasTemperature sensors(&oneWire);
+    return true;
+  }
   Serial.println("Dallas sensor not found");
   return false;
 }
@@ -2110,21 +1259,21 @@ uint8_t searchPinForOneWire(int pin) {
 String buildDallasReadingSensorUpdateRequest(bool force = false) {
   Serial.println("Building Dallas request");
   JsonDocument sensorUpdateRequest;
-  int currentTime = millis();
-  Serial.printf("current time: %d\n", currentTime);
+  unsigned long currentTime = millis();
+  Serial.printf("current time: %lu\n", currentTime);
   int jsonArrayIndex = 0;
 
   for (int i = 0; i < dallasTempData.sensorCount; ++i) {
-    if ((dallasTempData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+    if (currentTime >= dallasTempData.sendNextReadingAt[i] || force == true) {
       sensors.requestTemperatures();
       break;
     }
   }
   
   for (int i = 0; i < dallasTempData.sensorCount; ++i) {
-    Serial.printf("Dallas sensor next reading at value is %d\n", dallasTempData.sendNextReadingAt[i]);  
-    Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (dallasTempData.sendNextReadingAt[i] - currentTime));
-    if ((dallasTempData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {
+    Serial.printf("Dallas sensor next reading at value is %lu\n", dallasTempData.sendNextReadingAt[i]);
+    Serial.printf("next reading due in %lu ms\n", currentTime >= dallasTempData.sendNextReadingAt[i] ? 0UL : dallasTempData.sendNextReadingAt[i] - currentTime);
+    if (currentTime >= dallasTempData.sendNextReadingAt[i] || force == true) {
       float tempReading = sensors.getTempCByIndex(i);
       Serial.print("Temp number:");
       Serial.print(i);
@@ -2154,18 +1303,7 @@ String buildDallasReadingSensorUpdateRequest(bool force = false) {
 }
 
 bool sendDallasUpdateRequest(bool force = false) {
-  Serial.println("Begining to send Dallas request");
-  String payload = buildDallasReadingSensorUpdateRequest(force);
-  if (payload == "null") {
-    Serial.println("Aborting Dallas request payload empty");
-    return false;
-  }
-  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
-  String response = sendHomeAppHttpsRequest(url, payload, true);
-  Serial.println("response");
-  Serial.println(response);
-  
-  return true;
+  return sendSensorUpdateRequest(buildDallasReadingSensorUpdateRequest(force), "Dallas");
 }
 /////<!---END OF Dallas Sensor Methods ---!>//////
 
@@ -2174,13 +1312,13 @@ String buildRelaySensorUpdateRequest(bool force = false) {
   Serial.println("Building Relay request");
   JsonDocument sensorUpdateRequest;
 
-  int currentTime = millis();
-  Serial.printf("current time: %d\n", currentTime);
+  unsigned long currentTime = millis();
+  Serial.printf("current time: %lu\n", currentTime);
   int jsonArrayIndex = 0;
 
   for (int i = 0; i < relayData.sensorCount; ++i) {
-    Serial.printf("next reading at minus the current time is %d milli seconds left to send data \n", (relayData.sendNextReadingAt[i] - currentTime));
-    if ((relayData.sendNextReadingAt[i] - currentTime) < 0 || force == true) {      
+    Serial.printf("next reading due in %lu ms\n", currentTime >= relayData.sendNextReadingAt[i] ? 0UL : relayData.sendNextReadingAt[i] - currentTime);
+    if (currentTime >= relayData.sendNextReadingAt[i] || force == true) {      
       Serial.print("sensor name:");
       Serial.println(relayData.sensorName[i]);
       sensorUpdateRequest["sensorData"][jsonArrayIndex]["sensorType"] = RELAYNAME;
@@ -2203,37 +1341,21 @@ String buildRelaySensorUpdateRequest(bool force = false) {
 }
 
 bool sendRelayUpdateRequest(bool force = false) {
-  Serial.println("Begining to send Relay request");
-  String payload = buildRelaySensorUpdateRequest(force);
-  if (payload == "null") {
-    Serial.println("Aborting Dallas request payload empty");
-    return false;
-  }
-  String url = buildHomeAppUrl(HOME_APP_CURRENT_READING);
-  String response = sendHomeAppHttpsRequest(url, payload, true);
-  Serial.println("response");
-  Serial.println(response);
-  
-  return true;  
+  return sendSensorUpdateRequest(buildRelaySensorUpdateRequest(force), "Relay");
 }
 
 
 // Web Functions
-void resetDevice() {   
-  SPIFFS.remove("/device.json");
-  SPIFFS.remove("/wifi.json");
-
-  SPIFFS.remove("/dallas.json");
-  SPIFFS.remove("/dht.json");
-  SPIFFS.remove("/relay.json");
-  SPIFFS.remove("/sht.json");
+void resetDevice() {
+  const char* files[] = {"/device.json", "/wifi.json", "/dallas.json", "/dht.json", "/relay.json", "/sht.json", "/ldr.json"};
+  for (const char* f : files) SPIFFS.remove(f);
   server.send(200, "application/json", "{\"status\":\"device reset\"}");
-  ESP.restart;
+  ESP.restart();
 }
 
 void restartDevice() {
   server.send(200, "application/json", "{\"status\":\"ok\"}");
-  ESP.restart;
+  ESP.restart();
 }
 
 void sendAllActiveSensorData(bool force = false) {
@@ -2263,9 +1385,6 @@ void sendAllSensorData() {
 JsonDocument getDeserializedJson(String serializedJson, int jsonBuffSize) {
   Serial.println("serialized json to deserialize: ");
   Serial.println(serializedJson);
-  Serial.print("Buffer size: ");
-  Serial.println(jsonBuffSize);
-
   Serial.println("Deseriazing Json");
   //const char* jsonData[jsonBuffSize];
   //strcpy(jsonData, serializedJson.c_str());
@@ -2303,20 +1422,15 @@ String getSerializedSpiff(String spiff) {
 }
 
 void checkSensorSPIFFSExist() {
-  if (SPIFFS.exists("/dallas.json")) {
-    dallasTempData.settingsJsonExists = true;
-  }
-  if (SPIFFS.exists("/dht.json")) {
-    dhtSensor.settingsJsonExists = true;
-  }
-  if (SPIFFS.exists("/relay.json")) {
-    relayData.settingsJsonExists = true;
-  }
-  if (SPIFFS.exists("/ldr.json")) {
-    ldrData.settingsJsonExists = true;
-  }
-  if (SPIFFS.exists("/sht.json")) {
-    shtData.settingsJsonExists = true;
+  struct { const char* path; bool* flag; } entries[] = {
+    {"/dallas.json", &dallasTempData.settingsJsonExists},
+    {"/dht.json",    &dhtSensor.settingsJsonExists},
+    {"/relay.json",  &relayData.settingsJsonExists},
+    {"/ldr.json",    &ldrData.settingsJsonExists},
+    {"/sht.json",    &shtData.settingsJsonExists}
+  };
+  for (auto& e : entries) {
+    if (SPIFFS.exists(e.path)) *e.flag = true;
   }
 }
 
@@ -2372,13 +1486,26 @@ void setup() {
   Serial.begin(DEVICE_SERIAL);
   Serial.println("Searial started");
 
-  for (int i = 0; i <= DEVICE_LED_PIN_SANCTIONED; i++) {
-    pinMode(ledPins[i], OUTPUT); 
-    digitalWrite(ledPins[i], HIGH);
+  Serial.println("SPIFFS starting...");
+  if (!SPIFFS.begin()) {
+    Serial.println("SPIFFS failed to start");
+    ESP.restart();
   }
+  Serial.println("...SPIFFS started");
+
+  if (DEVICE_SERIAL != 115200) {
+    for (int i = 0; i < DEVICE_LED_PIN_SANCTIONED; i++) {
+      pinMode(ledPins[i], OUTPUT); 
+      digitalWrite(ledPins[i], HIGH);
+    }  
+  } else {
+    pinMode(1, OUTPUT); // TX (GPIO1) as output
+    pinMode(3, OUTPUT); // RX (GPIO3) as input
+  }
+  
  
   Serial.print("Starting web servers...");
-  server.on("/",[](){server.send_P(200,"text/html", webpage);});
+  server.serveStatic("/", SPIFFS, "/index.html");
   server.on("/settings", HTTP_POST, handleSettingsUpdate);
 
   server.on("/switch", HTTP_POST, handleSwitchSensor);
@@ -2390,13 +1517,6 @@ void setup() {
   Serial.println("Servers Begun");
 
   delay(2000);
-  Serial.println("SPIFFS starting...");
-  if (!SPIFFS.begin()) {
-    Serial.println("SPIFFS failed to start");
-    ESP.restart();
-  }
-  Serial.println("...SPIFFS started");
-  
   Serial.println("Begining device setup");
   
   if (setupNetworkConnection()) {
@@ -2418,6 +1538,10 @@ void loop() {
   if(WiFi.status() == WL_CONNECTED) {
     if (deviceLoggedIn == true) {
       sendAllActiveSensorData();
+      if (millis() >= ipAddressNextUpdate) {
+        updateDeviceIPAddress();
+        ipAddressNextUpdate = millis() + 3600000UL;
+      }
     } else {
       Serial.println("Device not loged in attempting to refresh token");
       deviceLoggedIn = deviceLogin();
@@ -2425,7 +1549,7 @@ void loop() {
         registerDevice();
       }
     }
-    if (publicIpAddress == NULL || publicIpAddress == "" || !publicIpAddress) {
+    if (publicIpAddress[0] == '\0') {
       getExternalIP();
     }
   } else {    
