@@ -49,6 +49,6 @@ class DataStoreControllerTest extends WebTestCase
         $data = json_decode($response->getContent(), true);
         $payload = $data['payload'];
 
-        self::assertCount(9, $payload);
+        self::assertCount(12, $payload);
     }
 }
