@@ -42,7 +42,7 @@ class DeleteSensorCommand extends Command
         $sensorObject = $this->sensorRepository->find($sensorID);
 
         $sensors = $this->sensorRepository->findSameSensorTypesOnSameDevice(
-            deviceId: $sensorObject->getDevice()->getDeviceID(),
+            deviceID: $sensorObject->getDevice()->getDeviceID(),
             sensorType: $sensorObject->getSensorTypeObject()->getSensorTypeID(),
         );
         foreach ($sensors as $sensor) {
