@@ -12,6 +12,8 @@ RUN chmod 0444 -R /etc/mysql/mariadb.conf.d/
 COPY ./my.cnf /etc/mysql/conf.d/my.cnf 
 RUN chmod 0444 -R /etc/mysql/conf.d/
 
+RUN mkdir -p /backups
+
 COPY ./docker-entrypoint.sh /docker-entrypoint-initdb.d/entrypoint.sh
 
 CMD ["mysqld"]

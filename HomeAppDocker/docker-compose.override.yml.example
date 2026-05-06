@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   apache:
     ports:
@@ -10,9 +8,17 @@ services:
       MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
       MARIADB_TEST_DATABASE: ${MARIADB_TEST_DATABASE}
     volumes:
-      - ../SymfonyReact:/var/www/html
-      - ../SSL:/etc/ssl/custom
+      - ../app:/var/www/html
+      - ../SSL:/etc/ssl
       - ./webservers/apache/php-config/php.ini:/usr/local/etc/php/conf.d/extra-php-config.ini
+      # - ./webservers/apache/logs:/etc/logs
+    depends_on:
+      maria-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      es01:
+        condition: service_healthy
 
   php-cli:
     environment:
@@ -20,12 +26,14 @@ services:
       MARIADB_TEST_PASSWORD: ${MARIADB_TEST_PASSWORD}
       MARIADB_TEST_DATABASE: ${MARIADB_TEST_DATABASE}
     volumes:
-      - ../SymfonyReact:/var/www/html
+      - ../app:/var/www/html
       - ../SSL:/etc/ssl/custom:ro
     depends_on:
       maria-db:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      es01:
         condition: service_healthy
 
   maria-db:
@@ -43,12 +51,47 @@ services:
 
   yarn:
     environment:
+      APP_ENV: ${APP_ENV}
       HTTPS_APP_PORT: ${HTTPS_APP_PORT}
     volumes:
-      - ../SymfonyReact:/home/node/app/src
+      - ../app:/home/node/app/src
     ports:
       - '8080:8080'
 
   es01:
+    container_name: ${APP_NAME}-es01
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     ports:
       - ${ELASTICSEARCH_EXTERNAL_PORT}:9200
+    environment:
+      - node.name=es01
+      - cluster.name=docker-cluster
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -Dcom.sun.management.jmxremote=false -XX:+UseContainerSupport"
+      - xpack.license.self_generated.type=basic
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - bootstrap.memory_lock=true
+    volumes:
+      - 'data01:/usr/share/elasticsearch/data'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test: "curl -sf http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s || exit 1"
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
+
+volumes:
+  data01:

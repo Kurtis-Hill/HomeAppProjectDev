@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   apache:
     build:
@@ -13,6 +12,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
       APP_NAME: ${APP_NAME}
+      APP_SECRET: ${APP_SECRET}x
       HTTPS_APP_PORT: ${HTTPS_APP_PORT}
       SECONDARY_APP_PORT: ${SECONDARY_APP_PORT}
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
@@ -22,17 +22,20 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
       ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
+      ELASTIC_VERSION: ${ELASTIC_VERSION}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT}
     volumes:
-      - ../SymfonyReact:/var/www/html:cached
+      - ../app:/var/www/html:cached
       - ../SSL:/etc/ssl:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     depends_on:
+      php-cli:
+        condition: service_healthy
       maria-db:
         condition: service_healthy
       rabbitmq:
-        condition: service_healthy
-      es01:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -54,17 +57,24 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
       ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
       ELASTIC_ENABLED: ${ELASTIC_ENABLED}
+      ELASTIC_VERSION: ${ELASTIC_VERSION}
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     volumes:
-      - ../SymfonyReact:/var/www/html:cached
+      - ../app:/var/www/html:cached
       - ../SSL:/etc/ssl/custom:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     depends_on:
       maria-db:
         condition: service_healthy
       rabbitmq:
-        condition: service_healthy
-      es01:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -85,6 +95,9 @@ services:
     volumes:
       - ./mariadb/db_data:/var/lib/mysql:rw,delegated
       - ../SSL/custom:/etc/mysql/ssl:ro
+      - ./mariadb/dumps:/dumps
+      - ${BACKUP_DIRECTORY}:/backup:rw,delegated
+      - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $MARIADB_USER --password=$MARIADB_PASSWORD
       interval: 5s
@@ -101,7 +114,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
     volumes:
-      - ../SymfonyReact:/home/node/app/src:cached
+      - ../app:/home/node/app/src:cached
     networks:
       - HomeAppProjectNetwork
     depends_on:
@@ -112,14 +125,16 @@ services:
       context: ./rabbitmq
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-rabbitmq'
+    environment:
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     ports:
       - '${RABBIT_MQ_INTERFACE_PORT}:15672'
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
         - ./rabbitmq/data/:/var/lib/rabbitmq:rw,delegated
         - ./rabbitmq/HomeAppRabbitMQ.json:/etc/rabbitmq/definitions.json:ro
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -140,67 +155,13 @@ services:
     command:
       - /bin/sh
       - -c
-      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}" && sysctl vm.overcommit_memory=1
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
-
-  es01:
-    container_name: ${APP_NAME}-es01
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
-    environment:
-      - node.name=es01
-      - discovery.seed_hosts=es01,es02
-      - cluster.initial_master_nodes=es01,es02
-      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD 
-      - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
-      - xpack.license.self_generated.type=basic 
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=$CERTS_DIR/es01/es01.key
-      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.http.ssl.certificate=$CERTS_DIR/es01/es01.crt
-      - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.verification_mode=certificate
-      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es01/es01.crt
-      - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
-    volumes: ['data01:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
-    healthcheck:
-      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200/_cluster/health?wait_for_status=green&timeout=50s >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
-      interval: 15s
-      timeout: 10s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - HomeAppProjectNetwork
-
-  es02:
-    container_name: ${APP_NAME}-es02
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
-    environment:
-      - node.name=es02
-      - discovery.seed_hosts=es01,es02
-      - cluster.initial_master_nodes=es01,es02
-      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
-      - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
-      - xpack.license.self_generated.type=basic
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=$CERTS_DIR/es02/es02.key
-      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.http.ssl.certificate=$CERTS_DIR/es02/es02.crt
-      - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.verification_mode=certificate
-      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
-      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es02/es02.crt
-      - xpack.security.transport.ssl.key=$CERTS_DIR/es02/es02.key
-    volumes: ['data02:/usr/share/elasticsearch/data', 'certs:$CERTS_DIR']
-    restart: unless-stopped
-    networks:
-      - HomeAppProjectNetwork
-
-volumes: {"data01", "data02", "certs"}
 
 networks:
   HomeAppProjectNetwork:

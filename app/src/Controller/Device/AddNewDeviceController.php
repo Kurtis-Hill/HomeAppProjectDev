@@ -1,0 +1,111 @@
+<?php
+
+namespace App\Controller\Device;
+
+use App\Builders\Device\DeviceBuilder;
+use App\Builders\Device\DeviceResponse\DeviceResponseDTOBuilder;
+use App\DTOs\Device\Request\NewDeviceRequestDTO;
+use App\DTOs\RequestDTO;
+use App\Entity\User\User;
+use App\Exceptions\Device\DeviceCreationFailureException;
+use App\Exceptions\User\GroupExceptions\GroupNotFoundException;
+use App\Exceptions\User\RoomsExceptions\RoomNotFoundException;
+use App\Services\API\APIErrorMessages;
+use App\Services\API\CommonURL;
+use App\Services\Device\DeleteDevice\DeleteDeviceServiceInterface;
+use App\Services\Device\NewDevice\NewDeviceHandlerInterface;
+use App\Services\Request\RequestQueryParameterHandler;
+use App\Traits\HomeAppAPITrait;
+use App\Traits\ValidatorProcessorTrait;
+use App\Voters\DeviceVoter;
+use Doctrine\ORM\Exception\ORMException;
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+#[Route(CommonURL::USER_HOMEAPP_API_URL . 'user-devices', name: 'add-new-user-devices')]
+class AddNewDeviceController extends AbstractController
+{
+    use HomeAppAPITrait;
+    use ValidatorProcessorTrait;
+
+    private LoggerInterface $logger;
+
+    private RequestQueryParameterHandler $requestQueryParameterHandler;
+
+    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    {
+        $this->logger = $elasticLogger;
+        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
+    }
+
+    /**
+     * @throws RoomNotFoundException
+     * @throws ORMException
+     * @throws DeviceCreationFailureException
+     * @throws GroupNotFoundException
+     */
+    #[Route('', name: 'add-new-esp-device', methods: [Request::METHOD_POST])]
+    public function addNewDevice(
+        NewDeviceHandlerInterface $newDeviceHandler,
+        DeleteDeviceServiceInterface $deleteDeviceHandler,
+        DeviceResponseDTOBuilder $deviceResponseDTOBuilder,
+        DeviceBuilder $deviceBuilder,
+        ValidatorInterface $validator,
+        #[MapRequestPayload(acceptFormat: 'json')]
+        NewDeviceRequestDTO $newDeviceRequestDTO,
+        #[MapQueryString]
+        ?RequestDTO $requestDTO = null,
+    ): JsonResponse {
+        $requestDTO ??= new RequestDTO();
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->sendForbiddenAccessJsonResponse();
+        }
+        $device = $deviceBuilder->buildDevice(
+            deviceName: $newDeviceRequestDTO->getDeviceName(),
+            createdBy: $user->getUserID(),
+            roomID: $newDeviceRequestDTO->getDeviceRoom(),
+            groupID: $newDeviceRequestDTO->getDeviceGroup(),
+            ipAddress: $newDeviceRequestDTO->getDeviceIPAddress(),
+            secret: $newDeviceRequestDTO->getDevicePassword(),
+            password: $newDeviceRequestDTO->getDevicePassword(),
+        );
+
+        try {
+            $this->denyAccessUnlessGranted(DeviceVoter::ADD_NEW_DEVICE, $device);
+        } catch (AccessDeniedException) {
+            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
+        }
+
+        $errors = $validator->validate($device);
+        if ($this->checkIfErrorsArePresent($errors)) {
+            return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($errors));
+        }
+
+        $deviceSaved = $newDeviceHandler->saveDevice($device, true);
+        if ($deviceSaved === false) {
+            return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILED_TO_SAVE_OBJECT, 'device')]);
+        }
+
+        $newDeviceResponseDTO = $deviceResponseDTOBuilder->buildDeviceResponseDTOWithDevicePermissions($device);
+        try {
+            $response = $this->normalize($newDeviceResponseDTO, [$requestDTO->getResponseType()]);
+        } catch (ExceptionInterface $e) {
+            $deleteDeviceHandler->deleteDevice($device);
+            $this->logger->error($e, $e->getTrace());
+
+            return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
+        }
+        $this->logger->info('new device created with id: ' . $device->getDeviceID(), ['user' => $user->getUserIdentifier()]);
+
+        return $this->sendCreatedResourceJsonResponse($response);
+    }
+}

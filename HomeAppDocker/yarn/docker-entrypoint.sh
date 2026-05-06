@@ -10,7 +10,7 @@ yarn config set network-timeout 1200000 -g
 # git config --global url."https://".insteadOf git://
 
 ## If having trouble building for production drop the yarn.lock file and remove node_modules
-if [ ${APP_ENV} = 'prod' ]; then
+if [ "${APP_ENV}" = 'prod' ]; then
   echo "production environment installing..."
   yarn install --production --check-files
   # yarn add @symfony/webpack-encore
@@ -20,7 +20,7 @@ if [ ${APP_ENV} = 'prod' ]; then
   echo "yarn finished operations"
 fi
 
-if [ ${APP_ENV} = 'dev' ]; then
+if [ "${APP_ENV}" = 'dev' ]; then
   echo "development environment setting up webpack dev server..."
   yarn install --dev --check-files
   yarn encore dev --watch
@@ -30,5 +30,6 @@ if [ ${APP_ENV} = 'dev' ]; then
 #    yarn encore dev-server --hot  --disable-host-check --port ${HTTPS_APP_PORT}
   echo "... encore dev server began"
 fi
+npx update-browserslist-db@latest
 
 exec "$@"
