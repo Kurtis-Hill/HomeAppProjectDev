@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Services\Sensor;
+namespace App\Services\Sensor\UpdateSensor;
 
-use App\Builders\Sensor\Internal\SensorEventUpdateDTOBuilders\SensorEventUpdateDTOBuilder;
+use App\Builders\Sensor\Internal\SensorEventDTOBuilders\SensorEventUpdateDTOBuilder;
 use App\Builders\Sensor\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\Entity\Sensor\Sensor;
 use App\Events\Sensor\SensorUpdateEvent;
 use App\Exceptions\Sensor\SensorNotFoundException;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
+use App\Services\Sensor\SensorDeletion\SensorDeletionEventHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -18,6 +19,7 @@ readonly class SensorUpdateEventHandler
         private SensorEventUpdateDTOBuilder $sensorEventUpdateDTOBuilder,
         private EventDispatcherInterface $eventDispatcher,
         private SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder,
+        private SensorDeletionEventHandler $sensorDeletionEventHandler,
         private LoggerInterface $elasticLogger,
     ) {}
 
@@ -40,7 +42,7 @@ readonly class SensorUpdateEventHandler
             );
         }
         if (empty($sensorsToUpdate)) {
-            throw new SensorNotFoundException('No sensors found to update');
+            $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensors[0]);
         }
 
         $sensorUpdateRequestDTOsByDeviceID = [];
@@ -49,7 +51,7 @@ readonly class SensorUpdateEventHandler
         }
 
         foreach ($sensorUpdateRequestDTOsByDeviceID as $sensorUpdateRequestDTOs) {
-            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorEventUpdateDTO($sensorUpdateRequestDTOs);
+            $updateSensorEventDTO = $this->sensorEventUpdateDTOBuilder->buildSensorUpdateEventDTO($sensorUpdateRequestDTOs);
             $sensorUpdateEvent = new SensorUpdateEvent($updateSensorEventDTO);
             $this->eventDispatcher->dispatch($sensorUpdateEvent, SensorUpdateEvent::NAME);
         }

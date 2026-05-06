@@ -4,28 +4,19 @@ namespace App\Services\Sensor\SensorDeletion;
 
 use App\Entity\Sensor\Sensor;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
-use App\Services\Sensor\SensorUpdateEventHandler;
+use App\Services\Sensor\UpdateSensor\SensorUpdateEventHandler;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
 
-class SensorDeletionHandler implements SensorDeletionInterface
+readonly class SensorDeletionHandler implements SensorDeletionInterface
 {
-    private SensorRepositoryInterface $sensorRepository;
-
-    private SensorUpdateEventHandler $sensorUpdateEventHandler;
-
-    private LoggerInterface $logger;
-
     public function __construct(
-        SensorRepositoryInterface $sensorRepository,
-        SensorUpdateEventHandler $sensorUpdateEventHandler,
-        LoggerInterface $logger,
-    )
-    {
-        $this->sensorRepository = $sensorRepository;
-        $this->sensorUpdateEventHandler = $sensorUpdateEventHandler;
-        $this->logger = $logger;
+        private SensorRepositoryInterface $sensorRepository,
+        private SensorUpdateEventHandler $sensorUpdateEventHandler,
+        private SensorDeletionEventHandler $sensorDeletionEventHandler,
+        private LoggerInterface $logger,
+    ) {
     }
 
     public function deleteSensor(Sensor $sensor): bool
@@ -33,6 +24,7 @@ class SensorDeletionHandler implements SensorDeletionInterface
         try {
             $deviceID = $sensor->getDevice()->getDeviceID();
             $sensorTypeID = $sensor->getSensorTypeObject()->getSensorTypeID();
+            $sensorType = $sensor->getSensorTypeObject()::getSensorTypeName();
 
             $this->sensorRepository->remove($sensor);
             $this->sensorRepository->flush();
@@ -44,9 +36,9 @@ class SensorDeletionHandler implements SensorDeletionInterface
             if (!empty($sameSensorsOnDevice)) {
                 $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sameSensorsOnDevice);
             }
-            //@TODO dispath message to remove the json file
-
-
+            else {
+                $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorType, $deviceID);
+            }
         } catch (ORMException|OptimisticLockException $e) {
             $this->logger->error('Failed to remove sensor', [$e->getMessage()]);
 
