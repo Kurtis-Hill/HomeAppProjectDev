@@ -23,11 +23,11 @@ class OperatorRepository extends ServiceEntityRepository
 
     public function persist(Operator $operator): void
     {
-        $this->_em->persist($operator);
+        $this->getEntityManager()->persist($operator);
     }
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 }

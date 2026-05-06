@@ -84,8 +84,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     public function test_multi_update_mixed_data(
         string $sensorType,
         string $tableId,
-        array $sensorReadingsToUpdate,
-        array $expectedErrorPayloadMessage,
+        array $sensorReadingTypes,
+        array $errorPayloadMessage,
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
@@ -93,7 +93,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeObject = $sensorTypeRepository->findAll()[0];
         if ($sensorTypeObject instanceof StandardSensorTypeInterface) {
             $sensorData = [
-                'sensorData' => $sensorReadingsToUpdate,
+                'sensorData' => $sensorReadingTypes,
             ];
         }
         $jsonData = json_encode($sensorData);
@@ -120,7 +120,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         self::assertEquals(Response::HTTP_MULTI_STATUS, $this->client->getResponse()->getStatusCode());
         self::assertEquals($expectedTitle, $title);
-        self::assertEquals($expectedErrorPayloadMessage, $errorsPayload);
+        self::assertEquals($errorPayloadMessage, $errorsPayload);
 
         if ($dataPayloads !== null) {
             foreach ($dataPayloads as $dataPayload) {
@@ -135,7 +135,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorTypeAfterUpdate = $this->sensorRepository->find($sensor->getSensorID());
 
         $readingUpdates = [];
-        foreach ($sensorReadingsToUpdate as $sensorReading) {
+        foreach ($sensorReadingTypes as $sensorReading) {
             $readingUpdates[$sensorReading['readingType']] = [
                 'highReading' => $sensorReading['highReading'] ?? null,
                 'lowReading' => $sensorReading['lowReading'] ?? null,
@@ -163,7 +163,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
     }
 
-    public function multiUpdateOneCorrectOneIncorrectDataProvider(): Generator
+    public static function multiUpdateOneCorrectOneIncorrectDataProvider(): Generator
     {
 //        DHT
         yield [
@@ -183,7 +183,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
-            'errorsPayloadMessage' => [
+            'errorPayloadMessage' => [
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
             ],
@@ -207,7 +207,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'errorsPayloadMessage' => [
+            'errorPayloadMessage' => [
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME .' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
                 ucfirst(Temperature::READING_TYPE) .' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
             ],
@@ -240,7 +240,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'errorsPayloadMessage' => [
+            'errorPayloadMessage' => [
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
             ],
@@ -270,7 +270,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'errorsPayloadMessage' => [
+            'errorPayloadMessage' => [
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot exceed ' . Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME .' sensor cannot be below ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
             ],
@@ -301,7 +301,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'errorsPayloadMessage' => [
+            'errorPayloadMessage' => [
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
             ],
@@ -331,7 +331,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
-            'errorsPayloadMessage' => [
+            'errorPayloadMessage' => [
                 'The highest possible ' . Latitude::READING_TYPE .' is ' . Latitude::HIGH_READING . Latitude::READING_SYMBOL . ' you entered ' . Latitude::HIGH_READING + 5 . Latitude::READING_SYMBOL,
                 'The lowest possible '. Latitude::READING_TYPE .' is ' . Latitude::LOW_READING . Latitude::READING_SYMBOL .' you entered ' . Latitude::LOW_READING - 5 . Latitude::READING_SYMBOL
             ],
@@ -357,7 +357,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
-            'errorsPayloadMessage' => [
+            'errorPayloadMessage' => [
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be under '. Humidity::LOW_READING . Humidity::READING_SYMBOL . ' you entered ' . Humidity::LOW_READING - 5 . Humidity::READING_SYMBOL,
             ],
@@ -381,7 +381,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => false,
                 ]
             ],
-            'errorsPayloadMessage' => [
+            'errorPayloadMessage' => [
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Sht::NAME . ' sensor cannot exceed ' . Sht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Sht::NAME .' sensor cannot be below ' . Sht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Sht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
             ],
@@ -389,14 +389,15 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         ];
     }
 
+
     /**
      * @dataProvider correctUpdateDataDataProvider
      */
     public function test_correct_update_data_returns_accepted(
         string $sensorType,
         string $tableId,
-        array $sensorReadingsToUpdate,
-        array $expectedDataPayloadMessage,
+        array $sensorReadingTypes,
+        array $dataPayloadMessage,
         string $expectedTitle,
     ): void {
         $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
@@ -405,7 +406,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         /** @var Sensor $sensor */
         $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorReadingTypeObject])[0];
         $sensorData = [
-            'sensorData' => $sensorReadingsToUpdate,
+            'sensorData' => $dataPayloadMessage,
         ];
         $jsonData = json_encode($sensorData);
 
@@ -433,18 +434,18 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 
         $count = 0;
         foreach ($dataPayloads as $dataPayload) {
-            self::assertEquals($expectedDataPayloadMessage[$count]['readingType'], $dataPayload['readingType']);
+            self::assertEquals($dataPayloadMessage[$count]['readingType'], $dataPayload['readingType']);
 
             if ($sensorReadingTypeObject instanceof StandardSensorTypeInterface) {
-                self::assertEquals($expectedDataPayloadMessage[$count]['highReading'], $dataPayload['highReading']);
+                self::assertEquals($dataPayloadMessage[$count]['highReading'], $dataPayload['highReading']);
 
-                if (!empty($expectedDataPayloadMessage[$count]['lowReading'])) {
-                    self::assertEquals($expectedDataPayloadMessage[$count]['lowReading'], $dataPayload['lowReading']);
+                if (!empty($dataPayloadMessage[$count]['lowReading'])) {
+                    self::assertEquals($dataPayloadMessage[$count]['lowReading'], $dataPayload['lowReading']);
                 }
-                self::assertEquals($expectedDataPayloadMessage[$count]['constRecord'], $dataPayload['constRecord']);
+                self::assertEquals($dataPayloadMessage[$count]['constRecord'], $dataPayload['constRecord']);
             }
             if ($sensorReadingTypeObject instanceof BoolSensorTypeInterface) {
-                self::assertEquals($expectedDataPayloadMessage[$count]['expectedReading'], $dataPayload['expectedReading']);
+                self::assertEquals($dataPayloadMessage[$count]['expectedReading'], $dataPayload['expectedReading']);
 
             }
             ++$count;
@@ -455,7 +456,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         $sensorReadingTypeAfterUpdate = $this->sensorRepository->find($sensor->getSensorID());
 
         $readingUpdates = [];
-        foreach ($sensorReadingsToUpdate as $sensorReading) {
+        foreach ($dataPayloadMessage as $sensorReading) {
             if ($sensorReadingTypeAfterUpdate instanceof BoolSensorTypeInterface) {
                 $readingUpdates[$sensorReading['readingType']] = [
                     'expectedReading' => $sensorReading['expectedReading'],
@@ -493,7 +494,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
     }
 
 
-    public function correctUpdateDataDataProvider(): Generator
+    public static function correctUpdateDataDataProvider(): Generator
     {
         yield [
             'sensorType' => Dht::class,
@@ -515,13 +516,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => Temperature::READING_TYPE,
                     "highReading" => 80,
                     "lowReading" => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "humidity",
                     "highReading" => 95,
                     "lowReading" => 0,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -547,13 +548,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     "highReading" => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
                     "lowReading" => 0,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "humidity",
                     "highReading" => 100,
                     "lowReading" => Humidity::LOW_READING + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -581,13 +582,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     "highReading" => 80,
                     "lowReading" => -40,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "humidity",
                     "highReading" => 100,
                     "lowReading" => 0,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -610,7 +611,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     "highReading" => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
                     "lowReading" => Dallas::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -631,7 +632,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     "highReading" => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
                     "lowReading" => Dallas::LOW_TEMPERATURE_READING_BOUNDARY,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -652,7 +653,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     "highReading" => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY,
                     "lowReading" => Dallas::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -687,19 +688,19 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
                     'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "humidity",
                     'highReading' => Humidity::HIGH_READING - 5,
                     'lowReading' => Humidity::LOW_READING + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "latitude",
                     'highReading' => Latitude::HIGH_READING - 5,
                     'lowReading' => Latitude::LOW_READING + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -730,19 +731,19 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
                     "lowReading" => Bmp::LOW_TEMPERATURE_READING_BOUNDARY,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "humidity",
                     'highReading' => Humidity::HIGH_READING - 5,
                     "lowReading" => Humidity::LOW_READING,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "latitude",
                     'highReading' => Latitude::HIGH_READING - 5,
                     "lowReading" => Latitude::LOW_READING,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -773,19 +774,19 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     "highReading" => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY,
                     'lowReading' => Bmp::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "humidity",
                     "highReading" => Humidity::HIGH_READING,
                     'lowReading' => Humidity::LOW_READING + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "latitude",
                     "highReading" => Latitude::HIGH_READING,
                     'lowReading' => Latitude::LOW_READING + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -808,7 +809,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "analog",
                     "highReading" => Soil::HIGH_SOIL_READING_BOUNDARY - 5,
                     "lowReading" => Soil::LOW_SOIL_READING_BOUNDARY + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -829,7 +830,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "analog",
                     "highReading" => Soil::HIGH_SOIL_READING_BOUNDARY,
                     "lowReading" => Soil::LOW_SOIL_READING_BOUNDARY,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -850,7 +851,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "analog",
                     "highReading" => Soil::HIGH_SOIL_READING_BOUNDARY,
                     "lowReading" => Soil::LOW_SOIL_READING_BOUNDARY,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ]
             ],
             'expectedTitle' => UpdateSensorBoundaryReadingsController::REQUEST_SUCCESSFUL,
@@ -1065,7 +1066,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     "readingType" => "temperature",
                     "highReading" => Sht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
                     "lowReading" => Sht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
-                    "constRecord" => 0,
+                    "constRecord" => false,
                 ],
                 [
                     "readingType" => "humidity",
@@ -1199,13 +1200,13 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         }
     }
 
-    public function sendingEntireWrongReadingPayloadDataProvider(): Generator
+    public static function sendingEntireWrongReadingPayloadDataProvider(): Generator
     {
 //        DHT
         yield [
             'sensorType' => Dht::class,
             'tableId' => 'dhtID',
-            'sensorReadingTypes' => [
+            'sensorReadingsToUpdate' => [
                 [
                     'readingType' => Temperature::READING_TYPE,
                     'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
@@ -1219,8 +1220,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
+            'expectedDataPayloadMessage' => [],
+            'expectedErrorPayloadMessage' => [
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Dht::NAME .' sensor cannot exceed ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
                 ucfirst(Temperature::READING_TYPE) .' settings for ' . Dht::NAME . ' sensor cannot be below ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Dht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
@@ -1232,7 +1233,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //        yield [
 //            'sensorType' => Dht::class,
 //            'tableId' => 'dhtID',
-//            'sensorReadingTypes' => [
+//            'sensorReadingsToUpdate' => [
 //                [
 //                    'readingType' => Temperature::READING_TYPE,
 //                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY,
@@ -1247,8 +1248,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //                ]
 //            ],
 //            'interval' => [10],
-//            'dataPayloadMessage' => [],
-//            'errorsPayloadMessage' => [
+//            'expectedDataPayloadMessage' => [],
+//            'expectedErrorPayloadMessage' => [
 //                'readingInterval must be a number'
 //            ],
 //            'expectedTitle' => 'Bad Request No Data Returned',
@@ -1259,7 +1260,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         yield [
             'sensorType' => Dallas::class,
             'tableId' => 'dallasID',
-            'sensorReadingTypes' => [
+            'sensorReadingsToUpdate' => [
                 [
                     'readingType' => Temperature::READING_TYPE,
                     'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
@@ -1267,8 +1268,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ],
             ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
+            'expectedDataPayloadMessage' => [],
+            'expectedErrorPayloadMessage' => [
                 "Temperature settings for Dallas sensor cannot exceed 125°C you entered 130°C",
                 "Temperature settings for Dallas sensor cannot be below -55°C you entered -60°C",
             ],
@@ -1278,7 +1279,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //        yield [
 //            'sensorType' => Dallas::class,
 //            'tableId' => 'dallasID',
-//            'sensorReadingTypes' => [
+//            'sensorReadingsToUpdate' => [
 //                [
 //                    'readingType' => Temperature::READING_TYPE,
 //                    'highReading' => Dallas::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
@@ -1287,8 +1288,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //                ],
 //            ],
 //            'interval' => 200,
-//            'dataPayloadMessage' => [],
-//            'errorsPayloadMessage' => [
+//            'expectedDataPayloadMessage' => [],
+//            'expectedErrorPayloadMessage' => [
 //                "readingInterval must be between 500 and 100000",
 //            ],
 //            'expectedTitle' => 'Bad Request No Data Returned',
@@ -1298,7 +1299,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         yield [
             'sensorType' => Bmp::class,
             'tableId' => 'bmpID',
-            'sensorReadingTypes' => [
+            'sensorReadingsToUpdate' => [
                 [
                     'readingType' => Temperature::READING_TYPE,
                     'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
@@ -1318,8 +1319,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
+            'expectedDataPayloadMessage' => [],
+            'expectedErrorPayloadMessage' => [
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME . ' sensor cannot exceed ' . Bmp::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Bmp::NAME .' sensor cannot be below ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Bmp::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
@@ -1333,7 +1334,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //        yield [
 //            'sensorType' => Bmp::class,
 //            'tableId' => 'bmpID',
-//            'sensorReadingTypes' => [
+//            'sensorReadingsToUpdate' => [
 //                [
 //                    'readingType' => Temperature::READING_TYPE,
 //                    'highReading' => Bmp::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
@@ -1354,8 +1355,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //                ]
 //            ],
 //            'interval' => 100250,
-//            'dataPayloadMessage' => [],
-//            'errorsPayloadMessage' => [
+//            'expectedDataPayloadMessage' => [],
+//            'expectedErrorPayloadMessage' => [
 //                "readingInterval must be between 500 and 100000"
 //            ],
 //            'expectedTitle' => 'Bad Request No Data Returned',
@@ -1367,7 +1368,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         yield [
             'sensorType' => Soil::class,
             'tableId' => 'soilID',
-            'sensorReadingTypes' => [
+            'sensorReadingsToUpdate' => [
                 [
                     'readingType' => Analog::READING_TYPE,
                     'highReading' => Soil::HIGH_SOIL_READING_BOUNDARY + 5,
@@ -1375,8 +1376,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ],
             ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
+            'expectedDataPayloadMessage' => [],
+            'expectedErrorPayloadMessage' => [
                 'Reading for ' . Soil::NAME . ' sensor cannot be over ' . Soil::HIGH_SOIL_READING_BOUNDARY .' you entered ' . Soil::HIGH_SOIL_READING_BOUNDARY + 5,
                 'Reading for ' . Soil::NAME . ' sensor cannot be under ' . Soil::LOW_SOIL_READING_BOUNDARY . ' you entered ' . Soil::LOW_SOIL_READING_BOUNDARY - 5,
             ],
@@ -1388,15 +1389,15 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         yield [
             'sensorType' => GenericMotion::class,
             'tableId' => 'genericMotionID',
-            'sensorReadingTypes' => [
+            'sensorReadingsToUpdate' => [
                 [
                     'readingType' => Motion::READING_TYPE,
                     'expectedReading' => 4,
                     'constRecord' => 4,
                 ],
             ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
+            'expectedDataPayloadMessage' => [],
+            'expectedErrorPayloadMessage' => [
                 'expectedReading must be a bool|null you have provided 4',
                 'constRecord must be a bool|null you have provided 4',
             ],
@@ -1407,15 +1408,15 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         yield [
             'sensorType' => GenericRelay::class,
             'tableId' => 'genericRelayID',
-            'sensorReadingTypes' => [
+            'sensorReadingsToUpdate' => [
                 [
                     'readingType' => Relay::READING_TYPE,
                     'expectedReading' => 4,
                     'constRecord' => 4,
                 ],
             ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
+            'expectedDataPayloadMessage' => [],
+            'expectedErrorPayloadMessage' => [
                 'expectedReading must be a bool|null you have provided 4',
                 'constRecord must be a bool|null you have provided 4',
             ],
@@ -1426,7 +1427,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         yield [
             'sensorType' => LDR::class,
             'tableId' => 'ldrID',
-            'sensorReadingTypes' => [
+            'sensorReadingsToUpdate' => [
                 [
                     'readingType' => Analog::READING_TYPE,
                     'highReading' => LDR::HIGH_READING + 5,
@@ -1434,8 +1435,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ],
             ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
+            'expectedDataPayloadMessage' => [],
+            'expectedErrorPayloadMessage' => [
                 'Reading for ' . LDR::NAME . ' sensor cannot be over ' . LDR::HIGH_READING .' you entered ' . LDR::HIGH_READING + 5,
                 'Reading for ' . LDR::NAME . ' sensor cannot be under ' . LDR::LOW_READING . ' you entered ' . LDR::LOW_READING - 5,
             ],
@@ -1446,7 +1447,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         yield [
             'sensorType' => Sht::class,
             'tableId' => 'shtID',
-            'sensorReadingTypes' => [
+            'sensorReadingsToUpdate' => [
                 [
                     'readingType' => Temperature::READING_TYPE,
                     'highReading' => Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 5,
@@ -1460,8 +1461,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     'outOfBounds' => true,
                 ]
             ],
-            'dataPayloadMessage' => [],
-            'errorsPayloadMessage' => [
+            'expectedDataPayloadMessage' => [],
+            'expectedErrorPayloadMessage' => [
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Sht::NAME . ' sensor cannot exceed ' . Sht::HIGH_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Sht::HIGH_TEMPERATURE_READING_BOUNDARY + 5 . Temperature::READING_SYMBOL,
                 ucfirst(Temperature::READING_TYPE) . ' settings for ' . Sht::NAME .' sensor cannot be below ' . Sht::LOW_TEMPERATURE_READING_BOUNDARY . Temperature::READING_SYMBOL . ' you entered ' . Sht::LOW_TEMPERATURE_READING_BOUNDARY - 5 . Temperature::READING_SYMBOL,
                 ucfirst(Humidity::READING_TYPE) . ' for this sensor cannot be over ' . Humidity::HIGH_READING . Humidity::READING_SYMBOL . ' you entered '. Humidity::HIGH_READING + 5 . Humidity::READING_SYMBOL,
@@ -1523,17 +1524,17 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
-    public function sendingMissingDataSetsDataProvider(): Generator
+    public static function sendingMissingDataSetsDataProvider(): Generator
     {
         yield [
-            'sensorData' => [
+            'sensorDataToSend' => [
                 [
                 ]
             ]
         ];
 
         yield [
-            'sensorData' => [
+            'sensorDataToSend' => [
                 [
                     'readingType' => Motion::READING_TYPE,
                     'expectedReading' => false,
@@ -1736,7 +1737,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_GET],

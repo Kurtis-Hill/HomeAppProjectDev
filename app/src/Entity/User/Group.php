@@ -3,6 +3,7 @@
 namespace App\Entity\User;
 
 use App\Repository\User\ORM\GroupRepository;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -90,7 +91,7 @@ class Group
 
     public function setCreatedAt(): void
     {
-        $this->createdAt = new DateTimeImmutable('now');
+        $this->createdAt = new DateTime('now');
     }
 
 }

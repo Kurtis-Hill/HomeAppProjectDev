@@ -133,7 +133,7 @@ class GetReadingTypeControllerTest extends ControllerTestCase
         self::assertEquals($readingType->getReadingTypeID(), $responseData['payload']['readingTypeID']);
     }
 
-    public function singleReadingTypeNamesDataProvider(): Generator
+    public static function singleReadingTypeNamesDataProvider(): Generator
     {
         yield [
             Temperature::READING_TYPE,
@@ -175,7 +175,7 @@ class GetReadingTypeControllerTest extends ControllerTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): array
+    public static function wrongHttpsMethodDataProvider(): array
     {
         return [
             [Request::METHOD_POST],

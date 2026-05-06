@@ -5,6 +5,7 @@ namespace App\Services\Sensor\Trigger\TriggerCreationHandler;
 use App\DTOs\Sensor\Internal\Trigger\CreateNewTriggerDTO;
 use App\Repository\Sensor\SensorTriggerRepository;
 use App\Traits\ValidatorProcessorTrait;
+use DateTime;
 use DateTimeImmutable;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -22,7 +23,7 @@ readonly class TriggerCreationHandler implements TriggerCreationHandlerInterface
     {
         $newSensorType = $createNewTriggerDTO->getNewSensorTrigger();
 
-        $now = new DateTimeImmutable('now');
+        $now = new DateTime('now');
         $newSensorType->setTriggerType($createNewTriggerDTO->getTriggerType());
         $newSensorType->setOperator($createNewTriggerDTO->getOperator());
         $newSensorType->setValueThatTriggers((string)$createNewTriggerDTO->getValueThatTriggers());

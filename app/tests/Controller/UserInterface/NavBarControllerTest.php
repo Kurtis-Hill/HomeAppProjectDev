@@ -107,7 +107,7 @@ class NavBarControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
     }
 
-    public function getNavBarDataRegularUserDataProvider(): Generator
+    public static function getNavBarDataRegularUserDataProvider(): Generator
     {
         yield [
             'email' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,
@@ -190,7 +190,7 @@ class NavBarControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(HTTPStatusCodes::HTTP_OK);
     }
 
-    public function getNavBarDataAdminUserDataProvider(): Generator
+    public static function getNavBarDataAdminUserDataProvider(): Generator
     {
         yield [
             'email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,

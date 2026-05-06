@@ -84,8 +84,8 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
         $httpClient = new MockHttpClient($response);
 
         $mockLogger = $this->createMock(LoggerInterface::class);
-        $mockLogger->expects(self::never())->method('error');
-        $mockLogger->expects(self::once())->method('info');
+        $mockLogger->expects($this->never())->method('error');
+        $mockLogger->expects($this->once())->method('info');
 
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
@@ -100,8 +100,8 @@ class SensorSendUpdateReadingRequestConsumerTest extends KernelTestCase
 
         $logger = $this->createMock(LoggerInterface::class);
 
-        $logger->expects(self::never())->method('error');
-        $logger->expects(self::once())->method('info');
+        $logger->expects($this->never())->method('error');
+        $logger->expects($this->once())->method('info');
 
         $this->sut = new SensorSendUpdateReadingRequestConsumer(
             $logger,

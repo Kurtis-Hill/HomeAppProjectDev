@@ -7,7 +7,7 @@ use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
 use App\Entity\Sensor\Sensor;
 use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Repository\Sensor\SensorReadingType\ORM\StandardReadingTypeRepository;
-use DateTimeImmutable;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
@@ -179,7 +179,7 @@ abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, 
     public function setCreatedAt(?DateTimeInterface $createdAt = null): void
     {
         if ($createdAt === null) {
-            $createdAt = new DateTimeImmutable('now');
+            $createdAt = new DateTime('now');
         }
         $this->getBaseReadingType()->setCreatedAt($createdAt);
     }

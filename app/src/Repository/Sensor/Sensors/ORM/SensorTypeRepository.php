@@ -52,16 +52,16 @@ class SensorTypeRepository extends ServiceEntityRepository implements SensorType
 
     public function persist(AbstractSensorType $sensorType): void
     {
-        $this->_em->persist($sensorType);
+        $this->getEntityManager()->persist($sensorType);
     }
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function remove(AbstractSensorType $sensorType): void
     {
-        $this->_em->remove($sensorType);
+        $this->getEntityManager()->remove($sensorType);
     }
 }

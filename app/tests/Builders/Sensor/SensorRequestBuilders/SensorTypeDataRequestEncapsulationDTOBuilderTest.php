@@ -15,7 +15,6 @@ use App\Entity\Sensor\SensorTypes\Sht;
 use App\Entity\Sensor\SensorTypes\Soil;
 use App\Repository\Sensor\Sensors\ORM\SensorTypeRepository;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -23,7 +22,7 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -121,11 +120,7 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
 
         $context = ['groups' => $groups ?? []];
 
-        $classMetadataFactory = new ClassMetadataFactory(
-            new AnnotationLoader(
-                new AnnotationReader()
-            )
-        );
+        $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
 
         $encoders = [new JsonEncoder()];
         $normalizers = [new ObjectNormalizer($classMetadataFactory)];
@@ -171,7 +166,7 @@ class SensorTypeDataRequestEncapsulationDTOBuilderTest extends KernelTestCase
         }
     }
 
-    public function oneSensorTypeDataProvider(): Generator
+    public static function oneSensorTypeDataProvider(): Generator
     {
         yield [
             'sensorType' => GenericRelay::class,

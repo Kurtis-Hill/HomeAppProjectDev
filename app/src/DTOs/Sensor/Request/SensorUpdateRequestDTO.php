@@ -16,7 +16,6 @@ class SensorUpdateRequestDTO
                 type: SensorDataCurrentReadingUpdateRequestDTO::class,
                 message: 'Each element of sensorData must be an instance of {{ type }} you have provided {{ value }}'
             ),
-//            new Assert\Valid()
         ]),
         Assert\Valid,
         Assert\Type(

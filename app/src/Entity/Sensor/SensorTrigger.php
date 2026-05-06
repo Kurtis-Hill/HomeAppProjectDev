@@ -6,6 +6,7 @@ use App\Entity\Common\Operator;
 use App\Entity\Sensor\ReadingTypes\BaseSensorReadingType;
 use App\Entity\User\User;
 use App\Repository\Sensor\SensorTriggerRepository;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -168,7 +169,7 @@ class SensorTrigger
 
     public function __construct()
     {
-        $this->updatedAt = new DateTimeImmutable('now');
+        $this->updatedAt = new DateTime('now');
     }
 
     public function getSensorTriggerID(): int
@@ -234,7 +235,7 @@ class SensorTrigger
     public function setCreatedAt(?DateTimeInterface $createdAt = null): void
     {
         if ($createdAt === null) {
-            $createdAt = new DateTimeImmutable('now');
+            $createdAt = new DateTime('now');
         }
         $this->createdAt = $createdAt;
     }

@@ -102,7 +102,7 @@ class GetUserDataControllerTest extends WebTestCase
         }
     }
 
-    public function getUserDataResponseDataProvider(): Generator
+    public static function getUserDataResponseDataProvider(): Generator
     {
         yield [
             'email' => UserDataFixtures::ADMIN_USER_EMAIL_ONE,

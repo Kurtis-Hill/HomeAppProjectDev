@@ -61,7 +61,7 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
                     ':sensor'
                 )
             )
-            ->setParameters(['sensor' => $sensorNameID]);
+            ->setParameter('sensor', $sensorNameID);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -80,7 +80,7 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
                     ':sensor'
                 )
             )
-            ->setParameters(['sensor' => $sensorName]);
+            ->setParameter('sensor', $sensorName);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -94,7 +94,7 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
      * @return Latitude[]
      */
     #[ArrayShape([Latitude::class])]
-    public function findBySensorID(int $sensorID): array
+    public function findBySensorID(int $sensorIDs): array
     {
         $qb = $this->createQueryBuilder('readingType');
         $expr = $qb->expr();
@@ -107,7 +107,7 @@ class LatitudeRepository extends ServiceEntityRepository implements ReadingTypeR
                     ':sensor'
                 )
             )
-            ->setParameters(['sensor' => $sensorID]);
+            ->setParameter('sensor', $sensorIDs);
 
         return $qb->getQuery()->getResult();
     }

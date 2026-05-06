@@ -198,7 +198,9 @@ class CardViewRepository extends ServiceEntityRepository implements CardViewRepo
         }
 //            $expr('sensors.sensorID');
 //        $qb->groupBy('sensors.sensorID');
-        $qb->setParameters($parameters);
+        foreach ($parameters as $key => $value) {
+            $qb->setParameter($key, $value);
+        }
 
         return $qb->getQuery()->getResult($hydrationMode);
     }

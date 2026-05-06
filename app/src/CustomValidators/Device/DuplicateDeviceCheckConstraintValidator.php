@@ -21,7 +21,6 @@ class DuplicateDeviceCheckConstraintValidator extends ConstraintValidator
         if (!$constraint instanceof DuplicateDeviceCheckConstraint) {
             throw new UnexpectedTypeException($constraint, DuplicateDeviceCheckConstraint::class);
         }
-
         if (
             !$value instanceof DeviceUpdateInterface
             || $value->getDeviceRoom() === null

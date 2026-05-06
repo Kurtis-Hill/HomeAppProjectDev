@@ -10,6 +10,7 @@ use App\Repository\Device\ORM\DeviceRepository;
 use App\CustomValidators\NoSpecialCharactersNameConstraint;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,12 +18,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: DeviceRepository::class),
     ORM\Table(name: "devices"),
-    ORM\Index(columns: ["createdBy"], name: "createdBy"),
-    ORM\Index(columns: ["groupID"], name: "groupID"),
-    ORM\Index(columns: ["roomID"], name: "roomID"),
-    ORM\Index(columns: ["deviceName"], name: "deviceName"),
+    ORM\Index(name: "createdBy", columns: ["createdBy"]),
+    ORM\Index(name: "groupID", columns: ["groupID"]),
+    ORM\Index(name: "roomID", columns: ["roomID"]),
+    ORM\Index(name: "deviceName", columns: ["deviceName"]),
     ORM\UniqueConstraint(name: "deviceIP", columns: ["ipAddress", "externalIpAddress"]),
     ORM\UniqueConstraint(name: "device_room_un", columns: ["deviceName", "roomID"]),
+    UniqueEntity(
+        fields: ["deviceName", "roomID"],
+        message: "A device with this name already exists in this room.",
+        errorPath: "deviceName"
+    )
 ]
 class Devices implements UserInterface, PasswordAuthenticatedUserInterface
 {

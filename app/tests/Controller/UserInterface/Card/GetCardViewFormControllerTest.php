@@ -138,7 +138,7 @@ class GetCardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function getCardViewFormDataProvider(): Generator
+    public static function getCardViewFormDataProvider(): Generator
     {
         yield [Dht::class];
 
@@ -173,7 +173,7 @@ class GetCardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
-    public function getCardViewFormIncorrectCardViewIDDataProvider(): Generator
+    public static function getCardViewFormIncorrectCardViewIDDataProvider(): Generator
     {
         yield [
             'notAInt',
@@ -209,12 +209,12 @@ class GetCardViewFormControllerTest extends WebTestCase
     /**
      * @dataProvider userCannotEditOtherUsersCardsDataProvider
      */
-    public function test_user_cannot_edit_other_users_cards(string $username, string $password, $usersCardToAlter): void
+    public function test_user_cannot_edit_other_users_cards(string $username, string $password, $alter): void
     {
         $userToken = $this->setUserToken($this->client, $username, $password);
 
         /** @var \App\Entity\User\User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $usersCardToAlter]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $alter]);
 
         /** @var CardView $cardViewObject */
         $cardViewObject = $this->entityManager->getRepository(CardView::class)->findBy(['userID' => $user->getUserID()])[0];
@@ -235,7 +235,7 @@ class GetCardViewFormControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
-    public function userCannotEditOtherUsersCardsDataProvider(): Generator
+    public static function userCannotEditOtherUsersCardsDataProvider(): Generator
     {
         yield [
             'username' => UserDataFixtures::REGULAR_USER_EMAIL_ONE,

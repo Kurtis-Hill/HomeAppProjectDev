@@ -14,7 +14,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +27,9 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
 
     private DeviceRepositoryInterface $deviceRepository;
 
-    private ContainerAwareInterface|Container $diContainer;
+    private ContainerInterface|Container $diContainer;
+
+    private int $exceptionHandlerCount = 0;
 
     protected function setUp(): void
     {
@@ -43,7 +45,34 @@ class DeviceSettingsUpdateConsumerTest extends KernelTestCase
     {
         $this->entityManager->close();
         $this->entityManager = null;
+
+        while ($this->countExceptionHandlers() > $this->exceptionHandlerCount) {
+            restore_exception_handler();
+        }
+
         parent::tearDown();
+    }
+
+    private function countExceptionHandlers(): int
+    {
+        $count = 0;
+        $handlers = [];
+        while (true) {
+            $handler = set_exception_handler(null);
+            restore_exception_handler();
+            if ($handler === null) {
+                break;
+            }
+            $handlers[] = $handler;
+            $count++;
+            // temporarily remove to count the next one
+            restore_exception_handler();
+        }
+        // restore all we temporarily removed
+        foreach (array_reverse($handlers) as $h) {
+            set_exception_handler($h);
+        }
+        return $count;
     }
 
     public function test_http_code_not_200_returns_false(): void

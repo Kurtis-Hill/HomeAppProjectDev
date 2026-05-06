@@ -35,6 +35,7 @@ app/.idea
 ###> symfony/phpunit-bridge ###
 app/.phpunit
 app/.phpunit.result.cache
+app/.phpunit.cache
 app/phpunit.xml
 
 ##< SSL >###

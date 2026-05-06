@@ -83,7 +83,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
 //        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
 //    }
 
-    public function wrongHttpsMethodDataProvider(): Generator
+    public static function wrongHttpsMethodDataProvider(): Generator
     {
         yield [Request::METHOD_GET];
         yield [Request::METHOD_PUT];
@@ -120,7 +120,7 @@ class DeleteGroupNameMappingControllerTest extends WebTestCase
 
     public function test_regular_user_can_delete_mapping_for_group_owns(): void
     {
-        /** @var \App\Entity\GroupMapping[] $groupNameMappingsRegularUserTwoOwns */
+        /** @var GroupMapping[] $groupNameMappingsRegularUserTwoOwns */
         $groupNameMappingsRegularUserTwoOwns = $this->groupNameMappingRepository->findBy(['groupID' => $this->regularUserTwo->getGroup()->getGroupID()]);
 
         self::assertNotEmpty($groupNameMappingsRegularUserTwoOwns);

@@ -126,7 +126,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         self::assertEquals($errorMessage, $payload['errors']);
     }
 
-    public function invalidRequestDataProvider(): Generator
+    public static function invalidRequestDataProvider(): Generator
     {
         yield [
             'operator' => 'invalid operator',
@@ -383,7 +383,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
      * @dataProvider operatorAndTriggerTypeProvider
      */
     public function test_admin_can_create_trigger_for_sensor_group_not_apart_of(
-        string $operatorSymbol,
+        string $operatorName,
         string $triggerTypeName,
     ): void {
         /** @var \App\Entity\User\User $adminUser */
@@ -399,7 +399,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         $baseReadingTypesNotApartOf = $this->baseSensorReadingTypeRepository->findBy(['sensor' => $sensorNotApartOf]);
         $baseReadingTypeThatTriggers = $baseReadingTypesNotApartOf[0];
 
-        $operator = $this->operatorRepository->findOneBy(['operatorSymbol' => $operatorSymbol]);
+        $operator = $this->operatorRepository->findOneBy(['operatorSymbol' => $operatorName]);
         $triggerType = $this->triggerTypeRepository->findOneBy(['triggerTypeName' => $triggerTypeName]);
 
         $groupsUserIsApartOf = $adminUser->getAssociatedGroupIDs();
@@ -472,7 +472,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
         self::assertEquals($baseReadingTypeThatIsTriggeredResponse['baseReadingTypeID'], $baseReadingTypeThatIsTriggered->getBaseReadingTypeID());
     }
 
-    public function operatorAndTriggerTypeProvider(): Generator
+    public static function operatorAndTriggerTypeProvider(): Generator
     {
         yield [
             'operatorName' => Operator::OPERATOR_EQUAL,
@@ -519,7 +519,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
      * @dataProvider operatorAndTriggerTypeProvider
      */
     public function test_user_can_create_trigger_sensor_apart_of(
-        string $operatorSymbol,
+        string $operatorName,
         string $triggerTypeName,
     ): void {
         /** @var \App\Entity\User\User $regularUser */
@@ -537,7 +537,7 @@ class AddSensorTriggerControllerTest extends WebTestCase
 
         $userToken = $this->setUserToken($this->client, UserDataFixtures::REGULAR_USER_EMAIL_TWO, UserDataFixtures::REGULAR_PASSWORD);
 
-        $operator = $this->operatorRepository->findOneBy(['operatorSymbol' => $operatorSymbol]);
+        $operator = $this->operatorRepository->findOneBy(['operatorSymbol' => $operatorName]);
         $triggerType = $this->triggerTypeRepository->findOneBy(['triggerTypeName' => $triggerTypeName]);
 
         $groupsUserIsApartOf = $regularUser->getAssociatedGroupIDs();

@@ -49,7 +49,7 @@ class IndexControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
-    public function variousRoutesDataProvider(): Generator
+    public static function variousRoutesDataProvider(): Generator
     {
         yield [
             'index',
