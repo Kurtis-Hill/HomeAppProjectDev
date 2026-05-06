@@ -32,7 +32,7 @@ class DeleteSensorCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('sensorID', InputArgument::REQUIRED, 'The sensor type to delete')
+            ->addArgument('sensorID', InputArgument::REQUIRED, 'The sensor type to delete');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
