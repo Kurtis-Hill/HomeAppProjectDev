@@ -24,7 +24,6 @@ class DeleteSensorCommand extends Command
 {
     public function __construct(
         private SensorDeletionEventHandler $sensorDeletionEventHandler,
-        private DeviceRepository $deviceRepository,
         private SensorRepository $sensorRepository,
     ) {
         parent::__construct();
@@ -34,19 +33,16 @@ class DeleteSensorCommand extends Command
     {
         $this
             ->addArgument('sensorID', InputArgument::REQUIRED, 'The sensor type to delete')
-            ->addArgument('deviceID', InputArgument::REQUIRED, 'The Device ID to delete');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $device = $input->getArgument('deviceID');
         $sensorID = $input->getArgument('sensorID');
 
         $sensorObject = $this->sensorRepository->find($sensorID);
-        $deviceObject = $this->deviceRepository->find($device);
 
         $sensors = $this->sensorRepository->findSameSensorTypesOnSameDevice(
-            deviceId: $deviceObject->getDeviceID(),
+            deviceId: $sensorObject->getDevice()->getDeviceID(),
             sensorType: $sensorObject->getSensorTypeObject()->getSensorTypeID(),
         );
         foreach ($sensors as $sensor) {
@@ -54,7 +50,7 @@ class DeleteSensorCommand extends Command
         }
         $this->sensorRepository->flush();
 
-        $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorID, $deviceObject->getDeviceID());
+        $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorID, $sensorObject->getDevice()->getDeviceID());
 
         return Command::SUCCESS;
     }
