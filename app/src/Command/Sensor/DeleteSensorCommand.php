@@ -26,7 +26,6 @@ class DeleteSensorCommand extends Command
         private SensorDeletionEventHandler $sensorDeletionEventHandler,
         private DeviceRepository $deviceRepository,
         private SensorRepository $sensorRepository,
-        private SensorTypeRepository $sensorTypeRepository,
     ) {
         parent::__construct();
     }
@@ -34,28 +33,28 @@ class DeleteSensorCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('sensorTypeID', InputArgument::REQUIRED, 'The sensor type to delete')
+            ->addArgument('sensorID', InputArgument::REQUIRED, 'The sensor type to delete')
             ->addArgument('deviceID', InputArgument::REQUIRED, 'The Device ID to delete');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $device = $input->getArgument('deviceID');
-        $sensorType = $input->getArgument('sensorTypeID');
+        $sensorID = $input->getArgument('sensorID');
 
+        $sensorObject = $this->sensorRepository->find($sensorID);
         $deviceObject = $this->deviceRepository->find($device);
-        $sensorTypeObject = $this->sensorTypeRepository->findOneBy(['sensorTypeID' => $sensorType]);
 
         $sensors = $this->sensorRepository->findSameSensorTypesOnSameDevice(
             deviceId: $deviceObject->getDeviceID(),
-            sensorType: $sensorTypeObject->getSensorTypeID(),
+            sensorType: $sensorObject->getSensorTypeObject()->getSensorTypeID(),
         );
         foreach ($sensors as $sensor) {
             $this->sensorRepository->remove($sensor);
         }
         $this->sensorRepository->flush();
 
-        $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorType, $deviceObject->getDeviceID());
+        $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorID, $deviceObject->getDeviceID());
 
         return Command::SUCCESS;
     }
