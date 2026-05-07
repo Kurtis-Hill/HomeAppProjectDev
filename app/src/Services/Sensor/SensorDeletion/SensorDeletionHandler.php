@@ -36,7 +36,7 @@ readonly class SensorDeletionHandler
             if (!empty($sameSensorsOnDevice) && $triggerESPUpdate === true) {
                 $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sensor);
             }
-            elseif ($triggerESPUpdate === true) {
+            elseif (empty($sameSensorsOnDevice) && $triggerESPUpdate === true) {
                 $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorType, $deviceID);
             }
         } catch (ORMException|OptimisticLockException $e) {
