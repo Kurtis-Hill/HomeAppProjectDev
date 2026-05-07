@@ -5,6 +5,7 @@ namespace App\Services\Sensor\SensorDeletion;
 use App\Entity\Sensor\Sensor;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\Sensor\UpdateSensor\SensorUpdateEventHandler;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
@@ -15,6 +16,7 @@ readonly class SensorDeletionHandler
         private SensorRepositoryInterface $sensorRepository,
         private SensorUpdateEventHandler $sensorUpdateEventHandler,
         private SensorDeletionEventHandler $sensorDeletionEventHandler,
+        private EntityManagerInterface $entityManager,
         private LoggerInterface $logger,
     ) {
     }
@@ -26,8 +28,8 @@ readonly class SensorDeletionHandler
             $sensorTypeID = $sensor->getSensorTypeObject()->getSensorTypeID();
             $sensorType = $sensor->getSensorTypeObject()::getSensorTypeName();
 
-            $this->sensorRepository->remove($sensor);
-            $this->sensorRepository->flush();
+            $this->entityManager->remove($sensor);
+            $this->entityManager->flush();
 
             $sameSensorsOnDevice = $this->sensorRepository->findSameSensorTypesOnSameDevice(
                 $deviceID,

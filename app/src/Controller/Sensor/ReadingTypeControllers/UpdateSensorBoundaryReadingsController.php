@@ -23,6 +23,7 @@ use App\Services\Sensor\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorB
 use App\Traits\HomeAppAPITrait;
 use App\Traits\ValidatorProcessorTrait;
 use App\Voters\SensorVoter;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -59,6 +60,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         SensorRepositoryInterface $sensorRepository,
         SensorReadingUpdateFactory $sensorUpdateFactory,
         ReadingTypeResponseBuilderFactory $readingTypeResponseBuilderFactory,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
@@ -139,7 +141,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         try {
-            $sensorRepository->flush();
+            $entityManager->flush();
         } catch (ORMException|OptimisticLockException) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'sensor'), ['user' => $this->getUser()?->getUserIdentifier()]);
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILURE, 'sensor')]);

@@ -8,6 +8,7 @@ use App\Repository\Device\ORM\DeviceRepository;
 use App\Repository\Sensor\Sensors\ORM\SensorRepository;
 use App\Repository\Sensor\Sensors\ORM\SensorTypeRepository;
 use App\Services\Sensor\SensorDeletion\SensorDeletionEventHandler;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,8 +24,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DeleteSensorCommand extends Command
 {
     public function __construct(
-        private SensorDeletionEventHandler $sensorDeletionEventHandler,
-        private SensorRepository $sensorRepository,
+        private readonly SensorDeletionEventHandler $sensorDeletionEventHandler,
+        private readonly SensorRepository $sensorRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -46,9 +48,9 @@ class DeleteSensorCommand extends Command
             sensorType: $sensorObject->getSensorTypeObject()->getSensorTypeID(),
         );
         foreach ($sensors as $sensor) {
-            $this->sensorRepository->remove($sensor);
+            $this->entityManager->remove($sensor);
         }
-        $this->sensorRepository->flush();
+        $this->entityManager->flush();
 
         $this->sensorDeletionEventHandler->handleSensorDeletionEvent($sensorObject->getSensorTypeObject()::getSensorTypeName(), $sensorObject->getDevice()->getDeviceID());
 
