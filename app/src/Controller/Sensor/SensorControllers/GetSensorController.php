@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Sensor\SensorControllers;
 
 use App\Builders\Sensor\Request\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
@@ -9,6 +11,7 @@ use App\DTOs\Sensor\Internal\Sensor\GetSensorQueryDTO;
 use App\DTOs\Sensor\Request\GetSensorRequestDTO\GetSensorRequestDTO;
 use App\Entity\User\User;
 use App\Exceptions\Common\ValidatorProcessorException;
+use App\Repository\Sensor\Sensors\ORM\SensorRepository;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
@@ -39,13 +42,14 @@ class GetSensorController extends AbstractController
     public function getAllSensors(
         SensorResponseDTOBuilder $sensorResponseDTOBuilder,
         SensorUserFilter $sensorUserFilter,
-        SensorRepositoryInterface $sensorRepository,
+        SensorRepository $sensorRepository,
         #[MapQueryString]
         GetSensorQueryDTO $getSensorQueryDTO,
         #[MapQueryString]
         ?RequestDTO $requestDTO = null,
     ): JsonResponse {
         $requestDTO ??= new RequestDTO();
+        $requestDTO->setLimit(self::GET_SENSOR_DEFAULT_LIMIT);
 
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -58,21 +62,13 @@ class GetSensorController extends AbstractController
         }
 
         if (empty($sensorDTOs)) {
-            if (!empty($sensorUserFilter->getErrors())) {
-                return $this->sendBadRequestJsonResponse($sensorUserFilter->getErrors());
-            }
-
-            return $this->sendSuccessfulJsonResponse([], 'No sensors found');
+            return $this->sendSuccessfulJsonResponse(title: 'No sensors found');
         }
 
         try {
             $normalizedResponse = $this->normalize($sensorDTOs, [$requestDTO->getResponseType()]);
         } catch (ExceptionInterface) {
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_NORMALIZE_RESPONSE]);
-        }
-
-        if (!empty($sensorUserFilter->getErrors())) {
-            return $this->sendMultiStatusJsonResponse($sensorUserFilter->getErrors(), $normalizedResponse, 'Some issues were found with your request');
         }
 
         return $this->sendSuccessfulJsonResponse($normalizedResponse);

@@ -21,9 +21,9 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor', name: 'delete-sensor')]
 class DeleteSensorController extends AbstractController
 {
-    public const DELETE_SENSOR_SUCCESS_MESSAGE = 'Sensor deleted successfully';
-
     use HomeAppAPITrait;
+
+    public const DELETE_SENSOR_SUCCESS_MESSAGE = 'Sensor deleted successfully';
 
     private LoggerInterface $logger;
 
