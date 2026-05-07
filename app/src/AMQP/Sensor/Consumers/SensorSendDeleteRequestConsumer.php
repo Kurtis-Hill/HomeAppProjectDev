@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class SensorSendDeleteRequestConsumer implements ConsumerInterface
+readonly class SensorSendDeleteRequestConsumer implements ConsumerInterface
 {
     use ValidatorProcessorTrait;
 

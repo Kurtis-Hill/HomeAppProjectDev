@@ -251,9 +251,6 @@ services:
         alias: 'App\Services\Sensor\TriggerChecker\SensorReadingTriggerChecker'
 
 ######################## New Sensor Creation Services ########################################################
-    App\Services\Sensor\NewSensor\NewSensorCreationInterface:
-        alias: 'App\Services\Sensor\NewSensor\NewSensorCreationHandler'
-
     App\Services\Sensor\NewReadingType\ReadingTypeCreationInterface:
         alias: 'App\Services\Sensor\NewReadingType\ReadingTypeCreationFacade'
 

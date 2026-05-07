@@ -8,7 +8,7 @@ use App\DTOs\Device\Request\DeviceRequest\DeviceRequestDTOInterface;
 use App\Entity\Sensor\AbstractSensorType;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SensorDeletionDTO implements DeviceRequestDTOInterface
+readonly class SensorDeletionDTO implements DeviceRequestDTOInterface
 {
     public function __construct(
         #[Assert\Choice(
