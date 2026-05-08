@@ -65,7 +65,7 @@ class CreateSensorCommand extends Command
             return Command::FAILURE;
         }
 
-        $adminUser = $this->userRepository->findOneBy(['email' => 'admin']);
+        $adminUser = $this->userRepository->findOneBy(['email' => 'kurtis.hill1990@gmail.com']);
         if (!$adminUser instanceof UserInterface) {
             $output->writeln("<error>Could not find user</error>");
         }
