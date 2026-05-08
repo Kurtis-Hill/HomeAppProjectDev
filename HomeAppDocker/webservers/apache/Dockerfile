@@ -36,6 +36,8 @@ RUN a2enmod rewrite
 
 RUN a2enmod ssl
 
+RUN a2enmod remoteip
+
 RUN mkdir -p /var/www/html/assets/images/profile-pics
 RUN chown www-data /var/www/html/assets/images/profile-pics
 

@@ -19,42 +19,23 @@ use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\Sensor\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Services\Sensor\OutOfBounds\SensorOutOfBoundsHandlerInterface;
 use App\Services\Sensor\SensorReadingTypesValidator\SensorReadingTypesValidatorInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Psr\Log\LoggerInterface;
 
-class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingInterface
+readonly class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingInterface
 {
-    private SensorRepositoryInterface $sensorRepository;
-
-    private SensorReadingUpdateFactory $readingUpdateFactory;
-
-    private SensorReadingTypesValidatorInterface $readingTypesValidator;
-
-    private SensorOutOfBoundsHandlerInterface $outOfBoundsSensorService;
-
-    private SensorConstantlyRecordHandlerInterface $constantlyRecordService;
-
-    private ReadingTypeQueryFactory $readingTypeQueryBuilderFactory;
-
-    private LoggerInterface $logger;
-
     public function __construct(
-        SensorRepositoryInterface $sensorRepository,
-        SensorReadingUpdateFactory $readingUpdateFactory,
-        SensorReadingTypesValidatorInterface $readingTypesValidator,
-        SensorOutOfBoundsHandlerInterface $outOfBoundsSensorService,
-        SensorConstantlyRecordHandlerInterface $constantlyRecordService,
-        ReadingTypeQueryFactory $readingTypeQueryBuilderFactory,
-        LoggerInterface $elasticLogger,
+        private SensorRepositoryInterface $sensorRepository,
+        private SensorReadingUpdateFactory $readingUpdateFactory,
+        private SensorReadingTypesValidatorInterface $readingTypesValidator,
+        private SensorOutOfBoundsHandlerInterface $outOfBoundsSensorService,
+        private SensorConstantlyRecordHandlerInterface $constantlyRecordService,
+        private ReadingTypeQueryFactory $readingTypeQueryBuilderFactory,
+        private EntityManagerInterface $entityManager,
+        private LoggerInterface $elasticLogger,
     ) {
-        $this->sensorRepository = $sensorRepository;
-        $this->readingUpdateFactory = $readingUpdateFactory;
-        $this->readingTypesValidator = $readingTypesValidator;
-        $this->outOfBoundsSensorService = $outOfBoundsSensorService;
-        $this->constantlyRecordService = $constantlyRecordService;
-        $this->readingTypeQueryBuilderFactory = $readingTypeQueryBuilderFactory;
-        $this->logger = $elasticLogger;
     }
 
     public function handleUpdateSensorCurrentReading(
@@ -122,15 +103,15 @@ class UpdateCurrentSensorReadingsHandler implements UpdateCurrentSensorReadingIn
                     | SensorReadingUpdateFactoryException
                     | ReadingTypeObjectBuilderException $e
                 ) {
-                    $this->logger->error($e->getMessage());
+                    $this->elasticLogger->error($e->getMessage());
                     continue;
                 }
             }
         }
         try {
-            $this->sensorRepository->flush();
+            $this->entityManager->flush();
         } catch (ORMException|OptimisticLockException $e) {
-            $this->logger->error($e->getMessage());
+            $this->elasticLogger->error($e->getMessage());
 
             return $validationErrors ?? [];
         }

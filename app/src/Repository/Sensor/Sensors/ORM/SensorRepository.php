@@ -44,27 +44,9 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
         parent::__construct($registry, Sensor::class);
     }
 
-    public function persist(Sensor $sensorReadingData): void
-    {
-        $this->getEntityManager()->persist($sensorReadingData);
-    }
-
     public function findOneById(int $id): ?Sensor
     {
         return $this->find($id);
-    }
-
-    public function flush(): void
-    {
-        //refresh the cache
-//        $this->getEntityManager()->getConfiguration()->getResultCache()?->clear();
-        $this->getEntityManager()->flush();
-//        $this->getEntityManager()->refresh();
-    }
-
-    public function remove(Sensor $sensors): void
-    {
-        $this->getEntityManager()->remove($sensors);
     }
 
     public function findDuplicateSensorOnDeviceByGroup(Sensor $sensorData): ?Sensor

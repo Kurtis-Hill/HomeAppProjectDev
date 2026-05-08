@@ -10,7 +10,7 @@ class SensorUpdateEvent extends Event
     public const NAME = 'sensor.update';
 
     public function __construct(
-        protected SensorUpdateEventDTO $sensorUpdateEventDTO
+        private readonly SensorUpdateEventDTO $sensorUpdateEventDTO
     ) {
     }
 

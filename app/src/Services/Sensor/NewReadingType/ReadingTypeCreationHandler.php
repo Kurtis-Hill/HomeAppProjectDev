@@ -15,7 +15,7 @@ use App\Exceptions\Sensor\SensorTypeException;
 use App\Factories\Sensor\SensorTypeCreationFactory\SensorTypeCreationFactory;
 use JetBrains\PhpStorm\ArrayShape;
 
-readonly class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
+readonly class ReadingTypeCreationHandler
 {
     public function __construct(
         private SensorTypeCreationFactory $readingTypeCreationFactory,
@@ -54,19 +54,4 @@ readonly class ReadingTypeCreationFacade implements ReadingTypeCreationInterface
 
         return $sensorReadingCreationService->buildNewSensorTypeObjects($sensor);
     }
-
-//    private function validateSensorReadingTypeData(SensorTypeInterface $sensorTypeObject): array
-//    {
-//        return $this->sensorReadingTypesValidatorService->validateSensorReadingTypeObjectsBySensorTypeObject($sensorTypeObject);
-//    }
-//
-//    /**
-//     * @throws SensorTypeException
-//     */
-//    private function persistSensorTypeObjects(SensorTypeInterface $sensorTypeObject): void
-//    {
-//        $sensorTypeObjectAsString = $sensorTypeObject->getReadingTypeName();
-//        $sensorTypeRepository = $this->sensorTypeFactory->getSensorTypeRepository($sensorTypeObjectAsString);
-////        $sensorTypeRepository->persist($sensorTypeObject);
-//    }
 }

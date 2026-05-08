@@ -28,6 +28,7 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
             $day,
             $time
         );
+
         $triggeredTriggers = [];
         foreach ($allSensorTriggers as $sensorTrigger) {
             $operator = $sensorTrigger->getOperator();
