@@ -15,13 +15,15 @@ readonly class SensorSavingHandler
         private EntityManagerInterface $entityManager,
     ) {}
 
-    public function saveSensor(Sensor $sensor): bool
+    public function saveSensor(Sensor $sensor, bool $sendUpdateEvent = true): bool
     {
         try {
             $this->entityManager->persist($sensor);
             $this->entityManager->flush();
 
-            $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sensor);
+            if ($sendUpdateEvent === true) {
+                $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sensor);
+            }
             return true;
         } catch (ORMException|OptimisticLockException) {
             return false;

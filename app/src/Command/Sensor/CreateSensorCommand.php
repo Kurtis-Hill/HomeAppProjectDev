@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Sensor;
 
 use App\Builders\Sensor\Internal\SensorBuilder;
 use App\DTOs\Sensor\Request\AddNewSensorRequestDTO;
@@ -56,17 +56,17 @@ class CreateSensorCommand extends Command
         $newSensorRequestDTO = new AddNewSensorRequestDTO();
         $newSensorRequestDTO->setDeviceID((int)$input->getArgument('deviceID'));
         $newSensorRequestDTO->setSensorName($input->getArgument('sensorName'));
-        $newSensorRequestDTO->setSensorTypeID($input->getArgument('sensorType'));
-        $newSensorRequestDTO->setPinNumber($input->getArgument('pinNumber'));
-        $newSensorRequestDTO->setReadingInterval($input->getArgument('readingInterval'));
+        $newSensorRequestDTO->setSensorTypeID((int) $input->getArgument('sensorType'));
+        $newSensorRequestDTO->setPinNumber((int)$input->getArgument('pinNumber'));
+        $newSensorRequestDTO->setReadingInterval((int)$input->getArgument('readingInterval'));
 
         $errors = $this->validator->validate($newSensorRequestDTO);
         if ($this->checkIfErrorsArePresent($errors)) {
             return Command::FAILURE;
         }
 
-        $adminUser = $this->userRepository->findOneBy(['email' => 'kurtis.hill1990@gmail.com']);
-        if ($adminUser instanceof UserInterface) {
+        $adminUser = $this->userRepository->findOneBy(['email' => 'admin']);
+        if (!$adminUser instanceof UserInterface) {
             $output->writeln("<error>Could not find user</error>");
         }
         $newSensor = $this->sensorBuilder->buildNewSensor(
