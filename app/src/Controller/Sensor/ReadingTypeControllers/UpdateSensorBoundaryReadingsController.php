@@ -57,8 +57,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         UpdateSensorBoundaryReadingsHandlerInterface $updateSensorBoundaryReadingsService,
-        SensorRepositoryInterface $sensorRepository,
-        SensorReadingUpdateFactory $sensorUpdateFactory,
         ReadingTypeResponseBuilderFactory $readingTypeResponseBuilderFactory,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
@@ -81,15 +79,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         $sensorProcessingErrors = [];
         $validationErrors = [];
 
-        foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateData) {
-            try {
-                $sensorUpdateBuilder = $sensorUpdateFactory->getSensorUpdateBuilder($updateData['readingType'] ?? null);
-            } catch (SensorUpdateFactoryException $e) {
-                $sensorProcessingErrors[] = $e->getMessage();
-                continue;
-            }
-
-            $updateBoundaryDataDTO = $sensorUpdateBuilder->buildSensorTypeDTO($updateData);
+        foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateBoundaryDataDTO) {
             $updateDataValidationErrors = $validator->validate($updateBoundaryDataDTO);
 
             if ($this->checkIfErrorsArePresent($updateDataValidationErrors)) {
@@ -98,7 +88,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 }
                 continue;
             }
-
             try {
                 $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject(
                     $sensorObject->getSensorID(),

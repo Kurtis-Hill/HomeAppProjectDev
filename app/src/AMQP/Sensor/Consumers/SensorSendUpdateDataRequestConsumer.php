@@ -41,6 +41,10 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
         }
 
         $sensor = $this->sensorRepository->find($sensorUpdateEventDTO->getSensorID());
+        if ($sensor === null) {
+            return self::MSG_ACK;
+        }
+
         $sensorsToUpdate = $this->sensorRepository->findSameSensorTypesOnSameDevice(
             $sensor->getDevice()->getDeviceID(),
             $sensor->getSensorTypeObject()->getSensorTypeID(),

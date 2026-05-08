@@ -3,6 +3,7 @@
 namespace App\DTOs\Sensor\Request;
 
 use App\DTOs\Sensor\Request\SensorUpdateDTO\BoolSensorUpdateBoundaryDataDTO;
+use App\DTOs\Sensor\Request\SensorUpdateDTO\SensorUpdateBoundaryDataDTOInterface;
 use App\DTOs\Sensor\Request\SensorUpdateDTO\StandardSensorUpdateBoundaryDataDTO;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,17 +15,18 @@ class UpdateSensorReadingBoundaryRequestDTO
             message: "sensorData cannot be empty"
         ),
     ]
-    private mixed $sensorData = null;
+    /** @var SensorUpdateBoundaryDataDTOInterface[] */
+    private ?array $sensorData = null;
 
     /**
      * @return StandardSensorUpdateBoundaryDataDTO[]|BoolSensorUpdateBoundaryDataDTO[]
      */
-    public function getSensorData(): mixed
+    public function getSensorData(): ?array
     {
         return $this->sensorData;
     }
 
-    public function setSensorData(mixed $sensorData): void
+    public function setSensorData(?array $sensorData): void
     {
         $this->sensorData = $sensorData;
     }
