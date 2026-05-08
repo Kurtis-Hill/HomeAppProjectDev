@@ -10,7 +10,7 @@ export const indexUrl = `${webappURL}index`;
 
 export const cardIndex = (cardURL: string) => `${webappURL}cards/${cardURL}`;
 
-export const loginUrl = `${webappURL}login`;
+export const loginUrl = `/HomeApp/${webappURL}login`;
 
 export const logoutUrl = `${webappURL}logout`;
 

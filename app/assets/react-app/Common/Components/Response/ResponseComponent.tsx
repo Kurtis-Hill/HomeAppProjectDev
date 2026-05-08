@@ -12,7 +12,6 @@ export function ResponseComponent(props: {refreshNavBar: (newValue: boolean) => 
     const refreshNavBar = props.refreshNavBar;
 
     useEffect(() => {
-        console.log('response componenet fired');
     }, [announcementModals]);
 
     const showAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
