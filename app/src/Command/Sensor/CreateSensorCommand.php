@@ -78,7 +78,7 @@ class CreateSensorCommand extends Command
             readingInterval: $newSensorRequestDTO->getReadingInterval(),
         );
 
-        $saveSensor = $this->newSensorSavingHandler->saveSensor($newSensor);
+        $saveSensor = $this->newSensorSavingHandler->saveSensor($newSensor, false);
         if ($saveSensor !== true) {
             $output->writeln("<error>Could not save sensor</error>");
             return Command::FAILURE;
