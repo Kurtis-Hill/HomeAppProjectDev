@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
+    "@types/minimatch": "^5.1.2",
     "sass": "^1.52.3",
     "sass-loader": "^13.1.0",
     "ts-loader": "^9.0.0",

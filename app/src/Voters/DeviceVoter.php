@@ -28,6 +28,8 @@ class DeviceVoter extends Voter
 
     public const RESET_DEVICE = 'reset-device';
 
+    public const DEVICE_UPDATE_IP = 'device-update-ip';
+
     protected function supports(string $attribute, mixed $subject): bool
     {
         if (!in_array($attribute, [
@@ -38,6 +40,7 @@ class DeviceVoter extends Voter
             self::PING_DEVICE,
             self::RESTART_DEVICE,
             self::RESET_DEVICE,
+            self::DEVICE_UPDATE_IP,
         ])) {
             return false;
         }
@@ -58,6 +61,7 @@ class DeviceVoter extends Voter
             self::PING_DEVICE => $this->canPing($user, $subject),
             self::RESTART_DEVICE => $this->canRestart($user, $subject),
             self::RESET_DEVICE => $this->canReset($user, $subject),
+            self::DEVICE_UPDATE_IP => $this->canUpdateIp($user),
             default => false
         };
     }
@@ -161,5 +165,10 @@ class DeviceVoter extends Voter
         }
 
         return $user->isAdmin();
+    }
+
+    private function canUpdateIp(UserInterface $user): bool
+    {
+        return $user instanceof Devices;
     }
 }

@@ -1,6 +1,15 @@
 framework:
     secret: '%env(APP_SECRET)%'
     http_method_override: false
+    # Trust the reverse proxy so Symfony builds correct URLs when behind /HomeApp/.
+    # TRUSTED_PROXIES can be set to the IP/CIDR of your nginx proxy in .env.
+    # Use "127.0.0.1,REMOTE_ADDR" for a local proxy, or a specific IP/CIDR.
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    trusted_headers:
+        - x-forwarded-for
+        - x-forwarded-host
+        - x-forwarded-proto
+        - x-forwarded-port
     csrf_protection: true
     http_client:
       max_host_connections: '%env(int:HTTP_MAX_CONNECTIONS)%'

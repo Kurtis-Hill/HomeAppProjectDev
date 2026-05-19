@@ -9,11 +9,10 @@ use App\DTOs\Sensor\Request\AddNewSensorRequestDTO;
 use App\Entity\User\User;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
-use App\Services\Request\RequestQueryParameterHandler;
-use App\Services\Sensor\NewReadingType\ReadingTypeCreationInterface;
-use App\Services\Sensor\NewSensor\NewSensorCreationInterface;
-use App\Services\Sensor\SensorDeletion\SensorDeletionInterface;
-use App\Services\UserInterface\Cards\CardCreation\CardCreationHandlerInterface;
+use App\Services\Sensor\NewReadingType\ReadingTypeCreationHandler;
+use App\Services\Sensor\NewSensor\SensorSavingHandler;
+use App\Services\Sensor\SensorDeletion\SensorDeletionHandler;
+use App\Services\UserInterface\Cards\CardCreation\CardCreationHandler;
 use App\Traits\HomeAppAPITrait;
 use App\Traits\ValidatorProcessorTrait;
 use App\Voters\SensorVoter;
@@ -34,25 +33,20 @@ class AddNewSensorController extends AbstractController
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
 
-    private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger)
+    public function __construct(private readonly LoggerInterface $elasticLogger)
     {
-        $this->logger = $elasticLogger;
     }
 
     #[Route('', name: 'add-new-sensor', methods: [Request::METHOD_POST])]
     public function addNewSensor(
         #[MapRequestPayload]
         AddNewSensorRequestDTO $newSensorRequestDTO,
-        NewSensorCreationInterface $newSensorCreationService,
-        CardCreationHandlerInterface $cardCreationService,
-        ReadingTypeCreationInterface $readingTypeCreation,
-        SensorDeletionInterface $deleteSensorService,
+        CardCreationHandler $cardCreationService,
+        ReadingTypeCreationHandler $readingTypeCreationHandler,
+        SensorDeletionHandler $deleteSensorService,
         ValidatorInterface $validator,
         SensorBuilder $sensorBuilder,
+        SensorSavingHandler $newSensorSavingHandler,
         #[MapQueryString]
         ?RequestDTO $requestDTO = null,
     ): JsonResponse {
@@ -83,24 +77,24 @@ class AddNewSensorController extends AbstractController
             return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($validationErrors));
         }
 
-        $saveSensor = $newSensorCreationService->saveSensor($newSensor);
+        $saveSensor = $newSensorSavingHandler->saveSensor($newSensor);
         if ($saveSensor !== true) {
-            $this->logger->error(APIErrorMessages::FAILED_TO_SAVE_DATA, ['user' => $this->getUser()->getUserIdentifier()]);
+            $this->elasticLogger->error(APIErrorMessages::FAILED_TO_SAVE_DATA, ['user' => $this->getUser()->getUserIdentifier()]);
 
             return $this->sendInternalServerErrorJsonResponse([APIErrorMessages::FAILED_TO_SAVE_DATA]);
         }
 
-        $sensorReadingTypesCreated = $readingTypeCreation->handleSensorReadingTypeCreation($newSensor);
+        $sensorReadingTypesCreated = $readingTypeCreationHandler->handleSensorReadingTypeCreation($newSensor);
         foreach ($sensorReadingTypesCreated as $sensorReadingType) {
             $readingTypeValidationErrors = $validator->validate(value: $sensorReadingType, groups: [$newSensor->getSensorTypeObject()::getSensorTypeName()]);
             if ($this->checkIfErrorsArePresent($readingTypeValidationErrors)) {
-                $deleteSensorService->deleteSensor($newSensor);
+                $deleteSensorService->deleteSensor(sensor: $newSensor, triggerESPUpdate: false);
 
                 return $this->sendBadRequestJsonResponse($this->getValidationErrorAsArray($readingTypeValidationErrors));
             }
         }
 
-        $this->logger->info('Created sensor', ['user' => $this->getUser()?->getUserIdentifier()]);
+        $this->elasticLogger->info('Created sensor', ['user' => $this->getUser()?->getUserIdentifier()]);
 
         $errors = $cardCreationService->createUserCardForSensor($newSensor, $user);
 

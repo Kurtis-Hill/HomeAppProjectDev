@@ -261,13 +261,11 @@ class AddCardControllerTest extends WebTestCase
 
         $title = $jsonResponse['title'];
         self::assertEquals(AddCardController::NOT_AUTHORIZED_TO_BE_HERE, $title);
-
-        self::assertEquals(\App\Controller\UserInterface\Card\AddCardController::NO_RESPONSE_MESSAGE, $jsonResponse['errors'][0]);
     }
 
     public function test_sending_request_admin_user_sensor_group_not_apart_of(): void
     {
-        /** @var \App\Entity\User\Group $groupsRegularUserIsNotApartOf */
+        /** @var Group $groupsRegularUserIsNotApartOf */
         $groupsRegularUserIsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->adminUserTwo);
 
         /** @var Devices[] $devicesInGroupsUserNotApartOf */
@@ -325,9 +323,6 @@ class AddCardControllerTest extends WebTestCase
         $title = $jsonResponse['title'];
         self::assertEquals(AddCardController::REQUEST_SUCCESSFUL, $title);
 
-        $payload = $jsonResponse['payload'];
-        self::assertEquals(AddCardController::NO_RESPONSE_MESSAGE, $payload);
-
         /** @var CardView $cardView */
         $cardView = $this->cardViewRepository->findOneBy(['sensor' => $sensor->getSensorID(), 'userID' => $this->adminUserTwo]);
         self::assertNotNull($cardView);
@@ -345,7 +340,7 @@ class AddCardControllerTest extends WebTestCase
         bool $cardColour,
         bool $cardState,
     ): void {
-        /** @var \App\Entity\User\Group $groupsRegularUserIsNotApartOf */
+        /** @var Group $groupsRegularUserIsNotApartOf */
         $groupsRegularUserIsNotApartOf = $this->groupRepository->findGroupsUserIsNotApartOf($this->adminUserTwo);
 
         /** @var Devices[] $devicesInGroupsUserNotApartOf */
@@ -409,10 +404,6 @@ class AddCardControllerTest extends WebTestCase
         $title = $jsonResponse['title'];
 
         self::assertEquals(AddCardController::REQUEST_SUCCESSFUL, $title);
-
-        $payload = $jsonResponse['payload'];
-
-        self::assertEquals(\App\Controller\UserInterface\Card\AddCardController::NO_RESPONSE_MESSAGE, $payload);
 
         /** @var CardView $cardView */
         $cardView = $this->cardViewRepository->findOneBy(['sensor' => $sensor->getSensorID(), 'userID' => $this->adminUserTwo]);

@@ -46,20 +46,10 @@ trait HomeAppAPITrait
      */
     public function sendSuccessfulJsonResponse(array $data = [], string $title = self::REQUEST_SUCCESSFUL): JsonResponse
     {
-        if (!empty($data)) {
-            return $this->returnJsonResponse(
-                [
-                    'title' => $title,
-                    'payload' => $data
-                ],
-                HTTPStatusCodes::HTTP_OK
-            );
-        }
-
         return $this->returnJsonResponse(
             [
                 'title' => $title,
-                'payload' => self::NO_RESPONSE_MESSAGE
+                'payload' => $data
             ],
             HTTPStatusCodes::HTTP_OK
         );

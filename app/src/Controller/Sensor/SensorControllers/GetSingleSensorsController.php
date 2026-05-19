@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Sensor\SensorControllers;
 
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
@@ -27,10 +29,6 @@ class GetSingleSensorsController extends AbstractController
 {
     use HomeAppAPITrait;
     use ValidatorProcessorTrait;
-
-    private LoggerInterface $logger;
-
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
 
     #[Route('/{sensorID}', name: 'get-single-sensor', methods: [Request::METHOD_GET])]
     public function getSingleSensor(

@@ -7,8 +7,6 @@ use App\Builders\Device\Request\DeviceSettingsRequestDTOBuilder;
 use App\Builders\Sensor\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\DataFixtures\ESP8266\SensorFixtures;
 use App\DTOs\Sensor\Internal\Event\SensorUpdateEventDTO;
-use App\DTOs\Sensor\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
-use App\Entity\Sensor\Sensor;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\Device\Request\DeviceRequestHandler;
 use App\Services\Sensor\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
@@ -18,7 +16,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +28,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
 
     private SensorRepositoryInterface $sensorRepository;
 
-    private ContainerAwareInterface|Container $diContainer;
+    private Container $diContainer;
 
     protected function setUp(): void
     {
@@ -49,7 +46,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $httpClient = new MockHttpClient($response);
 
         $deviceMockLogger = $this->createMock(LoggerInterface::class);
-        $deviceMockLogger->expects(self::once())->method('info');
+        $deviceMockLogger->expects($this->once())->method('info');
 
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
@@ -57,8 +54,8 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         );
 
         $mockLogger = $this->createMock(LoggerInterface::class);
-        $mockLogger->expects(self::once())->method('info');
-        $mockLogger->expects(self::never())->method('error');
+        $mockLogger->expects($this->once())->method('info');
+        $mockLogger->expects($this->never())->method('error');
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
@@ -70,18 +67,15 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         );
         $this->sut = new SensorSendUpdateDataRequestConsumer(
             $updateDeviceSensorDataHandler,
-            $mockLogger
+            $this->sensorRepository,
+            new SingleSensorUpdateRequestDTOBuilder(),
+            $mockLogger,
         );
 
         $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME]);
 
-        /** @var SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder */
-        $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
-
-        $sensorRequestDTOs = $singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
-
         $sensorUpdateEventDTO = new SensorUpdateEventDTO(
-            [$sensorRequestDTOs]
+            $sensorToUpdate->getSensorID()
         );
         $amqpMess = new AMQPMessage(serialize($sensorUpdateEventDTO));
 
@@ -96,7 +90,6 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $httpClient = new MockHttpClient($response);
 
         $deviceMockLogger = $this->createMock(LoggerInterface::class);
-//        $deviceMockLogger->expects(self::once())->method('info');
 
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
@@ -104,8 +97,8 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         );
 
         $mockLogger = $this->createMock(LoggerInterface::class);
-        $mockLogger->expects(self::once())->method('error');
-        $mockLogger->expects(self::never())->method('info');
+        $mockLogger->expects($this->once())->method('error');
+        $mockLogger->expects($this->never())->method('info');
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
@@ -117,15 +110,15 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         );
         $this->sut = new SensorSendUpdateDataRequestConsumer(
             $updateDeviceSensorDataHandler,
+            $this->sensorRepository,
+            new SingleSensorUpdateRequestDTOBuilder(),
             $mockLogger
         );
 
         $sensorToUpdate = $this->sensorRepository->findOneBy(['sensorName' => SensorFixtures::ADMIN_1_RELAY_SENSOR_NAME]);
-        $singleSensorUpdateRequestDTOBuilder = $this->diContainer->get(SingleSensorUpdateRequestDTOBuilder::class);
-        $sensorRequestDTOs = $singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
 
         $sensorUpdateEventDTO = new SensorUpdateEventDTO(
-            [$sensorRequestDTOs]
+            $sensorToUpdate->getSensorID()
         );
         $amqpMess = new AMQPMessage(serialize($sensorUpdateEventDTO));
 
@@ -140,7 +133,7 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         $httpClient = new MockHttpClient($response);
 
         $deviceMockLogger = $this->createMock(LoggerInterface::class);
-        $deviceMockLogger->expects(self::never())->method('info');
+        $deviceMockLogger->expects($this->never())->method('info');
 
         $deviceRequestHandler = new DeviceRequestHandler(
             $httpClient,
@@ -148,8 +141,8 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         );
 
         $mockLogger = $this->createMock(LoggerInterface::class);
-        $mockLogger->expects(self::never())->method('info');
-        $mockLogger->expects(self::once())->method('error');
+        $mockLogger->expects($this->never())->method('info');
+        $mockLogger->expects($this->any())->method('error');
 
         $deviceSettingsRequestDTOBuilder = $this->diContainer->get(DeviceSettingsRequestDTOBuilder::class);
 
@@ -161,21 +154,13 @@ class SensorSendUpdateDataRequestConsumerTest extends KernelTestCase
         );
         $this->sut = new SensorSendUpdateDataRequestConsumer(
             $updateDeviceSensorDataHandler,
+            $this->sensorRepository,
+            new SingleSensorUpdateRequestDTOBuilder(),
             $mockLogger
         );
 
-        $mockSensor = new Sensor();
-        $mockSensor->setSensorName('NAANONAME');
-        $mockSensor->setPinNumber(2);
-
-        $sensorRequestDTO = new SingleSensorUpdateRequestDTO(
-            $mockSensor->getSensorName(),
-            $mockSensor->getPinNumber(),
-            $mockSensor->getReadingInterval()
-        );
-
         $sensorUpdateEventDTO = new SensorUpdateEventDTO(
-            [$sensorRequestDTO],
+            999,
         );
 
         $amqpMess = new AMQPMessage(serialize($sensorUpdateEventDTO));

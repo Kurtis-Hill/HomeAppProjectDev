@@ -5,12 +5,16 @@ var Encore = require('@symfony/webpack-encore');
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
+
+// When building for deployment behind the /HomeApp/ reverse-proxy prefix,
+// set WEBPACK_PUBLIC_PATH=/HomeApp/build in the environment before building.
+// For local direct access leave it unset (defaults to /build).
+const publicPath = process.env.WEBPACK_PUBLIC_PATH || '/build';
+
 Encore
     .setOutputPath('public/build/')
-    .setPublicPath('/build')
-
-    // .setPublicPath('/HomeApp/build')
-    // .setManifestKeyPrefix('build/')
+    .setPublicPath(publicPath)
+    .setManifestKeyPrefix('build/')
     // only needed for CDN's or sub-directory deploy
 
     .enableReactPreset()

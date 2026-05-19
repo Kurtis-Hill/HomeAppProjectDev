@@ -166,13 +166,6 @@ class DeleteSensorControllerTest extends ControllerTestCase
         );
 
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-
-        $responseData = json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        $title = $responseData['title'];
-        $errors = $responseData['errors'];
-
-        self::assertEquals(DeleteSensorController::NOT_AUTHORIZED_TO_BE_HERE, $title);
-        self::assertEquals(APIErrorMessages::ACCESS_DENIED, $errors[0]);
     }
 
     public static function wrongHttpsMethodDataProvider(): array

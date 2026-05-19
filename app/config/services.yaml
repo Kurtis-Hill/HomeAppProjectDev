@@ -189,9 +189,14 @@ services:
       calls:
           - setSensorDataUpdateProducer: [ '@upload_sensor_data_to_device_producer' ]
 
+    App\Events\Subscribers\Sensor\SensorDeletionEventSubscriber:
+      calls:
+          - setSensorDataDeletionProducer: [ '@upload_sensor_delete_to_device_producer' ]
+
 ####################### Producers ######################################################
     App\AMQP\Sensor\Producers\UpdateCurrentDataProducer: '@old_sound_rabbit_mq.upload_current_reading_sensor_data_producer'
     App\AMQP\Sensor\Producers\UploadSensorDataToDeviceProducer: '@old_sound_rabbit_mq.upload_sensor_data_to_device_producer'
+    App\AMQP\Sensor\Producers\UploadSensorDeleteToDeviceProducer: '@old_sound_rabbit_mq.upload_sensor_delete_to_device_producer'
     App\AMQP\Sensor\Producers\UploadSwitchSensorProducer: '@old_sound_rabbit_mq.send_current_sensor_reading_producer'
 
   ######################## Consumers ######################################################
@@ -246,9 +251,6 @@ services:
         alias: 'App\Services\Sensor\TriggerChecker\SensorReadingTriggerChecker'
 
 ######################## New Sensor Creation Services ########################################################
-    App\Services\Sensor\NewSensor\NewSensorCreationInterface:
-        alias: 'App\Services\Sensor\NewSensor\NewSensorCreationHandler'
-
     App\Services\Sensor\NewReadingType\ReadingTypeCreationInterface:
         alias: 'App\Services\Sensor\NewReadingType\ReadingTypeCreationFacade'
 
