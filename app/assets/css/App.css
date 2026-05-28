@@ -408,13 +408,255 @@ input:checked + .slider:before {
    border-radius: 20px;
 }
 
-.standard-modal-height {
+/* old height helpers kept for any stray references */
+.standard-modal-height { overflow-y: auto; }
+.snap-modal-height     { overflow-y: auto; }
+
+/* ── Modern Modal Overlay ────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.52);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    padding: 1rem;
+    animation: overlayIn 0.18s ease;
     overflow-y: auto;
-    height: 650px;
 }
 
-.snap-modal-height {
+@keyframes overlayIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.modal-modern {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+    width: 100%;
+    max-width: 620px;
+    max-height: 88dvh;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    animation: modalIn 0.2s ease;
+    margin: auto;
+}
+
+@keyframes modalIn {
+    from { transform: translateY(-14px); opacity: 0; }
+    to   { transform: translateY(0);     opacity: 1; }
+}
+
+.modal-modern-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid #e9ecef;
+    flex-shrink: 0;
+}
+
+.modal-modern-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a1c23;
+    letter-spacing: -0.01em;
+}
+
+.modal-modern-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    color: #6c757d;
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: background-color 0.15s, color 0.15s;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+}
+
+.modal-modern-close:hover {
+    background-color: #f3f4f6;
+    color: #1a1c23;
+}
+
+.modal-modern-body {
+    padding: 1.4rem;
     overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ── Toast / Flash Notification ──────────────────────────────────── */
+.toast-stack {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    pointer-events: none;
+    max-width: 340px;
+    width: calc(100vw - 3rem);
+}
+
+.toast-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+    border-left: 4px solid #4e73df;
+    padding: 0.8rem 1rem;
+    pointer-events: all;
+    animation: toastIn 0.22s ease;
+    transition: opacity 0.3s;
+}
+
+.toast-card.toast-success { border-left-color: #1cc88a; }
+.toast-card.toast-error   { border-left-color: #e74a3b; }
+.toast-card.toast-warning { border-left-color: #f6c23e; }
+
+@keyframes toastIn {
+    from { transform: translateX(28px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+
+.toast-title {
+    font-weight: 700;
+    font-size: 0.87rem;
+    margin-bottom: 0.2rem;
+    color: #1a1c23;
+}
+
+.toast-messages {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.82rem;
+    color: #495057;
+}
+
+.toast-messages li + li { margin-top: 0.15rem; }
+
+/* ── Trigger Form ─────────────────────────────────────────────────── */
+.trigger-form-grid {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.trigger-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.trigger-form-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0;
+}
+
+.trigger-form-hint {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin-bottom: 0.1rem;
+}
+
+.days-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.15rem;
+}
+
+.day-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    padding: 0.3rem 0.65rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #374151;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+    user-select: none;
+}
+
+.day-pill input[type="checkbox"] {
+    display: none;
+}
+
+.day-pill.active {
+    border-color: #4e73df;
+    background-color: #eef2ff;
+    color: #3a5fc8;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.55rem;
+    padding-top: 1rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid #e9ecef;
+    flex-wrap: wrap;
+}
+
+/* Trigger Card clean layout */
+.trigger-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+
+.trigger-info-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+}
+
+.trigger-info-value {
+    color: #1a1c23;
+    font-weight: 500;
+}
+
+.trigger-days-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.2rem;
+}
+
+.trigger-day-badge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.45rem;
+    border-radius: 12px;
+    background-color: #eef2ff;
+    color: #3a5fc8;
+}
+
+.trigger-day-badge.inactive {
+    background-color: #f3f4f6;
+    color: #9ca3af;
 }
 
 .add-new-submit-button {
@@ -445,6 +687,121 @@ input:checked + .slider:before {
 .bool-sensor-button-loading {
     position: inherit;
     z-index: 1;
+}
+
+/* ── Modern Sidebar Navbar ─────────────────────────────────────────── */
+.sidebar-modern .sidebar-nav-item {
+    border-radius: 6px;
+    margin: 2px 8px;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-modern .sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, padding-left 0.2s ease;
+    position: relative;
+}
+
+.sidebar-modern .sidebar-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    padding-left: 1.25rem;
+}
+
+.sidebar-modern .sidebar-nav-link.active-nav {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-modern .sidebar-nav-icon {
+    flex-shrink: 0;
+    width: 1.25rem;
+    text-align: center;
+    margin-right: 0.5rem;
+    opacity: 0.85;
+}
+
+.sidebar-modern .sidebar-nav-label {
+    flex: 1;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.sidebar-modern .sidebar-nav-chevron {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-left: 0.25rem;
+}
+
+/* Collapse panel smooth reveal */
+.sidebar-modern .collapse {
+    transition: none;
+}
+
+.sidebar-modern .collapse.show .bg-white {
+    animation: slideDown 0.2s ease forwards;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Modern collapse items */
+.collapse-item-modern {
+    padding: 0.45rem 1rem !important;
+    border-radius: 4px !important;
+    font-size: 0.82rem !important;
+    transition: background-color 0.15s ease, padding-left 0.15s ease !important;
+    display: block;
+}
+
+.collapse-item-modern:hover {
+    background-color: #f0f4ff !important;
+    padding-left: 1.25rem !important;
+    color: #4e73df !important;
+    text-decoration: none;
+}
+
+.collapse-item-add {
+    color: #4e73df !important;
+    font-weight: 600 !important;
+    border-top: 1px solid #e9ecef;
+    margin-top: 4px;
+    padding-top: 8px !important;
+}
+
+.collapse-item-add:hover {
+    background-color: #eef2ff !important;
+}
+
+/* Sidebar toggle button modernized */
+.sidebar-toggle-btn {
+    background: rgba(255, 255, 255, 0.15) !important;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    width: 2rem;
+    height: 2rem;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    transform: scale(1.1);
+}
+
+/* Nav link items (Query / User Settings) modern styling */
+.sidebar-modern .nav-item > a .nav-link,
+.sidebar-modern .nav-item .nav-link {
+    border-radius: 6px;
+    transition: background-color 0.2s ease, padding-left 0.2s ease;
+}
+
+.sidebar-modern .nav-item > a:hover .nav-link,
+.sidebar-modern .nav-item .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.12);
 }
 /*@media only screen and (max-width: 700px) {*/
 /*    !*.modal-body {*!*/
@@ -477,3 +834,398 @@ input:checked + .slider:before {
 /*        height: 100px;       */
 /*    }*/
 /*}*/
+
+/* ── Sensor List ──────────────────────────────────────────────────── */
+.sensor-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.25rem;
+    padding: 0.25rem 0 1.5rem;
+}
+
+.sensor-list-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+    padding: 0.6rem 0.9rem;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.sensor-list-toolbar-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #3d4459;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
+}
+
+.sensor-list-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #4e73df;
+    color: #fff;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding: 0 0.35rem;
+    letter-spacing: 0;
+}
+
+.sensor-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 1rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #fff;
+    background: #4e73df;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.sensor-add-btn:hover {
+    background: #375bc8;
+    box-shadow: 0 3px 10px rgba(78,115,223,0.35);
+    color: #fff;
+}
+
+.sensor-add-btn:active {
+    background: #2f50b0;
+    box-shadow: none;
+}
+
+.sensor-add-btn-icon {
+    font-size: 0.78rem;
+}
+
+/* ── Sensor Card ──────────────────────────────────────────────────── */
+.sensor-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.sensor-card:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.11);
+}
+
+.sensor-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.1rem;
+    border-bottom: 1px solid #f0f2f5;
+    background: #fafbfc;
+    gap: 0.5rem;
+}
+
+.sensor-card-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1c23;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.sensor-card-name-edit {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+}
+
+.sensor-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+}
+
+.sensor-card-body {
+    padding: 1rem 1.1rem;
+    flex: 1;
+}
+
+/* Key-value info grid inside sensor card */
+.sensor-info-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 1rem;
+    font-size: 0.88rem;
+    align-items: center;
+}
+
+.sensor-info-label {
+    font-size: 0.71rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    white-space: nowrap;
+    padding: 0.22rem 0;
+}
+
+.sensor-info-value {
+    color: #1a1c23;
+    font-weight: 500;
+    padding: 0.22rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.sensor-info-inline-edit {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Expand / collapse reading boundaries */
+.sensor-card-expand-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.55rem 1.1rem;
+    background: none;
+    border: none;
+    border-top: 1px solid #f0f2f5;
+    cursor: pointer;
+    font-size: 0.81rem;
+    font-weight: 600;
+    color: #4e73df;
+    transition: background-color 0.15s;
+    text-align: left;
+}
+
+.sensor-card-expand-btn:hover {
+    background-color: #f0f4ff;
+}
+
+/* Reading types section inside card */
+.reading-types-section {
+    padding: 0.85rem 1.1rem 1.1rem;
+    border-top: 1px solid #f0f2f5;
+    background: #fafbfc;
+}
+
+.reading-types-title {
+    font-size: 0.71rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    margin: 0 0 0.7rem;
+}
+
+/* Modern reading types table */
+.reading-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.reading-table th {
+    font-size: 0.71rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    padding: 0.35rem 0.65rem;
+    border-bottom: 1.5px solid #e9ecef;
+    background: transparent;
+    text-align: left;
+    border-top: none;
+}
+
+.reading-table td {
+    padding: 0.45rem 0.65rem;
+    border-bottom: 1px solid #f0f2f5;
+    color: #1a1c23;
+    vertical-align: middle;
+    border-top: none;
+}
+
+.reading-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.reading-table tbody tr:hover td {
+    background-color: #f9fafb;
+}
+
+.reading-table td .form-inline-span {
+    padding-bottom: 0;
+    width: auto;
+}
+
+/* Card view toggle icon */
+.sensor-card-view-icon {
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.15s;
+}
+
+.sensor-card-view-icon.has-card { color: #1cc88a; }
+.sensor-card-view-icon.no-card  { color: #e74a3b; }
+
+.sensor-card-view-icon:hover {
+    transform: scale(1.2);
+}
+
+@media (max-width: 600px) {
+    .sensor-list {
+        grid-template-columns: 1fr;
+    }
+    .sensor-info-grid {
+        grid-template-columns: auto 1fr;
+    }
+}
+
+/* ── Device View Card ─────────────────────────────────────────────── */
+.device-view-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    max-width: 620px;
+}
+
+.device-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: #fafbfc;
+    border-bottom: 1px solid #f0f2f5;
+    gap: 0.75rem;
+}
+
+.device-card-name-area {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.device-card-icon {
+    font-size: 1.1rem;
+    color: #4e73df;
+    flex-shrink: 0;
+}
+
+.device-card-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a1c23;
+    letter-spacing: -0.01em;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.device-card-name.hover {
+    cursor: pointer;
+}
+
+.device-card-name.hover:hover {
+    color: #4e73df;
+}
+
+.device-card-actions {
+    flex-shrink: 0;
+}
+
+.device-card-body {
+    padding: 1.1rem 1.25rem;
+}
+
+/* key-value grid — matches sensor-info-grid style */
+.device-info-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.55rem 1.25rem;
+    font-size: 0.88rem;
+    align-items: center;
+}
+
+.device-info-label {
+    font-size: 0.71rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    white-space: nowrap;
+    padding: 0.2rem 0;
+}
+
+.device-info-value {
+    color: #1a1c23;
+    font-weight: 500;
+    padding: 0.2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.device-info-editable {
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 0.1rem 0.3rem;
+    transition: background 0.15s;
+}
+
+.device-info-editable:hover {
+    background: #eef0f8;
+    color: #4e73df;
+}
+
+/* Monospace badge for the numeric device ID */
+.device-id-badge {
+    display: inline-flex;
+    align-items: center;
+    background: #f0f2f5;
+    color: #3d4459;
+    border-radius: 6px;
+    font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    letter-spacing: 0.03em;
+}
+
+/* Fixed-width IP address display */
+.device-ip {
+    font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    font-size: 0.84rem;
+    color: #495057;
+}
+
+.device-name-inline-input {
+    flex: 1;
+}

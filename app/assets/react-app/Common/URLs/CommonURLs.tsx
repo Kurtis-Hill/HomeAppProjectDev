@@ -4,7 +4,7 @@ export const apiURL = '/HomeApp/api/user/'
 
 export const baseApiURL = '/HomeApp/api/'
 
-export const registerAccountUrl = `${webappURL}register`;
+export const registerAccountUrl = `/HomeApp${webappURL}register`;
 
 export const indexUrl = `${webappURL}index`;
 

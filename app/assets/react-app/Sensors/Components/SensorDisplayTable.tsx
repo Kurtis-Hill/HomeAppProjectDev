@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { useState, useRef } from 'react';
 
-import { GeneralTable } from '../../Common/Components/Table/General/GeneralTable';
-import { GeneralTableHeaders } from '../../Common/Components/Table/General/GeneralTableHeaders';
-import { GeneralTableBody } from '../../Common/Components/Table/General/GeneralTableBody';
-import { GeneralTableRow } from '../../Common/Components/Table/General/GeneralTableRow';
 import SensorResponseInterface from '../Response/Sensor/SensorResponseInterface';
 import { FormInlineInput } from '../../Common/Components/Inputs/FormInlineUpdate';
 import { SensorPatchRequestInputInterface } from '../Response/Sensor/SensorPatchRequestInputInterface';
 import { DeleteSensorModal } from './DeleteSensor/DeleteSensorModal';
 import { updateSensorRequest } from '../Request/Sensor/UpdateSensorRequest';
-import { AnnouncementFlashModal } from '../../Common/Components/Modals/AnnouncementFlashModal';
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
 import BaseModal from '../../Common/Components/Modals/BaseModal';
@@ -18,6 +13,7 @@ import CloseButton from '../../Common/Components/Buttons/CloseButton';
 import CardViewResponseInterface from '../../UserInterface/Response/Cards/CardView/CardViewResponseInterface';
 import { AddNewCardTypeInterface, addNewCardRequest } from '../../UserInterface/Request/Cards/Card/AddNewCardRequest';
 import { UpdateCard } from '../../UserInterface/Components/Form/UpdateCard';
+import { getSensorTypeColour } from '../Enum/SensorTypeColours';
 
 const defaultFormActiveState = {
     sensorName: false,
@@ -29,82 +25,33 @@ const defaultFormActiveState = {
     readingInterval: false,
 };
 
-export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refreshData?: () => void,}) {
+export function SensorDisplayTable(props: { sensor: SensorResponseInterface; refreshData?: () => void }) {
     const { sensor, refreshData } = props;
 
-    const [activeFormForUpdating, setActiveFormForUpdating] = useState({
-        defaultFormActiveState,
-    });
+    const [activeFormForUpdating, setActiveFormForUpdating] = useState({ ...defaultFormActiveState });
 
-    const originalSensorData = useRef<SensorResponseInterface>({
-        sensorName: sensor.sensorName,
-        pinNumber: sensor.pinNumber,
-        sensorType: sensor.sensorType,
-        device: sensor.device,
-        createdBy: sensor.createdBy,
-        readingInterval: sensor.readingInterval,
-        canDelete: sensor.canDelete,
-        canEdit: sensor.canEdit,
-        cardView: sensor.cardView,
-        sensorID: sensor.sensorID,
-        sensorReadingTypes: sensor.sensorReadingTypes,
-    });
+    const originalSensorData = useRef<SensorResponseInterface>({ ...sensor });
 
-    const [sensorUpdateFormInputs, setSensorUpdateFormInputs] = useState<SensorResponseInterface>({
-        sensorName: sensor.sensorName,
-        pinNumber: sensor.pinNumber,
-        sensorType: sensor.sensorType,
-        device: sensor.device,
-        createdBy: sensor.createdBy,
-        readingInterval: sensor.readingInterval,
-        canDelete: sensor.canDelete,
-        canEdit: sensor.canEdit,
-        cardView: sensor.cardView,
-        sensorID: sensor.sensorID,
-        sensorReadingTypes: sensor.sensorReadingTypes,
-    });
+    const [sensorUpdateFormInputs, setSensorUpdateFormInputs] = useState<SensorResponseInterface>({ ...sensor });
 
-    const [updateCardView, setUpdateCardView] = useState<CardViewResponseInterface|null>(null);
-
+    const [updateCardView, setUpdateCardView] = useState<CardViewResponseInterface | null>(null);
     const [showUpdateCardModal, setShowUpdateCardModal] = useState<boolean>(false);
-
     const [createCardLoading, setCreateCardLoading] = useState<boolean>(false);
+    const [announcementModals, setAnnouncementModals] = useState<JSX.Element[]>([]);
 
-    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
-
-    const toggleFormInput = (event: Event) => {
-        const name = (event.target as HTMLElement|HTMLInputElement).dataset.name !== undefined
-            ? (event.target as HTMLElement|HTMLInputElement).dataset.name
-            : (event.target as HTMLInputElement).name;
-
-        setActiveFormForUpdating({
-            ...activeFormForUpdating,
-            [name]: !activeFormForUpdating[name],
-        });
-
-        setSensorUpdateFormInputs({
-            ...sensorUpdateFormInputs,
-            [name]: originalSensorData.current[name],
-        });
-    }
+    const toggleFormInput = (name: string) => {
+        setActiveFormForUpdating(prev => ({ ...prev, [name]: !prev[name] }));
+        setSensorUpdateFormInputs(prev => ({ ...prev, [name]: originalSensorData.current[name] }));
+    };
 
     const handleUpdateSensorInput = (event: Event) => {
         const name = (event.target as HTMLInputElement).name;
         const value = (event.target as HTMLInputElement).value;
+        setSensorUpdateFormInputs(prev => ({ ...prev, [name]: value }));
+    };
 
-        setSensorUpdateFormInputs({
-            ...sensorUpdateFormInputs,
-            [name]: value,
-        });
-    }
-
-
-    const sendUpdateSensorRequest = async (event: Event) => {
-        const name = (event.target as HTMLElement).dataset.name;
-        const value = (event.target as HTMLElement).dataset.value;
-
+    const sendUpdateSensorRequest = async (name: string) => {
         let dataToSend: SensorPatchRequestInputInterface = {};
-
         switch (name) {
             case 'sensorName':
                 dataToSend.sensorName = sensorUpdateFormInputs.sensorName;
@@ -113,185 +60,188 @@ export function SensorDisplayTable(props: {sensor: SensorResponseInterface, refr
                 dataToSend.deviceName = sensorUpdateFormInputs.device.deviceName;
                 break;
             case 'pinNumber':
-                dataToSend.pinNumber = parseInt(sensorUpdateFormInputs.pinNumber);
+                dataToSend.pinNumber = parseInt(String(sensorUpdateFormInputs.pinNumber));
                 break;
             case 'readingInterval':
-                dataToSend.readingInterval = parseInt(sensorUpdateFormInputs.readingInterval);
+                dataToSend.readingInterval = parseInt(String(sensorUpdateFormInputs.readingInterval));
                 break;
         }
 
         const updatedSensorResponse = await updateSensorRequest(sensor.sensorID, dataToSend);
-
         if (updatedSensorResponse.status === 200 || updatedSensorResponse.status === 202) {
             const updatedSensor: SensorResponseInterface = updatedSensorResponse.data.payload;
-
-            setSensorUpdateFormInputs({
-                ...sensorUpdateFormInputs,
-                [name]: updatedSensor[name],
-            });
-
-            originalSensorData.current = {
-                ...originalSensorData.current,
-                [name]: updatedSensor[name],
-            };
-
-            setActiveFormForUpdating(defaultFormActiveState);
+            setSensorUpdateFormInputs(prev => ({ ...prev, [name]: updatedSensor[name] }));
+            originalSensorData.current = { ...originalSensorData.current, [name]: updatedSensor[name] };
+            setActiveFormForUpdating({ ...defaultFormActiveState });
         } else {
             showAnnouncementFlash(['Unexpected Response'], 'Error Updating Sensor');
-        }    
-    }
+        }
+    };
 
-    const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
+    const showAnnouncementFlash = (message: string[], title: string, timer?: number | null) => {
         setAnnouncementModals([
             <AnnouncementFlashModalBuilder
                 setAnnouncementModals={setAnnouncementModals}
                 title={title}
                 dataToList={message}
-                timer={timer ? timer : 40}
-            />
-        ])
-    }
+                timer={timer ?? 40}
+            />,
+        ]);
+    };
 
     const canEdit: boolean = sensor.canEdit ?? false;
     const canDelete: boolean = sensor.canDelete ?? false;
     const cardView: CardViewResponseInterface = sensor.cardView;
-    
-    const handleCardViewModal = async (cardView: CardViewResponseInterface|null) => {
+
+    const handleCardViewModal = async (cardView: CardViewResponseInterface | null) => {
         if (cardView === null) {
             setCreateCardLoading(true);
-            const addNewCardData: AddNewCardTypeInterface = {
-                sensorID: sensor.sensorID,
-            };
-
-            const addNewCardResponse = await addNewCardRequest(addNewCardData);
-
-            if (addNewCardResponse.status === 200) {
-                setCreateCardLoading(false);
-                if (refreshData !== undefined) {
-                    refreshData();
-                }
-            } else {
-                setCreateCardLoading(false);
-            }
+            const addNewCardResponse = await addNewCardRequest({ sensorID: sensor.sensorID } as AddNewCardTypeInterface);
+            setCreateCardLoading(false);
+            if (addNewCardResponse.status === 200 && refreshData) refreshData();
         } else {
             setUpdateCardView(cardView);
             setShowUpdateCardModal(true);
         }
-    }
+    };
 
     return (
         <>
-            {
-                showUpdateCardModal === true
-                    ? 
-                        <BaseModal modalShow={showUpdateCardModal} title='User Card Update' setShowModal={setShowUpdateCardModal}>
-                            <UpdateCard cardViewID={updateCardView.cardViewID} />
-                            <CloseButton 
-                                close={setShowUpdateCardModal} 
-                                classes={"modal-cancel-button"} 
+            {announcementModals.map((modal, i) => <React.Fragment key={i}>{modal}</React.Fragment>)}
+
+            {showUpdateCardModal && (
+                <BaseModal modalShow={showUpdateCardModal} title="User Card Update" setShowModal={setShowUpdateCardModal}>
+                    <UpdateCard cardViewID={updateCardView.cardViewID} />
+                    <CloseButton close={setShowUpdateCardModal} classes="modal-cancel-button" />
+                </BaseModal>
+            )}
+
+            {/* Card header — editable sensor name + delete */}
+            <div className="sensor-card-header">
+                <div className="sensor-card-name-edit">
+                    {activeFormForUpdating.sensorName && canEdit ? (
+                        <FormInlineInput
+                            changeEvent={handleUpdateSensorInput}
+                            nameParam="sensorName"
+                            value={sensorUpdateFormInputs.sensorName}
+                            dataName="sensorName"
+                            acceptClickEvent={() => sendUpdateSensorRequest('sensorName')}
+                            declineClickEvent={() => toggleFormInput('sensorName')}
+                            extraClasses="center-text"
+                        />
+                    ) : (
+                        <h5
+                            className={`sensor-card-name${canEdit ? ' hover' : ''}`}
+                            onClick={() => canEdit && toggleFormInput('sensorName')}
+                            title={canEdit ? 'Click to edit name' : undefined}
+                        >
+                            {originalSensorData.current.sensorName}
+                        </h5>
+                    )}
+                </div>
+                <div className="sensor-card-actions">
+                    {canDelete && (
+                        <DeleteSensorModal
+                            sensorID={sensor.sensorID}
+                            sensorName={sensor.sensorName}
+                            refreshData={refreshData}
+                        />
+                    )}
+                </div>
+            </div>
+
+            {/* Card body — info grid */}
+            <div className="sensor-card-body">
+                <div className="sensor-info-grid">
+
+                    {/* Pin Number */}
+                    <span className="sensor-info-label">Pin</span>
+                    <span className="sensor-info-value">
+                        {activeFormForUpdating.pinNumber && canEdit ? (
+                            <FormInlineInput
+                                changeEvent={handleUpdateSensorInput}
+                                nameParam="pinNumber"
+                                value={sensorUpdateFormInputs.pinNumber}
+                                dataName="pinNumber"
+                                acceptClickEvent={() => sendUpdateSensorRequest('pinNumber')}
+                                declineClickEvent={() => toggleFormInput('pinNumber')}
+                                extraClasses="center-text"
                             />
-                        </BaseModal>
-                    : null
-            }
-            {
-                announcementModals.map((announcementModal: typeof AnnouncementFlashModal, index: number) => {
-                    return (
-                        <React.Fragment key={index}>
-                            { announcementModal }
-                        </React.Fragment>
-                    );
-                })
-            }
-            <GeneralTable>
-                <GeneralTableHeaders
-                    headers={[
-                        'Sensor Name',
-                        'Pin Number',
-                        'Reading Interval (ms)',
-                        'Sensor Type',
-                        'Created By',
-                        'User Card',
-                        canDelete === true ? 'Delete' : '',
-                    ]}
-                />
-                <GeneralTableBody>
-                    <GeneralTableRow>
-                        {
-                            activeFormForUpdating.sensorName === true && canEdit === true
-                                ?
-                                    <FormInlineInput
-                                        changeEvent={handleUpdateSensorInput}
-                                        nameParam='sensorName'
-                                        value={sensorUpdateFormInputs.sensorName}
-                                        dataName='sensorName'
-                                        acceptClickEvent={(e: Event) => sendUpdateSensorRequest(e)}
-                                        declineClickEvent={(e: Event) => toggleFormInput(e)}
-                                        extraClasses='center-text'
-                                    />
+                        ) : (
+                            <span
+                                className={canEdit ? 'hover' : ''}
+                                onClick={() => canEdit && toggleFormInput('pinNumber')}
+                                title={canEdit ? 'Click to edit' : undefined}
+                            >
+                                {originalSensorData.current.sensorReadingTypes?.analog !== undefined ? 'A' : ''}
+                                {originalSensorData.current.pinNumber}
+                            </span>
+                        )}
+                    </span>
 
-                                :
-                                    <span className={`${canEdit === true ? 'hover' : ''}`} data-name="sensorName" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.sensorName}</span>
-                            }
-                    </GeneralTableRow>
-                    <GeneralTableRow>
-                        {
-                            activeFormForUpdating.pinNumber === true && canEdit === true
-                                ?
-                                    <FormInlineInput
-                                        changeEvent={handleUpdateSensorInput}
-                                        nameParam='pinNumber'
-                                        value={sensorUpdateFormInputs.pinNumber}
-                                        dataName='pinNumber'
-                                        acceptClickEvent={(e: Event) => sendUpdateSensorRequest(e)}
-                                        declineClickEvent={(e: Event) => toggleFormInput(e)}
-                                        extraClasses='center-text'
-                                    />
-                                :
-                                    <span className={`${canEdit === true ? 'hover' : ''}`} data-name="pinNumber" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.sensorReadingTypes.analog !== undefined  ? 'A' : '' }{originalSensorData.current.pinNumber}</span>
-                        }
-                    </GeneralTableRow>
-                    <GeneralTableRow>
-                        {
-                            activeFormForUpdating.readingInterval === true && canEdit === true
-                                ?
-                                    <FormInlineInput
-                                            changeEvent={handleUpdateSensorInput}
-                                            nameParam='readingInterval'
-                                            value={sensorUpdateFormInputs.readingInterval}
-                                            dataName='readingInterval'
-                                            acceptClickEvent={(e: Event) => sendUpdateSensorRequest(e)}
-                                            declineClickEvent={(e: Event) => toggleFormInput(e)}
-                                            extraClasses='center-text'
-                                        />
-                                    :
-                                        <span className={`${canEdit === true ? 'hover' : ''}`} data-name="readingInterval" onClick={(e: Event) => toggleFormInput(e)}>{originalSensorData.current.readingInterval}</span>
-                        }
-                    </GeneralTableRow>
-                    <GeneralTableRow>
-                        <span>{sensor?.sensorType?.sensorTypeName}</span>
-                    </GeneralTableRow>
-                    <GeneralTableRow>
-                        <span>{sensor?.createdBy?.email}</span>
-                    </GeneralTableRow>
-                    <GeneralTableRow>
-                        { createCardLoading === false ? <i onClick={() => handleCardViewModal(cardView)} className={`fas fa-${cardView ? 'check' : 'times'} hover`}></i> : <DotCircleSpinner classes='center-spinner-absolute' spinnerSize={2} />}
-                    </GeneralTableRow>
-                    {
-                        canDelete === true
-                            ?
-                                <GeneralTableRow>
-                                    <DeleteSensorModal
-                                        sensorID={sensor.sensorID}
-                                        sensorName={sensor.sensorName}
-                                        refreshData={refreshData}
-                                    />
-                                </GeneralTableRow>
-                            :
-                            null
-                    }
+                    {/* Reading Interval */}
+                    <span className="sensor-info-label">Interval</span>
+                    <span className="sensor-info-value">
+                        {activeFormForUpdating.readingInterval && canEdit ? (
+                            <FormInlineInput
+                                changeEvent={handleUpdateSensorInput}
+                                nameParam="readingInterval"
+                                value={sensorUpdateFormInputs.readingInterval}
+                                dataName="readingInterval"
+                                acceptClickEvent={() => sendUpdateSensorRequest('readingInterval')}
+                                declineClickEvent={() => toggleFormInput('readingInterval')}
+                                extraClasses="center-text"
+                            />
+                        ) : (
+                            <span
+                                className={canEdit ? 'hover' : ''}
+                                onClick={() => canEdit && toggleFormInput('readingInterval')}
+                                title={canEdit ? 'Click to edit' : undefined}
+                            >
+                                {originalSensorData.current.readingInterval} ms
+                            </span>
+                        )}
+                    </span>
 
-                </GeneralTableBody>
-            </GeneralTable>
+                    {/* Sensor Type */}
+                    <span className="sensor-info-label">Type</span>
+                    <span className="sensor-info-value">
+                        {sensor?.sensorType?.sensorTypeName
+                            ? (() => {
+                                const typeName = sensor.sensorType.sensorTypeName;
+                                const colour   = getSensorTypeColour(typeName);
+                                return (
+                                    <span
+                                        className="badge badge-pill"
+                                        style={{ background: colour, color: '#fff', fontSize: '0.7rem', letterSpacing: '0.04em' }}
+                                    >
+                                        {typeName}
+                                    </span>
+                                );
+                              })()
+                            : '—'}
+                    </span>
+
+                    {/* Created By */}
+                    <span className="sensor-info-label">Created by</span>
+                    <span className="sensor-info-value">{sensor?.createdBy?.email ?? '—'}</span>
+
+                    {/* Card View */}
+                    <span className="sensor-info-label">Dashboard card</span>
+                    <span className="sensor-info-value">
+                        {createCardLoading ? (
+                            <DotCircleSpinner spinnerSize={1} />
+                        ) : (
+                            <i
+                                className={`fas fa-${cardView ? 'check-circle' : 'times-circle'} sensor-card-view-icon ${cardView ? 'has-card' : 'no-card'}`}
+                                onClick={() => handleCardViewModal(cardView)}
+                                title={cardView ? 'Update dashboard card' : 'Add to dashboard'}
+                            />
+                        )}
+                    </span>
+
+                </div>
+            </div>
         </>
     );
 }

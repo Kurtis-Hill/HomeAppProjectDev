@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-import { CardReadingViewHandler,  } from './Readings/CardReadingViewHandler';
+import { CardReadingViewHandler } from './Readings/CardReadingViewHandler';
 import { sensorType, readingType } from '../../Sensors/SensorLanguage'
 
 import CardFilterBarView, { CardFilterBarType } from './Filterbars/CardFilterBarView';
@@ -13,17 +13,14 @@ export function CardRowContainer(props: {
     horizontal?: boolean; 
     classes?: string; 
 }) {
-    const { filterParams, route, horizontal, classes } = props;
+    const { filterParams, route } = props;
 
-    const [cardRefreshTimer, setCardRefreshTimer] = useState<number>(4000)
-
+    const [cardRefreshTimer, setCardRefreshTimer] = useState<number>(4000);
     const [sensorFilterParams, setSensorFilterParams] = useState<CardFilterBarType>(filterParams ?? {readingTypes: [], sensorTypes: []});
-
     const [selectedCardForQuickUpdate, setSelectedCardForQuickUpdate] = useState<number|null>(null);
-
     const [loadingCardModalView, setLoadingCardModalView] = useState<boolean>(false);
-
     const [cardFilterSettingsForceReset, setCardFilterSettingsForceReset] = useState<boolean>(false);
+    const [cardsCount, setCardsCount] = useState<number>(0);
 
     const forceResetCardFilterSettings = (setting: boolean): void => {
         if (setting === true) {
@@ -34,7 +31,6 @@ export function CardRowContainer(props: {
 
     const addSensorFilterParamsForRequest = (filterParam: {type: string, value: string}): void => {
         const filterParamType = filterParam.type;
-        
         if (filterParamType === readingType) {
             setSensorFilterParams({...sensorFilterParams, readingTypes: [...sensorFilterParams.readingTypes, filterParam.value]});
         }
@@ -49,9 +45,7 @@ export function CardRowContainer(props: {
             if (Array.isArray(readingTypes) && readingTypes.includes(filterParam.value, sensorFilterParams)) {
                 setSensorFilterParams({
                     ...sensorFilterParams, 
-                    readingTypes: readingTypes.filter((readingType: string) => {
-                        return readingType !== filterParam.value
-                    })
+                    readingTypes: readingTypes.filter((rt: string) => rt !== filterParam.value)
                 });
             }
         }
@@ -60,58 +54,55 @@ export function CardRowContainer(props: {
             if (Array.isArray(sensorTypes) && sensorTypes.includes(filterParam.value, sensorFilterParams)) {
                 setSensorFilterParams({
                     ...sensorFilterParams, 
-                    sensorTypes: sensorTypes.filter((sensorType: string) => {
-                        return sensorType !== filterParam.value
-                    })
+                    sensorTypes: sensorTypes.filter((st: string) => st !== filterParam.value)
                 });
             }
         }
     };
 
+    const refreshSeconds = cardRefreshTimer / 1000;
+
     return (
         <>
-            <
-                CardFilterBarView
-                    filterParams={sensorFilterParams}
-                    addFilterParams={addSensorFilterParamsForRequest}
-                    removeFilterParams={removeSensorFilterParamsForRequest}
-                    setCardRefreshTimer={setCardRefreshTimer}
-                    cardRefreshTimer={cardRefreshTimer}
-                    setCardFilterSettingsForceReset={forceResetCardFilterSettings}
+            <CardFilterBarView
+                filterParams={sensorFilterParams}
+                addFilterParams={addSensorFilterParamsForRequest}
+                removeFilterParams={removeSensorFilterParamsForRequest}
+                setCardRefreshTimer={setCardRefreshTimer}
+                cardRefreshTimer={cardRefreshTimer}
+                setCardFilterSettingsForceReset={forceResetCardFilterSettings}
             />
 
-            {
-                horizontal === true
-                    ? <div className={classes ?? 'col-xl-12 col-md-12 mb-12'}>
-                        <CardReadingViewHandler 
-                            route={route}
-                            filterParams={sensorFilterParams} 
-                            cardRefreshTimer={cardRefreshTimer}
-                            setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate} 
-                            loadingCardModalView={loadingCardModalView}
-                            setLoadingCardModalView={setLoadingCardModalView}
-                        />
-                    </div>  
-                    :   <CardReadingViewHandler 
-                            route={route}
-                            filterParams={sensorFilterParams} 
-                            cardRefreshTimer={cardRefreshTimer}
-                            setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate} 
-                            loadingCardModalView={loadingCardModalView}
-                            setLoadingCardModalView={setLoadingCardModalView}
-                        />
-            }
-            {
-                loadingCardModalView === true
-                    ?
-                        <UpdateCardDisplayModal
-                            cardViewID={selectedCardForQuickUpdate}
-                            loadingCardModalView={loadingCardModalView}
-                            setLoadingCardModalView={setLoadingCardModalView}
-                        />
-                    :
-                        null
-            }
+            {/* Status bar */}
+            <div className="d-flex align-items-center justify-content-between mb-3">
+                <small className="text-muted">
+                    <i className="fas fa-th-large mr-1" />
+                    {cardsCount > 0
+                        ? <><strong>{cardsCount}</strong> sensor card{cardsCount !== 1 ? 's' : ''} loaded</>
+                        : 'Loading cards…'}
+                </small>
+                <small className="text-muted">
+                    <i className="fas fa-sync-alt mr-1" />Refresh every <strong>{refreshSeconds}s</strong>
+                </small>
+            </div>
+
+            <CardReadingViewHandler
+                route={route}
+                filterParams={sensorFilterParams}
+                cardRefreshTimer={cardRefreshTimer}
+                setSelectedCardForQuickUpdate={setSelectedCardForQuickUpdate}
+                loadingCardModalView={loadingCardModalView}
+                setLoadingCardModalView={setLoadingCardModalView}
+                onCountChange={setCardsCount}
+            />
+
+            {loadingCardModalView === true && (
+                <UpdateCardDisplayModal
+                    cardViewID={selectedCardForQuickUpdate}
+                    loadingCardModalView={loadingCardModalView}
+                    setLoadingCardModalView={setLoadingCardModalView}
+                />
+            )}
         </>
     );
 }

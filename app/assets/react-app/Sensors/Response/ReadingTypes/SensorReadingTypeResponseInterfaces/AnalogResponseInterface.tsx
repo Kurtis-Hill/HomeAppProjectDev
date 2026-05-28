@@ -9,6 +9,7 @@ export default interface AnalogResponseInterface {
     highReading: number,
     lowReading: number,
     constRecord: boolean,
+    outOfBoundsAlertTimer: number,
     updatedAt: string,
     sensorType: string,
     readingType: ReadingTypesEnum.analog,

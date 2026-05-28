@@ -115,6 +115,9 @@ class UpdateSensorBoundaryReadingsHandler implements UpdateSensorBoundaryReading
         if ($updateSensorBoundaryReadingsDTO->getNewConstRecord() !== null) {
             $standardReadingSensor->setConstRecord($updateSensorBoundaryReadingsDTO->getNewConstRecord());
         }
+        if ($updateSensorBoundaryReadingsDTO->getOutOfBoundsAlertTimer() !== null) {
+            $standardReadingSensor->setOutOfBoundsAlertTimer($updateSensorBoundaryReadingsDTO->getOutOfBoundsAlertTimer());
+        }
     }
 
     private function updateBoolSensorBoundaryReading(

@@ -29,6 +29,7 @@ class HumidityResponseDTOBuilder implements SensorResponseDTOBuilderInterface
             $readingTypeObject->getLowReading(),
             $readingTypeObject->getConstRecord(),
             $readingTypeObject->getUpdatedAt()->format('d/m/y H:i:s'),
+            $readingTypeObject->getOutOfBoundsAlertTimer(),
         );
     }
 }

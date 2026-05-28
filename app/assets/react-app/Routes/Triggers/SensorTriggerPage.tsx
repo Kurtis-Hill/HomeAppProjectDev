@@ -1,0 +1,165 @@
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, NavigateFunction, useNavigate } from 'react-router-dom';
+import { SensorTriggerResponseInterface } from '../../Sensors/Response/Sensor/Trigger/SensorTriggerResponseInterface';
+import { getAllSensorTriggerTypesRequest } from '../../Sensors/Request/Trigger/GetAllTriggersRequest';
+import { addNewTriggerForm, AddNewTriggerType } from '../../Sensors/Request/Trigger/AddNewTriggerRequest';
+import { deleteTriggerRequest } from '../../Sensors/Request/Trigger/DeleteTriggerRequest';
+import BaseModal from '../../Common/Components/Modals/BaseModal';
+import SubmitButton from '../../Common/Components/Buttons/SubmitButton';
+import CloseButton from '../../Common/Components/Buttons/CloseButton';
+import TriggerCard from '../../Sensors/Components/Trigger/TriggerCard';
+import DotCircleSpinner from '../../Common/Components/Spinners/DotCircleSpinner';
+import TriggerForm from '../../Sensors/Components/Trigger/TriggerForm';
+import UpdateTriggerView from '../../Sensors/Components/Trigger/UpdateTriggerView';
+import { indexUrl } from '../../Common/URLs/CommonURLs';
+
+export default function SensorTriggerPage() {
+    const params = useParams<{ sensorID: string }>();
+    const sensorID = params.sensorID ? parseInt(params.sensorID) : null;
+    const navigate: NavigateFunction = useNavigate();
+
+    const [triggerData, setTriggerData] = useState<SensorTriggerResponseInterface[]>([]);
+    const [loadingTriggerData, setLoadingTriggerData] = useState<boolean>(true);
+
+    const [addNewModal, setAddNewModal] = useState<boolean>(false);
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+    const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
+    const [updateTriggerID, setUpdateTriggerID] = useState<number|null>(null);
+    const [selectedTriggerID, setSelectedTriggerID] = useState<number|null>(null);
+
+    const fetchTriggerData = async () => {
+        if (sensorID === null) {
+            navigate(indexUrl);
+            return;
+        }
+        setLoadingTriggerData(true);
+        try {
+            const response = await getAllSensorTriggerTypesRequest(sensorID);
+            if (response.status === 200) {
+                setTriggerData(Array.isArray(response.data.payload) ? response.data.payload : []);
+            }
+        } catch {
+            // handle silently
+        }
+        setLoadingTriggerData(false);
+    };
+
+    useEffect(() => {
+        fetchTriggerData();
+    }, [sensorID]);
+
+    const handleShowDeleteModal = (triggerID: number|null) => {
+        setShowUpdateModal(false);
+        if (triggerID === null) {
+            setShowDeleteModal(false);
+        } else {
+            setSelectedTriggerID(triggerID);
+            setShowDeleteModal(true);
+        }
+    };
+
+    const deleteTrigger = async () => {
+        const response = await deleteTriggerRequest(selectedTriggerID);
+        if (response.status === 200) {
+            setShowDeleteModal(false);
+            await fetchTriggerData();
+        }
+    };
+
+    const handleSendNewTriggerRequest = async (e: Event, triggerRequest: AddNewTriggerType) => {
+        const response = await addNewTriggerForm(triggerRequest);
+        if (response.status === 200) {
+            setAddNewModal(false);
+            fetchTriggerData();
+        }
+    };
+
+    return (
+        <>
+            <div id="content-wrapper" className="d-flex flex-column">
+                <div id="content">
+                    <div className="container-fluid">
+                        <h1>Triggers for Sensor #{sensorID}</h1>
+                        {
+                            loadingTriggerData
+                                ? <DotCircleSpinner spinnerSize={5} classes="center-spinner-card-row hidden-scroll" />
+                                : triggerData.length > 0
+                                    ? triggerData.map((sensorTriggerData: SensorTriggerResponseInterface, index: number) => (
+                                        <React.Fragment key={index}>
+                                            <div>
+                                                <TriggerCard
+                                                    sensorTriggerData={sensorTriggerData}
+                                                    handleShowDeleteModal={handleShowDeleteModal}
+                                                    setTriggerToUpdate={setUpdateTriggerID}
+                                                    setShowUpdateModal={setShowUpdateModal}
+                                                    showUpdateModal={showUpdateModal}
+                                                    id={sensorTriggerData.sensorTriggerID}
+                                                />
+                                            </div>
+                                        </React.Fragment>
+                                    ))
+                                    : <h2>No triggers found for this sensor</h2>
+                        }
+
+                        {addNewModal && (
+                            <BaseModal
+                                title={'Add New Trigger'}
+                                modalShow={addNewModal}
+                                setShowModal={setAddNewModal}
+                                heightClasses="standard-modal-height"
+                            >
+                                <TriggerForm
+                                    closeForm={setAddNewModal}
+                                    presets={null}
+                                    handleTriggerRequest={handleSendNewTriggerRequest}
+                                    operation='Add'
+                                />
+                            </BaseModal>
+                        )}
+
+                        {showDeleteModal && (
+                            <BaseModal
+                                title={`Delete Trigger`}
+                                modalShow={showDeleteModal}
+                                setShowModal={setShowDeleteModal}
+                            >
+                                <>
+                                    Delete trigger ID: <b>{selectedTriggerID}</b>?
+                                    <br />
+                                    <SubmitButton
+                                        type="submit"
+                                        text='Delete Trigger'
+                                        name='delete-trigger'
+                                        action='submit'
+                                        classes='add-new-submit-button'
+                                        onClickFunction={deleteTrigger}
+                                    />
+                                    <CloseButton
+                                        close={setShowDeleteModal}
+                                        classes={"modal-cancel-button"}
+                                    />
+                                </>
+                            </BaseModal>
+                        )}
+
+                        {showUpdateModal && (
+                            <BaseModal
+                                title={`Update Trigger`}
+                                modalShow={showUpdateModal}
+                                setShowModal={setShowUpdateModal}
+                                heightClasses="standard-modal-height"
+                            >
+                                <UpdateTriggerView
+                                    setShowUpdateModal={setShowUpdateModal}
+                                    triggerID={updateTriggerID}
+                                    resetData={fetchTriggerData}
+                                />
+                            </BaseModal>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}

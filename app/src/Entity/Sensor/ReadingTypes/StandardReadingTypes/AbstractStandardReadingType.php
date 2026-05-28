@@ -65,6 +65,19 @@ abstract class AbstractStandardReadingType implements BaseReadingTypeInterface, 
     #[ORM\Column(name: 'lowReading', type: "float", precision: 10, scale: 0, nullable: false)]
     protected float $lowReading = 0;
 
+    #[ORM\Column(name: 'outOfBoundsAlertTimer', type: "integer", nullable: false, options: ["default" => 3600])]
+    private int $outOfBoundsAlertTimer = 3600;
+
+    public function getOutOfBoundsAlertTimer(): int
+    {
+        return $this->outOfBoundsAlertTimer;
+    }
+
+    public function setOutOfBoundsAlertTimer(int $outOfBoundsAlertTimer): void
+    {
+        $this->outOfBoundsAlertTimer = $outOfBoundsAlertTimer;
+    }
+
     public function getBaseReadingType(): BaseSensorReadingType
     {
         return $this->baseReadingType;

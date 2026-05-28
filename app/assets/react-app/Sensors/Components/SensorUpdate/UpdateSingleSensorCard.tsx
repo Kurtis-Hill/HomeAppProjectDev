@@ -4,49 +4,32 @@ import SensorResponseInterface from '../../Response/Sensor/SensorResponseInterfa
 import { SensorDisplayTable } from '../SensorDisplayTable';
 import { ReadingTypeDisplayTable } from '../ReadingTypes/ReadingTypeDisplayTable';
 
-export function UpdateSingleSensorCard(props: {sensor: SensorResponseInterface, refreshData?: () => void,}) {
+export function UpdateSingleSensorCard(props: { sensor: SensorResponseInterface; refreshData?: () => void }) {
     const { sensor, refreshData } = props;
-
-    const [activeFormForUpdating, setActiveFormForUpdating] = useState({
-        sensorName: false,
-        sensorType: false,
-        device: false,
-        createdBy: false,
-        expandSensor: false,
-    });
-
-    const toggleDisplay = (event: Event) => {
-        const name = (event.target as HTMLElement|HTMLInputElement).dataset.name !== undefined
-            ? (event.target as HTMLElement|HTMLInputElement).dataset.name
-            : (event.target as HTMLInputElement).name;
-
-        setActiveFormForUpdating({
-            ...activeFormForUpdating,
-            [name]: !activeFormForUpdating[name],
-        });
-    }
+    const [expanded, setExpanded] = useState<boolean>(false);
 
     return (
-        <>
-            <div className="container" style={{ paddingBottom: "5%" }}>
-                <div className="card" style={{ margin: "inherit", border: 'solid' }}>
-                    <div className="card-body"> 
-                        <SensorDisplayTable sensor={sensor} refreshData={refreshData} />
-                            <div style={{paddingTop: "3%"}}>
-                                {
-                                    activeFormForUpdating.expandSensor === true
-                                        ?
-                                            <>  
-                                                <ReadingTypeDisplayTable sensorReadingTypes={sensor.sensorReadingTypes} canEdit={sensor.canEdit} refreshData={refreshData} />
-                                            </>
-                                        : 
-                                            null
-                                }
-                            </div>
-                        <i onClick={(e: Event) => {toggleDisplay(e)}} data-name="expandSensor" className={`fas fa-${activeFormForUpdating.expandSensor === true ? 'minus' : 'plus' } hover edit fa-fw`}></i>
-                    </div>
+        <div className="sensor-card">
+            <SensorDisplayTable sensor={sensor} refreshData={refreshData} />
+
+            <button
+                className="sensor-card-expand-btn"
+                onClick={() => setExpanded(prev => !prev)}
+                type="button"
+            >
+                <span>{expanded ? 'Hide Reading Boundaries' : 'Show Reading Boundaries'}</span>
+                <i className={`fas fa-chevron-${expanded ? 'up' : 'down'}`} style={{ fontSize: '0.7rem' }} />
+            </button>
+
+            {expanded && sensor.sensorReadingTypes && (
+                <div className="reading-types-section">
+                    <ReadingTypeDisplayTable
+                        sensorReadingTypes={sensor.sensorReadingTypes}
+                        canEdit={sensor.canEdit}
+                        refreshData={refreshData}
+                    />
                 </div>
-            </div>
-        </>
+            )}
+        </div>
     );
 }
