@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState, useRef} from 'react';
+import { useState, useRef } from 'react';
 
 import SensorResponseInterface from '../Response/Sensor/SensorResponseInterface';
 import { FormInlineInput } from '../../Common/Components/Inputs/FormInlineUpdate';
