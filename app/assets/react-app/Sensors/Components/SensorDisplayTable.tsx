@@ -37,7 +37,7 @@ export function SensorDisplayTable(props: { sensor: SensorResponseInterface; ref
     const [updateCardView, setUpdateCardView] = useState<CardViewResponseInterface | null>(null);
     const [showUpdateCardModal, setShowUpdateCardModal] = useState<boolean>(false);
     const [createCardLoading, setCreateCardLoading] = useState<boolean>(false);
-    const [announcementModals, setAnnouncementModals] = useState<JSX.Element[]>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const toggleFormInput = (name: string) => {
         setActiveFormForUpdating(prev => ({ ...prev, [name]: !prev[name] }));
