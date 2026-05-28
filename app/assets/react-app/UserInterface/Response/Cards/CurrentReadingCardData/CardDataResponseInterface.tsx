@@ -13,18 +13,18 @@ export interface CardSensorDataResponseInterface {
 
 export interface CurrentCardCurrentReadingResponse {
     currentReading: number;
-    hightReading: number;
+    highReading: number;
     lowReading: number;
     readingSymbol?: string|null;
     readingType: string;
-    updatedAt: Date;
+    updatedAt: string;
 }
 
 export interface BoolCurrentReadingResponse {
     currentReading: number;
-    hightReading: number;
+    highReading: number;
     lowReading: number;
     readingSymbol?: string|null;
     readingType: string;
-    updatedAt: Date;
+    updatedAt: string;
 }

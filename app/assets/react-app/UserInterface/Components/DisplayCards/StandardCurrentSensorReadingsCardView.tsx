@@ -4,23 +4,24 @@ import { SensorTypesEnum } from '../../../Sensors/Enum/SensorTypesEnum';
 import { BaseCard } from '../../../Common/Components/BaseCard';
 import { getSensorTypeColour, getReadingTypeColour } from '../../../Sensors/Enum/SensorTypeColours';
 
-function formatUpdatedAt(updatedAt: Date | string): string {
-    try {
-        const d = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
-        return d.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
-    } catch {
-        return String(updatedAt);
-    }
+function formatUpdatedAt(updatedAt: string): string {
+    return updatedAt;
+    // try {
+        // const d = typeof updatedAt === 'string' ? new Date(updatedAt) : updatedAt;
+        // return d.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
+    // } catch {
+    //     return String(updatedAt);
+    // }
 }
 
 function ReadingRow({ data }: { data: CurrentSensorDataTypeStandardCard }) {
-    const { currentReading, hightReading, lowReading, readingSymbol, readingType, lastState, updatedAt } = data;
+    const { currentReading, highReading: highReading, lowReading, readingSymbol, readingType, lastState, updatedAt } = data;
 
-    const isAboveHigh = currentReading > hightReading;
+    const isAboveHigh = currentReading > highReading;
     const isBelowLow  = currentReading < lowReading;
     const isOob       = isAboveHigh || isBelowLow;
 
-    const range    = hightReading - lowReading;
+    const range    = highReading - lowReading;
     const barPct   = range > 0
         ? Math.min(100, Math.max(0, ((currentReading - lowReading) / range) * 100))
         : 50;
@@ -50,7 +51,7 @@ function ReadingRow({ data }: { data: CurrentSensorDataTypeStandardCard }) {
                         <span
                             className="badge badge-danger ml-1"
                             style={{ fontSize: '0.6rem', letterSpacing: '0.05em' }}
-                            title={isAboveHigh ? `Above high boundary (${hightReading}${readingSymbol})` : `Below low boundary (${lowReading}${readingSymbol})`}
+                            title={isAboveHigh ? `Above high boundary (${highReading}${readingSymbol})` : `Below low boundary (${lowReading}${readingSymbol})`}
                         >
                             OOB
                         </span>
@@ -76,7 +77,7 @@ function ReadingRow({ data }: { data: CurrentSensorDataTypeStandardCard }) {
             <div className="d-flex justify-content-between" style={{ fontSize: '0.65rem' }}>
                 <span className="text-muted">↓ {lowReading}{readingSymbol}</span>
                 <span className="text-muted">{formatUpdatedAt(updatedAt)}</span>
-                <span className="text-muted">↑ {hightReading}{readingSymbol}</span>
+                <span className="text-muted">↑ {highReading}{readingSymbol}</span>
             </div>
         </div>
     );
