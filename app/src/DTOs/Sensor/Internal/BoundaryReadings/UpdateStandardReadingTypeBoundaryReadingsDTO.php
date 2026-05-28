@@ -14,6 +14,7 @@ readonly class UpdateStandardReadingTypeBoundaryReadingsDTO implements UpdateBou
         private bool $currentConstRecord,
         private int|float|null $highReading,
         private int|float|null $lowReading,
+        private int|null $outOfBoundsAlertTimer,
         private ?bool $constRecord,
     ) {
     }
@@ -53,5 +54,13 @@ readonly class UpdateStandardReadingTypeBoundaryReadingsDTO implements UpdateBou
         return $this->currentLowReading;
     }
 
+    public function getOutOfBoundsAlertTimer(): ?int
+    {
+        return $this->outOfBoundsAlertTimer;
+    }
 
+    public function getConstRecord(): ?bool
+    {
+        return $this->constRecord;
+    }
 }

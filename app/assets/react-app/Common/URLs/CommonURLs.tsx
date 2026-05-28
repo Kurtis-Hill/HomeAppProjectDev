@@ -4,13 +4,13 @@ export const apiURL = '/HomeApp/api/user/'
 
 export const baseApiURL = '/HomeApp/api/'
 
-export const registerAccountUrl = `${webappURL}register`;
+export const registerAccountUrl = `/HomeApp${webappURL}register`;
 
 export const indexUrl = `${webappURL}index`;
 
 export const cardIndex = (cardURL: string) => `${webappURL}cards/${cardURL}`;
 
-export const loginUrl = `/HomeApp/${webappURL}login`;
+export const loginUrl = `/HomeApp${webappURL}login`;
 
 export const logoutUrl = `${webappURL}logout`;
 

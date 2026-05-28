@@ -1,4 +1,6 @@
-import React, { createContext } from "react";
-const SensorDataContext = createContext();
+import { createContext } from "react";
+import { SensorDataContextDataInterface } from "../DataProviders/SensorDataProvider";
+
+const SensorDataContext = createContext<SensorDataContextDataInterface | null>(null);
 
 export default SensorDataContext;

@@ -424,6 +424,14 @@ services:
         arguments:
             $redisClient: '@app.my_custom_redis_provider'
 
+    App\Services\Sensor\OutOfBounds\Elastic\OutOfBoundsElasticSearchService:
+        arguments:
+            $client: '@Elastica\Client'
+            $tempRepository: '@App\Repository\Sensor\OutOfBounds\Elastic\OutOfBoundsTempRepository'
+            $humidityRepository: '@App\Repository\Sensor\OutOfBounds\Elastic\OutOfBoundsHumidityRepository'
+            $analogRepository: '@App\Repository\Sensor\OutOfBounds\Elastic\OutOfBoundsAnalogRepository'
+            $latitudeRepository: '@App\Repository\Sensor\OutOfBounds\Elastic\OutOfBoundsLatitudeRepository'
+
     App\Command\RedisCheckerCommand:
         arguments:
             $redisClient: '@app.my_custom_redis_provider'

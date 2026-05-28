@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import InputWLabel from '../../../Common/Components/Inputs/InputWLabel';
 import SensorDataContext from '../../Contexts/SensorDataContext';
 import { SensorDataContextDataInterface } from '../../DataProviders/SensorDataProvider';
@@ -20,6 +20,8 @@ export type NewSensor = {
 
 export function AddNewSensorForm(props: {deviceID: number, refreshData?: () => void; setShowModal?: (showModal: boolean) => void;}) {
     const { deviceID, setShowModal, refreshData } = props;
+
+    const sensorCtx = useContext(SensorDataContext) as SensorDataContextDataInterface | null;
 
     const [errors, setErrors] = useState<string[]>([]);
 
@@ -78,6 +80,10 @@ export function AddNewSensorForm(props: {deviceID: number, refreshData?: () => v
                 const newSensorsResponse = await addNewSensorRequest(dataToSend);
                 if (newSensorsResponse.status === 201 || newSensorsResponse.status === 200) {
                     setResponseLoading(false);
+                    // Refresh global sensor list so navbar trigger dropdown updates immediately
+                    if (sensorCtx?.refreshSensors) {
+                        await sensorCtx.refreshSensors();
+                    }
                     if (refreshData !== undefined) {
                         refreshData();
                     }

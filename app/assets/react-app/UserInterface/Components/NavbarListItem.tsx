@@ -12,43 +12,76 @@ export default function NavbarListItem(props: {
     createNewText: string|null;
     flagAddNewModal?: (show: boolean) => void;
     errors?: string[];
+    isOpen?: boolean;
+    onToggle?: () => void;
 }) {
     const heading: string = props.header;
     const icon: string = props.icon;
     const createNewText: string|null = props.createNewText;
     const dropdownItems: Array<ListLinkItem>|[] = props.listLinks;
-    const flagAddNewModal: (show: boolean) => void|null = props.flagAddNewModal ?? null; 
+    const flagAddNewModal: (show: boolean) => void|null = props.flagAddNewModal ?? null;
 
-    const [navbarItemToggleDropdown, setNavbarItemToggleDropdown] = useState<boolean>(false)
-    
-    const toggleNavTabElement = (): void => {            
-        setNavbarItemToggleDropdown(!navbarItemToggleDropdown);
-    }
-    
-    const navItemDropdownToggleClass: string = navbarItemToggleDropdown === true ? 'show' : '';
+    // Support both controlled (accordion) and uncontrolled usage
+    const isControlled = props.isOpen !== undefined;
+    const [localOpen, setLocalOpen] = useState<boolean>(false);
+    const isOpen = isControlled ? props.isOpen : localOpen;
+
+    const handleToggle = (): void => {
+        if (isControlled) {
+            props.onToggle?.();
+        } else {
+            setLocalOpen(prev => !prev);
+        }
+    };
+
+    const navItemDropdownToggleClass: string = isOpen ? 'show' : '';
 
     return (
-        <li className="nav-item" onClick={() => {toggleNavTabElement()}}>
-            <div className={`nav-link ${navbarItemToggleDropdown === true ? '' :'collapsed'} hover`} data-toggle="collapse" aria-expanded="true" aria-controls="collapseUtilities">
-                <i className={`fas fa-fw fa-${icon}`}/>
-                <span>{ heading }</span>
+        <li className="nav-item sidebar-nav-item" onClick={handleToggle}>
+            <div
+                className={`nav-link sidebar-nav-link ${isOpen ? 'active-nav' : 'collapsed'} hover`}
+                data-toggle="collapse"
+                aria-expanded={isOpen}
+                aria-controls="collapseUtilities"
+            >
+                <i className={`fas fa-fw fa-${icon} sidebar-nav-icon`} />
+                <span className="sidebar-nav-label">{ heading }</span>
+                <i
+                    className="fas fa-chevron-down sidebar-nav-chevron"
+                    style={{
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.25s ease',
+                    }}
+                />
             </div>
             <SmallWhiteBoxDisplay
                 classes={navItemDropdownToggleClass}
                 heading={heading}
             >
                 <React.Fragment>
-                    {                        
+                    {
                         Array.isArray(dropdownItems) && dropdownItems.length > 0
                             ? dropdownItems.map((navListItem: ListLinkItem, index: number) => (
-                            <Link to={navListItem.link} key={index} className="collapse-item">{navListItem.displayName}</Link>
+                            <Link
+                                to={navListItem.link}
+                                key={index}
+                                className="collapse-item collapse-item-modern"
+                                onClick={e => e.stopPropagation()}
+                            >
+                                {navListItem.displayName}
+                            </Link>
                         ))
-                        : null                    
+                        : null
                     }
-
                     {
                         flagAddNewModal !== null
-                            ? <span className="collapse-item hover" onClick={ () => flagAddNewModal(true) }>{ createNewText }</span>
+                            ? <span
+                                className="collapse-item collapse-item-modern collapse-item-add hover"
+                                onClick={e => { e.stopPropagation(); flagAddNewModal(true); }}
+                              >
+                                <i className="fas fa-plus-circle mr-2" style={{ fontSize: '0.75rem' }} />
+                                { createNewText }
+                              </span>
                             : null
                     }
                 </React.Fragment>

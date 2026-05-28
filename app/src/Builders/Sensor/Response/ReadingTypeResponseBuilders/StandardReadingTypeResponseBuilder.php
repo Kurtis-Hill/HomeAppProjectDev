@@ -31,6 +31,7 @@ class StandardReadingTypeResponseBuilder implements ReadingTypeResponseBuilderIn
             $readingTypeObject->getHighReading(),
             $readingTypeObject->getLowReading(),
             $readingTypeObject->getConstRecord(),
+            $readingTypeObject->getOutOfBoundsAlertTimer(),
         );
     }
 }

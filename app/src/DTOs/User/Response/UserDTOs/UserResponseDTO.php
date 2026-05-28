@@ -9,12 +9,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 readonly class UserResponseDTO
 {
+    /**
+     * @param GroupResponseDTO[] $allUsersGroups
+     */
     public function __construct(
         private int $userID,
         private string $firstName,
         private string $lastName,
         private string $email,
         private GroupResponseDTO $group,
+        private array $allUsersGroups,
         private DateTimeInterface $createdAt,
         private ?string $profilePicture = null,
         private ?array $roles = [],
@@ -127,5 +131,14 @@ readonly class UserResponseDTO
     public function getCanDelete(): ?bool
     {
         return $this->canDelete;
+    }
+
+    #[Groups([
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getAllUsersGroups(): array
+    {
+        return $this->allUsersGroups;
     }
 }

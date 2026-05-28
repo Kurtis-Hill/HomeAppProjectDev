@@ -20,6 +20,7 @@ abstract class AbstractStandardSensorTypeBuilder extends AbstractCurrentReadingU
             $standardReadingSensor->getConstRecord(),
             $sensorData->getHighReading(),
             $sensorData->getLowReading(),
+            $sensorData->getOutOfBoundsAlertTimer(),
             $sensorData->getConstRecord()
         );
     }

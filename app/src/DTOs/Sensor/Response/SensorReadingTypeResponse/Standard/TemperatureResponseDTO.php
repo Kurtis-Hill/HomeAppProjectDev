@@ -20,7 +20,8 @@ readonly class TemperatureResponseDTO extends AbstractStandardResponseDTO implem
         float $highReading,
         float $lowReading,
         bool $constRecorded,
-        string $updatedAt
+        string $updatedAt,
+        int $outOfBoundsAlertTimer,
     ) {
         parent::__construct(
             sensor: $sensor,
@@ -31,6 +32,7 @@ readonly class TemperatureResponseDTO extends AbstractStandardResponseDTO implem
             constRecord: $constRecorded,
             updated: $updatedAt,
             readingType: Temperature::READING_TYPE,
+            outOfBoundsAlertTimer:  $outOfBoundsAlertTimer,
         );
     }
 

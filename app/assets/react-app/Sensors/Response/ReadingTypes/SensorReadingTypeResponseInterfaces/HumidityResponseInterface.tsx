@@ -9,6 +9,7 @@ export default interface HumidityResponseInterface {
     highReading: number,
     lowReading: number,
     constRecord: boolean,
+    outOfBoundsAlertTimer: number,
     updatedAt: string,
     readingType: string,
     sensorType: ReadingTypesEnum.humidity,

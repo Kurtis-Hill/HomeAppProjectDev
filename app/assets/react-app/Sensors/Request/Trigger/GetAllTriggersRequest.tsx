@@ -2,8 +2,13 @@ import axios, {AxiosPromise} from 'axios';
 
 import {apiURL} from "../../../Common/URLs/CommonURLs";
 
-export async function getAllSensorTriggerTypesRequest(): Promise<AxiosPromise> {
+export async function getAllSensorTriggerTypesRequest(sensorID?: number): Promise<AxiosPromise> {
+    const params: Record<string, number> = {};
+    if (sensorID !== undefined && sensorID !== null) {
+        params['sensorID'] = sensorID;
+    }
     return await axios.get(
         `${apiURL}sensor-trigger`,
+        { params }
     );
 }

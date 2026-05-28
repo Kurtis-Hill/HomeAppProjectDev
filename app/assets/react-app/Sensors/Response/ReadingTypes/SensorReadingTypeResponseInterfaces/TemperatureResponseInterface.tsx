@@ -8,6 +8,7 @@ export default interface TemperatureResponseInterface {
     highReading: number,
     lowReading: number,
     constRecord: boolean,
+    outOfBoundsAlertTimer: number,
     updatedAt: string,
     readingType: string,
     sensorType: string

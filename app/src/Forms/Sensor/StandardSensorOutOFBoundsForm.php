@@ -176,6 +176,9 @@ class StandardSensorOutOFBoundsForm extends AbstractType implements SensorReadin
             ->add('constRecord', TextType::class, [
                 'required' => false,
                 'empty_data' => false,
+            ])
+            ->add('outOfBoundsAlertTimer', TextType::class, [
+                'required' => false,
             ]);
     }
 
