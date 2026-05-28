@@ -66,7 +66,7 @@ export function UpdateDeviceView(props: {
         userRooms: [] as RoomResponseInterface[],
     });
 
-    const [announcementModals, setAnnouncementModals] = useState<JSX.Element[]>([]);
+    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
 
     const showAnnouncementFlash = (message: Array<string>, title: string, timer?: number | null): void => {
         setAnnouncementModals([
