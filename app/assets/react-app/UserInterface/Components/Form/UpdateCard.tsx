@@ -7,6 +7,7 @@ import { Label } from '../../../Common/Components/Elements/Label';
 import { AnnouncementFlashModal } from '../../../Common/Components/Modals/AnnouncementFlashModal';
 import DotCircleSpinner from '../../../Common/Components/Spinners/DotCircleSpinner';
 import { capitalizeFirstLetter } from '../../../Common/StringFormatter';
+import { getFaPrefix } from '../../../Common/FontAwesomeHelper';
 import { ColourResponseInterface } from '../../Response/Colour/ColourResponseInterface';
 import { IconResponseInterface } from '../../Response/Icons/IconResponseInterface';
 import StateResponseInterface from '../../Response/State/StateResponseInterface';
@@ -171,7 +172,7 @@ export function UpdateCard(props: {cardViewID: number}) {
                         <option key={icon.iconID} value={icon.iconID}>{capitalizeFirstLetter(icon.iconName)}</option>
                     ))}
                 </select>
-                <i className={`fas fa-2x text-gray-300 modal-icon fa-${cardViewUserForm.currentCardIcon.iconName}`}></i>
+                <i className={`${getFaPrefix(cardViewUserForm.currentCardIcon.iconName)} fa-2x text-gray-300 modal-icon fa-${cardViewUserForm.currentCardIcon.iconName.toLowerCase()}`}></i>
                 <br />
 
                 {

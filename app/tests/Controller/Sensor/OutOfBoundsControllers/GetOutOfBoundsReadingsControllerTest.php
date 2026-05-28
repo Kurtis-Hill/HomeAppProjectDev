@@ -16,20 +16,19 @@ class GetOutOfBoundsReadingsControllerTest extends ControllerTestCase
 {
     private const GET_OUT_OF_BOUNDS_READINGS_URL = '/HomeApp/api/user/out-of-bounds/readings';
 
+    /** Holds the data that the mocked search service will return for the current test. */
+    private array $mockSearchReturnData = [];
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockSearchService();
-    }
 
-    private function mockSearchService(array $returnData = []): void
-    {
-        $mockService = $this->createMock(OutOfBoundsElasticSearchService::class);
-        $mockService
-            ->method('search')
-            ->willReturn($returnData);
-
-        static::getContainer()->set(OutOfBoundsElasticSearchService::class, $mockService);
+        // Register the mock ONCE per test using a callback, so individual tests can
+        // change $this->mockSearchReturnData without calling set() a second time
+        // (which throws "service is already initialized").
+        $mock = $this->createMock(OutOfBoundsElasticSearchService::class);
+        $mock->method('search')->willReturnCallback(fn() => $this->mockSearchReturnData);
+        static::getContainer()->set(OutOfBoundsElasticSearchService::class, $mock);
     }
 
     private function buildSampleReadings(): array
@@ -98,7 +97,7 @@ class GetOutOfBoundsReadingsControllerTest extends ControllerTestCase
 
     public function test_valid_request_returns_200_with_populated_payload(): void
     {
-        $this->mockSearchService($this->buildSampleReadings());
+        $this->mockSearchReturnData = $this->buildSampleReadings();
         $this->authenticateAdminOne();
 
         $this->client->request(
@@ -378,14 +377,14 @@ class GetOutOfBoundsReadingsControllerTest extends ControllerTestCase
 
     public function test_response_payload_has_expected_keys_for_each_reading(): void
     {
-        $this->mockSearchService([
+        $this->mockSearchReturnData = [
             new OutOfBoundsReadingResponseDTO(
                 sensorReadingID: 42,
                 sensorReading: 105.7,
                 createdAt: '2025-03-15T10:30:00+00:00',
                 readingType: 'temperature',
             ),
-        ]);
+        ];
 
         $this->authenticateAdminOne();
 

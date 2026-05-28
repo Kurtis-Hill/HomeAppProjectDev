@@ -75,9 +75,9 @@ readonly class SensorTriggerResponseDTO
 
     #[Groups([
         RequestTypeEnum::FULL->value,
-//        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::ONLY->value,
         RequestTypeEnum::SENSITIVE_FULL->value,
-//        RequestTypeEnum::SENSITIVE_ONLY->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
     ])]
     public function getCreatedBy(): UserResponseDTO
     {

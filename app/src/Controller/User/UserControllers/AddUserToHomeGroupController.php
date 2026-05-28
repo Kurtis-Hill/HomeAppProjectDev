@@ -3,6 +3,7 @@
 namespace App\Controller\User\UserControllers;
 
 use App\Builders\User\GroupNameMapping\GroupNameMappingInternalDTOBuilder;
+use App\Entity\Authentication\GroupMapping;
 use App\Entity\User\Group;
 use App\Entity\User\User;
 use App\Exceptions\User\GroupExceptions\GroupMappingValidationException;
@@ -40,7 +41,7 @@ class AddUserToHomeGroupController extends AbstractController
         }
 
         if (in_array($homeGroup->getGroupID(), $user->getAssociatedGroupIDs())) {
-            return $this->sendBadRequestJsonResponse([sprintf('User already in group %s', Group::HOME_APP_GROUP_NAME)]);
+            return $this->sendBadRequestJsonResponse([GroupMapping::GROUP_NAME_MAPPING_EXISTS]);
         }
 
         $groupMappingDTO = GroupNameMappingInternalDTOBuilder::buildGroupNameMappingInternalDTO(

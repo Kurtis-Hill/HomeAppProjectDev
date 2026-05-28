@@ -3,6 +3,7 @@ import { CurrentSensorDataTypeStandardCard } from '../../Factories/CurrentReadin
 import { SensorTypesEnum } from '../../../Sensors/Enum/SensorTypesEnum';
 import { BaseCard } from '../../../Common/Components/BaseCard';
 import { getSensorTypeColour, getReadingTypeColour } from '../../../Sensors/Enum/SensorTypeColours';
+import {getFaPrefix} from "../../../Common/FontAwesomeHelper";
 
 function formatUpdatedAt(updatedAt: string): string {
     return updatedAt;
@@ -101,7 +102,7 @@ export function StandardCurrentSensorReadingsCardView(props: {
     } = props;
 
     const sensorRoom  = props.room;
-    const iconName    = cardIcon ?? 'microchip';
+    const iconName    = (cardIcon ?? 'microchip').toLowerCase();
     const typeColour  = getSensorTypeColour(String(sensorType));
 
     return (
@@ -124,7 +125,7 @@ export function StandardCurrentSensorReadingsCardView(props: {
                     </div>
                 </div>
                 <div className="d-flex flex-column align-items-end ml-2 flex-shrink-0">
-                    <i className={`fas fa-lg text-gray-200 fa-${iconName} mb-1`} />
+                    <i className={`${getFaPrefix(iconName)} fa-lg text-gray-200 fa-${iconName} mb-1`} />
                     <span
                         className="badge badge-pill"
                         style={{ background: typeColour, color: '#fff', fontSize: '0.6rem' }}

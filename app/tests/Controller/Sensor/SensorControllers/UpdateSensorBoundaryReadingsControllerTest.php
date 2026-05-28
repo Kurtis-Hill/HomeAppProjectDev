@@ -1800,6 +1800,24 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'readingType' => Humidity::READING_TYPE,
             'newAlertTimer' => 86400,
         ];
+
+        yield 'ldr analog 10 minutes' => [
+            'sensorType' => LDR::class,
+            'readingType' => Analog::READING_TYPE,
+            'newAlertTimer' => 600,
+        ];
+
+        yield 'sht temperature 3 hours' => [
+            'sensorType' => Sht::class,
+            'readingType' => Temperature::READING_TYPE,
+            'newAlertTimer' => 10800,
+        ];
+
+        yield 'bmp humidity 45 minutes' => [
+            'sensorType' => Bmp::class,
+            'readingType' => Humidity::READING_TYPE,
+            'newAlertTimer' => 2700,
+        ];
     }
 
     /**
@@ -1864,6 +1882,18 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             'sensorType' => Bmp::class,
             'readingType' => Temperature::READING_TYPE,
             'invalidAlertTimer' => [3600],
+        ];
+
+        yield 'boolean true for soil analog' => [
+            'sensorType' => Soil::class,
+            'readingType' => Analog::READING_TYPE,
+            'invalidAlertTimer' => true,
+        ];
+
+        yield 'boolean false for sht humidity' => [
+            'sensorType' => Sht::class,
+            'readingType' => Humidity::READING_TYPE,
+            'invalidAlertTimer' => false,
         ];
     }
 
