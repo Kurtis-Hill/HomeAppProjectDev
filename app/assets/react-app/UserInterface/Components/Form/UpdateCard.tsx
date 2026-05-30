@@ -146,7 +146,7 @@ export function UpdateCard(props: {cardViewID: number}) {
                     text="Colour Selection"
                     htmlFor='card-colour'
                 />
-                <select name="card-colour" value={cardViewUserForm.currentCardColour.colourID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="form-control form-bottom-margin">
+                <select name="card-colour" value={cardViewUserForm.currentCardColour.colourID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="select-modern form-bottom-margin">
                     {cardViewUserForm.cardUserSelectionOptions.colours.map((colour: ColourResponseInterface) => (
                     <option value={colour.colourID} key={colour.colourID}>{capitalizeFirstLetter(colour.colour)}</option>
                     ))}
@@ -156,7 +156,7 @@ export function UpdateCard(props: {cardViewID: number}) {
                     text="Card State Selection"
                     htmlFor='card-view-state'
                 />
-                <select name="card-view-state" value={cardViewUserForm.currentViewState.cardStateID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="form-control form-bottom-margin">
+                <select name="card-view-state" value={cardViewUserForm.currentViewState.cardStateID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="select-modern form-bottom-margin">
                     {cardViewUserForm.cardUserSelectionOptions.states.map((states: StateResponseInterface) => (
                     <option value={states.cardStateID} key={states.cardStateID}>{capitalizeFirstLetter(states.cardState)}</option>
                     ))}
@@ -167,7 +167,7 @@ export function UpdateCard(props: {cardViewID: number}) {
                     htmlFor='card-icon'
                 />
                 <br />
-                <select name="card-icon" id="icon-select" value={cardViewUserForm.currentCardIcon.iconID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="form-space-left form-bottom-margin">
+                <select name="card-icon" id="icon-select" value={cardViewUserForm.currentCardIcon.iconID} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {updateCardFormInput(e)}} className="select-modern form-bottom-margin" style={{ maxWidth: '55%', display: 'inline-block' }}>
                     {cardViewUserForm.cardUserSelectionOptions.icons.map((icon: IconResponseInterface) => (
                         <option key={icon.iconID} value={icon.iconID}>{capitalizeFirstLetter(icon.iconName)}</option>
                     ))}

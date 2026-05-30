@@ -10,9 +10,8 @@ export default function SubmitButton(props: {
 }) {
     const text: string = props.text;
     const name: string = props.name ?? 'submit';
-    const action: string = props.action ?? 'submit';
-    const classes: string = props.classes ?? '';
     const type: "button"|"submit" = props.type ?? 'button';
+    const classes: string = props.classes ?? '';
     const onClickFunction: (e: Event) => void = props.onClickFunction ?? function (){};
 
     return (
@@ -21,11 +20,9 @@ export default function SubmitButton(props: {
                 type={type}
                 onClick={onClickFunction}
                 name={name}
-                action={action}
-                className={`btn btn-primary btn-user ${classes}`}
+                className={`btn-modern-primary ${classes}`}
             >{text}
             </button>
         </React.Fragment>
     );
-
 }

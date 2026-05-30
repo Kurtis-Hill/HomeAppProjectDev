@@ -155,10 +155,11 @@ tr:nth-child(even) {
 }
 
 .switch {
+    /* replaced by modern version at bottom of file */
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    width: 44px;
+    height: 24px;
 }
   
 .switch input { 
@@ -174,44 +175,72 @@ tr:nth-child(even) {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s;
+    background-color: #d1d5db;
+    border-radius: 24px;
+    transition: background-color 0.2s ease;
 }
   
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
     background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 input:checked + .slider {
-    background-color: #2196F3;
+    background-color: #4e73df;
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 0 3px rgba(78,115,223,0.2);
 }
 
 input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    transform: translateX(20px);
 }
 
 /* Rounded sliders */
 .slider.round {
-    border-radius: 34px;
+    border-radius: 24px;
 }
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+/* Large toggle variant */
+.switch-lg {
+    position: relative;
+    display: inline-block;
+    width: 64px;
+    height: 34px;
+}
+
+.switch-lg input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-lg .slider {
+    border-radius: 34px;
+}
+
+.switch-lg .slider:before {
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+}
+
+.switch-lg input:checked + .slider:before {
+    transform: translateX(30px);
 }
 /*.nav-link {*/
 /*    -webkit-transition: 0.5s;*/
@@ -792,6 +821,36 @@ input:checked + .slider:before {
     transform: scale(1.1);
 }
 
+/* ── Sidebar mobile responsive ─────────────────────────────────────── */
+@media (max-width: 576px) {
+    .sidebar-modern .sidebar-nav-item {
+        margin: 1px 4px;
+    }
+
+    .sidebar-modern .sidebar-nav-link {
+        padding: 0.55rem 0.75rem;
+    }
+
+    .sidebar-modern .sidebar-nav-label {
+        font-size: 0.82rem;
+    }
+
+    .sidebar-modern .sidebar-nav-icon {
+        width: 1rem;
+        margin-right: 0.4rem;
+    }
+
+    .collapse-item-modern {
+        padding: 0.35rem 0.75rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* Tighten up the top buttons (UserSettings, Admin, Logs) */
+    .sidebar-modern .nav-item {
+        margin: 1px 4px;
+    }
+}
+
 /* Nav link items (Query / User Settings) modern styling */
 .sidebar-modern .nav-item > a .nav-link,
 .sidebar-modern .nav-item .nav-link {
@@ -1229,3 +1288,229 @@ input:checked + .slider:before {
 .device-name-inline-input {
     flex: 1;
 }
+
+/* ── Modern Form Controls ─────────────────────────────────────────── */
+.label-modern {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+}
+
+.input-modern {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #374151;
+    background: #fff;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.input-modern:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.15);
+}
+
+.input-modern::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.select-modern {
+    display: inline-block;
+    width: 100%;
+    padding: 0.5rem 2.2rem 0.5rem 0.85rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #374151;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 10px 6px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.select-modern:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.15);
+}
+
+/* ── Modern Buttons ───────────────────────────────────────────────── */
+.btn-modern-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+    background: #4e73df;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.btn-modern-primary:hover {
+    background: #375bc8;
+    box-shadow: 0 3px 10px rgba(78, 115, 223, 0.35);
+    color: #fff;
+}
+
+.btn-modern-primary:active {
+    background: #2f50b0;
+    transform: scale(0.98);
+    box-shadow: none;
+}
+
+.btn-modern-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+    background: #e74a3b;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.btn-modern-danger:hover {
+    background: #c0392b;
+    box-shadow: 0 3px 10px rgba(231, 74, 59, 0.35);
+    color: #fff;
+}
+
+.btn-modern-danger:active {
+    background: #a93226;
+    transform: scale(0.98);
+    box-shadow: none;
+}
+
+.btn-modern-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    background: #f3f4f6;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.btn-modern-secondary:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    color: #1a1c23;
+}
+
+.btn-modern-secondary:active {
+    background: #d1d5db;
+    transform: scale(0.98);
+}
+
+/* Inline accept / decline action icon-buttons */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.btn-action-accept {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.btn-action-accept:hover {
+    background: #6ee7b7;
+    transform: scale(1.08);
+}
+
+.btn-action-decline {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-action-decline:hover {
+    background: #fca5a5;
+    transform: scale(1.08);
+}
+
+.btn-action + .btn-action {
+    margin-left: 0.3rem;
+}
+
+/* ── Relay Toggle ─────────────────────────────────────────────────── */
+.relay-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.relay-control-row {
+    justify-content: center;
+}
+
+.relay-control-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+}
+
+.relay-control-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.relay-status {
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.relay-status-on  { color: #065f46; }
+.relay-status-off { color: #6b7280; }

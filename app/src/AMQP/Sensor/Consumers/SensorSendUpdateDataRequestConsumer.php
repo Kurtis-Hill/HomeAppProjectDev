@@ -9,7 +9,6 @@ use App\Exceptions\Sensor\SensorNotFoundException;
 use App\Exceptions\Sensor\SensorRequestException;
 use App\Repository\Sensor\Sensors\ORM\SensorRepository;
 use App\Services\Sensor\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
-use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -34,28 +33,34 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
                         SensorUpdateEventDTO::class]
                 ]
             );
-        } catch (Exception $exception) {
+
+            if (!$sensorUpdateEventDTO instanceof SensorUpdateEventDTO) {
+                $this->logger->error('Deserialization returned unexpected type, message body may be malformed or sent to wrong queue');
+
+                return self::MSG_REJECT;
+            }
+        } catch (\Throwable $exception) {
             $this->logger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return self::MSG_ACK;
         }
 
-        $sensor = $this->sensorRepository->find($sensorUpdateEventDTO->getSensorID());
-        if ($sensor === null) {
-            return self::MSG_ACK;
-        }
-
-        $sensorsToUpdate = $this->sensorRepository->findSameSensorTypesOnSameDevice(
-            $sensor->getDevice()->getDeviceID(),
-            $sensor->getSensorTypeObject()->getSensorTypeID(),
-        );
-
-        $sensorUpdateRequestDTOsByDeviceID = [];
-        foreach ($sensorsToUpdate as $sensorToUpdate) {
-            $sensorUpdateRequestDTOsByDeviceID[] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
-        }
-
         try {
+            $sensor = $this->sensorRepository->find($sensorUpdateEventDTO->getSensorID());
+            if ($sensor === null) {
+                return self::MSG_ACK;
+            }
+
+            $sensorsToUpdate = $this->sensorRepository->findSameSensorTypesOnSameDevice(
+                $sensor->getDevice()->getDeviceID(),
+                $sensor->getSensorTypeObject()->getSensorTypeID(),
+            );
+
+            $sensorUpdateRequestDTOsByDeviceID = [];
+            foreach ($sensorsToUpdate as $sensorToUpdate) {
+                $sensorUpdateRequestDTOsByDeviceID[] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
+            }
+
             $updateRequestResult = $this->updateDeviceSensorDataHandler->handleSensorsUpdateRequest($sensorUpdateRequestDTOsByDeviceID);
             if ($updateRequestResult === false) {
                 $this->logger->error('Error processing sensor data to upload sensor not found, sensor ID: ' . $sensorUpdateEventDTO->getSensorID());
@@ -72,8 +77,12 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
             return self::MSG_REJECT;
         } catch (SensorNotFoundException $e) {
             $this->logger->error($e->getMessage());
-        }
 
-        return self::MSG_ACK;
+            return self::MSG_ACK;
+        } catch (\Throwable $e) {
+            $this->logger->error('Unexpected error processing sensor update, exception message: ' . $e->getMessage());
+
+            return self::MSG_REJECT;
+        }
     }
 }

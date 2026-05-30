@@ -66,7 +66,7 @@ export default function NavbarListItem(props: {
                                 to={navListItem.link}
                                 key={index}
                                 className="collapse-item collapse-item-modern"
-                                onClick={e => e.stopPropagation()}
+                                onClick={e => { e.stopPropagation(); if (isControlled) props.onToggle?.(); else setLocalOpen(false); }}
                             >
                                 {navListItem.displayName}
                             </Link>
@@ -77,7 +77,7 @@ export default function NavbarListItem(props: {
                         flagAddNewModal !== null
                             ? <span
                                 className="collapse-item collapse-item-modern collapse-item-add hover"
-                                onClick={e => { e.stopPropagation(); flagAddNewModal(true); }}
+                                onClick={e => { e.stopPropagation(); flagAddNewModal(true); if (isControlled) props.onToggle?.(); else setLocalOpen(false); }}
                               >
                                 <i className="fas fa-plus-circle mr-2" style={{ fontSize: '0.75rem' }} />
                                 { createNewText }

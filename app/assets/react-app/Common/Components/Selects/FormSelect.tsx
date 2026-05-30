@@ -14,14 +14,16 @@ export function FormSelect(props: {
     
     return (
         <>
-            <select name={selectName} data-name={dataName} defaultValue={selectDefaultValue} className="form-control" onChange={(e: Event) => changeEvent(e)}>
-                {
-                    selectOptions.map((option: {value: any, name:string}, index: number) => {
-                        return (
-                                <option key={index} value={option.value}>{option.name}</option>
-                            )
-                        })
-                }
+            <select
+                name={selectName}
+                data-name={dataName}
+                defaultValue={selectDefaultValue}
+                className="select-modern"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => changeEvent(e as unknown as Event)}
+            >
+                {selectOptions.map((option: {value: any, name: string}, index: number) => (
+                    <option key={index} value={option.value}>{option.name}</option>
+                ))}
             </select>
         </>
     )

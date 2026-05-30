@@ -8,6 +8,15 @@ export function AcceptButton(props: {
     const { clickEvent, dataName, dataType } = props;
 
     return (
-        <i className="fas fa-check-circle fa-2x hover accept-button" onClick={(e: Event) => clickEvent(e)} data-name={dataName} data-type={dataType}></i>
-    )
+        <button
+            type="button"
+            className="btn-action btn-action-accept"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => clickEvent(e as unknown as Event)}
+            data-name={dataName}
+            data-type={dataType}
+            title="Accept"
+        >
+            <i className="fas fa-check" />
+        </button>
+    );
 }

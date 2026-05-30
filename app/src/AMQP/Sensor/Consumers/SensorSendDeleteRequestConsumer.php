@@ -12,7 +12,6 @@ use App\DTOs\Sensor\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequ
 use App\Repository\Device\ORM\DeviceRepository;
 use App\Services\Device\Request\DeviceRequestHandlerInterface;
 use App\Traits\ValidatorProcessorTrait;
-use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -47,6 +46,12 @@ readonly class SensorSendDeleteRequestConsumer implements ConsumerInterface
                 ]
             );
 
+            if (!$sensorUpdateEventDTO instanceof SensorDeletionEventDTO) {
+                $this->logger->error('Deserialization returned unexpected type, message body may be malformed or sent to wrong queue');
+
+                return self::MSG_ACK;
+            }
+
             $sensorDeleteRequestDTO = $this->deletionDTOBuilder->buildSensorDeletionDTO($sensorUpdateEventDTO->getSensorType());
 
             $errors = $this->validator->validate($sensorDeleteRequestDTO);
@@ -62,7 +67,7 @@ readonly class SensorSendDeleteRequestConsumer implements ConsumerInterface
                 $sensorDeleteRequestDTO,
                 self::URI,
             );
-        } catch (Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->logger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return self::MSG_ACK;
@@ -77,7 +82,7 @@ readonly class SensorSendDeleteRequestConsumer implements ConsumerInterface
                 $this->logger->error(sprintf('Error processing sensor delete request'));
                 return self::MSG_ACK;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error(sprintf('Error processing sensor data to upload exception: %s', $e->getMessage()));
         }
 

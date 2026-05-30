@@ -6,6 +6,9 @@ export default function DeleteButton(props: {
     const { clickFunction } = props;
 
     return (
-        <button onClick={() => clickFunction(true)} type="button" className="btn btn-danger btn-lg btn-block">Delete</button>
+        <button onClick={() => clickFunction(true)} type="button" className="btn-modern-danger">
+            <i className="fas fa-trash-alt" style={{ fontSize: '0.8rem' }} />
+            Delete
+        </button>
     )
 }
