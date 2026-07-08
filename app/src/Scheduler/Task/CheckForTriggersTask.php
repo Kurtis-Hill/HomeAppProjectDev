@@ -22,8 +22,6 @@ readonly class CheckForTriggersTask
     }
     public function __invoke(): void
     {
-        $now = new DateTimeImmutable();
-        $this->elasticLogger->info(sprintf('Trigger check started at %s', $now->format('d-m-Y H:i:s')));
         $allStandardSensors = $this->standardReadingTypeRepository->findAll();
         $allBoolSensors = $this->boolReadingBaseSensorRepository->findAll();
         $allSensors = array_merge($allStandardSensors, $allBoolSensors);
@@ -36,7 +34,10 @@ readonly class CheckForTriggersTask
                         'Unexpected error during trigger check for base reading type ID %d: %s',
                         $sensor->getBaseReadingType()->getBaseReadingTypeID(),
                         $e->getMessage()
-                    )
+                    ),
+                    context: [
+                        'sensorID' => $sensor->getSensorID(),
+                    ]
                 );
             }
         }
