@@ -7,6 +7,7 @@ use App\Entity\Sensor\SensorTypes\Interfaces\AllSensorReadingTypeInterface;
 use App\Exceptions\Common\OperatorConvertionException;
 use App\Repository\Sensor\SensorTriggerRepository;
 use App\Services\Common\OperatorValueCheckerConvertor;
+use DateTimeImmutable;
 use JetBrains\PhpStorm\ArrayShape;
 use Predis\Client;
 use Predis\Transaction\MultiExec;
@@ -76,6 +77,24 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
                         $tx->set($redisKey, true);
                         $tx->expire($redisKey,  $seconds);
                     });
+                }
+
+                $lastUpdate = $sensorTrigger->getBaseReadingTypeToTriggers()->getUpdatedAt()->getTimestamp();
+                $sensorReadingInterval = $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getReadingInterval();
+
+                $whenNextUpdateShouldBe = $lastUpdate + $sensorReadingInterval;
+                $now = (new DateTimeImmutable())->getTimestamp();
+
+                if ($whenNextUpdateShouldBe < $now) {
+                    $this->elasticLogger->info("Sensor not active ignoring trigger", [
+                        'sensorTriggerID' => $sensorTrigger->getSensorTriggerID(),
+                        'baseReadingType' => $sensorTrigger->getBaseReadingTypeToTriggers()->getBaseReadingTypeID(),
+                        'lastUpdate' => $lastUpdate,
+                        'sensorReadingInterval' => $sensorReadingInterval,
+                        'whenNextUpdateShouldBe' => $whenNextUpdateShouldBe,
+                        'now' => $now
+                    ]);
+                    continue;
                 }
 
                 $triggeredTriggers[] = $sensorTrigger;
