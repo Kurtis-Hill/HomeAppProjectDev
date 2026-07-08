@@ -424,6 +424,10 @@ services:
         arguments:
             $redisClient: '@app.my_custom_redis_provider'
 
+    App\Services\Sensor\Trigger\TriggerChecker\TriggerCheckerHandler:
+        arguments:
+            $redisClient: '@app.my_custom_redis_provider'
+
     App\Services\Sensor\OutOfBounds\Elastic\OutOfBoundsElasticSearchService:
         arguments:
             $client: '@Elastica\Client'
