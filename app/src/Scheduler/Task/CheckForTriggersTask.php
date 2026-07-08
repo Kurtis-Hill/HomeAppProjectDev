@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 use Throwable;
 
-##[AsCronTask('* * * * *')]
+#[AsCronTask('* * * * *')]
 readonly class CheckForTriggersTask
 {
     public function __construct(
