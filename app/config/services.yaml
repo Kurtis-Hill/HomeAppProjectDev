@@ -424,7 +424,7 @@ services:
         arguments:
             $redisClient: '@app.my_custom_redis_provider'
 
-    App\Services\Sensor\Trigger\TriggerChecker\TriggerCheckerHandler:
+    App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerChecker:
         arguments:
             $redisClient: '@app.my_custom_redis_provider'
 
