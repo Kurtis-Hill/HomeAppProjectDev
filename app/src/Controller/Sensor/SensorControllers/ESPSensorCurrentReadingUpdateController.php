@@ -11,6 +11,7 @@ use App\Services\Sensor\SensorReadingUpdate\CurrentReading\CurrentReadingSensorD
 use App\Traits\HomeAppAPITrait;
 use App\Traits\ValidatorProcessorTrait;
 use App\Voters\SensorVoter;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Psr\Log\LoggerInterface;
@@ -56,12 +57,20 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         ValidatorInterface $validator,
         CurrentReadingSensorDataRequestHandlerInterface $currentReadingSensorDataRequest,
         #[MapRequestPayload]
-        SensorUpdateRequestDTO $sensorUpdateRequestDTO
+        SensorUpdateRequestDTO $sensorUpdateRequestDTO,
+        Request $request,
+        EntityManagerInterface $entityManager,
     ): Response {
         $device = $this->getUser();
         if (!$device instanceof Devices) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
+        $deviceIP = $request->getClientIp();
+        if ($device->getIpAddress() !== $deviceIP) {
+            $device->setIpAddress($deviceIP);
+            $entityManager->flush();
+        }
+
         $deviceID = $device->getDeviceID();
         $errors = $validator->validate(value: $sensorUpdateRequestDTO);
         if ($this->checkIfErrorsArePresent($errors)) {

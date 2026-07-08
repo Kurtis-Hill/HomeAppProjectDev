@@ -184,7 +184,7 @@ final class Version20220303160823 extends AbstractMigration
                 roomID INT NOT NULL, 
                 createdBy INT NOT NULL, 
                 ipAddress VARCHAR(13) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
-                externalIpAddress VARCHAR(13) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
+                externalIpAddress VARCHAR(255) CHARACTER SET utf8mb4 DEFAULT \'NULL\' COLLATE `utf8mb4_general_ci`, 
                 roles JSON NOT NULL COLLATE `utf8mb4_general_ci`, 
                 INDEX createdBy (createdBy),
                 INDEX groupID (groupID),

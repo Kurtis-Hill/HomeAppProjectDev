@@ -21,8 +21,11 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
      *
      */
     #[ArrayShape([SensorTrigger::class])]
-    public function checkSensorForTriggers(AllSensorReadingTypeInterface $readingType, ?string $day = null, ?string $time = null): array
-    {
+    public function checkSensorForTriggers(
+        AllSensorReadingTypeInterface $readingType,
+        ?string $day = null,
+        ?string $time = null
+    ): array {
         $allSensorTriggers = $this->sensorTriggerRepository->findAllSensorTriggersForDayAndTimeForSensorThatTriggers(
             $readingType,
             $day,
