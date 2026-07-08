@@ -65,11 +65,11 @@ class ESPSensorCurrentReadingUpdateController extends AbstractController
         if (!$device instanceof Devices) {
             return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::FORBIDDEN_ACTION]);
         }
-        $deviceIP = $request->getClientIp();
-        if ($device->getIpAddress() !== $deviceIP) {
-            $device->setIpAddress($deviceIP);
-            $entityManager->flush();
-        }
+//        $deviceIP = $request->getClientIp();
+//        if ($device->getIpAddress() !== $deviceIP) {
+//            $device->setIpAddress($deviceIP);
+//            $entityManager->flush();
+//        }
 
         $deviceID = $device->getDeviceID();
         $errors = $validator->validate(value: $sensorUpdateRequestDTO);
