@@ -65,6 +65,19 @@ readonly class ReadingTriggerHandler implements ReadingTriggerHandlerInterface
                         $e->getMessage()
                     )
                 );
+                sleep(1);
+                try {
+                    $triggerTypeHandler->processTrigger($trigger);
+                } catch (Throwable $e) {
+                    $this->elasticLogger->error(
+                        sprintf(
+                            'Retry failed for trigger %d (%s): %s',
+                            $trigger->getSensorTriggerID(),
+                            $triggerTypeName,
+                            $e->getMessage()
+                        )
+                    );
+                }
                 continue;
             }
         }

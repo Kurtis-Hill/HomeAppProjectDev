@@ -17,7 +17,7 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
 {
     private const SECONDS_BEFORE_DOING_ACTION_AGAIN = 300;
 
-    private const REDIS_KEY = 'triggered_%d_%s';
+    private const REDIS_KEY = 'triggered_%d';
 
     public function __construct(
         private SensorTriggerRepository $sensorTriggerRepository,
@@ -55,7 +55,7 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
             );
             if ($hasNewReadingTriggered === true) {
                 if ($this->env !== 'test') {
-                    $redisKey = sprintf(self::REDIS_KEY, $sensorTrigger->getBaseReadingTypeToTriggers()->getBaseReadingTypeID(), $operator->getOperatorSymbol());
+                    $redisKey = sprintf(self::REDIS_KEY, $sensorTrigger->getSensorTriggerID());
                     if ($this->redisClient->exists($redisKey)) {
                         $this->elasticLogger->error(
                             sprintf(
@@ -66,6 +66,7 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
                             [
                                 'sensorID' => $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getSensorID(),
                                 'baseReadingTypeID' => $sensorTrigger->getBaseReadingTypeToTriggers()->getBaseReadingTypeID(),
+                                'sensorToTrigger' => $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getSensorName(),
                                 'operator' => $operator->getOperatorSymbol(),
                             ]
                         );
