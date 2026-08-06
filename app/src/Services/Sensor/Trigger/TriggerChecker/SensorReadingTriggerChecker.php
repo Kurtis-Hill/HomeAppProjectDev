@@ -81,7 +81,7 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
                 }
 
                 $lastUpdate = $sensorTrigger->getBaseReadingTypeToTriggers()->getUpdatedAt()->getTimestamp();
-                $sensorReadingInterval = $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getReadingInterval();
+                $sensorReadingInterval = $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getReadingInterval() / 1000;
 
                 $whenNextUpdateShouldBe = $lastUpdate + $sensorReadingInterval;
                 $now = (new DateTimeImmutable())->getTimestamp();
