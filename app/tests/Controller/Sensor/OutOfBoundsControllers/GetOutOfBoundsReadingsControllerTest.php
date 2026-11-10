@@ -23,6 +23,10 @@ class GetOutOfBoundsReadingsControllerTest extends ControllerTestCase
     {
         parent::setUp();
 
+        // Keep the same kernel across the login request and the real request,
+        // otherwise the container is rebuilt and the mock below is lost.
+        $this->client->disableReboot();
+
         // Register the mock ONCE per test using a callback, so individual tests can
         // change $this->mockSearchReturnData without calling set() a second time
         // (which throws "service is already initialized").

@@ -146,7 +146,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'deviceIDs' => 'string'
             ],
             'errorMessages' => [
-                'deviceIDs' => 'This value should be of type array.'
+                'deviceIDs' => 'This value should be of type array|null.'
             ],
         ];
 
@@ -155,7 +155,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'deviceIDs' => 1
             ],
             'errorMessages' => [
-                'deviceIDs' => 'This value should be of type array.'
+                'deviceIDs' => 'This value should be of type array|null.'
             ],
         ];
 
@@ -164,7 +164,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'deviceNames' => 'string'
             ],
             'errorMessages' => [
-                'deviceNames' => 'This value should be of type array.'
+                'deviceNames' => 'This value should be of type array|null.'
             ],
         ];
 
@@ -173,7 +173,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'deviceNames' => 1
             ],
             'errorMessages' => [
-                'deviceNames' => 'This value should be of type array.'
+                'deviceNames' => 'This value should be of type array|null.'
             ],
         ];
 
@@ -182,7 +182,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'groupIDs' => 'string'
             ],
             'errorMessages' => [
-                'groupIDs' => 'This value should be of type array.'
+                'groupIDs' => 'This value should be of type array|null.'
             ],
         ];
 
@@ -191,7 +191,7 @@ class GetSensorControllerTest extends ControllerTestCase
                 'groupIDs' => 1
             ],
             'errorMessages' => [
-                'groupIDs' => 'This value should be of type array.'
+                'groupIDs' => 'This value should be of type array|null.'
             ],
         ];
     }

@@ -35,6 +35,12 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         $this->diContainer = static::getContainer();
         $this->entityManager = $this->diContainer->get('doctrine.orm.default_entity_manager');
         $this->sensorTriggerRepository = $this->diContainer->get(SensorTriggerRepository::class);
+
+        // The checker ignores triggers whose target sensor hasn't reported within its reading interval,
+        // so mark every reading as just updated (in memory only) to treat all fixture sensors as active.
+        foreach ($this->diContainer->get(BaseSensorReadingTypeRepository::class)->findAll() as $baseReadingType) {
+            $baseReadingType->setUpdatedAt();
+        }
     }
 
     protected function tearDown(): void
@@ -81,7 +87,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         };
         $sensorReadingType->setCurrentReading($currentValue);
 
-        $sut = new \App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerChecker($this->sensorTriggerRepository);
+        $sut = $this->diContainer->get(SensorReadingTriggerChecker::class);
         $result = $sut->checkSensorForTriggers(
             $sensorReadingType,
             $triggerDay,
@@ -129,7 +135,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
             default => throw new \Exception('Operator not found'),
         };
         $sensorReadingType->setCurrentReading($currentValue);
-        $sut = new \App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
+        $sut = $this->diContainer->get(SensorReadingTriggerChecker::class);
         $result = $sut->checkSensorForTriggers(
             $sensorReadingType,
             $triggerDay,
@@ -177,7 +183,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
                 default => throw new \Exception('Operator not found'),
             };
             $sensorReadingType->setCurrentReading($currentValue);
-            $sut = new \App\Services\Sensor\Trigger\TriggerChecker\SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
+            $sut = $this->diContainer->get(SensorReadingTriggerChecker::class);
             $result = $sut->checkSensorForTriggers(
                 $sensorReadingType,
                 $triggerDay,
@@ -231,7 +237,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
                 default => throw new \Exception('Operator not found'),
             };
             $sensorReadingType->setCurrentReading($currentValue);
-            $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository, $boolReadingBaseSensorRepository);
+            $sut = $this->diContainer->get(SensorReadingTriggerChecker::class);
             $result = $sut->checkSensorForTriggers(
                 $sensorReadingType,
                 $triggerDay,
@@ -281,7 +287,7 @@ class SensorReadingTriggerCheckerTest extends KernelTestCase
         };
 
         $sensorReadingType->setCurrentReading($currentValue);
-        $sut = new SensorReadingTriggerChecker($this->sensorTriggerRepository);
+        $sut = $this->diContainer->get(SensorReadingTriggerChecker::class);
         $result = $sut->checkSensorForTriggers(
             $sensorReadingType,
             $triggerDay,
