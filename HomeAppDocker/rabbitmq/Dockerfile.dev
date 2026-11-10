@@ -1,0 +1,2 @@
+# Dev: same as the base for now. Add dev-only RabbitMQ changes here.
+FROM homeapp-rabbitmq-base

@@ -51,7 +51,9 @@ SSL/signed/client-key.pem
 SSL/signed/ca-cert.pem
 ##< Docker >###
 HomeAppDocker/.env
+HomeAppDocker/mariadb/dumps/*
 HomeAppDocker/mariadb/db_data/*
+HomeAppDocker/mariadb/db_data-10.8/*
 HomeAppDocker/webservers/auth/auth.json
 HomeAppDocker/docker-compose.override.*
 HomeAppDocker/docker-compose.yml.*
@@ -61,6 +63,7 @@ HomeAppDocker/docker-compose.yml.*
 ##< RabbitMQ >###
 HomeAppDocker/rabbitmq/data/*
 HomeAppDocker/rabbitmq/log/*
+HomeAppDocker/rabbitmq/data-3.11/*
 
 ##< ElasticSearch >###
 HomeAppDocker/elasticsearch/certs/.env

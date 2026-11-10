@@ -1,0 +1,208 @@
+# Production stack. This file and a .env file are all the server needs — no source code.
+#
+# On the server:
+#   1. Copy this file and .env.prod.example to a folder, rename .env.prod.example to .env and fill it in
+#   2. Put the SSL certificates in ./ssl (server-cert.pem, server-key.pem, ca-cert.pem, cacert.pem, ...)
+#   3. docker login ghcr.io            (once; use a GitHub token with read:packages)
+#   4. docker compose -f docker-compose.prod.yml pull
+#      docker compose -f docker-compose.prod.yml up -d
+#
+# To update: run step 4 again.
+
+x-app-environment: &app-environment
+  APP_NAME: ${APP_NAME}
+  APP_SECRET: ${APP_SECRET}
+  JWT_PASSPHRASE: ${JWT_PASSPHRASE}
+  HTTPS_APP_PORT: ${HTTPS_APP_PORT}
+  SECONDARY_APP_PORT: ${SECONDARY_APP_PORT}
+  PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT:-256M}
+  TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+  RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+  RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+  MARIADB_USER: ${MARIADB_USER}
+  MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+  MARIADB_DATABASE: ${MARIADB_DATABASE}
+  REDIS_INTERNAL_PORT: ${REDIS_INTERNAL_PORT:-6379}
+  REDIS_PASSWORD: ${REDIS_PASSWORD}
+  ELASTIC_ENABLED: ${ELASTIC_ENABLED:-true}
+  ELASTIC_VERSION: ${ELASTIC_VERSION}
+  ELASTIC_TRANSPORT: ${ELASTIC_TRANSPORT:-http}
+  ELASTIC_TRANSPORT_FAILOVER: ${ELASTIC_TRANSPORT:-http}
+  ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ${ELASTIC_SEARCH_HTTP_AUTH_PASSWORD}
+  SLACK_WEBHOOK_ALERT_URL: ${SLACK_WEBHOOK_ALERT_URL:-}
+
+services:
+  apache:
+    image: ${REGISTRY:-ghcr.io/kurtis-hill}/homeapp-apache:${IMAGE_TAG:-latest}
+    container_name: '${APP_NAME}-php-apache-server'
+    # Optional: any other app settings (the old server's app/.env values that differ from the defaults)
+    env_file:
+      - path: ./app.env
+        required: false
+    ports:
+      - '${HTTPS_APP_PORT}:${HTTPS_APP_PORT}'
+      - '${SECONDARY_APP_PORT}:${SECONDARY_APP_PORT}'
+    environment: *app-environment
+    volumes:
+      - ./ssl:/etc/ssl/custom:ro
+      - jwt-keys:/var/www/html/config/jwt
+      - profile-pics:/var/www/html/assets/images/profile-pics
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    depends_on:
+      php-cli:
+        condition: service_healthy
+      maria-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
+
+  # Runs database migrations and creates the JWT keys on start, then the queue workers
+  php-cli:
+    image: ${REGISTRY:-ghcr.io/kurtis-hill}/homeapp-php-cli:${IMAGE_TAG:-latest}
+    container_name: '${APP_NAME}-php-cli-queue-proccessor'
+    # Optional: any other app settings (the old server's app/.env values that differ from the defaults)
+    env_file:
+      - path: ./app.env
+        required: false
+    environment: *app-environment
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ./ssl:/etc/ssl/custom:ro
+      - jwt-keys:/var/www/html/config/jwt
+      - profile-pics:/var/www/html/assets/images/profile-pics
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    depends_on:
+      maria-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      es01:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
+
+  maria-db:
+    image: ${REGISTRY:-ghcr.io/kurtis-hill}/homeapp-mariadb:${IMAGE_TAG:-latest}
+    container_name: '${APP_NAME}-mariadb'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MYSQL_USER: ${MARIADB_USER}
+      MYSQL_PASSWORD: ${MARIADB_PASSWORD}
+      MYSQL_DATABASE: ${MARIADB_DATABASE}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      # Any .sql / .sql.gz files here are imported once, only when the database volume is empty
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+      - ./backups:/backup
+      - ./ssl:/etc/mysql/ssl:ro
+      - /etc/timezone:/etc/timezone:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
+
+  rabbitmq:
+    image: ${REGISTRY:-ghcr.io/kurtis-hill}/homeapp-rabbitmq:${IMAGE_TAG:-latest}
+    container_name: '${APP_NAME}-rabbitmq'
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    ports:
+      # Management UI. Remove this line if you don't need it reachable from outside the server.
+      - '${RABBIT_MQ_INTERFACE_PORT}:15672'
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 15s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
+
+  redis:
+    image: ${REGISTRY:-ghcr.io/kurtis-hill}/homeapp-redis:${IMAGE_TAG:-latest}
+    container_name: '${APP_NAME}-redis'
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
+
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    container_name: '${APP_NAME}-es01'
+    environment:
+      - node.name=es01
+      - cluster.name=docker-cluster
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -Dcom.sun.management.jmxremote=false -XX:+UseContainerSupport"
+      - xpack.license.self_generated.type=basic
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - bootstrap.memory_lock=true
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test: "curl -sf http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s || exit 1"
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - HomeAppProjectNetwork
+
+volumes:
+  mariadb-data:
+  rabbitmq-data:
+  jwt-keys:
+  profile-pics:
+  es-data:
+    # To keep existing Elasticsearch data, set ES_DATA_VOLUME to the old volume's name (see `docker volume ls`)
+    name: ${ES_DATA_VOLUME:-homeapp-es-data}
+
+networks:
+  HomeAppProjectNetwork:

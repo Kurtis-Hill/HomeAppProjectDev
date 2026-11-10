@@ -1,0 +1,29 @@
+# Shared base for the apache and php-cli images (dev and prod).
+# Built as its own image (homeapp-php-base) — see docker-bake.hcl.
+#
+# Both images start from the apache variant so the PHP extensions are only
+# compiled once (this matters when building for ARM, where it is slow).
+FROM php:8.5-apache-trixie
+
+WORKDIR /var/www/html
+
+RUN apt-get update -y \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        git \
+        unzip \
+        zip \
+    && update-ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache sockets http apcu
+
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+
+# Default used by php.ini when PHP_MEMORY_LIMIT isn't set at runtime
+ENV PHP_MEMORY_LIMIT=256M
+COPY ./webservers/apache/php-config/php.ini /usr/local/etc/php/conf.d/extra-php-config.ini
+
+RUN mkdir -p /var/www/html/assets/images/profile-pics /var/www/html/config/jwt

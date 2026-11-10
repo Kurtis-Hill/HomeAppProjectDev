@@ -1,0 +1,16 @@
+# Prod: builds the front-end assets (public/build). This image is never deployed —
+# the apache prod image copies the built files out of it. Build context is the repository root.
+# Assets are the same on every CPU type, so this always runs natively on the build machine.
+FROM --platform=$BUILDPLATFORM homeapp-node-base
+
+COPY app/package.json app/yarn.lock ./
+RUN yarn install --frozen-lockfile --non-interactive
+
+# Set to /HomeApp/build when the app sits behind the /HomeApp/ reverse-proxy prefix
+ARG WEBPACK_PUBLIC_PATH=/build
+ENV WEBPACK_PUBLIC_PATH=${WEBPACK_PUBLIC_PATH}
+
+COPY app/webpack.config.js ./
+COPY app/assets ./assets
+
+RUN yarn build

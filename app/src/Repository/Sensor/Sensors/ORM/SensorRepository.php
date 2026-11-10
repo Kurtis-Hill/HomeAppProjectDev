@@ -194,7 +194,9 @@ class SensorRepository extends ServiceEntityRepository implements SensorReposito
                 ->setParameter('cardViewIDs', $getSensorQueryDTO->getCardViewIDs());
         }
 
-        $qb->setFirstResult(PaginationCalculator::calculateOffset($requestDTO->getLimit(), $requestDTO->getPage()))
+        // Paging needs a fixed order, otherwise the database can return any rows for a given page
+        $qb->orderBy(Sensor::ALIAS . '.sensorID', 'ASC')
+            ->setFirstResult(PaginationCalculator::calculateOffset($requestDTO->getLimit(), $requestDTO->getPage()))
             ->setMaxResults($requestDTO->getLimit());
 
         return $qb->getQuery()->getResult();

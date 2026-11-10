@@ -1,0 +1,8 @@
+# Shared base for the front-end build (homeapp-node-base).
+FROM node:26-alpine
+
+# Node 25+ images no longer ship Yarn; the project uses Yarn 1 (yarn.lock v1)
+RUN npm install -g yarn@1.22.22 \
+    && yarn config set network-timeout 1200000 -g
+
+WORKDIR /home/node/app/src

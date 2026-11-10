@@ -1,0 +1,13 @@
+# Shared base for the database (homeapp-mariadb-base): server and client config.
+FROM mariadb:12.3
+
+COPY ./mariadb/50config/50-client.cnf /etc/mysql/mariadb.conf.d/50-client.cnf
+COPY ./mariadb/50config/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+COPY ./mariadb/my.cnf /etc/mysql/conf.d/my.cnf
+
+# Config files read-only, but folders must stay searchable (0755) or the mysql user can't read them
+RUN find /etc/mysql/mariadb.conf.d/ /etc/mysql/conf.d/ -type d -exec chmod 0755 {} + \
+    && find /etc/mysql/mariadb.conf.d/ /etc/mysql/conf.d/ -type f -exec chmod 0444 {} + \
+    && mkdir -p /backups
+
+CMD ["mariadbd"]

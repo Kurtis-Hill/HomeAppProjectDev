@@ -1,0 +1,12 @@
+# Prod: app code baked in (from homeapp-php-app), front-end assets from the yarn prod build.
+FROM homeapp-php-app
+
+COPY --from=homeapp-assets /home/node/app/src/public/build ./public/build
+
+COPY ./webservers/apache/sites-enabled/site.conf /etc/apache2/sites-available/000-default.conf
+
+COPY ./webservers/apache/docker-entrypoint.sh /usr/bin/docker-entrypoint
+RUN chmod +x /usr/bin/docker-entrypoint \
+    && a2enmod rewrite ssl remoteip
+
+ENTRYPOINT ["docker-entrypoint", "-D", "FOREGROUND"]

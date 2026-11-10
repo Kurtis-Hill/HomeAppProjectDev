@@ -21,7 +21,7 @@ use App\Entity\Sensor\SensorTypes\Sht;
 use App\Entity\Sensor\SensorTypes\Soil;
 use App\Entity\User\Group;
 use App\Entity\UserInterface\Card\CardState;
-use Doctrine\DBAL\Platforms\MySQL80Platform;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -35,8 +35,8 @@ final class Version20220303160823 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof MySQL80Platform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
+            !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform,
+            "Migration can only be executed safely on MySQL or MariaDB."
         );
 
         $this->addSql('
@@ -475,8 +475,8 @@ final class Version20220303160823 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof MySQL80Platform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MySQL80Platform'."
+            !$this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform,
+            "Migration can only be executed safely on MySQL or MariaDB."
         );
 
         $this->addSql("SET FOREIGN_KEY_CHECKS = 0;");

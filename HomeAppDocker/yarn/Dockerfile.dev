@@ -1,0 +1,8 @@
+# Dev: app code is mounted from ../app by docker-compose.yml; rebuilds assets on change.
+FROM homeapp-node-base
+
+COPY ./yarn/docker-entrypoint.sh /usr/bin/docker-entrypoint
+RUN chmod +x /usr/bin/docker-entrypoint
+
+ENTRYPOINT ["docker-entrypoint"]
+CMD ["yarn"]
