@@ -62,10 +62,6 @@ fi
   php bin/console lexik:jwt:generate-keypair --overwrite
 #fi
 
-echo "Starting symfony transport..."
-bin/console messenger:consume scheduler_default -vv --failure-limit=3 &
-echo "transport started..."
-
 echo "Starting supervisor..."
 supervisord -n -c /etc/supervisor/conf.d/update-current-reading.conf
 echo "Supervisor Started..."

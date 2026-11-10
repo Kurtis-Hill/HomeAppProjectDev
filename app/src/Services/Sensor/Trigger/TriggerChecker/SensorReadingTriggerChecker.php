@@ -57,19 +57,19 @@ readonly class SensorReadingTriggerChecker implements SensorReadingTriggerChecke
                 if ($this->env !== 'test') {
                     $redisKey = sprintf(self::REDIS_KEY, $sensorTrigger->getSensorTriggerID());
                     if ($this->redisClient->exists($redisKey)) {
-                        $this->elasticLogger->error(
-                            sprintf(
-                                'Trigger %d for base reading type ID %d has been triggered recently and will not be processed again yet.',
-                                $sensorTrigger->getSensorTriggerID(),
-                                $sensorTrigger->getBaseReadingTypeToTriggers()->getBaseReadingTypeID()
-                            ),
-                            [
-                                'sensorID' => $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getSensorID(),
-                                'baseReadingTypeID' => $sensorTrigger->getBaseReadingTypeToTriggers()->getBaseReadingTypeID(),
-                                'sensorToTrigger' => $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getSensorName(),
-                                'operator' => $operator->getOperatorSymbol(),
-                            ]
-                        );
+//                        $this->elasticLogger->info(
+//                            sprintf(
+//                                'Trigger %d for base reading type ID %d has been triggered recently and will not be processed again yet.',
+//                                $sensorTrigger->getSensorTriggerID(),
+//                                $sensorTrigger->getBaseReadingTypeToTriggers()->getBaseReadingTypeID()
+//                            ),
+//                            [
+//                                'sensorID' => $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getSensorID(),
+//                                'baseReadingTypeID' => $sensorTrigger->getBaseReadingTypeToTriggers()->getBaseReadingTypeID(),
+//                                'sensorToTrigger' => $sensorTrigger->getBaseReadingTypeToTriggers()->getSensor()->getSensorName(),
+//                                'operator' => $operator->getOperatorSymbol(),
+//                            ]
+//                        );
                         continue;
                     }
 
