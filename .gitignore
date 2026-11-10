@@ -64,3 +64,6 @@ HomeAppDocker/rabbitmq/log/*
 
 ##< ElasticSearch >###
 HomeAppDocker/elasticsearch/certs/.env
+
+Arduino Sketches/lib
+Arduino Sketches/DHT_Dallas/data/wifi.json

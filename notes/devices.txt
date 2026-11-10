@@ -1,8 +1,10 @@
 Devices
 Node MCU
-(Reserve for soil)
+(For soil)
 SCL-SDA
 5-4
+Green D1
+Yellow D2
 ====================================================
 PondDevice
 LEDS
