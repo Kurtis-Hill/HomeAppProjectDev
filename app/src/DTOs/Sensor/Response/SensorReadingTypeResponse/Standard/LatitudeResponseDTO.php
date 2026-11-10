@@ -20,7 +20,8 @@ readonly class LatitudeResponseDTO extends AbstractStandardResponseDTO implement
         float $highReading,
         float $lowReading,
         bool $constRecorded,
-        string $updatedAt
+        string $updatedAt,
+        int $outOfBoundsAlertTimer,
     ) {
         parent::__construct(
             sensor: $sensor,
@@ -31,6 +32,7 @@ readonly class LatitudeResponseDTO extends AbstractStandardResponseDTO implement
             constRecord: $constRecorded,
             updated: $updatedAt,
             readingType: Latitude::READING_TYPE,
+            outOfBoundsAlertTimer: $outOfBoundsAlertTimer,
         );
     }
 

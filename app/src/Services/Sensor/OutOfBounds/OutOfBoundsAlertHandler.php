@@ -45,9 +45,10 @@ readonly class OutOfBoundsAlertHandler
         );
 
         if ($this->env !== 'test') {
-            $this->redisClient->transaction(function (MultiExec $tx) use ($redisKey) {
+            $seconds = $standardReadingSensor->getOutOfBoundsAlertTimer() ?? 60 * 60;
+            $this->redisClient->transaction(function (MultiExec $tx) use ($redisKey, $seconds) {
                 $tx->set($redisKey, true);
-                $tx->expire($redisKey, 60 * 60);
+                $tx->expire($redisKey,  $seconds);
             });
 
             $this->homeAppAlertClient->sendAlert($message);

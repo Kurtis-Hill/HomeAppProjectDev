@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\AMQP\Sensor\Consumers;
 
+use App\Builders\Sensor\Internal\SensorUpdateRequestDTOBuilder\SingleSensorUpdateRequestDTOBuilder;
 use App\DTOs\Sensor\Internal\Event\SensorUpdateEventDTO;
-use App\DTOs\Sensor\Request\SendRequests\SensorDataUpdate\SingleSensorUpdateRequestDTO;
 use App\Exceptions\Sensor\SensorNotFoundException;
 use App\Exceptions\Sensor\SensorRequestException;
+use App\Repository\Sensor\Sensors\ORM\SensorRepository;
 use App\Services\Sensor\UpdateDeviceSensorData\UpdateDeviceSensorDataHandler;
-use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -17,6 +17,8 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
 {
     public function __construct(
         private UpdateDeviceSensorDataHandler $updateDeviceSensorDataHandler,
+        private SensorRepository $sensorRepository,
+        private SingleSensorUpdateRequestDTOBuilder $singleSensorUpdateRequestDTOBuilder,
         private LoggerInterface $logger,
     ) {}
 
@@ -28,22 +30,42 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
                 $msg->getBody(),
                 [
                     'allowed_classes' => [
-                        SensorUpdateEventDTO::class,
-                        SingleSensorUpdateRequestDTO::class,
-                    ]
+                        SensorUpdateEventDTO::class]
                 ]
             );
-        } catch (Exception $exception) {
+
+            if (!$sensorUpdateEventDTO instanceof SensorUpdateEventDTO) {
+                $this->logger->error('Deserialization returned unexpected type, message body may be malformed or sent to wrong queue');
+
+                return self::MSG_REJECT;
+            }
+        } catch (\Throwable $exception) {
             $this->logger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return self::MSG_ACK;
         }
+
         try {
-            $updateRequestResult = $this->updateDeviceSensorDataHandler->handleSensorsUpdateRequest($sensorUpdateEventDTO->getSensorUpdateRequestDTOs());
+            $sensor = $this->sensorRepository->find($sensorUpdateEventDTO->getSensorID());
+            if ($sensor === null) {
+                return self::MSG_ACK;
+            }
+
+            $sensorsToUpdate = $this->sensorRepository->findSameSensorTypesOnSameDevice(
+                $sensor->getDevice()->getDeviceID(),
+                $sensor->getSensorTypeObject()->getSensorTypeID(),
+            );
+
+            $sensorUpdateRequestDTOsByDeviceID = [];
+            foreach ($sensorsToUpdate as $sensorToUpdate) {
+                $sensorUpdateRequestDTOsByDeviceID[] = $this->singleSensorUpdateRequestDTOBuilder->buildSensorUpdateRequestDTO($sensorToUpdate);
+            }
+
+            $updateRequestResult = $this->updateDeviceSensorDataHandler->handleSensorsUpdateRequest($sensorUpdateRequestDTOsByDeviceID);
             if ($updateRequestResult === false) {
-                $this->logger->error('Error processing sensor data to upload sensor not found, sensor name: ' . $sensorUpdateEventDTO->getSensorUpdateRequestDTOs()[0]->getSensorName());
+                $this->logger->error('Error processing sensor data to upload sensor not found, sensor ID: ' . $sensorUpdateEventDTO->getSensorID());
             } else {
-                $this->logger->info('Sensor data update handled successfully, sensor name: ' . $sensorUpdateEventDTO->getSensorUpdateRequestDTOs()[0]->getSensorName());
+                $this->logger->info('Sensor data update handled successfully, sensor ID: ' . $sensorUpdateEventDTO->getSensorID());
             }
 
             return $updateRequestResult === true
@@ -55,8 +77,12 @@ readonly class SensorSendUpdateDataRequestConsumer implements ConsumerInterface
             return self::MSG_REJECT;
         } catch (SensorNotFoundException $e) {
             $this->logger->error($e->getMessage());
-        }
 
-        return self::MSG_ACK;
+            return self::MSG_ACK;
+        } catch (\Throwable $e) {
+            $this->logger->error('Unexpected error processing sensor update, exception message: ' . $e->getMessage());
+
+            return self::MSG_REJECT;
+        }
     }
 }

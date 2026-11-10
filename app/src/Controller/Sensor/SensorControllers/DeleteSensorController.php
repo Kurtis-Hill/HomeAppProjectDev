@@ -3,13 +3,11 @@
 namespace App\Controller\Sensor\SensorControllers;
 
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
+use App\DTOs\RequestDTO;
 use App\Entity\Sensor\Sensor;
-use App\Exceptions\Common\ValidatorProcessorException;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
-use App\Services\Request\RequestQueryParameterHandler;
-use App\Services\Request\RequestTypeEnum;
-use App\Services\Sensor\SensorDeletion\SensorDeletionInterface;
+use App\Services\Sensor\SensorDeletion\SensorDeletionHandler;
 use App\Traits\HomeAppAPITrait;
 use App\Voters\SensorVoter;
 use Psr\Log\LoggerInterface;
@@ -17,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 #[Route(CommonURL::USER_HOMEAPP_API_URL . 'sensor', name: 'delete-sensor')]
@@ -29,38 +27,18 @@ class DeleteSensorController extends AbstractController
 
     private LoggerInterface $logger;
 
-    private RequestQueryParameterHandler $requestQueryParameterHandler;
-
-    public function __construct(LoggerInterface $elasticLogger, RequestQueryParameterHandler $requestQueryParameterHandler)
+    public function __construct(LoggerInterface $elasticLogger)
     {
         $this->logger = $elasticLogger;
-        $this->requestQueryParameterHandler = $requestQueryParameterHandler;
     }
 
     #[Route('/{sensorID}', name: 'delete-sensor', methods: [Request::METHOD_DELETE])]
+    #[IsGranted(SensorVoter::DELETE_SENSOR, subject: 'sensor')]
     public function deleteSensor(
         Sensor $sensor,
-        Request $request,
-        SensorDeletionInterface $sensorDeletionHandler
+        SensorDeletionHandler $sensorDeletionHandler
     ): Response {
-        try {
-            $this->denyAccessUnlessGranted(SensorVoter::DELETE_SENSOR, $sensor);
-        } catch (AccessDeniedException) {
-            $this->logger->info('User tried to delete sensor without permission', [
-                'user' => $this->getUser()?->getUserIdentifier(),
-                'sensor' => $sensor->getSensorID()
-            ]);
-
-            return $this->sendForbiddenAccessJsonResponse([APIErrorMessages::ACCESS_DENIED]);
-        }
-
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::ONLY->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
-        }
+        $requestDTO ??= new RequestDTO();
 
         $sensorResponseData = SensorResponseDTOBuilder::buildSensorResponseDTO($sensor);
 

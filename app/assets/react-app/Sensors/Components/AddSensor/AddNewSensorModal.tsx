@@ -14,7 +14,10 @@ export function AddNewSensorModal(props: {deviceID: number, refreshData?: () => 
 
     return (
         <>
-            <button onClick={() => toggleAddNewSensorModal()} className="btn btn-primary">+Add New Sensor</button>
+                <button onClick={() => toggleAddNewSensorModal()} className="btn sensor-add-btn">
+                <i className="fas fa-plus sensor-add-btn-icon" />
+                Add New Sensor
+            </button>
             {
                 showModal === true
                     ?

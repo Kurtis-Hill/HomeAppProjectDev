@@ -69,21 +69,15 @@ class SensorTriggerRepository extends ServiceEntityRepository
             $expr->eq('st.' . $currentDay, ':currentDay'),
             $expr->eq('st.override', ':override'),
             $expr->orX(
-                $expr->orX(
+                // No time restriction — both start and end are null
+                $expr->andX(
                     $expr->isNull('st.startTime'),
                     $expr->isNull('st.endTime'),
                 ),
-                $expr->orX(
-                    $expr->andX(
-                        $expr->lte('st.startTime', ':currentTime'),
-                        $expr->gte('st.endTime', ':currentTime'),
-                    ),
-                ),
-                $expr->orX(
-                    $expr->andX(
-                        $expr->gte('st.startTime', ':currentTime'),
-                        $expr->lte('st.endTime', ':currentTime'),
-                    ),
+                // Current time falls within the configured window
+                $expr->andX(
+                    $expr->lte('st.startTime', ':currentTime'),
+                    $expr->gte('st.endTime', ':currentTime'),
                 ),
             )
         )
@@ -113,21 +107,15 @@ class SensorTriggerRepository extends ServiceEntityRepository
             $expr->eq('st.' . $currentDay, ':currentDay'),
             $expr->eq('st.override', ':override'),
             $expr->orX(
-                $expr->orX(
+                // No time restriction — both start and end are null
+                $expr->andX(
                     $expr->isNull('st.startTime'),
                     $expr->isNull('st.endTime'),
                 ),
-                $expr->orX(
-                    $expr->andX(
-                        $expr->lte('st.startTime', ':currentTime'),
-                        $expr->gte('st.endTime', ':currentTime'),
-                    ),
-                ),
-                $expr->orX(
-                    $expr->andX(
-                        $expr->gte('st.startTime', ':currentTime'),
-                        $expr->lte('st.endTime', ':currentTime'),
-                    ),
+                // Current time falls within the configured window
+                $expr->andX(
+                    $expr->lte('st.startTime', ':currentTime'),
+                    $expr->gte('st.endTime', ':currentTime'),
                 ),
             )
         )

@@ -21,4 +21,5 @@ export interface StandardSensorBoundaryReadingUpdateInputInterface {
     highReading: StandardSensorReadingValue,
     lowReading: StandardSensorReadingValue,
     constRecord: StandardSensorConstRecord,
+    outOfBoundsAlertTimer?: number | null,
 }

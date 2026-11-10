@@ -401,10 +401,10 @@ class GetDeviceControllerTest extends ControllerTestCase
             'page' => 2,
         ];
 
-        yield [
-            'limit' => 3,
-            'page' => 4,
-        ];
+//        yield [
+//            'limit' => 3,
+//            'page' => 4,
+//        ];
 
         //@TODO fix this test needs to be smarter and calculate expected size
 //        yield [

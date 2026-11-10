@@ -8,6 +8,6 @@ export function Label(props: {
     const { text, htmlFor, classes } = props;
 
     return (
-        <label className={`large font-weight-bold ${classes ?? ''}`} htmlFor={htmlFor}>{text}</label>
+        <label className={`label-modern ${classes ?? ''}`} htmlFor={htmlFor}>{text}</label>
     )
 }

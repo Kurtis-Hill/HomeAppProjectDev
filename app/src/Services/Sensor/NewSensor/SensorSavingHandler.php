@@ -3,50 +3,27 @@
 namespace App\Services\Sensor\NewSensor;
 
 use App\Entity\Sensor\Sensor;
-use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
-use App\Services\Sensor\SensorUpdateEventHandler;
+use App\Services\Sensor\UpdateSensor\SensorUpdateEventHandler;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 
 readonly class SensorSavingHandler
 {
     public function __construct(
-        private SensorRepositoryInterface $sensorRepository,
         private SensorUpdateEventHandler $sensorUpdateEventHandler,
+        private EntityManagerInterface $entityManager,
     ) {}
 
-    public function saveSensor(Sensor $sensor): bool
+    public function saveSensor(Sensor $sensor, bool $sendUpdateEvent = true): bool
     {
         try {
-            $this->sensorRepository->persist($sensor);
-            $this->sensorRepository->flush();
+            $this->entityManager->persist($sensor);
+            $this->entityManager->flush();
 
-            $this->sensorUpdateEventHandler->handleSensorUpdateEvent([$sensor]);
-            return true;
-        } catch (ORMException|OptimisticLockException) {
-            return false;
-        }
-    }
-
-    // doesnt work need to remember to grab related sensors and send full request
-    public function saveBulkSensor(array $sensors): bool
-    {
-        try {
-            $sensorsToSend = [];
-            foreach ($sensors as $sensor) {
-                if (!$sensor instanceof Sensor) {
-                    continue;
-                }
-                $sensorsToSend[] = $sensor;
-                $this->sensorRepository->persist($sensor);
+            if ($sendUpdateEvent === true) {
+                $this->sensorUpdateEventHandler->handleSensorUpdateEvent($sensor);
             }
-            $this->sensorRepository->flush();
-
-            $batchedSensorIDs = array_chunk($sensorsToSend, 100);
-            foreach ($batchedSensorIDs as $batchedSensors) {
-                $this->sensorUpdateEventHandler->handleSensorUpdateEvent($batchedSensors);
-            }
-
             return true;
         } catch (ORMException|OptimisticLockException) {
             return false;

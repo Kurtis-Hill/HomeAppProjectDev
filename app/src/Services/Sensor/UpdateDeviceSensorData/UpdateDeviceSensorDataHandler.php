@@ -17,6 +17,7 @@ use App\Entity\Sensor\SensorTypes\Soil;
 use App\Exceptions\Sensor\SensorNotFoundException;
 use App\Exceptions\Sensor\SensorRequestException;
 use App\Exceptions\Sensor\SensorTypeException;
+use App\Repository\Sensor\Sensors\ORM\SensorRepository;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\Device\Request\DeviceRequestHandlerInterface;
 use Exception;
@@ -29,13 +30,14 @@ readonly class UpdateDeviceSensorDataHandler
 
     public function __construct(
         private DeviceRequestHandlerInterface $deviceRequestHandler,
-        private SensorRepositoryInterface $sensorRepository,
+        private SensorRepository $sensorRepository,
         private DeviceSettingsRequestDTOBuilder $deviceSettingsRequestDTOBuilder,
         private LoggerInterface $logger,
     ) {}
 
     /**
      * @param SensorUpdateRequestDTOInterface[] $sensorUpdateRequestDTOs
+     *
      * @throws SensorNotFoundException
      * @throws SensorTypeException
      *

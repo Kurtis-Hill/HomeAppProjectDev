@@ -4,9 +4,17 @@ export function DeclineButton(props: {
     clickEvent: (e: Event) => void;
     dataName?: string;
 }) {
-
     const { clickEvent, dataName } = props;
+
     return (
-        <i className="fas fa-times-circle fa-2x hover cancel-button" onClick={(e: Event) => clickEvent(e)} data-name={dataName}></i>
-    )
+        <button
+            type="button"
+            className="btn-action btn-action-decline"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => clickEvent(e as unknown as Event)}
+            data-name={dataName}
+            title="Cancel"
+        >
+            <i className="fas fa-times" />
+        </button>
+    );
 }

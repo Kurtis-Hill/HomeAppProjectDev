@@ -5,10 +5,16 @@ export default function CloseButton(props: {
     buttonText?: string|undefined;
     classes?: string;
 }) {
-    const buttonText = props.buttonText ?? 'Cancel'
-    const classes = props.classes;
+    const buttonText = props.buttonText ?? 'Cancel';
+    const classes = props.classes ?? '';
 
     return (
-        <button className={`${classes ?? ''} btn btn-secondary"`} type="button" onClick={() => {props.close(false)}} data-dismiss="modal">{ buttonText }</button>
+        <button
+            className={`btn-modern-secondary ${classes}`}
+            type="button"
+            onClick={() => props.close(false)}
+        >
+            {buttonText}
+        </button>
     );
 }

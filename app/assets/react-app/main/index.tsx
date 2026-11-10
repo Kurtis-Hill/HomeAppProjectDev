@@ -20,12 +20,15 @@ import { MainPageTop } from "../Common/Components/Pages/MainPageTop";
 import { LandingPage } from '../Routes/LandingPage/LandingPage';
 import { UserSettingsView } from '../User/Components/User/UserSettingsView';
 import TriggerPage from '../Routes/Triggers/TriggerPage';
+import SensorTriggerPage from '../Routes/Triggers/SensorTriggerPage';
 import { DeviceView } from "../Devices/Components/DeviceView";
 import LoginView from "../Authentication/Components/LoginView";
 import { Logout } from '../Authentication/Components/Logout';
 import QueryPage from "../Routes/Query/QueryPage";
 import {RoomView} from "../User/Components/Room/RoomView";
 import {GroupView} from "../User/Components/Group/GroupView";
+import AdminView from "../User/Components/Admin/AdminView";
+import LogsView from "../Logs/Components/LogsView";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -42,8 +45,11 @@ root.render(
                     <Route path="room/:roomID" element={<RoomView />} />
                     <Route path="group/:groupID" element={<GroupView />} />
                     <Route path="sensors/triggers" element={<TriggerPage />} />
+                    <Route path="sensors/:sensorID/triggers" element={<SensorTriggerPage />} />
                     <Route path="user-settings" element={<UserSettingsView />} />
                     <Route path="query" element={<QueryPage />} />
+                    <Route path="admin" element={<AdminView />} />
+                    <Route path="admin/logs" element={<LogsView />} />
                 </Route>
         </Routes>
     </BrowserRouter>

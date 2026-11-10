@@ -11,7 +11,6 @@ import { deleteTriggerRequest } from '../../Sensors/Request/Trigger/DeleteTrigge
 import TriggerForm from '../../Sensors/Components/Trigger/TriggerForm';
 import UpdateTriggerView from "../../Sensors/Components/Trigger/UpdateTriggerView";
 import { AddNewTriggerType, addNewTriggerForm } from '../../Sensors/Request/Trigger/AddNewTriggerRequest';
-import { BaseCard } from '../../Common/Components/BaseCard';
 
 export default function TriggerPage() {
     const [triggerData, setTriggerData] = useState<SensorTriggerResponseInterface[]>([]);
@@ -110,11 +109,6 @@ export default function TriggerPage() {
                                             : 
                                                 <h2>No Triggers to display</h2>
 
-                            }
-                            {
-                                <BaseCard loading={false} setCardLoading={setAddNewModal} setVariableToUpdate={() => false}>
-                                    <h2>+ Add New Trigger</h2>
-                                </BaseCard>
                             }
                             {
                                 addNewModal === true

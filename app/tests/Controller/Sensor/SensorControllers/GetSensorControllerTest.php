@@ -48,29 +48,20 @@ class GetSensorControllerTest extends ControllerTestCase
 
     private const GET_ALL_SENSORS_URL = '/HomeApp/api/user/sensors';
 
-    private ?Devices $device;
-
     private SensorRepositoryInterface $sensorRepository;
-
-    private UserRepositoryInterface $userRepository;
 
     private GroupRepository $groupNameRepository;
 
     private DeviceRepositoryInterface $deviceRepository;
-
-    private SensorTypeRepository $sensorTypeRepository;
 
     private CardViewRepository $cardViewRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->device = $this->entityManager->getRepository(Devices::class)->findOneBy(['deviceName' => ESP8266DeviceFixtures::LOGIN_TEST_ACCOUNT_NAME_ADMIN_GROUP_ONE['name']]);
         $this->sensorRepository = $this->entityManager->getRepository(Sensor::class);
-        $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->groupNameRepository = $this->entityManager->getRepository(Group::class);
         $this->deviceRepository = $this->entityManager->getRepository(Devices::class);
-        $this->sensorTypeRepository = $this->entityManager->getRepository(AbstractSensorType::class);
         $this->cardViewRepository = $this->entityManager->getRepository(CardView::class);
     }
 
@@ -227,15 +218,12 @@ class GetSensorControllerTest extends ControllerTestCase
             $dataToSend,
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        self::assertResponseIsSuccessful();
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $title = $responseData['title'];
-        self::assertEquals(GetSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
-
-        $errors = $responseData['errors'];
-        self::assertCount(count($deviceIDs), $errors);
+        $payload = $responseData['payload'];
+        self::assertCount(0, $payload);
     }
 
     public function test_getting_device_names_not_assigned_to(): void
@@ -261,15 +249,12 @@ class GetSensorControllerTest extends ControllerTestCase
             $dataToSend,
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        self::assertResponseIsSuccessful();
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $title = $responseData['title'];
-        self::assertEquals(GetSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
-
-        $errors = $responseData['errors'];
-        self::assertCount(count($deviceNames), $errors);
+        $payload = $responseData['payload'];
+        self::assertCount(0, $payload);
     }
 
     public function test_getting_groupIDs_not_assigned_to(): void
@@ -289,16 +274,12 @@ class GetSensorControllerTest extends ControllerTestCase
             $dataToSend,
         );
 
-        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        self::assertResponseIsSuccessful(Response::HTTP_BAD_REQUEST);
 
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
 
-        $title = $responseData['title'];
-        self::assertEquals(GetSensorController::BAD_REQUEST_NO_DATA_RETURNED, $title);
-
-        $errors = $responseData['errors'];
-        // -1 for the group that had no sensors
-        self::assertCount(count($groupIDs) - 1, $errors);
+        $payload = $responseData['payload'];
+        self::assertCount(0, $payload);
     }
 
     public function test_regular_user_can_get_devices_ids_is_assigned_to(): void

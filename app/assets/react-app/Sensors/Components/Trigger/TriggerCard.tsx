@@ -1,9 +1,14 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-
 import { SensorTriggerResponseInterface } from '../../Response/Sensor/Trigger/SensorTriggerResponseInterface';
 import DeleteButton from '../../../Common/Components/Buttons/DeleteButton';
 import { BaseCard } from '../../../Common/Components/BaseCard';
+
+const DAYS: Array<{ key: string; label: string }> = [
+    { key: 'monday', label: 'Mon' }, { key: 'tuesday', label: 'Tue' },
+    { key: 'wednesday', label: 'Wed' }, { key: 'thursday', label: 'Thu' },
+    { key: 'friday', label: 'Fri' }, { key: 'saturday', label: 'Sat' },
+    { key: 'sunday', label: 'Sun' },
+];
 
 export default function TriggerCard(props: {
     sensorTriggerData: SensorTriggerResponseInterface,
@@ -13,50 +18,50 @@ export default function TriggerCard(props: {
     showUpdateModal: boolean,
     id: number
 }) {
-    const { sensorTriggerData, handleShowDeleteModal, showUpdateModal, setShowUpdateModal, setTriggerToUpdate, id } = props;
+    const { sensorTriggerData, handleShowDeleteModal, setShowUpdateModal, setTriggerToUpdate, id } = props;
 
     return (
-        <>
-            <BaseCard loading={false} setCardLoading={() => setShowUpdateModal(true)} setVariableToUpdate={() => setTriggerToUpdate(id)} id={id}>
-                {
-                    sensorTriggerData.baseReadingTypeThatTriggers
-                        ? <span>Sensor that triggers: {sensorTriggerData.baseReadingTypeThatTriggers.sensor.sensorName}</span>
-                        : null
-                }
-                <br />
-                {
-                    sensorTriggerData.baseReadingTypeThatIsTriggered
-                        ? <span>Sensor that is triggered: {sensorTriggerData.baseReadingTypeThatIsTriggered.sensor.sensorName}</span>
-                        : null
-                }
-                <br />
-                <span>Trigger Type: {sensorTriggerData.triggerType.triggerTypeName}</span>
-                <br />
-                <span>Value that triggers: {sensorTriggerData.valueThatTriggers}</span>
-                <br />
-                <span>Operator: {sensorTriggerData.operator.operatorSymbol}</span>
-                <br />
-                <span>Start time {sensorTriggerData.startTime}</span>
-                <br />
-                <span>End time {sensorTriggerData.endTime}</span>
-                <br />
-                <span>Monday: {sensorTriggerData.days.monday === true ? 'true' : 'false'}</span>
-                <br />
-                <span>Tuesday: {sensorTriggerData.days.tuesday === true ? 'true' : 'false'}</span>
-                <br />
-                <span>Wednesday: {sensorTriggerData.days.wednesday === true ? 'true' : 'false'}</span>
-                <br />
-                <span>Thursday: {sensorTriggerData.days.thursday === true ? 'true' : 'false'}</span>
-                <br />
-                <span>Friday: {sensorTriggerData.days.friday === true ? 'true' : 'false'}</span>
-                <br />
-                <span>Saturday: {sensorTriggerData.days.saturday === true ? 'true' : 'false'}</span>
-                <br />
-                <span>Sunday: {sensorTriggerData.days.sunday === true ? 'true' : 'false'}</span>
-                <br />
-                <br />
-                <DeleteButton clickFunction={() => handleShowDeleteModal(sensorTriggerData.sensorTriggerID)}></DeleteButton>
-            </BaseCard>
-        </>
-    )
+        <BaseCard loading={false} setCardLoading={() => setShowUpdateModal(true)} setVariableToUpdate={() => setTriggerToUpdate(id)} id={id}>
+            <div className="trigger-info-grid">
+                {sensorTriggerData.baseReadingTypeThatTriggers && <>
+                    <span className="trigger-info-label">Triggers from</span>
+                    <span className="trigger-info-value">{sensorTriggerData.baseReadingTypeThatTriggers.sensor?.sensorName ?? '—'}</span>
+                </>}
+                {sensorTriggerData.baseReadingTypeThatIsTriggered && <>
+                    <span className="trigger-info-label">Triggers</span>
+                    <span className="trigger-info-value">{sensorTriggerData.baseReadingTypeThatIsTriggered.sensor?.sensorName ?? '—'}</span>
+                </>}
+                <span className="trigger-info-label">Type</span>
+                <span className="trigger-info-value">{sensorTriggerData.triggerType.triggerTypeName}</span>
+
+                <span className="trigger-info-label">Operator</span>
+                <span className="trigger-info-value">{sensorTriggerData.operator.operatorSymbol}</span>
+
+                <span className="trigger-info-label">Value</span>
+                <span className="trigger-info-value">{String(sensorTriggerData.valueThatTriggers)}</span>
+
+                {(sensorTriggerData.startTime || sensorTriggerData.endTime) && <>
+                    <span className="trigger-info-label">Time window</span>
+                    <span className="trigger-info-value">
+                        {sensorTriggerData.startTime ?? '—'} → {sensorTriggerData.endTime ?? '—'}
+                    </span>
+                </>}
+            </div>
+
+            <div className="trigger-days-badges">
+                {DAYS.map(({ key, label }) => (
+                    <span
+                        key={key}
+                        className={`trigger-day-badge${sensorTriggerData.days[key] === false ? ' inactive' : ''}`}
+                    >
+                        {label}
+                    </span>
+                ))}
+            </div>
+
+            <div style={{ marginTop: '0.75rem' }} onClick={e => e.stopPropagation()}>
+                <DeleteButton clickFunction={() => handleShowDeleteModal(sensorTriggerData.sensorTriggerID)} />
+            </div>
+        </BaseCard>
+    );
 }

@@ -18,18 +18,22 @@ class StandardBoundaryReadingsTypeResponseDTO implements BoundaryReadingTypeResp
 
     private int|float|string $constRecord;
 
+    private int $outOfBoundsAlertTimer;
+
     public function __construct(
         int $sensorReadingTypeID,
         string $readingType,
         int|float|string $highReading,
         int|float|string $lowReading,
-        int|float|string $constRecord
+        int|float|string $constRecord,
+        int $outOfBoundsAlertTimer
     ) {
         $this->sensorReadingTypeID = $sensorReadingTypeID;
         $this->readingType = $readingType;
         $this->highReading = $highReading;
         $this->lowReading = $lowReading;
         $this->constRecord = $constRecord;
+        $this->outOfBoundsAlertTimer = $outOfBoundsAlertTimer;
     }
 
     #[Groups([
@@ -85,5 +89,16 @@ class StandardBoundaryReadingsTypeResponseDTO implements BoundaryReadingTypeResp
     public function getConstRecord(): int|float|string
     {
         return $this->constRecord;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getOutOfBoundsAlertTimer(): int
+    {
+        return $this->outOfBoundsAlertTimer;
     }
 }

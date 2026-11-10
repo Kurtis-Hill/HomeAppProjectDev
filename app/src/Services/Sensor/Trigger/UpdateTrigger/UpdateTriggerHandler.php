@@ -10,6 +10,7 @@ use App\Repository\Sensor\TriggerTypeRepository;
 use App\Services\API\APIErrorMessages;
 use App\Services\Sensor\Trigger\TriggerHelpers\TriggerDateTimeConvertor;
 use App\Traits\ValidatorProcessorTrait;
+use DateTime;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -99,7 +100,7 @@ class UpdateTriggerHandler
             if (!$readingTypeThatIsTriggered) {
                 $validationErrors[] = sprintf(APIErrorMessages::OBJECT_NOT_FOUND, 'BaseReadingType That Is Triggered');
             } else {
-                $sensorTriggerToUpdate->setBaseReadingTypeToTrigger($updateTriggerDTO->getBaseReadingTypeThatIsTriggered());
+                $sensorTriggerToUpdate->setBaseReadingTypeToTrigger($readingTypeThatIsTriggered);
             }
         }
         if ($updateTriggerDTO->getBaseReadingTypeThatTriggers() !== null) {
@@ -114,6 +115,8 @@ class UpdateTriggerHandler
         if ($updateTriggerDTO->getOverride() !== null) {
             $sensorTriggerToUpdate->setOverride($updateTriggerDTO->getOverride());
         }
+
+        $sensorTriggerToUpdate->setUpdatedAt(new \DateTime('now'));
 
         $errors = $this->validator->validate($sensorTriggerToUpdate);
         if ($this->checkIfErrorsArePresent($errors)) {

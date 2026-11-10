@@ -34,11 +34,27 @@ if [ "${APP_ENV}" = 'dev' ]; then
 fi
 
 if [ "${ELASTIC_ENABLED}" = 'true' ]; then
-  echo "Elastic indicie creation"
-  bin/console app:elastic-create-const-record-indices
-  bin/console app:elastic-create-out-of-bounds-indices
-  bin/console app:elastic-create-log-index
-  echo "...Elastic indicie creation"
+  echo "Waiting for Elasticsearch to be ready..."
+  ELASTIC_HOST="${ELASTIC_HOST:-es01}"
+  ELASTIC_PORT="${ELASTIC_PORT:-9200}"
+  retries=30
+  until curl -sf "http://${ELASTIC_HOST}:${ELASTIC_PORT}/_cluster/health?wait_for_status=yellow&timeout=5s" > /dev/null 2>&1; do
+    retries=$((retries - 1))
+    if [ "$retries" -le 0 ]; then
+      echo "ERROR: Elasticsearch not reachable after waiting. Aborting index creation."
+      break
+    fi
+    echo "  ...Elasticsearch not ready yet, retrying in 5s (${retries} attempts left)"
+    sleep 5
+  done
+
+  if curl -sf "http://${ELASTIC_HOST}:${ELASTIC_PORT}/_cluster/health" > /dev/null 2>&1; then
+    echo "Elastic indicie creation"
+    bin/console app:elastic-create-const-record-indices
+    bin/console app:elastic-create-out-of-bounds-indices
+    bin/console app:elastic-create-log-index
+    echo "...Elastic indicie creation"
+  fi
 fi
 
 #if [ ! -f "/var/www/html/config/jwt/private.pem" ]; then

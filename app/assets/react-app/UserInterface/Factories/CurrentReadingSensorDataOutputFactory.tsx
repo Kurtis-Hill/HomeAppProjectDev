@@ -5,11 +5,11 @@ import { SensorTypesEnum } from '../../Sensors/Enum/SensorTypesEnum';
 
 export interface CurrentSensorDataTypeStandardCard {
     currentReading: number;
-    hightReading: number;
+    highReading: number;
     lowReading: number;
     readingSymbol?: string|null;
     readingType: string;
-    updatedAt: Date;
+    updatedAt: string;
     lastState?: string;
 }
 
@@ -18,7 +18,7 @@ export interface CurrentSensorDataTypeBoolCard {
     expectedReading: boolean;
     requestedReading: boolean;
     readingType: string;
-    updatedAt: Date;
+    updatedAt: string;
     readingSymbol?: string|null;
 }
 

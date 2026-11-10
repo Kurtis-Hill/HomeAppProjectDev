@@ -23,23 +23,6 @@ interface SensorRepositoryInterface
 {
     public function findOneById(int $id): ?Sensor;
 
-    /**
-     * @throws ORMInvalidArgumentException
-     * @throws ORMException
-     */
-    public function persist(Sensor $sensorReadingData): void;
-
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function flush(): void;
-
-    /**
-     * @throws ORMException
-     */
-    public function remove(Sensor $sensors): void;
-
     public function findDuplicateSensorOnDeviceByGroup(Sensor $sensorData): ?Sensor;
 
     /**

@@ -53,61 +53,61 @@ class SensorUserFilter
             ];
         }
 
-        if (!empty($notAllowedSensors)) {
-            $errors = [];
-            foreach ($notAllowedSensors as $notAllowedSensor) {
-                $notAllowedDeviceID = $notAllowedSensor['deviceID'];
-                if (
-                    !empty($requestedDeviceIDs)
-                    && in_array($notAllowedDeviceID, $requestedDeviceIDs, false)
-                ) {
-                    $errors[] = sprintf(
-                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
-                        'deviceID',
-                        $notAllowedDeviceID
-                    );
-                }
-                if (
-                    !empty($requestedDeviceNames)
-                    && in_array($notAllowedSensor['deviceName'], $requestedDeviceNames, false)
-                ) {
-                    $errors[] = sprintf(
-                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
-                        'deviceName',
-                        $notAllowedSensor['deviceName']
-                    );
-                }
-                if (
-                    !empty($requestedGroupsIDs)
-                    && in_array($notAllowedSensor['groupID'], $requestedGroupsIDs, false)
-                ) {
-                    $errors[] = sprintf(
-                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
-                        'groupID',
-                        $notAllowedSensor['groupID']
-                    );
-                }
-                if (
-                    !empty($requestedCardViewIDs)
-                    && in_array($notAllowedDeviceID, $requestedCardViewIDs, false)
-                ) {
-                    $errors[] = sprintf(
-                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
-                        'cardViewID',
-                        $notAllowedDeviceID
-                    );
-                }
-            }
-            $errors = array_unique($errors);
-            $this->errors = $errors;
-        }
+//        if (!empty($notAllowedSensors)) {
+//            $errors = [];
+//            foreach ($notAllowedSensors as $notAllowedSensor) {
+//                $notAllowedDeviceID = $notAllowedSensor['deviceID'];
+//                if (
+//                    !empty($requestedDeviceIDs)
+//                    && in_array($notAllowedDeviceID, $requestedDeviceIDs, false)
+//                ) {
+//                    $errors[] = sprintf(
+//                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
+//                        'deviceID',
+//                        $notAllowedDeviceID
+//                    );
+//                }
+//                if (
+//                    !empty($requestedDeviceNames)
+//                    && in_array($notAllowedSensor['deviceName'], $requestedDeviceNames, false)
+//                ) {
+//                    $errors[] = sprintf(
+//                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
+//                        'deviceName',
+//                        $notAllowedSensor['deviceName']
+//                    );
+//                }
+//                if (
+//                    !empty($requestedGroupsIDs)
+//                    && in_array($notAllowedSensor['groupID'], $requestedGroupsIDs, false)
+//                ) {
+//                    $errors[] = sprintf(
+//                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
+//                        'groupID',
+//                        $notAllowedSensor['groupID']
+//                    );
+//                }
+//                if (
+//                    !empty($requestedCardViewIDs)
+//                    && in_array($notAllowedDeviceID, $requestedCardViewIDs, false)
+//                ) {
+//                    $errors[] = sprintf(
+//                        APIErrorMessages::USER_DOES_NOT_HAVE_ACCESS_TO_REQUESTED,
+//                        'cardViewID',
+//                        $notAllowedDeviceID
+//                    );
+//                }
+//            }
+//            $errors = array_unique($errors);
+//            $this->errors = $errors;
+//        }
 
         return $allowedSensors ?? [];
     }
 
-    #[ArrayShape(['errors' => "string"])]
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
+//    #[ArrayShape(['errors' => "string"])]
+//    public function getErrors(): array
+//    {
+//        return $this->errors;
+//    }
 }

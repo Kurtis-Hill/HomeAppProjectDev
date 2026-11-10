@@ -18,7 +18,8 @@ readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implement
         float $highReading,
         float $lowReading,
         bool $constRecorded,
-        string $updatedAt
+        string $updatedAt,
+        int $outOfBoundsAlertTimer,
     ) {
         parent::__construct(
             sensor: $sensor,
@@ -29,6 +30,7 @@ readonly class HumidityResponseDTO extends AbstractStandardResponseDTO implement
             constRecord: $constRecorded,
             updated: $updatedAt,
             readingType: Humidity::READING_TYPE,
+            outOfBoundsAlertTimer: $outOfBoundsAlertTimer,
         );
     }
 

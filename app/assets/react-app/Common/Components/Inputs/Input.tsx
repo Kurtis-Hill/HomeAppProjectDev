@@ -24,22 +24,22 @@ export default function Input(props: {
     const inputOnClickFn: (event: Event) => void = props.inputOnClickFn ?? function (){}
     const dataName: string = props.dataName ?? ''
 
-    const onChangeFunction: (event: { target: { name: string; value: string; }; }) => void = props.onChangeFunction ?? function (){}
+    const onChangeFunction = props.onChangeFunction ?? function (){}
 
     return (
         <React.Fragment>
             <div className="form-group">
                 <input
-                    required={required ?? ''}
+                    required={required}
                     type={type}
                     name={name}
                     placeholder={placeHolder}
                     autoComplete={autoComplete}
-                    className={`form-control form-control-user ${extraClasses}`}
+                    className={`input-modern ${extraClasses}`}
                     onChange={onChangeFunction}
                     autoFocus={autoFocus}
-                    value={value}
-                    onClick={(e: Event) => inputOnClickFn(e)}
+                    value={value as string | number | readonly string[]}
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) => inputOnClickFn(e as unknown as Event)}
                     data-name={dataName}
                 />
             </div>

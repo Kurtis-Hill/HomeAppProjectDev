@@ -10,27 +10,29 @@ export function SensorsView(props: {
 }) {
     const { sensorData, refreshData, deviceID } = props;
 
-    if (sensorData.length === 0) {
-        return (
-            <>
-                <h1>No Sensors to Display</h1>
-                <AddNewSensorModal deviceID={deviceID} refreshData={refreshData}/>
-            </>
-        )
-    }
-
     return (
         <>
-            {
-                sensorData.map((sensor: SensorResponseInterface, index: number) => {
-                    return (
+            <div className="sensor-list-toolbar">
+                <span className="sensor-list-toolbar-title">
+                    <i className="fas fa-microchip mr-2" />
+                    Sensors
+                    {sensorData.length > 0 && (
+                        <span className="sensor-list-count">{sensorData.length}</span>
+                    )}
+                </span>
+                <AddNewSensorModal deviceID={deviceID} refreshData={refreshData} />
+            </div>
+            {sensorData.length === 0 ? (
+                <p className="no-data-message">No sensors found for this device.</p>
+            ) : (
+                <div className="sensor-list">
+                    {sensorData.map((sensor: SensorResponseInterface, index: number) => (
                         <React.Fragment key={index}>
-                            <UpdateSingleSensorCard sensor={sensor} refreshData={refreshData}  />
+                            <UpdateSingleSensorCard sensor={sensor} refreshData={refreshData} />
                         </React.Fragment>
-                    );
-                })
-            }
-            <AddNewSensorModal deviceID={deviceID} refreshData={refreshData}/>
+                    ))}
+                </div>
+            )}
         </>
-    )
+    );
 }

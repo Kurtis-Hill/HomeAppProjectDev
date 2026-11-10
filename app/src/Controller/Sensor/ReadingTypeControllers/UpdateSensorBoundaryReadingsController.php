@@ -11,10 +11,7 @@ use App\Exceptions\Sensor\ReadingTypeNotSupportedException;
 use App\Exceptions\Sensor\SensorReadingTypeObjectNotFoundException;
 use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Exceptions\Sensor\SensorReadingUpdateFactoryException;
-use App\Exceptions\Sensor\SensorUpdateFactoryException;
 use App\Factories\Sensor\ReadingTypeFactories\ReadingTypeResponseBuilderFactory;
-use App\Factories\Sensor\SensorUpdateFactory\SensorReadingUpdateFactory;
-use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
 use App\Services\Request\RequestQueryParameterHandler;
@@ -23,10 +20,10 @@ use App\Services\Sensor\SensorReadingUpdate\UpdateBoundaryReadings\UpdateSensorB
 use App\Traits\HomeAppAPITrait;
 use App\Traits\ValidatorProcessorTrait;
 use App\Voters\SensorVoter;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,9 +53,8 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         Request $request,
         ValidatorInterface $validator,
         UpdateSensorBoundaryReadingsHandlerInterface $updateSensorBoundaryReadingsService,
-        SensorRepositoryInterface $sensorRepository,
-        SensorReadingUpdateFactory $sensorUpdateFactory,
         ReadingTypeResponseBuilderFactory $readingTypeResponseBuilderFactory,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         try {
             $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
@@ -79,15 +75,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         $sensorProcessingErrors = [];
         $validationErrors = [];
 
-        foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateData) {
-            try {
-                $sensorUpdateBuilder = $sensorUpdateFactory->getSensorUpdateBuilder($updateData['readingType'] ?? null);
-            } catch (SensorUpdateFactoryException $e) {
-                $sensorProcessingErrors[] = $e->getMessage();
-                continue;
-            }
-
-            $updateBoundaryDataDTO = $sensorUpdateBuilder->buildSensorTypeDTO($updateData);
+        foreach ($updateBoundaryReadingRequestDTO->getSensorData() as $updateBoundaryDataDTO) {
             $updateDataValidationErrors = $validator->validate($updateBoundaryDataDTO);
 
             if ($this->checkIfErrorsArePresent($updateDataValidationErrors)) {
@@ -96,7 +84,6 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
                 }
                 continue;
             }
-
             try {
                 $sensorReadingTypeObject = $updateSensorBoundaryReadingsService->getSensorReadingTypeObject(
                     $sensorObject->getSensorID(),
@@ -139,7 +126,7 @@ class UpdateSensorBoundaryReadingsController extends AbstractController
         }
 
         try {
-            $sensorRepository->flush();
+            $entityManager->flush();
         } catch (ORMException|OptimisticLockException) {
             $this->logger->error(sprintf(APIErrorMessages::QUERY_FAILURE, 'sensor'), ['user' => $this->getUser()?->getUserIdentifier()]);
             return $this->sendInternalServerErrorJsonResponse([sprintf(APIErrorMessages::FAILURE, 'sensor')]);

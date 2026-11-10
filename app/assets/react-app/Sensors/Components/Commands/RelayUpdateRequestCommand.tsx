@@ -40,19 +40,24 @@ export function RelayUpdateRequestCommand(props: { sensor: SensorResponseInterfa
         const disabled = false;
 
         return (
-            <>                       
-                <h5 className="title">Send Relay Update Request</h5>
-                <label className="switch">
-                    { disabled ? <DotCircleSpinner classes="center-spinner bool-sensor-button-loading"  /> : null }
-                    <input 
-                        type="checkbox"
-                        onChange={(e: Event) => handleRelayUpdate(e)}
-                        checked={shouldBeChecked}
-                        disabled={disabled}
-                    />
-                    <span className="slider round"></span>
-                </label> 
-            </>
+            <div className="relay-control">
+                <span className="relay-control-label">Relay</span>
+                <div className="relay-control-row">
+                    { disabled ? <DotCircleSpinner classes="center-spinner bool-sensor-button-loading" /> : null }
+                    <label className="switch-lg">
+                        <input
+                            type="checkbox"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleRelayUpdate(e as unknown as Event)}
+                            checked={shouldBeChecked}
+                            disabled={disabled}
+                        />
+                        <span className="slider round"></span>
+                    </label>
+                    <span className={`relay-status ${shouldBeChecked ? 'relay-status-on' : 'relay-status-off'}`}>
+                        {shouldBeChecked ? 'ON' : 'OFF'}
+                    </span>
+                </div>
+            </div>
         )
     }
 }

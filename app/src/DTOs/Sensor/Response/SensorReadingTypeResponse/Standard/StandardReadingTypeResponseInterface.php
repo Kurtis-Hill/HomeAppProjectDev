@@ -17,4 +17,6 @@ interface StandardReadingTypeResponseInterface
     public function getConstRecord(): bool;
 
     public function getUpdatedAt(): string;
+
+    public function getOutOfBoundsAlertTimer(): int;
 }

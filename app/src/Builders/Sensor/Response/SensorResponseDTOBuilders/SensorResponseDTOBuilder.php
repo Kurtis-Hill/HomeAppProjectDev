@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Builders\Sensor\Response\SensorResponseDTOBuilders;
 
 use App\Builders\Device\DeviceResponse\DeviceResponseDTOBuilder;

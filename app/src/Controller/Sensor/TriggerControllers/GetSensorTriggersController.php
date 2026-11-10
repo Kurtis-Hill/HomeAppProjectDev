@@ -4,24 +4,23 @@ namespace App\Controller\Sensor\TriggerControllers;
 
 use App\Builders\Sensor\Request\GetSensorQueryDTOBuilder\GetSensorQueryDTOBuilder;
 use App\Builders\Sensor\Response\TriggerResponseBuilder\SensorTriggerResponseDTOBuilder;
+use App\DTOs\Sensor\Request\Trigger\GetSensorTriggersRequestDTO;
 use App\Entity\Sensor\SensorTrigger;
 use App\Entity\User\User;
-use App\Exceptions\Common\ValidatorProcessorException;
 use App\Exceptions\Sensor\UserNotAllowedException;
 use App\Repository\Sensor\Sensors\SensorRepositoryInterface;
 use App\Repository\Sensor\SensorTriggerRepository;
 use App\Services\API\APIErrorMessages;
 use App\Services\API\CommonURL;
-use App\Services\Request\RequestQueryParameterHandler;
 use App\Services\Request\RequestTypeEnum;
 use App\Services\Sensor\SensorReadingTypeFetcher;
 use App\Services\User\GroupServices\UserGroupsFinder;
 use App\Traits\HomeAppAPITrait;
-use App\Traits\ValidatorProcessorTrait;
 use App\Voters\SensorVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -30,9 +29,8 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 class GetSensorTriggersController extends AbstractController
 {
     use HomeAppAPITrait;
-    use ValidatorProcessorTrait;
 
-    public function __construct(private readonly RequestQueryParameterHandler $requestQueryParameterHandler, private SensorTriggerResponseDTOBuilder $sensorTriggerResponseDTOBuilder)
+    public function __construct(private SensorTriggerResponseDTOBuilder $sensorTriggerResponseDTOBuilder)
     {
     }
 
@@ -41,28 +39,28 @@ class GetSensorTriggersController extends AbstractController
      */
     #[Route('', name: 'get-sensor-triggers', methods: [Request::METHOD_GET])]
     public function getSensorTriggers(
-        Request $request,
         SensorTriggerRepository $sensorTriggerRepository,
         SensorRepositoryInterface $sensorRepository,
         UserGroupsFinder $userGroupsFinder,
         SensorReadingTypeFetcher $sensorReadingTypeFetcher,
+        #[MapQueryString]
+        ?GetSensorTriggersRequestDTO $requestDTO = null,
     ): JsonResponse {
+        $requestDTO ??= new GetSensorTriggersRequestDTO();
+
         $user = $this->getUser();
         if (!$user instanceof User) {
             throw $this->createAccessDeniedException(APIErrorMessages::FORBIDDEN_ACTION);
-        }
-        try {
-            $requestDTO = $this->requestQueryParameterHandler->handlerRequestQueryParameterCreation(
-                $request->get(RequestQueryParameterHandler::RESPONSE_TYPE, RequestTypeEnum::FULL->value),
-            );
-        } catch (ValidatorProcessorException $e) {
-            return $this->sendBadRequestJsonResponse($e->getValidatorErrors());
         }
 
         $getSensorQueryParams = GetSensorQueryDTOBuilder::buildGetSensorQueryDTO(
             groupIDs: $userGroupsFinder->getGroupIDs($user),
         );
         $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams, $requestDTO);
+
+        if ($requestDTO->getSensorID() !== null) {
+            $usersSensors = array_filter($usersSensors, static fn($sensor) => $sensor->getSensorID() === $requestDTO->getSensorID());
+        }
 
         $baseReadingTypeIDs = $sensorReadingTypeFetcher->fetchBaseReadingTypeIDsFromSensors($usersSensors);
 

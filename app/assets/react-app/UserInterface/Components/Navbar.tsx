@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext, useMemo, JSX } from 'react';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 
 import { checkAdmin } from "../../Authentication/Session/UserSessionHelper";
@@ -16,8 +16,11 @@ import DotCircleSpinner from "../../Common/Components/Spinners/DotCircleSpinner"
 import { AnnouncementFlashModal } from '../../Common/Components/Modals/AnnouncementFlashModal';
 import { AnnouncementFlashModalBuilder } from '../../Common/Builders/ModalBuilder/AnnouncementFlashModalBuilder';
 import UserSettingsButton from '../../Common/Components/Buttons/UserSettingsButton';
-import QueryButton from "../../Common/Components/Buttons/QueryButton";
+import AdminButton from '../../Common/Components/Buttons/AdminButton';
+import LogsButton from '../../Common/Components/Buttons/LogsButton';
 import {QuickViewOptionsNavBarElement} from "./Navbar/QuickViewOptionsNavBarElement";
+import SensorDataContext from '../../Sensors/Contexts/SensorDataContext';
+import { SensorDataContextDataInterface } from '../../Sensors/DataProviders/SensorDataProvider';
 
 export default function NavBar(props: {
     refreshNavbar: boolean,
@@ -26,15 +29,41 @@ export default function NavBar(props: {
     const refreshNavbarIndicator = props.refreshNavbar;
     const setRefreshNavDataFlag = props.setRefreshNavDataFlag;
 
-    const [navbarResponseData, setNavbarResponseData] = useState<NavBarResponseInterface>([]);
+    const sensorCtx = useContext(SensorDataContext) as SensorDataContextDataInterface | null;
+
+    const [baseNavbarData, setBaseNavbarData] = useState<NavBarResponseInterface>(null);
     const [loadingNavbarListItems, setLoadingNavbarListItems] = useState<boolean>(true);
     const [navbarToggleSizeSmall, setNavbarToggleSizeSmall] = useState<boolean>(false);
 
-    const [announcementModals, setAnnouncementModals] = useState<React.JSX.Element[]>([]);
-
+    const [announcementModals, setAnnouncementModals] = useState<JSX.Element[]>([]);
     const [announcementCount, setAnnouncementCount] = useState<number>(0);
     
     const admin: boolean = checkAdmin();
+
+    // Build the full navbar every time base data or the sensor list changes
+    const navbarResponseData: NavBarResponseInterface = useMemo(() => {
+        if (!baseNavbarData) return { payload: [] } as NavBarResponseInterface;
+
+        // Deep-clone payload so we don't mutate cached base data
+        const payload: IndividualNavBarElement[] = baseNavbarData.payload.map(el => ({ ...el }));
+
+        const sensorLinks = (sensorCtx?.allSensors ?? []).map(sensor => ({
+            displayName: sensor.sensorName,
+            link: `/WebApp/sensors/${sensor.sensorID}/triggers`,
+        }));
+
+        const triggersNavElement: IndividualNavBarElement = {
+            header: 'Triggers',
+            icon: 'bolt',
+            itemName: 'triggers',
+            listItemLinks: [
+                { displayName: 'All Triggers', link: '/WebApp/sensors/triggers' },
+                ...sensorLinks,
+            ],
+        };
+
+        return { ...baseNavbarData, payload: [...payload, triggersNavElement] };
+    }, [baseNavbarData, sensorCtx?.allSensors]);
 
     useEffect(() => {
         if (refreshNavbarIndicator === true) {
@@ -44,7 +73,7 @@ export default function NavBar(props: {
         }
       }, [refreshNavbarIndicator]);
 
-      const showAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
+    const showAnnouncementFlash = (errors: Array<string>, title: string, timer?: number | null): void => {
         setAnnouncementModals([
             ...announcementModals,
             <AnnouncementFlashModalBuilder
@@ -68,27 +97,13 @@ export default function NavBar(props: {
                 icon: 'search',
                 itemName: 'Query',
                 listItemLinks: [
-                    {
-                        displayName: 'View Queries',
-                        link: '/HomeApp/WebApp/query'
-                    },
+                    { displayName: 'Out of bounds', link: '/WebApp/query' },
                 ]
-            }
+            };
             navbarResponseData.payload.push(queryNavElement);
-            const triggersNavElement: IndividualNavBarElement = {
-                header: 'Triggers',
-                icon: 'bolt',
-                itemName: 'Triggers',
-                listItemLinks: [
-                    {
-                        displayName: 'View Triggers',
-                        link: '/WebApp/sensors/triggers'
-                    },
-                ]
-            }
-            navbarResponseData.payload.push(triggersNavElement);
 
-            setNavbarResponseData(navbarResponseData);
+            // Store base data — triggers dropdown is built reactively via useMemo
+            setBaseNavbarData(navbarResponseData);
             setLoadingNavbarListItems(false);
 
             return navbarResponse;
@@ -105,9 +120,8 @@ export default function NavBar(props: {
             const errorStatusCode: number = axiosError.response.status;
             if (errorStatusCode === 401 || err.status === 403) {
                 const navbarResponse: AxiosResponse = await handleNavBarRequest();
-                const navbarResponseData: NavBarResponseInterface = navbarResponse.data;
-    
-                setNavbarResponseData(navbarResponseData);
+                const data: NavBarResponseInterface = navbarResponse.data;
+                setBaseNavbarData(data);
                 setLoadingNavbarListItems(false);
             }
             setLoadingNavbarListItems(false);
@@ -120,15 +134,22 @@ export default function NavBar(props: {
 
     return (
         <React.Fragment>
-            <ul className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion ${navbarToggleSizeSmall === true ? 'toggled' : ''}` }>
+            <ul className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion sidebar-modern ${navbarToggleSizeSmall === true ? 'toggled' : ''}`}>
                 <HomeAppButton />
                 <hr className="sidebar-divider my-0" />
                 <li className="nav-item">
-                    <QueryButton />
-                </li>
-                <li className="nav-item">
                     <UserSettingsButton />
                 </li>
+                {admin && (
+                    <li className="nav-item">
+                        <AdminButton />
+                    </li>
+                )}
+                {admin && (
+                    <li className="nav-item">
+                        <LogsButton />
+                    </li>
+                )}
                 <SidebarDividerWithHeading heading="View options for:" />
                 {
                     loadingNavbarListItems === true
@@ -146,7 +167,12 @@ export default function NavBar(props: {
                 <hr className="sidebar-divider d-none d-md-block" />
 
                 <div className="text-center d-none d-md-inline">
-                    <button className="rounded-circle border-0" id="sidebarToggle" onClick={toggleNavbarSize}/>
+                    <button
+                        className="rounded-circle border-0 sidebar-toggle-btn"
+                        id="sidebarToggle"
+                        onClick={toggleNavbarSize}
+                        title={navbarToggleSizeSmall ? 'Expand sidebar' : 'Collapse sidebar'}
+                    />
                 </div>
             </ul>
         </React.Fragment>

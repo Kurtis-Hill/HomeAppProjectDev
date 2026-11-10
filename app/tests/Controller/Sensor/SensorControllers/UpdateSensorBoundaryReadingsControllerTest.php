@@ -107,6 +107,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             $jsonData,
         );
 
+//        dd($this->client->getResponse());
         $responseData = json_decode(
             $this->client->getResponse()->getContent(),
             true,
@@ -129,6 +130,7 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                 self::assertArrayHasKey('highReading', $dataPayload);
                 self::assertArrayHasKey('lowReading', $dataPayload);
                 self::assertArrayHasKey('constRecord', $dataPayload);
+                self::assertArrayHasKey('outOfBoundsAlertTimer', $dataPayload);
             }
         }
 
@@ -443,6 +445,8 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
                     self::assertEquals($dataPayloadMessage[$count]['lowReading'], $dataPayload['lowReading']);
                 }
                 self::assertEquals($dataPayloadMessage[$count]['constRecord'], $dataPayload['constRecord']);
+                self::assertArrayHasKey('outOfBoundsAlertTimer', $dataPayload);
+                self::assertIsInt($dataPayload['outOfBoundsAlertTimer']);
             }
             if ($sensorReadingTypeObject instanceof BoolSensorTypeInterface) {
                 self::assertEquals($dataPayloadMessage[$count]['expectedReading'], $dataPayload['expectedReading']);
@@ -1617,9 +1621,9 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
             JSON_THROW_ON_ERROR
         );
 
-        self::assertEquals('All sensor boundary update requests failed', $responseData['title']);
+        self::assertEquals('Validation errors occurred', $responseData['title']);
         self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-        self::assertEquals('Sensor update builder not found: '. $readingType, $responseData['errors'][0]);
+        self::assertEquals('This value should be of type string.', $responseData['errors']['sensorData[0].readingType']);
     }
 
     public function test_sending_request_for_sensor_regular_user_not_apart_of_group(): void
@@ -1676,6 +1680,262 @@ class UpdateSensorBoundaryReadingsControllerTest extends WebTestCase
         self::assertEquals('You Are Not Authorised To Be Here', $responseData['title']);
         self::assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
         self::assertEquals(APIErrorMessages::ACCESS_DENIED, $responseData['errors'][0]);
+    }
+
+    /**
+     * @dataProvider outOfBoundsAlertTimerUpdateDataProvider
+     */
+    public function test_updating_out_of_bounds_alert_timer_persists_correctly(
+        string $sensorType,
+        string $readingType,
+        int $newAlertTimer,
+    ): void {
+        $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        /** @var SensorTypeInterface $sensorTypeObject */
+        $sensorTypeObject = $sensorTypeRepository->findAll()[0];
+        /** @var Sensor $sensor */
+        $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject])[0];
+
+        $sensorData = [
+            'sensorData' => [
+                [
+                    'readingType' => $readingType,
+                    'outOfBoundsAlertTimer' => $newAlertTimer,
+                ],
+            ],
+        ];
+        $jsonData = json_encode($sensorData);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensor->getSensorID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        self::assertArrayHasKey('payload', $responseData);
+
+        $payloads = $responseData['payload'];
+        self::assertCount(1, $payloads);
+        self::assertArrayHasKey('outOfBoundsAlertTimer', $payloads[0]);
+        self::assertEquals($newAlertTimer, $payloads[0]['outOfBoundsAlertTimer']);
+
+        // Verify the value is persisted to the DB by querying the reading type directly
+        $this->entityManager->clear();
+
+        if ($readingType === Temperature::READING_TYPE) {
+            $readingTypeRepository = $this->entityManager->getRepository(Temperature::class);
+        } elseif ($readingType === Humidity::READING_TYPE) {
+            $readingTypeRepository = $this->entityManager->getRepository(Humidity::class);
+        } elseif ($readingType === Analog::READING_TYPE) {
+            $readingTypeRepository = $this->entityManager->getRepository(Analog::class);
+        } elseif ($readingType === Latitude::READING_TYPE) {
+            $readingTypeRepository = $this->entityManager->getRepository(Latitude::class);
+        } else {
+            self::fail('Unrecognised reading type: ' . $readingType);
+        }
+
+        /** @var StandardReadingSensorInterface $readingTypeEntity */
+        $readingTypeEntity = $readingTypeRepository->findOneBySensorNameID($sensor->getSensorID());
+        self::assertNotNull($readingTypeEntity, 'Reading type entity not found after update');
+        self::assertEquals($newAlertTimer, $readingTypeEntity->getOutOfBoundsAlertTimer());
+    }
+
+    public static function outOfBoundsAlertTimerUpdateDataProvider(): Generator
+    {
+        yield 'dht temperature 2 hours' => [
+            'sensorType' => Dht::class,
+            'readingType' => Temperature::READING_TYPE,
+            'newAlertTimer' => 7200,
+        ];
+
+        yield 'dht humidity 30 minutes' => [
+            'sensorType' => Dht::class,
+            'readingType' => Humidity::READING_TYPE,
+            'newAlertTimer' => 1800,
+        ];
+
+        yield 'dallas temperature 1 hour' => [
+            'sensorType' => Dallas::class,
+            'readingType' => Temperature::READING_TYPE,
+            'newAlertTimer' => 3600,
+        ];
+
+        yield 'dallas temperature 4 hours' => [
+            'sensorType' => Dallas::class,
+            'readingType' => Temperature::READING_TYPE,
+            'newAlertTimer' => 14400,
+        ];
+
+        yield 'bmp temperature 6 hours' => [
+            'sensorType' => Bmp::class,
+            'readingType' => Temperature::READING_TYPE,
+            'newAlertTimer' => 21600,
+        ];
+
+        yield 'bmp latitude 12 hours' => [
+            'sensorType' => Bmp::class,
+            'readingType' => Latitude::READING_TYPE,
+            'newAlertTimer' => 43200,
+        ];
+
+        yield 'soil analog 15 minutes' => [
+            'sensorType' => Soil::class,
+            'readingType' => Analog::READING_TYPE,
+            'newAlertTimer' => 900,
+        ];
+
+        yield 'sht humidity 24 hours' => [
+            'sensorType' => Sht::class,
+            'readingType' => Humidity::READING_TYPE,
+            'newAlertTimer' => 86400,
+        ];
+
+        yield 'ldr analog 10 minutes' => [
+            'sensorType' => LDR::class,
+            'readingType' => Analog::READING_TYPE,
+            'newAlertTimer' => 600,
+        ];
+
+        yield 'sht temperature 3 hours' => [
+            'sensorType' => Sht::class,
+            'readingType' => Temperature::READING_TYPE,
+            'newAlertTimer' => 10800,
+        ];
+
+        yield 'bmp humidity 45 minutes' => [
+            'sensorType' => Bmp::class,
+            'readingType' => Humidity::READING_TYPE,
+            'newAlertTimer' => 2700,
+        ];
+    }
+
+    /**
+     * @dataProvider invalidOutOfBoundsAlertTimerDataProvider
+     */
+    public function test_sending_invalid_out_of_bounds_alert_timer_returns_bad_request(
+        string $sensorType,
+        string $readingType,
+        mixed $invalidAlertTimer,
+    ): void {
+        $sensorTypeRepository = $this->entityManager->getRepository($sensorType);
+        /** @var SensorTypeInterface $sensorTypeObject */
+        $sensorTypeObject = $sensorTypeRepository->findAll()[0];
+        /** @var Sensor $sensor */
+        $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject])[0];
+
+        $sensorData = [
+            'sensorData' => [
+                [
+                    'readingType' => $readingType,
+                    'outOfBoundsAlertTimer' => $invalidAlertTimer,
+                ],
+            ],
+        ];
+        $jsonData = json_encode($sensorData);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensor->getSensorID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        self::assertNotEmpty($responseData['errors']);
+    }
+
+    public static function invalidOutOfBoundsAlertTimerDataProvider(): Generator
+    {
+        yield 'string value for dht temperature' => [
+            'sensorType' => Dht::class,
+            'readingType' => Temperature::READING_TYPE,
+            'invalidAlertTimer' => 'not-a-number',
+        ];
+
+        yield 'float value for dallas temperature' => [
+            'sensorType' => Dallas::class,
+            'readingType' => Temperature::READING_TYPE,
+            'invalidAlertTimer' => 3600.5,
+        ];
+
+        yield 'array value for bmp temperature' => [
+            'sensorType' => Bmp::class,
+            'readingType' => Temperature::READING_TYPE,
+            'invalidAlertTimer' => [3600],
+        ];
+
+        yield 'boolean true for soil analog' => [
+            'sensorType' => Soil::class,
+            'readingType' => Analog::READING_TYPE,
+            'invalidAlertTimer' => true,
+        ];
+
+        yield 'boolean false for sht humidity' => [
+            'sensorType' => Sht::class,
+            'readingType' => Humidity::READING_TYPE,
+            'invalidAlertTimer' => false,
+        ];
+    }
+
+    public function test_out_of_bounds_alert_timer_in_response_uses_default_when_not_sent(): void
+    {
+        $sensorTypeRepository = $this->entityManager->getRepository(Dht::class);
+        /** @var Dht $sensorTypeObject */
+        $sensorTypeObject = $sensorTypeRepository->findAll()[0];
+        /** @var Sensor $sensor */
+        $sensor = $this->sensorRepository->findBy(['sensorTypeID' => $sensorTypeObject])[0];
+
+        $sensorData = [
+            'sensorData' => [
+                [
+                    'readingType' => Temperature::READING_TYPE,
+                    'highReading' => Dht::HIGH_TEMPERATURE_READING_BOUNDARY - 5,
+                    'lowReading' => Dht::LOW_TEMPERATURE_READING_BOUNDARY + 5,
+                ],
+            ],
+        ];
+        $jsonData = json_encode($sensorData);
+
+        $this->client->request(
+            Request::METHOD_PUT,
+            sprintf(self::UPDATE_SENSOR_BOUNDARY_READING_URL, $sensor->getSensorID()),
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'BEARER ' . $this->userToken, 'CONTENT_TYPE' => 'application/json'],
+            $jsonData,
+        );
+
+        $responseData = json_decode(
+            $this->client->getResponse()->getContent(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        self::assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        self::assertArrayHasKey('outOfBoundsAlertTimer', $responseData['payload'][0]);
+        // The outOfBoundsAlertTimer should remain at whatever it currently is (not changed)
+        self::assertIsInt($responseData['payload'][0]['outOfBoundsAlertTimer']);
     }
 
     private function checkOutOfBoundResult(array $readingUpdates, AllSensorReadingTypeInterface $object, string $sensorReadingType): void

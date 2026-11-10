@@ -13,6 +13,7 @@ use App\Services\Sensor\ConstantlyRecord\SensorConstantlyRecordHandlerInterface;
 use App\Services\Sensor\OutOfBounds\SensorOutOfBoundsHandlerInterface;
 use App\Services\Sensor\Trigger\SensorTriggerProcessor\ReadingTriggerHandlerInterface;
 use App\Traits\ValidatorProcessorTrait;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
@@ -30,6 +31,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
         private SensorConstantlyRecordHandlerInterface $constantlyRecordService,
         private ReadingTriggerHandlerInterface $triggerHandler,
         private SensorRepositoryInterface $sensorRepository,
+        private EntityManagerInterface $entityManager,
         private LoggerInterface $elasticLogger,
     ) {}
 
@@ -123,7 +125,7 @@ readonly class UpdateCurrentSensorReadingsHandlerVersionTwo implements UpdateCur
         }
 
         try {
-            $this->sensorRepository->flush();
+            $this->entityManager->flush();
         } catch (Exception $exception) {
             $this->elasticLogger->error(
                 'Error flushing sensor repository',

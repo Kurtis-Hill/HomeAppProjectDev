@@ -10,8 +10,6 @@ use App\Exceptions\Sensor\SensorNotFoundException;
 use App\Exceptions\Sensor\SensorReadingTypeRepositoryFactoryException;
 use App\Exceptions\Sensor\SensorTypeException;
 use App\Services\Sensor\SensorReadingUpdate\RequestReading\SensorUpdateCurrentReadingRequestHandlerInterface;
-use Exception;
-use HttpException;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -37,7 +35,13 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
                     ]
                 ]
             );
-        } catch (Exception $exception) {
+
+            if (!$sensorData instanceof RequestSensorCurrentReadingUpdateTransportMessageDTO) {
+                $this->elasticLogger->error('Deserialization returned unexpected type, message body may be malformed or sent to wrong queue');
+
+                return self::MSG_REJECT;
+            }
+        } catch (\Throwable $exception) {
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return self::MSG_REJECT;
@@ -58,11 +62,7 @@ readonly class SensorSendUpdateReadingRequestConsumer implements ConsumerInterfa
             $this->elasticLogger->error('Sensor update request failed: ' . $exception->getMessage());
 
             return self::MSG_REJECT;
-        } catch (HttpException $exception) {
-            $this->elasticLogger->error('Sensor update request failed with http exception, exception message: ' . $exception->getMessage());
-
-            return self::MSG_REJECT;
-        } catch (Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->elasticLogger->error('Sensor update request failed with unexpected error, exception message: ' . $exception->getMessage());
 
             return self::MSG_REJECT;

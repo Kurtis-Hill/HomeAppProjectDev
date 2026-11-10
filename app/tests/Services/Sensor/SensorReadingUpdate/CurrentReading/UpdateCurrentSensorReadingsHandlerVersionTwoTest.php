@@ -98,6 +98,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $constRecordService,
             $triggerHandler,
             $this->sensorRepository,
+            $this->entityManager,
             $logger,
         );
 
@@ -283,6 +284,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $constRecordService,
             $triggerHandler,
             $this->sensorRepository,
+            $this->entityManager,
             $logger,
         );
 
@@ -327,6 +329,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $constRecordService,
             $triggerHandler,
             $this->sensorRepository,
+            $this->entityManager,
             $logger,
         );
 
@@ -406,6 +409,7 @@ class UpdateCurrentSensorReadingsHandlerVersionTwoTest extends KernelTestCase
             $constRecordService,
             $triggerHandler,
             $this->sensorRepository,
+            $this->entityManager,
             $logger,
         );
 

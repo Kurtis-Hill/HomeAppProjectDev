@@ -12,6 +12,9 @@ services:
     arguments:
       $outOfBoundsFactory: '@App\Factories\Sensor\OufOfBounds\OutOfBoundsORMFactory'
 
+  App\Services\Sensor\OutOfBounds\Elastic\OutOfBoundsElasticSearchService:
+    public: true
+
 #  Symfony\Contracts\HttpClient\HttpClientInterface: ~
 #  Symfony\Contracts\HttpClient\HttpClientInterface:
 #    class: '@Symfony\Contracts\HttpClient\HttpClientInterface'

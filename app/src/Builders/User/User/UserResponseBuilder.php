@@ -25,12 +25,19 @@ readonly class UserResponseBuilder
         ?bool $canUpdate = null,
         ?bool $canDelete = null,
     ): UserResponseDTO {
+
+        $allUserGroups = array_map(
+            static fn($group) => GroupResponseDTOBuilder::buildGroupNameResponseDTO($group),
+            $user->getAssociatedGroups(),
+        );
+
         return new UserResponseDTO(
             $user->getUserID(),
             $user->getFirstName(),
             $user->getLastName(),
             $user->getEmail(),
             GroupResponseDTOBuilder::buildGroupNameResponseDTO($user->getGroup()),
+            $allUserGroups,
             $user->getCreatedAt(),
             $user->getProfilePic(),
             $user->getRoles(),

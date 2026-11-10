@@ -6,7 +6,6 @@ namespace App\AMQP\Device\Consumers;
 use App\DTOs\Device\Internal\DeviceSettingsUpdateDTO;
 use App\Exceptions\Sensor\DeviceNotFoundException;
 use App\Services\Device\Request\DeviceSettingsUpdateRequestHandler;
-use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -30,7 +29,13 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
                     ]
                 ]
             );
-        } catch (Exception $exception) {
+
+            if (!$deviceUpdateRequestDTO instanceof DeviceSettingsUpdateDTO) {
+                $this->elasticLogger->error('Deserialization returned unexpected type, message body may be malformed or sent to wrong queue');
+
+                return self::MSG_REJECT;
+            }
+        } catch (\Throwable $exception) {
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return self::MSG_ACK;
@@ -48,7 +53,7 @@ readonly class DeviceSettingsUpdateConsumer implements ConsumerInterface
             $this->elasticLogger->error('Device settings update request failed, device not found');
 
             return self::MSG_REJECT;
-        } catch (Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->elasticLogger->error('Device settings update request failed with unexpected error, exception message: ' . $exception->getMessage());
 
             return self::MSG_REJECT;

@@ -14,7 +14,6 @@ use App\Repository\Device\ORM\DeviceRepositoryInterface;
 use App\Services\Sensor\SensorReadingUpdate\CurrentReading\UpdateCurrentSensorReadingInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Exception;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -45,23 +44,31 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
                     ]
                 ]
             );
-        } catch (Exception $exception) {
+
+            if (!$sensorData instanceof UpdateSensorCurrentReadingTransportMessageDTO) {
+                $this->elasticLogger->error('Deserialization returned unexpected type, message body may be malformed or sent to wrong queue');
+
+                return self::MSG_REJECT;
+            }
+        } catch (\Throwable $exception) {
             $this->elasticLogger->error('Deserialization of message failure, check the message has been sent to the correct queue, exception message: ' . $exception->getMessage());
 
             return self::MSG_REJECT;
         }
+
         try {
             $device = $this->deviceRepository->find($sensorData->getDeviceID());
         } catch (ORMException $exception) {
             $this->elasticLogger->error('expection message: ' . $exception->getMessage());
             return self::MSG_REJECT;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->elasticLogger->error('expection message: ' . $e->getMessage());
 
             return self::MSG_REJECT;
         }
 
         if ($device instanceof Devices) {
+            $validationErrors = [];
             try {
                 $validationErrors = $this->sensorDeviceDataQueueConsumerService->handleUpdateSensorCurrentReading(
                     $sensorData,
@@ -75,7 +82,7 @@ readonly class ProcessCurrentReadingRequestConsumer implements ConsumerInterface
                 return empty($validationErrors)
                     ? self::MSG_ACK
                     : self::MSG_REJECT;
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->elasticLogger->error($e->getMessage(), ['device' => $device->getUserIdentifier()]);
 
                 return self::MSG_REJECT;

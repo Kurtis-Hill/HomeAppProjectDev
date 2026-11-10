@@ -20,9 +20,11 @@ readonly class AnalogResponseDTO extends AbstractStandardResponseDTO implements 
         float $highReading,
         float $lowReading,
         bool $constRecorded,
-        string $updatedAt
+        string $updatedAt,
+        int $outOfBoundsAlertTimer,
     ) {
         $type = Analog::READING_TYPE;
+
         parent::__construct(
             sensor: $sensor,
             baseReadingTypeID: $baseReadingTypeID,
@@ -31,7 +33,8 @@ readonly class AnalogResponseDTO extends AbstractStandardResponseDTO implements 
             lowReading: $lowReading,
             constRecord: $constRecorded,
             updated: $updatedAt,
-            readingType: $type
+            readingType: $type,
+            outOfBoundsAlertTimer: $outOfBoundsAlertTimer,
         );
     }
 

@@ -52,4 +52,8 @@ interface StandardReadingSensorInterface
     public function getBaseReadingType(): BaseSensorReadingType;
 
     public function setBaseReadingType(BaseSensorReadingType $readingType): void;
+
+    public function getOutOfBoundsAlertTimer(): int;
+
+    public function setOutOfBoundsAlertTimer(int $outOfBoundsAlertTimer);
 }

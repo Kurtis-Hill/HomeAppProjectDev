@@ -20,6 +20,7 @@ readonly abstract class AbstractStandardResponseDTO
         private bool $constRecord,
         private string $updated,
         private string $readingType,
+        private int $outOfBoundsAlertTimer,
     ) {
     }
 
@@ -120,5 +121,16 @@ readonly abstract class AbstractStandardResponseDTO
     public function getReadingType(): string
     {
         return $this->readingType;
+    }
+
+    #[Groups([
+        RequestTypeEnum::FULL->value,
+        RequestTypeEnum::ONLY->value,
+        RequestTypeEnum::SENSITIVE_FULL->value,
+        RequestTypeEnum::SENSITIVE_ONLY->value,
+    ])]
+    public function getOutOfBoundsAlertTimer(): int
+    {
+        return $this->outOfBoundsAlertTimer;
     }
 }

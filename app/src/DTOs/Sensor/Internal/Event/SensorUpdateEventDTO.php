@@ -10,12 +10,11 @@ use JetBrains\PhpStorm\Immutable;
 readonly class SensorUpdateEventDTO
 {
     public function __construct(
-        private array $sensorUpdateRequestDTOs,
+        private int $sensorID,
     ) {}
 
-    #[ArrayShape([SensorUpdateRequestDTOInterface::class])]
-    public function getSensorUpdateRequestDTOs(): array
+    public function getSensorID(): int
     {
-        return $this->sensorUpdateRequestDTOs;
+        return $this->sensorID;
     }
 }
