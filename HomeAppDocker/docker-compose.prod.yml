@@ -98,6 +98,9 @@ services:
   maria-db:
     image: ${REGISTRY:-ghcr.io/kurtis-hill}/homeapp-mariadb:${IMAGE_TAG:-latest}
     container_name: '${APP_NAME}-mariadb'
+    ports:
+      # For connecting from other machines (e.g. a database GUI). Remove these lines to keep the DB internal.
+      - '${DB_PORT:-3306}:3306'
     environment:
       MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MYSQL_USER: ${MARIADB_USER}
@@ -112,8 +115,13 @@ services:
       - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 5s
+      interval: 10s
+      timeout: 5s
       retries: 5
+      # The first start imports ./initdb, which can take several minutes on the Pi;
+      # failed checks during this window don't count
+      start_period: 15m
+      start_interval: 5s
     restart: unless-stopped
     networks:
       - HomeAppProjectNetwork
