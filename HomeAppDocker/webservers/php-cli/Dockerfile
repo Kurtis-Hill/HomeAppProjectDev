@@ -1,22 +1,19 @@
-FROM php:8.2-cli-bullseye
+FROM php:8.4-cli-trixie
 
 WORKDIR /var/www/html
 
-RUN apt-get update -y && apt-get install -y \
-git \
-unzip \
-zip \
-supervisor
+RUN apt-get update -y \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        git \
+        unzip \
+        zip \
+        supervisor \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
-# if no network connection and compose is installed locally, use this instead:
-#COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
-#COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
-
-#RUN composer --version
-
-COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
 
 RUN install-php-extensions gd pdo_mysql bcmath zip intl opcache sockets http apcu
 

@@ -9,14 +9,18 @@ use PhpAmqpLib\Exception\AMQPIOException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Wraps a producer used from long-running processes (e.g. the scheduler worker).
  *
- * php-amqplib only sends heartbeats while doing I/O, so a producer that sits idle
- * between publishes has its connection closed by RabbitMQ ("missed heartbeats from client").
- * This reconnects before publishing when the connection has been idle too long, and
- * reconnects + retries once if the publish still fails on a dead connection.
+ * php-amqplib only sends heartbeats while doing I/O, so a connection that sits idle
+ * between publishes gets closed by RabbitMQ ("missed heartbeats from client").
+ * To avoid that, this opens the connection when publishing and closes it again straight
+ * after, so nothing is left idle. If a publish fails on a dead connection it reconnects
+ * and retries once.
+ *
+ * The connection passed in must be dedicated to this producer, as it is closed after every publish.
  */
 readonly class ReconnectingProducer implements ProducerInterface
 {
@@ -29,31 +33,26 @@ readonly class ReconnectingProducer implements ProducerInterface
 
     public function publish($msgBody, $routingKey = null,$additionalProperties = [], ?array $headers = null): void
     {
-        $this->ensureConnectionIsAlive();
-
         try {
-            $this->producer->publish($msgBody, $routingKey, $additionalProperties, $headers);
-        } catch (AMQPRuntimeException|AMQPIOException|AMQPTimeoutException $e) {
-            $this->elasticLogger->warning(
-                sprintf('AMQP publish failed, reconnecting and retrying once: %s', $e->getMessage())
-            );
-            $this->reconnect();
-            $this->producer->publish($msgBody, $routingKey, $additionalProperties, $headers);
+            $this->ensureConnected();
+
+            try {
+                $this->producer->publish($msgBody, $routingKey, $additionalProperties, $headers);
+            } catch (AMQPRuntimeException|AMQPIOException|AMQPTimeoutException $e) {
+                $this->elasticLogger->warning(
+                    sprintf('AMQP publish failed, reconnecting and retrying once: %s', $e->getMessage())
+                );
+                $this->reconnect();
+                $this->producer->publish($msgBody, $routingKey, $additionalProperties, $headers);
+            }
+        } finally {
+            $this->closeConnection();
         }
     }
 
-    private function ensureConnectionIsAlive(): void
+    private function ensureConnected(): void
     {
         if (!$this->connection->isConnected()) {
-            $this->reconnect();
-
-            return;
-        }
-
-        $heartbeat = $this->connection->getHeartbeat();
-        $lastActivity = $this->connection->getLastActivity();
-        // Past half the heartbeat interval RabbitMQ may already have dropped us, so start fresh.
-        if ($heartbeat > 0 && $lastActivity > 0 && (microtime(true) - $lastActivity) > ($heartbeat / 2)) {
             $this->reconnect();
         }
     }
@@ -63,5 +62,14 @@ readonly class ReconnectingProducer implements ProducerInterface
         // Call the connection directly: the bundle's BaseAmqp::reconnect() is a no-op once the connection is marked closed.
         $this->connection->reconnect();
         $this->producer->setChannel($this->connection->channel());
+    }
+
+    private function closeConnection(): void
+    {
+        try {
+            $this->connection->close();
+        } catch (Throwable $e) {
+            $this->elasticLogger->warning(sprintf('Failed to close AMQP connection after publish: %s', $e->getMessage()));
+        }
     }
 }
