@@ -26,6 +26,21 @@ variable "WEBPACK_PUBLIC_PATH" {
   default = "/HomeApp/build"
 }
 
+# Set CACHE=gha in GitHub Actions to reuse layers between runs (saves recompiling PHP extensions for ARM)
+variable "CACHE" {
+  default = ""
+}
+
+function "cache_from" {
+  params = [name]
+  result = CACHE == "gha" ? ["type=gha,scope=${name}"] : []
+}
+
+function "cache_to" {
+  params = [name]
+  result = CACHE == "gha" ? ["type=gha,scope=${name},mode=max"] : []
+}
+
 function "prod_tags" {
   params = [name]
   result = TAG == "latest" ? ["${REGISTRY}/${name}:latest"] : ["${REGISTRY}/${name}:${TAG}", "${REGISTRY}/${name}:latest"]
@@ -175,6 +190,8 @@ target "apache-prod" {
     homeapp-assets  = "target:assets"
   }
   tags = prod_tags("homeapp-apache")
+  cache-from = cache_from("homeapp-apache")
+  cache-to   = cache_to("homeapp-apache")
 }
 
 target "php-cli-prod" {
@@ -183,6 +200,8 @@ target "php-cli-prod" {
   dockerfile = "webservers/php-cli/Dockerfile.prod"
   contexts   = { homeapp-php-app = "target:php-app" }
   tags       = prod_tags("homeapp-php-cli")
+  cache-from = cache_from("homeapp-php-cli")
+  cache-to   = cache_to("homeapp-php-cli")
 }
 
 target "mariadb-prod" {
@@ -191,6 +210,8 @@ target "mariadb-prod" {
   dockerfile = "mariadb/Dockerfile.prod"
   contexts   = { homeapp-mariadb-base = "target:mariadb-base-prod" }
   tags       = prod_tags("homeapp-mariadb")
+  cache-from = cache_from("homeapp-mariadb")
+  cache-to   = cache_to("homeapp-mariadb")
 }
 
 target "redis-prod" {
@@ -199,6 +220,8 @@ target "redis-prod" {
   dockerfile = "redis/Dockerfile.prod"
   contexts   = { homeapp-redis-base = "target:redis-base-prod" }
   tags       = prod_tags("homeapp-redis")
+  cache-from = cache_from("homeapp-redis")
+  cache-to   = cache_to("homeapp-redis")
 }
 
 target "rabbitmq-prod" {
@@ -207,4 +230,6 @@ target "rabbitmq-prod" {
   dockerfile = "rabbitmq/Dockerfile.prod"
   contexts   = { homeapp-rabbitmq-base = "target:rabbitmq-base-prod" }
   tags       = prod_tags("homeapp-rabbitmq")
+  cache-from = cache_from("homeapp-rabbitmq")
+  cache-to   = cache_to("homeapp-rabbitmq")
 }

@@ -1,0 +1,128 @@
+# Runs the PHPUnit suite in CI (GitHub Actions), using the dev images built by ./build.sh dev.
+# All values here are throwaway test values — nothing secret.
+#
+#   ./build.sh dev
+#   docker compose -p homeapp-ci -f docker-compose.ci.yml run --rm tests
+#   docker compose -p homeapp-ci -f docker-compose.ci.yml down -v
+
+name: homeapp-ci
+
+x-ci-environment: &ci-environment
+  APP_ENV: test
+  APP_SECRET: ci-app-secret
+  MARIADB_INTERNAL_PORT: 3306
+  MARIADB_USER: homeapp
+  MARIADB_PASSWORD: ci-password
+  MARIADB_DATABASE: HomeApp
+  MARIADB_TEST_USER: test
+  MARIADB_TEST_PASSWORD: ci-test-password
+  MARIADB_TEST_DATABASE: HomeAppTest
+  RABBITMQ_DEFAULT_USER: homeapp
+  RABBITMQ_DEFAULT_PASS: ci-rabbit-password
+  REDIS_INTERNAL_PORT: 6379
+  REDIS_PASSWORD: ci-redis-password
+  ELASTIC_VERSION: ${ELASTIC_VERSION:-8.19.25}
+  ELASTIC_SEARCH_HTTP_AUTH_PASSWORD: ci-elastic-password
+  # Set by the workflow to GitHub's token so Composer isn't rate-limited; empty locally
+  COMPOSER_AUTH: ${COMPOSER_AUTH:-}
+
+services:
+  tests:
+    image: homeapp-php-cli:dev
+    environment: *ci-environment
+    working_dir: /var/www/html
+    volumes:
+      - ../app:/var/www/html
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+        [ -f .env ] || cp .env.example .env
+        composer install --prefer-dist --no-interaction --no-progress
+        php bin/console lexik:jwt:generate-keypair --skip-if-exists --env=test
+        php bin/console doctrine:migrations:migrate -n --env=test
+        php bin/console doctrine:fixtures:load -n --env=test
+        php -d memory_limit=-1 vendor/bin/phpunit
+    depends_on:
+      maria-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      es01:
+        condition: service_healthy
+
+  # Creates a throwaway CA + server certificate, as the MariaDB config requires SSL files to start
+  ci-certs:
+    image: homeapp-mariadb:dev
+    user: root
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+        cd /certs
+        [ -f server-key.pem ] && exit 0
+        openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj "/CN=ci-ca" -keyout ca-key.pem -out ca-cert.pem
+        openssl req -newkey rsa:2048 -nodes -subj "/CN=maria-db" -keyout server-key.pem -out server.csr
+        openssl x509 -req -in server.csr -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -days 2 -out server-cert.pem
+        chown 999:999 server-key.pem && chmod 600 server-key.pem && chmod 644 ca-cert.pem server-cert.pem
+    volumes:
+      - ci-certs:/certs
+
+  maria-db:
+    image: homeapp-mariadb:dev
+    depends_on:
+      ci-certs:
+        condition: service_completed_successfully
+    volumes:
+      - ci-certs:/etc/mysql/ssl:ro
+    environment:
+      APP_ENV: dev  # makes the dev image create the test database and user
+      MYSQL_ROOT_PASSWORD: ci-root-password
+      MYSQL_USER: homeapp
+      MYSQL_PASSWORD: ci-password
+      MYSQL_DATABASE: HomeApp
+      MARIADB_TEST_USER: test
+      MARIADB_TEST_PASSWORD: ci-test-password
+      MARIADB_TEST_DATABASE: HomeAppTest
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 30
+
+  rabbitmq:
+    image: homeapp-rabbitmq:dev
+    environment:
+      RABBITMQ_DEFAULT_USER: homeapp
+      RABBITMQ_DEFAULT_PASS: ci-rabbit-password
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 30s
+      retries: 12
+
+  redis:
+    image: homeapp-redis:dev
+    command: ["redis-server", "--requirepass", "ci-redis-password"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "ci-redis-password", "ping"]
+      interval: 5s
+      retries: 10
+
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-8.19.25}
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    healthcheck:
+      test: "curl -sf http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s || exit 1"
+      interval: 10s
+      timeout: 60s
+      retries: 20
+
+volumes:
+  ci-certs:

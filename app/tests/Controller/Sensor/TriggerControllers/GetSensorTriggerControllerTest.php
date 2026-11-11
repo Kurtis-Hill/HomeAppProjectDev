@@ -131,10 +131,9 @@ class GetSensorTriggerControllerTest extends WebTestCase
     {
         $payload = $this->makeGetRequestAndDecodePayload(self::GET_ALL_SENSOR_TRIGGER_URL, $this->userToken);
 
+        // Admins are in every group, so they see every trigger
         $allTriggers = $this->sensorTriggerRepository->findAll();
-//        dd($payload);
-//        dd($allTriggers);
-        self::assertCount(count($allTriggers) -1, $payload);
+        self::assertCount(count($allTriggers), $payload);
 
         foreach ($payload as $triggerResponseData) {
             $this->assertTriggerResponseHasRequiredKeys($triggerResponseData);
