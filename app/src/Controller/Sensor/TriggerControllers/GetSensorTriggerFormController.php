@@ -8,7 +8,6 @@ use App\Builders\Sensor\Response\SensorReadingTypeResponseBuilders\Bool\RelayRes
 use App\Builders\Sensor\Response\SensorResponseDTOBuilders\SensorResponseDTOBuilder;
 use App\Builders\Sensor\Response\TriggerResponseBuilder\TriggerFormEncapsulationDTOBuilder;
 use App\Builders\Sensor\Response\TriggerResponseBuilder\TriggerTypeResponseBuilder;
-use App\DTOs\RequestDTO;
 use App\Entity\User\User;
 use App\Repository\Common\ORM\OperatorRepository;
 use App\Repository\Sensor\ReadingType\ORM\RelayRepository;
@@ -22,7 +21,6 @@ use App\Traits\HomeAppAPITrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
@@ -40,11 +38,7 @@ class GetSensorTriggerFormController extends AbstractController
         TriggerTypeRepository $triggerTypeRepository,
         RelayRepository $relayRepository,
         RelayResponseDTOBuilder $relayResponseDTOBuilder,
-        #[MapQueryString]
-        ?RequestDTO $requestDTO = null,
     ): JsonResponse {
-        $requestDTO ??= new RequestDTO();
-
         $user = $this->getUser();
         if (!$user instanceof User) {
             throw $this->createAccessDeniedException(APIErrorMessages::FORBIDDEN_ACTION);
@@ -64,7 +58,8 @@ class GetSensorTriggerFormController extends AbstractController
         $getSensorQueryParams = GetSensorQueryDTOBuilder::buildGetSensorQueryDTO(
             groupIDs: $userGroupsFinder->getGroupIDs($user),
         );
-        $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams, $requestDTO);
+        // Every sensor the user can access, not just the first page, so the form can offer them all
+        $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams, null);
         $sensorsToChooseFrom = [];
         foreach ($usersSensors as $sensor) {
             $sensorsToChooseFrom[] = $sensorResponseDTOBuilder->buildFullSensorResponseDTOWithPermissions($sensor, [RequestTypeEnum::FULL->value]);
