@@ -34,7 +34,10 @@ interface SensorRepositoryInterface
     public function findSensorObjectsByDeviceID(int $deviceId): array;
 
     #[ArrayShape([Sensor::class])]
-    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO, RequestDTO $requestDTO): array;
+    /**
+     * Pass null for $requestDTO to get every matching sensor without paging.
+     */
+    public function findSensorsByQueryParameters(GetSensorQueryDTO $getSensorQueryDTO, ?RequestDTO $requestDTO): array;
 
     #[ArrayShape([Sensor::class])]
     public function findSensorsObjectByDeviceIDAndPinNumber(int $deviceID, int $pinNumber): array;

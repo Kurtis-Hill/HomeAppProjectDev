@@ -1,0 +1,2 @@
+# Prod: same as the base for now. Add prod-only Redis changes here.
+FROM homeapp-redis-base

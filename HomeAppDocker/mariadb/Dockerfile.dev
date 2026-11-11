@@ -1,0 +1,4 @@
+# Dev: also creates the test database and user the first time the data directory is initialised.
+FROM homeapp-mariadb-base
+
+COPY ./mariadb/docker-entrypoint.sh /docker-entrypoint-initdb.d/entrypoint.sh

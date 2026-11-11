@@ -18,32 +18,32 @@
         "predis/predis": "^2.3",
         "ruflin/elastica": "^7.3",
         "snc/redis-bundle": "^4.10",
-        "symfony/asset": "7.2.*",
-        "symfony/console": "7.2.*",
-        "symfony/doctrine-bridge": "7.2.*",
-        "symfony/dotenv": "7.2.*",
-        "symfony/expression-language": "^7.2",
+        "symfony/asset": "7.4.*",
+        "symfony/console": "7.4.*",
+        "symfony/doctrine-bridge": "7.4.*",
+        "symfony/dotenv": "7.4.*",
+        "symfony/expression-language": "^7.4",
         "symfony/flex": "^2.4",
-        "symfony/form": "7.2.*",
-        "symfony/framework-bundle": "7.2.*",
-        "symfony/http-client": "7.2.*",
-        "symfony/http-foundation": "7.2.*",
-        "symfony/messenger": "7.2.*",
-        "symfony/mime": "7.2.*",
+        "symfony/form": "7.4.*",
+        "symfony/framework-bundle": "7.4.*",
+        "symfony/http-client": "7.4.*",
+        "symfony/http-foundation": "7.4.*",
+        "symfony/messenger": "7.4.*",
+        "symfony/mime": "7.4.*",
         "symfony/monolog-bundle": "^3.10",
-        "symfony/password-hasher": "^7.2",
-        "symfony/property-access": "7.2.*",
-        "symfony/property-info": "7.2.*",
-        "symfony/rate-limiter": "7.2.*",
-        "symfony/scheduler": "7.2.*",
-        "symfony/security-bundle": "7.2.*",
-        "symfony/serializer": "7.2.*",
-        "symfony/stopwatch": "7.2.*",
-        "symfony/twig-bundle": "7.2.*",
-        "symfony/validator": "7.2.*",
-        "symfony/web-profiler-bundle": "7.2.*",
+        "symfony/password-hasher": "^7.4",
+        "symfony/property-access": "7.4.*",
+        "symfony/property-info": "7.4.*",
+        "symfony/rate-limiter": "7.4.*",
+        "symfony/scheduler": "7.4.*",
+        "symfony/security-bundle": "7.4.*",
+        "symfony/serializer": "7.4.*",
+        "symfony/stopwatch": "7.4.*",
+        "symfony/twig-bundle": "7.4.*",
+        "symfony/validator": "7.4.*",
+        "symfony/web-profiler-bundle": "7.4.*",
         "symfony/webpack-encore-bundle": "^2.0",
-        "symfony/yaml": "7.2.*",
+        "symfony/yaml": "7.4.*",
         "twig/extra-bundle": "^3.0",
         "twig/twig": "^3.0"
     },
@@ -53,10 +53,10 @@
         "jetbrains/phpstorm-attributes": "^1.0",
         "phpstan/phpstan": "^1.12",
         "phpunit/phpunit": "^11.0",
-        "symfony/browser-kit": "7.2.*",
-        "symfony/css-selector": "7.2.*",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/css-selector": "7.4.*",
         "symfony/maker-bundle": "^1.60",
-        "symfony/phpunit-bridge": "^7.2"
+        "symfony/phpunit-bridge": "^7.4"
     },
     "config": {
         "preferred-install": {
@@ -113,7 +113,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.2.*"
+            "require": "7.4.*"
         }
     }
 }

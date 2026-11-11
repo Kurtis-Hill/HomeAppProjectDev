@@ -1,0 +1,20 @@
+# Build context is the repo root: only send the app code, minus local/dev-only files and secrets
+*
+!app
+
+app/vendor
+app/node_modules
+app/var
+app/public/build
+app/public/bundles
+app/tests
+app/.env
+app/.env.local
+app/.env.*.local
+app/.env.local.php
+app/.env.test
+app/config/jwt/*.pem
+app/*.bak
+app/supervisord.*
+app/.phpunit*
+HomeAppDocker/webservers/auth

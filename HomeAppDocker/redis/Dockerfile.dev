@@ -1,0 +1,2 @@
+# Dev: same as the base for now. Add dev-only Redis changes here.
+FROM homeapp-redis-base

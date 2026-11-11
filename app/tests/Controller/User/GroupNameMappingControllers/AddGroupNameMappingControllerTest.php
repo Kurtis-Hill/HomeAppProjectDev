@@ -15,6 +15,7 @@ use App\Services\API\APIErrorMessages;
 use App\Tests\Traits\TestLoginTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,9 +83,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         self::assertEquals([APIErrorMessages::FORMAT_NOT_SUPPORTED], $response['errors']);
     }
 
-    /**
-     * @dataProvider sendingWrongDataTypesDataProvider
-     */
+    #[DataProvider('sendingWrongDataTypesDataProvider')]
     public function test_sending_wrong_data_types(array $dataToSend, array $errorMessages): void
     {
         $jsonData = json_encode($dataToSend);
@@ -144,9 +143,7 @@ class AddGroupNameMappingControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider missingDataDataProvider
-     */
+    #[DataProvider('missingDataDataProvider')]
     public function test_sending_missing_data(array $dataToSend, array $errorMessages)
     {
         $jsonData = json_encode($dataToSend);

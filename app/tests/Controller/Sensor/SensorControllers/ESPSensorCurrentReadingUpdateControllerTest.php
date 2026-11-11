@@ -383,8 +383,8 @@ class ESPSensorCurrentReadingUpdateControllerTest extends ControllerTestCase
                     'sensorName' => SensorFixtures::SENSORS[Bmp::NAME],
                 ],
             ],
-            'title' => APIErrorMessages::COULD_NOT_PROCESS_ANY_CONTENT,
-            'errors' => ['currentReadings cannot be empty'],
+            'title' => 'Validation errors occurred',
+            'errors' => ['sensorData[0]' => 'This value should be of type unknown.'],
         ];
     }
 

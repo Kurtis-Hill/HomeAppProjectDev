@@ -1,0 +1,12 @@
+# Build context for most images is this folder: keep data, backups and secrets out of it
+mariadb/db_data
+mariadb/backups
+mariadb/dumps
+rabbitmq/data
+elasticsearch
+webservers/auth
+webservers/apache/logs
+nginx/logs
+.env
+.env.*
+*.swp

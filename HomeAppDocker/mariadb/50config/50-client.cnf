@@ -7,9 +7,9 @@
 # Default is Latin1, if you need UTF-8 set this (also in server section)
 default-character-set = utf8mb4
 
-ssl-ca = /etc/mysql/ssl/ca-cert.pem 
-ssl-cert = /etc/mysql/ssl/client-cert.pem
-ssl-key = /etc/mysql/ssl/client-key.pem
+# No TLS options here: clients inside this container connect over the local socket, and the
+# image's first-start setup (including the ./initdb import) runs with SSL off and fails if the
+# client config requires TLS. The server still has SSL enabled for connections over the network.
 # socket location
 socket = /var/run/mysqld/mysqld.sock
 

@@ -1,0 +1,7 @@
+# Shared base for Redis (homeapp-redis-base). Uses the official image's own entrypoint.
+FROM redis:8.10-alpine
+
+COPY ./redis/redis.conf /usr/local/etc/redis/redis.conf
+COPY ./redis/sysctl.conf /etc/sysctl.conf
+
+CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]

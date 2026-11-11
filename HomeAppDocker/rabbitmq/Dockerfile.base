@@ -1,0 +1,2 @@
+# Shared base for RabbitMQ (homeapp-rabbitmq-base).
+FROM rabbitmq:4.4-management-alpine

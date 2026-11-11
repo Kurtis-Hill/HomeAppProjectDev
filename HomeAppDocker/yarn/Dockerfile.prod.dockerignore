@@ -1,0 +1,6 @@
+# Build context is the repo root: only send what the front-end build needs
+*
+!app/package.json
+!app/yarn.lock
+!app/webpack.config.js
+!app/assets

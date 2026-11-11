@@ -33,7 +33,7 @@ class SecurityController extends AbstractController
     /**
      * FOR DEVELOPMENT ONLY
      */
-    #[Route('/HomeApp/ssl', name: 'ssl')]
+    #[Route('/HomeApp/ssl', name: 'ssl', env: 'dev')]
     public function showSSLConfig(EntityManager $entityManager)
     {
         $ssl = $entityManager->getRepository(User::class)->showSSL();
@@ -57,7 +57,7 @@ class SecurityController extends AbstractController
         die;
     }
 
-    #[Route('/HomeApp/test', name: 'test')]
+    #[Route('/HomeApp/test', name: 'test', env: 'dev')]
     public function testEndPoint()
     {
 
@@ -66,7 +66,7 @@ class SecurityController extends AbstractController
     /**
      * FOR DEVELOPMENT ONLY
      */
-    #[Route('/HomeApp/xdebug', name: 'xdebug')]
+    #[Route('/HomeApp/xdebug', name: 'xdebug', env: 'dev')]
     public function showxDebug()
     {
         return new Response(xdebug_info());
@@ -75,7 +75,7 @@ class SecurityController extends AbstractController
     /**
      * FOR DEVELOPMENT ONLY
      */
-    #[Route('/HomeApp/driver', name: 'driver')]
+    #[Route('/HomeApp/driver', name: 'driver', env: 'dev')]
     public function driverCheck()
     {
         $driver = \PDO::getAvailableDrivers();
@@ -86,7 +86,7 @@ class SecurityController extends AbstractController
     /**
      * FOR DEVELOPMENT ONLY
      */
-    #[Route('/HomeApp/JIT', name: 'JIT')]
+    #[Route('/HomeApp/JIT', name: 'JIT', env: 'dev')]
     public function checkJITDriver()
     {
         dd(\opcache_get_status()['jit']);
@@ -95,7 +95,7 @@ class SecurityController extends AbstractController
     /**
      * @return Response
      */
-    #[Route('/HomeApp/ini', name: 'ini')]
+    #[Route('/HomeApp/ini', name: 'ini', env: 'dev')]
     public function phpIni()
     {
         return new Response(phpinfo());

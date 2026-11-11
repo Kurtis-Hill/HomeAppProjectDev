@@ -1,0 +1,15 @@
+# Dev: app code is mounted from ../app by docker-compose.yml.
+# The entrypoint runs composer install, migrations (dev + test) and fixtures on start.
+FROM homeapp-php-base
+
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./webservers/supervisor/ /etc/supervisor/conf.d/
+
+COPY ./webservers/php-cli/docker-entrypoint.sh /usr/bin/docker-entrypoint
+RUN chmod +x /usr/bin/docker-entrypoint
+
+ENTRYPOINT ["docker-entrypoint"]
+CMD ["php"]

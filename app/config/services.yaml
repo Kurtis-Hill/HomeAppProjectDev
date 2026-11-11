@@ -183,7 +183,14 @@ services:
 
     App\Services\Sensor\Trigger\TriggerActivationHandlers\TriggerRelayActivationProcessor:
         arguments:
-              $sendCurrentReadingAMQPProducer: '@send_current_sensor_reading_producer'
+              $sendCurrentReadingAMQPProducer: '@reconnecting_send_current_sensor_reading_producer'
+
+    # Publishes from the long-running scheduler worker on its own connection, which is closed after each publish
+    reconnecting_send_current_sensor_reading_producer:
+        class: App\AMQP\Common\ReconnectingProducer
+        arguments:
+              $producer: '@scheduler_send_current_sensor_reading_producer'
+              $connection: '@old_sound_rabbit_mq.connection.scheduler'
 
     App\Events\Subscribers\Sensor\SensorUpdateEventSubscriber:
       calls:

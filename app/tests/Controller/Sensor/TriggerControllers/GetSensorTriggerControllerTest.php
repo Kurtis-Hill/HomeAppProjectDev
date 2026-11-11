@@ -105,8 +105,15 @@ class GetSensorTriggerControllerTest extends WebTestCase
             $this->assertTriggerResponseHasRequiredKeys($triggerResponseData);
 
             if (!empty($triggerResponseData['baseReadingTypeThatIsTriggered']) && !empty($triggerResponseData['baseReadingTypeThatTriggers'])) {
-                $responseBaseSensorIDThatIsTriggered = $triggerResponseData['baseReadingTypeThatIsTriggered']['sensor']['sensorID'];
-                $responseBaseSensorIDThatTriggers = $triggerResponseData['baseReadingTypeThatTriggers']['sensor']['sensorID'];
+                // The trigger response no longer nests the sensor, so look it up from the base reading type
+                $responseBaseSensorIDThatIsTriggered = $this->baseSensorReadingTypeRepository
+                    ->find($triggerResponseData['baseReadingTypeThatIsTriggered']['baseReadingTypeID'])
+                    ->getSensor()
+                    ->getSensorID();
+                $responseBaseSensorIDThatTriggers = $this->baseSensorReadingTypeRepository
+                    ->find($triggerResponseData['baseReadingTypeThatTriggers']['baseReadingTypeID'])
+                    ->getSensor()
+                    ->getSensorID();
 
                 $shouldNotMatch = in_array($responseBaseSensorIDThatIsTriggered, $sensorIDsUserIsNotApartOf, true);
                 $shouldNotMatchTwo = in_array($responseBaseSensorIDThatTriggers, $sensorIDsUserIsNotApartOf, true);
@@ -124,10 +131,9 @@ class GetSensorTriggerControllerTest extends WebTestCase
     {
         $payload = $this->makeGetRequestAndDecodePayload(self::GET_ALL_SENSOR_TRIGGER_URL, $this->userToken);
 
+        // Admins are in every group, so they see every trigger
         $allTriggers = $this->sensorTriggerRepository->findAll();
-//        dd($payload);
-//        dd($allTriggers);
-        self::assertCount(count($allTriggers) -1, $payload);
+        self::assertCount(count($allTriggers), $payload);
 
         foreach ($payload as $triggerResponseData) {
             $this->assertTriggerResponseHasRequiredKeys($triggerResponseData);

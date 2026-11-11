@@ -1,0 +1,14 @@
+# Prod: app code baked in (from homeapp-php-app). Runs migrations, then the queue workers under supervisor.
+FROM homeapp-php-app
+
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./webservers/supervisor/ /etc/supervisor/conf.d/
+
+COPY ./webservers/php-cli/docker-entrypoint.prod.sh /usr/bin/docker-entrypoint
+RUN chmod +x /usr/bin/docker-entrypoint
+
+ENTRYPOINT ["docker-entrypoint"]
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/conf.d/update-current-reading.conf"]

@@ -1,0 +1,2 @@
+# Prod: same as the base for now. Add prod-only database changes here.
+FROM homeapp-mariadb-base

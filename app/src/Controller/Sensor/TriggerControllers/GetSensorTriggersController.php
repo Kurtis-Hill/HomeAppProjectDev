@@ -56,7 +56,8 @@ class GetSensorTriggersController extends AbstractController
         $getSensorQueryParams = GetSensorQueryDTOBuilder::buildGetSensorQueryDTO(
             groupIDs: $userGroupsFinder->getGroupIDs($user),
         );
-        $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams, $requestDTO);
+        // All of the user's sensors (not just the first page), so every trigger they can see is returned
+        $usersSensors = $sensorRepository->findSensorsByQueryParameters($getSensorQueryParams, null);
 
         if ($requestDTO->getSensorID() !== null) {
             $usersSensors = array_filter($usersSensors, static fn($sensor) => $sensor->getSensorID() === $requestDTO->getSensorID());
