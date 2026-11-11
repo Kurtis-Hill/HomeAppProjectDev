@@ -39,16 +39,10 @@ app/.phpunit.cache
 app/phpunit.xml
 
 ##< SSL >###
-SSL/custom/client-cert.pem
-SSL/custom/client-key.pem
-SSL/custom/server-cert.pem
-SSL/custom/server-key.pem
-SSL/custom/server.pfx
-SSL/custom/ca-cert.pem
-SSL/custom/ca-key.pem
-SSL/signed/client-cert.pem
-SSL/signed/client-key.pem
-SSL/signed/ca-cert.pem
+# Certificates and private keys must never be committed
+SSL/custom/*
+SSL/signed/*
+!SSL/signed/.gitkeep
 ##< Docker >###
 HomeAppDocker/.env
 HomeAppDocker/mariadb/dumps/*
