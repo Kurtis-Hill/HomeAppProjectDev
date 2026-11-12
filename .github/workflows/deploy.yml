@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build dev images
         run: HomeAppDocker/build.sh dev
@@ -62,7 +62,7 @@ jobs:
     outputs:
       tag: ${{ steps.vars.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Work out registry and tag
         id: vars
@@ -106,7 +106,7 @@ jobs:
     timeout-minutes: 30
     environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           sparse-checkout: HomeAppDocker/docker-compose.prod.yml
           sparse-checkout-cone-mode: false
