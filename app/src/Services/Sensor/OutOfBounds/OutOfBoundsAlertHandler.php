@@ -3,7 +3,11 @@
 namespace App\Services\Sensor\OutOfBounds;
 
 use App\Entity\Sensor\OutOfRangeRecordings\OutOfBoundsEntityInterface;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Analog;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Humidity;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Latitude;
 use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\StandardReadingSensorInterface;
+use App\Entity\Sensor\ReadingTypes\StandardReadingTypes\Temperature;
 use App\Services\Common\Client\HomeAppAlertClientInterface;
 use Predis\Client;
 use Predis\Transaction\MultiExec;
@@ -35,12 +39,22 @@ readonly class OutOfBoundsAlertHandler
 
         $isHighReading = $currentReading > $highReading;
 
+        $readingTypeName = $standardReadingSensor::getReadingTypeName();
+
         $message = sprintf(
-            'Sensor reading: %s is out of bounds for  sensor: %s in: %s  when the %s limit was set to %s',
-            $currentReading,
+            "%s *Out of bounds alert: %s %s*\n"
+            . ">%s *Sensor:* %s\n"
+            . ">🏠 *Room:* %s\n"
+            . ">📊 *Current reading:* `%s`\n"
+            . ">🚧 *%s limit:* `%s`",
+            $isHighReading ? '🔺' : '🔻',
+            ucfirst($readingTypeName),
+            $isHighReading ? 'too high' : 'too low',
+            $this->getReadingTypeEmoji($readingTypeName, $isHighReading),
             $standardReadingSensor->getSensor()->getSensorName(),
             $standardReadingSensor->getSensor()->getDevice()->getRoomObject()->getRoom(),
-            $isHighReading ? 'high' : 'low',
+            $currentReading,
+            $isHighReading ? 'High' : 'Low',
             $isHighReading ? $highReading : $lowReading,
         );
 
@@ -53,6 +67,16 @@ readonly class OutOfBoundsAlertHandler
 
             $this->homeAppAlertClient->sendAlert($message);
         }
+    }
 
+    private function getReadingTypeEmoji(string $readingTypeName, bool $isHighReading): string
+    {
+        return match ($readingTypeName) {
+            Temperature::READING_TYPE => $isHighReading ? '🔥' : '🥶',
+            Humidity::READING_TYPE => '💧',
+            Analog::READING_TYPE => '🎛️',
+            Latitude::READING_TYPE => '🧭',
+            default => '📡',
+        };
     }
 }
